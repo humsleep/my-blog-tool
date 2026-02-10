@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AdPlaceholder from '../components/AdPlaceholder';
 
@@ -101,7 +101,7 @@ const ADDITIONAL_OPTIONS = [
   '연관 해시태그 30개 추천',
 ];
 
-export default function PromptGeneratorPage() {
+function PromptGeneratorContent() {
   const searchParams = useSearchParams();
   const [keyword, setKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -704,6 +704,31 @@ export default function PromptGeneratorPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PromptGeneratorPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-gray-50 min-h-screen py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">프롬프트 생성</h1>
+            <p className="text-gray-600 mt-2">
+              키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
+            </p>
+          </div>
+          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+            <div className="animate-pulse">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <PromptGeneratorContent />
+    </Suspense>
   );
 }
 

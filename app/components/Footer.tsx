@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Boheme PostLab</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Boheme BlogLab</h3>
             <p className="text-sm text-gray-600">
               전문적인 블로그 제작을 위한 도구 모음입니다.
             </p>
@@ -45,7 +45,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">
-          <p>&copy; 2026 Boheme PostLab. All rights reserved.</p>
+          <p>&copy; 2026 Boheme BlogLab. All rights reserved.</p>
         </div>
       </div>
     </footer>

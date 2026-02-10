@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import FontLoader from "./components/FontLoader";
 
 export const metadata: Metadata = {
-  title: "Boheme PostLab - 블로그 제작 도우미",
+  title: "Boheme BlogLab - 블로그 제작 도우미",
   description: "전문적인 블로그 제작을 위한 도구 모음",
 };
 
