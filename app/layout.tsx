@@ -25,14 +25,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ko_KR",
+    url: "https://bohemebloglab.com",
     title: "Boheme PostLab - 블로그 포스팅 도우미",
     description: "네이버/티스토리 블로거를 위한 글자 수 세기, 금칙어 검사, 이미지 편집 도구",
     siteName: "Boheme PostLab",
+    images: [
+      {
+        url: "https://bohemebloglab.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Boheme PostLab - 블로그 포스팅 도우미",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Boheme PostLab - 블로그 포스팅 도우미",
     description: "네이버/티스토리 블로거를 위한 글자 수 세기, 금칙어 검사, 이미지 편집 도구",
+    images: ["https://bohemebloglab.com/og-image.png"],
   },
   verification: {
     google: "ag_t43fLpqdnJHcfun4Is25BPgksKp3Om0Gd7pZAERQ",
