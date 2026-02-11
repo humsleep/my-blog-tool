@@ -44,8 +44,18 @@ export default function Footer() {
             </a>
           </div>
         </div>
-        <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">
-          <p>&copy; 2026 Boheme BlogLab. All rights reserved.</p>
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600">
+            <p>&copy; 2026 Boheme BlogLab. All rights reserved.</p>
+            <div className="flex gap-4">
+              <a href="/about" className="hover:text-blue-600 hover:underline">
+                서비스 소개
+              </a>
+              <a href="/privacy" className="hover:text-blue-600 hover:underline">
+                개인정보처리방침
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
