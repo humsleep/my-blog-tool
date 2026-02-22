@@ -4,6 +4,17 @@ import AdPlaceholder from './components/AdPlaceholder';
 export default function Home() {
   const features = [
     {
+      title: '포스팅 연구실',
+      description: '블로그 포스팅 관련 연구와 실험 결과를 공유하는 공간입니다.',
+      href: '/lab',
+      icon: (
+        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+        </svg>
+      ),
+      highlight: true,
+    },
+    {
       title: '키워드 분석',
       description: '블로그 포스트에 적합한 키워드를 분석하고 추천합니다.',
       href: '/keyword-analysis',
@@ -48,12 +59,12 @@ export default function Home() {
   return (
     <div className="bg-gradient-to-b from-blue-50 to-white min-h-screen">
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
             블로그 포스팅 도우미
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-2">
             전문적인 블로그 포스트를 만들기 위한 필수 도구들을 한 곳에서 만나보세요
           </p>
         </div>
@@ -64,28 +75,29 @@ export default function Home() {
         </div>
 
         {/* Site Introduction */}
-        <div className="bg-white rounded-lg shadow-md p-8 mb-12 border border-gray-100">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8 mb-8 sm:mb-12 border border-gray-100">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 text-center px-2">
               블로그 포스팅의 모든 과정을 한 곳에서
             </h2>
-            <p className="text-lg text-gray-700 mb-8 text-center leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 mb-6 sm:mb-8 text-center leading-relaxed px-2">
               이 사이트는 실제 블로그 포스팅 순서에 맞게 구성되어 있습니다.
-              <br />
+              <br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>
               처음부터 끝까지 체계적으로 블로그 포스트를 완성할 수 있습니다.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <Link
                 href="/keyword-analysis"
-                className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors cursor-pointer touch-manipulation"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="flex-shrink-0 w-12 h-12 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg sm:text-base">
                   1
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">키워드 찾기</h3>
-                  <p className="text-gray-600 text-sm whitespace-nowrap">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-base sm:text-sm">키워드 찾기</h3>
+                  <p className="text-gray-600 text-sm sm:text-xs">
                     적합한 키워드를 분석하고 경쟁률을 확인합니다.
                   </p>
                 </div>
@@ -93,14 +105,14 @@ export default function Home() {
               
               <Link
                 href="/prompt-generator"
-                className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors cursor-pointer touch-manipulation"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="flex-shrink-0 w-12 h-12 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg sm:text-base">
                   2
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">프롬프트 생성</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-base sm:text-sm">프롬프트 생성</h3>
+                  <p className="text-gray-600 text-sm sm:text-xs">
                     찾은 키워드로 포스팅하기 위한 최적의 프롬프트를 생성합니다.
                   </p>
                 </div>
@@ -108,14 +120,14 @@ export default function Home() {
               
               <Link
                 href="/editor"
-                className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors cursor-pointer touch-manipulation"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="flex-shrink-0 w-12 h-12 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg sm:text-base">
                   3
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">금칙어 검사</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-base sm:text-sm">금칙어 검사</h3>
+                  <p className="text-gray-600 text-sm sm:text-xs">
                     작성한 포스팅 내용에 대해 금칙어를 검사하고 수정합니다.
                   </p>
                 </div>
@@ -123,14 +135,14 @@ export default function Home() {
               
               <Link
                 href="/image-tools"
-                className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 bg-blue-50 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors cursor-pointer touch-manipulation"
               >
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div className="flex-shrink-0 w-12 h-12 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg sm:text-base">
                   4
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">이미지 편집</h3>
-                  <p className="text-gray-600 text-sm">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 mb-1 text-base sm:text-sm">이미지 편집</h3>
+                  <p className="text-gray-600 text-sm sm:text-xs">
                     포스팅에 들어가는 이미지를 편집하고 최적화합니다.
                   </p>
                 </div>
@@ -140,20 +152,26 @@ export default function Home() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {features.map((feature) => (
-            <Link
-              key={feature.href}
-              href={feature.href}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100"
-            >
-              <div className="text-blue-600 mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600">{feature.description}</p>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
+          {features.map((feature) => {
+            return (
+              <Link
+                key={feature.href}
+                href={feature.href}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg active:shadow-xl transition-all p-5 sm:p-6 border border-gray-100 hover:border-blue-200 touch-manipulation"
+              >
+                <div className="text-blue-600 mb-3 sm:mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-sm sm:text-base text-gray-600">
+                  {feature.description}
+                </p>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Ad Banner */}

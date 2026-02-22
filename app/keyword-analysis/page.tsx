@@ -211,11 +211,11 @@ export default function KeywordAnalysisPage() {
   const sortedKeywords = [...keywordData].reverse();
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">키워드 분석</h1>
-          <p className="text-gray-600 mt-2">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">키워드 분석</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             네이버 검색광고 API를 사용하여 키워드 검색량과 블로그 제목을 추천합니다
           </p>
         </div>
@@ -228,16 +228,16 @@ export default function KeywordAnalysisPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Input Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 mb-6">
+            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
               <div className="space-y-4">
                 <div>
                   <label
                     htmlFor="keywords-input"
-                    className="block text-sm font-medium text-gray-700 mb-2"
+                    className="block text-sm sm:text-base font-medium text-gray-700 mb-2"
                   >
                     검색할 키워드 (쉼표로 구분, 최대 10개)
                   </label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       id="keywords-input"
                       type="text"
@@ -249,13 +249,13 @@ export default function KeywordAnalysisPage() {
                         }
                       }}
                       placeholder="예: 꽃배달, flower, 화환"
-                      className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="flex-1 p-3 sm:p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       disabled={isLoading}
                     />
                     <button
                       onClick={analyzeKeywords}
                       disabled={isLoading || !inputKeywords.trim()}
-                      className="px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed shadow-sm flex items-center justify-center"
+                      className="px-6 py-3 sm:px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed shadow-sm flex items-center justify-center min-h-[44px] touch-manipulation"
                       title="키워드 분석하기"
                     >
                       {isLoading ? (
@@ -291,20 +291,20 @@ export default function KeywordAnalysisPage() {
 
             {/* Results */}
             {sortedKeywords.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900">
+              <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
+                  <div className="flex-1">
+                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                       분석 결과 ({sortedKeywords.length}개)
                     </h2>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
                       💡 키워드를 클릭하면 해당 키워드로 프롬프트를 자동 생성할 수 있습니다.
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={downloadCSV}
-                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm whitespace-nowrap"
+                      className="px-4 py-3 bg-green-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors shadow-sm whitespace-nowrap min-h-[44px] touch-manipulation"
                     >
                       CSV 다운로드
                     </button>
@@ -314,133 +314,137 @@ export default function KeywordAnalysisPage() {
                           setKeywordData([]);
                         }
                       }}
-                      className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm whitespace-nowrap"
+                      className="px-4 py-3 bg-red-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors shadow-sm whitespace-nowrap min-h-[44px] touch-manipulation"
                     >
                       전체 삭제
                     </button>
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          키워드
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          PC검색량
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          모바일검색량
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          월간총검색량
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          문서수
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                          경쟁율
-                        </th>
-                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider w-16">
-                          삭제
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {sortedKeywords.map((item) => (
-                        <tr key={item.id} className="hover:bg-blue-50 transition-colors">
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <div 
-                              className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
-                              onClick={() => {
-                                if (confirm(`"${item.keyword}" 키워드로 프롬프트를 생성하시겠습니까?`)) {
-                                  router.push(`/prompt-generator?keyword=${encodeURIComponent(item.keyword)}`);
-                                }
-                              }}
-                            >
-                              {item.keyword}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
-                            {formatNumber(item.pcSearchVolume)}
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
-                            {formatNumber(item.mobileSearchVolume)}
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <span className="font-semibold text-blue-600 text-base">
-                              {formatNumber(item.totalSearchVolume)}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
-                            {formatNumber(item.documentCount)}
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            {(() => {
-                              const ratio = item.competitionRatio;
-                              let icon = '';
-                              let colorClass = '';
-                              let label = '';
-                              
-                              if (ratio <= 0.5) {
-                                icon = '🟢';
-                                colorClass = 'text-green-600';
-                                label = '최상 (꿀키워드)';
-                              } else if (ratio <= 1.0) {
-                                icon = '🟡';
-                                colorClass = 'text-yellow-600';
-                                label = '상 (우수)';
-                              } else if (ratio <= 3.0) {
-                                icon = '⚫';
-                                colorClass = 'text-gray-900';
-                                label = '중 (보통)';
-                              } else if (ratio <= 7.0) {
-                                icon = '🟠';
-                                colorClass = 'text-orange-600';
-                                label = '하 (치열)';
-                              } else {
-                                icon = '🔴';
-                                colorClass = 'text-red-600';
-                                label = '최하 (위험)';
-                              }
-                              
-                              return (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-lg">{icon}</span>
-                                  <span className={`text-sm font-medium ${colorClass}`}>
-                                    {ratio.toFixed(2)}
-                                  </span>
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              키워드
+                            </th>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              PC
+                            </th>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              모바일
+                            </th>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              총검색량
+                            </th>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              문서수
+                            </th>
+                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                              경쟁율
+                            </th>
+                            <th className="px-3 sm:px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider w-14 sm:w-16">
+                              삭제
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {sortedKeywords.map((item) => (
+                            <tr key={item.id} className="hover:bg-blue-50 transition-colors">
+                              <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
+                                <div 
+                                  className="font-semibold text-sm sm:text-base text-gray-900 cursor-pointer hover:text-blue-600 active:text-blue-700 transition-colors touch-manipulation"
+                                  onClick={() => {
+                                    if (confirm(`"${item.keyword}" 키워드로 프롬프트를 생성하시겠습니까?`)) {
+                                      router.push(`/prompt-generator?keyword=${encodeURIComponent(item.keyword)}`);
+                                    }
+                                  }}
+                                >
+                                  {item.keyword}
                                 </div>
-                              );
-                            })()}
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-center">
-                            <button
-                              onClick={() => deleteKeyword(item.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 rounded-full transition-all"
-                              title="삭제"
-                            >
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                              </td>
+                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                {formatNumber(item.pcSearchVolume)}
+                              </td>
+                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                {formatNumber(item.mobileSearchVolume)}
+                              </td>
+                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
+                                <span className="font-semibold text-blue-600 text-sm sm:text-base">
+                                  {formatNumber(item.totalSearchVolume)}
+                                </span>
+                              </td>
+                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
+                                {formatNumber(item.documentCount)}
+                              </td>
+                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
+                                {(() => {
+                                  const ratio = item.competitionRatio;
+                                  let icon = '';
+                                  let colorClass = '';
+                                  let label = '';
+                                  
+                                  if (ratio <= 0.5) {
+                                    icon = '🟢';
+                                    colorClass = 'text-green-600';
+                                    label = '최상 (꿀키워드)';
+                                  } else if (ratio <= 1.0) {
+                                    icon = '🟡';
+                                    colorClass = 'text-yellow-600';
+                                    label = '상 (우수)';
+                                  } else if (ratio <= 3.0) {
+                                    icon = '⚫';
+                                    colorClass = 'text-gray-900';
+                                    label = '중 (보통)';
+                                  } else if (ratio <= 7.0) {
+                                    icon = '🟠';
+                                    colorClass = 'text-orange-600';
+                                    label = '하 (치열)';
+                                  } else {
+                                    icon = '🔴';
+                                    colorClass = 'text-red-600';
+                                    label = '최하 (위험)';
+                                  }
+                                  
+                                  return (
+                                    <div className="flex items-center gap-1 sm:gap-2">
+                                      <span className="text-base sm:text-lg">{icon}</span>
+                                      <span className={`text-xs sm:text-sm font-medium ${colorClass}`}>
+                                        {ratio.toFixed(2)}
+                                      </span>
+                                    </div>
+                                  );
+                                })()}
+                              </td>
+                              <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-center">
+                                <button
+                                  onClick={() => deleteKeyword(item.id)}
+                                  className="text-red-500 hover:text-red-700 active:text-red-800 hover:bg-red-100 active:bg-red-200 p-2 sm:p-2 rounded-full transition-all min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+                                  title="삭제"
+                                >
+                                  <svg
+                                    className="w-5 h-5 sm:w-6 sm:h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

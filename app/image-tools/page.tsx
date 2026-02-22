@@ -1119,11 +1119,11 @@ export default function ImageToolsPage() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">이미지 편집 도구</h1>
-          <p className="text-gray-600 mt-2">이미지를 업로드하고 편집하세요</p>
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">이미지 편집 도구</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">이미지를 업로드하고 편집하세요</p>
         </div>
 
         {/* Ad Banner */}
@@ -1132,23 +1132,24 @@ export default function ImageToolsPage() {
         </div>
 
         {/* 공통 기능 버튼 - 광고 영역 바로 아래 */}
-        <div className="mb-6 bg-white rounded-lg shadow-md border border-gray-100 p-4">
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="mb-4 sm:mb-6 bg-white rounded-lg shadow-md border border-gray-100 p-3 sm:p-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:justify-center">
             <button
               onClick={handleUndo}
               disabled={!image || (editMode === 'mosaic' && mosaicHistory.length === 0) || (editMode === 'crop' && cropHistory.length === 0 && !cropRegion)}
-              className="px-4 py-2 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors border border-gray-300 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-3 sm:py-2 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 active:bg-gray-200 transition-colors border border-gray-300 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="실행 취소"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
               </svg>
-              실행 취소
+              <span className="hidden sm:inline">실행 취소</span>
+              <span className="sm:hidden">취소</span>
             </button>
             <button
               onClick={handleDownload}
               disabled={!image}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-3 sm:py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="다운로드"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1162,7 +1163,7 @@ export default function ImageToolsPage() {
                 resetImageEffects();
               }}
               disabled={!image}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-3 sm:py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 active:bg-gray-400 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="초기화"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1186,13 +1187,14 @@ export default function ImageToolsPage() {
                 resetImageEffects();
               }}
               disabled={!image}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-3 sm:py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 active:bg-red-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="새 이미지"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              새 이미지
+              <span className="hidden sm:inline">새 이미지</span>
+              <span className="sm:hidden">새로</span>
             </button>
           </div>
         </div>

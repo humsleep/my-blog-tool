@@ -122,11 +122,11 @@ export default function EditorPage() {
 
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">금칙어 검사기</h1>
-          <p className="text-gray-600 mt-2">실시간으로 글자 수와 금칙어를 확인하세요</p>
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">금칙어 검사기</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">실시간으로 글자 수와 금칙어를 확인하세요</p>
         </div>
 
         {/* Ad Banner */}
@@ -137,19 +137,19 @@ export default function EditorPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Editor Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <div className="flex justify-between items-center mb-2">
-                <label htmlFor="editor" className="block text-sm font-medium text-gray-700">
+            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3 sm:mb-2">
+                <label htmlFor="editor" className="block text-sm sm:text-base font-medium text-gray-700">
                   본문 작성 {stats.foundWords.length > 0 && (
-                    <span className="text-red-600 text-xs ml-2">
+                    <span className="text-red-600 text-xs sm:text-sm ml-2">
                       ({stats.foundWords.length}개 금칙어 발견)
                     </span>
                   )}
                 </label>
-                <div className="flex gap-3 items-center">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
                   <button
                     onClick={() => setContent(SAMPLE_TEXT)}
-                    className="text-xs text-blue-600 hover:text-blue-700 underline"
+                    className="px-4 py-2.5 text-sm text-blue-600 hover:text-blue-700 active:text-blue-800 hover:bg-blue-50 active:bg-blue-100 rounded-lg transition-colors min-h-[44px] touch-manipulation"
                   >
                     샘플 텍스트 불러오기
                   </button>
@@ -159,13 +159,13 @@ export default function EditorPage() {
                       alert('내용이 클립보드에 복사되었습니다.');
                     }}
                     disabled={!content.trim()}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    className="px-4 py-2.5 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm min-h-[44px] touch-manipulation"
                   >
                     복사 하기
                   </button>
                 </div>
               </div>
-              <div className="relative w-full border border-gray-300 rounded-lg overflow-hidden" style={{ minHeight: '600px' }}>
+              <div className="relative w-full border border-gray-300 rounded-lg overflow-hidden" style={{ minHeight: '400px' }}>
                 {/* 하이라이트 오버레이 */}
                 <div
                   ref={highlightRef}
@@ -184,22 +184,22 @@ export default function EditorPage() {
                   onChange={(e) => setContent(e.target.value)}
                   onScroll={handleScroll}
                   placeholder="여기에 글을 작성하세요..."
-                  className="w-full h-[600px] p-4 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none font-sans text-base overflow-y-auto relative bg-transparent text-gray-900"
+                  className="w-full h-[400px] sm:h-[500px] md:h-[600px] p-3 sm:p-4 border-0 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none font-sans text-base sm:text-lg overflow-y-auto relative bg-transparent text-gray-900"
                   style={{
                     zIndex: 2,
                     caretColor: '#000',
-                    lineHeight: '1.5',
+                    lineHeight: '1.6',
                   }}
                 />
               </div>
               
               {/* 금칙어 위치 정보 및 대체 */}
               {stats.foundPositions.length > 0 && (
-                <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-200 h-96 flex flex-col">
-                  <h3 className="text-sm font-medium text-red-700 mb-3">
+                <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200 h-64 sm:h-96 flex flex-col">
+                  <h3 className="text-sm sm:text-base font-medium text-red-700 mb-3">
                     금칙어 발견 위치 ({stats.foundPositions.length}곳)
                   </h3>
-                  <div className="space-y-3 overflow-y-auto flex-1">
+                  <div className="space-y-2 sm:space-y-3 overflow-y-auto flex-1">
                     {stats.foundPositions.map((pos, idx) => {
                       const replacementKey = `${pos.index}-${pos.word}`;
                       const replacementValue = replacements[replacementKey] || '';
@@ -226,9 +226,11 @@ export default function EditorPage() {
                       
                       return (
                         <div key={idx} className="p-3 bg-white rounded-lg border border-red-200">
-                          <div className="flex gap-3 items-center">
-                            <span className="font-semibold text-red-600 text-sm whitespace-nowrap">{pos.word}</span>
-                            <span className="text-xs text-gray-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
+                            <div className="flex gap-2 items-center">
+                              <span className="font-semibold text-red-600 text-sm whitespace-nowrap">{pos.word}</span>
+                              <span className="text-xs text-gray-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
+                            </div>
                             <div className="flex-1 flex gap-2 items-center">
                               <input
                                 type="text"
@@ -238,11 +240,11 @@ export default function EditorPage() {
                                   [replacementKey]: e.target.value
                                 }))}
                                 placeholder="대체할 단어 입력"
-                                className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="flex-1 px-3 py-2.5 text-base border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[44px]"
                               />
                               <button
                                 onClick={handleReplace}
-                                className="flex-shrink-0 px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
+                                className="flex-shrink-0 px-4 py-2.5 bg-blue-600 text-white text-sm sm:text-base font-medium rounded hover:bg-blue-700 active:bg-blue-800 transition-colors whitespace-nowrap min-h-[44px] min-w-[60px] touch-manipulation"
                               >
                                 적용
                               </button>

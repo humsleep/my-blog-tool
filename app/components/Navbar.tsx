@@ -10,6 +10,7 @@ export default function Navbar() {
 
   const menuItems = [
     { href: '/', label: '홈' },
+    { href: '/lab', label: '포스팅 연구실', highlight: true },
     { href: '/keyword-analysis', label: '키워드 분석' },
     { href: '/prompt-generator', label: '프롬프트 생성' },
     { href: '/editor', label: '금칙어 검사기' },
@@ -17,7 +18,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-white border-b-2 border-gray-300 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -28,17 +29,17 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex md:items-center md:space-x-2">
+          <div className="hidden md:flex md:items-center md:space-x-3">
             {menuItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                  className={`px-5 py-2.5 text-base font-bold rounded-lg transition-all ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                      : 'text-gray-800 hover:text-blue-600 hover:bg-blue-50 font-semibold'
                   }`}
                 >
                   {item.label}
@@ -51,10 +52,10 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 min-w-[44px] min-h-[44px]"
               aria-expanded="false"
+              aria-label="메뉴 열기"
             >
-              <span className="sr-only">메뉴 열기</span>
               {!isOpen ? (
                 <svg
                   className="block h-6 w-6"
@@ -102,10 +103,10 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-semibold transition-all ${
+                  className={`block px-4 py-3 rounded-lg text-base font-bold transition-all min-h-[44px] flex items-center ${
                     isActive
                       ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                      : 'text-gray-800 hover:text-blue-600 hover:bg-blue-50 active:bg-blue-100 font-semibold'
                   }`}
                 >
                   {item.label}
