@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import AdPlaceholder from '../components/AdPlaceholder';
+import AdSense from '../components/AdSense';
 
 // 확장된 금칙어 리스트
 const FORBIDDEN_WORDS = [
@@ -131,7 +131,7 @@ export default function EditorPage() {
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -314,7 +314,7 @@ export default function EditorPage() {
             </div>
 
             {/* Ad Sidebar */}
-            <AdPlaceholder size="sidebar" />
+            <AdSense size="sidebar" />
           </div>
         </div>
       </div>

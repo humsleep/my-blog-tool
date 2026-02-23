@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import AdPlaceholder from '../components/AdPlaceholder';
+import AdSense from '../components/AdSense';
 
 interface MosaicRegion {
   x: number;
@@ -1128,7 +1128,7 @@ export default function ImageToolsPage() {
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         {/* 공통 기능 버튼 - 광고 영역 바로 아래 */}
@@ -1591,7 +1591,7 @@ export default function ImageToolsPage() {
               </div>
 
             {/* Ad Sidebar */}
-            <AdPlaceholder size="sidebar" />
+            <AdSense size="sidebar" />
           </div>
         </div>
       </div>

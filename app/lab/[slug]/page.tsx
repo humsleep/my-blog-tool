@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import AdPlaceholder from '../../components/AdPlaceholder';
+import AdSense from '../../components/AdSense';
 import fs from 'fs';
 import path from 'path';
 
@@ -118,7 +118,7 @@ export default async function PostPage({
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         {/* Post Content */}

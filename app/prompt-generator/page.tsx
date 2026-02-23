@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import AdPlaceholder from '../components/AdPlaceholder';
+import AdSense from '../components/AdSense';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -355,7 +355,7 @@ function PromptGeneratorContent() {
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -699,7 +699,7 @@ function PromptGeneratorContent() {
             </div>
 
             {/* Ad Sidebar */}
-            <AdPlaceholder size="sidebar" />
+            <AdSense size="sidebar" />
           </div>
         </div>
       </div>

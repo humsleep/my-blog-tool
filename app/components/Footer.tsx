@@ -51,6 +51,9 @@ export default function Footer() {
               <a href="/about" className="hover:text-blue-600 hover:underline">
                 서비스 소개
               </a>
+              <a href="/terms" className="hover:text-blue-600 hover:underline">
+                이용약관
+              </a>
               <a href="/privacy" className="hover:text-blue-600 hover:underline">
                 개인정보처리방침
               </a>

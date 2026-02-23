@@ -78,9 +78,10 @@ export default function AboutPage() {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">서비스 특징</h2>
               <ul className="list-disc pl-6 space-y-2 text-gray-700">
                 <li><strong>무료 사용:</strong> 모든 기능을 무료로 제공합니다.</li>
-                <li><strong>간편한 사용:</strong> 복잡한 설치나 가입 없이 바로 사용할 수 있습니다.</li>
+                <li><strong>회원가입 불필요:</strong> 회원가입이나 로그인 없이 바로 사용할 수 있습니다.</li>
+                <li><strong>간편한 사용:</strong> 복잡한 설치나 추가 프로그램 없이 웹 브라우저에서 바로 사용 가능합니다.</li>
                 <li><strong>실시간 처리:</strong> 모든 작업이 브라우저에서 실시간으로 처리됩니다.</li>
-                <li><strong>개인정보 보호:</strong> 사용자의 개인정보를 수집하지 않습니다.</li>
+                <li><strong>개인정보 보호:</strong> 회원가입 기능이 없어 사용자의 개인정보를 수집하지 않습니다.</li>
                 <li><strong>지속적 개선:</strong> 사용자 피드백을 반영하여 지속적으로 서비스를 개선합니다.</li>
               </ul>
             </section>

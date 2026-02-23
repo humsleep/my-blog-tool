@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AdPlaceholder from '../components/AdPlaceholder';
+import AdSense from '../components/AdSense';
 
 interface KeywordData {
   keyword: string;
@@ -222,7 +222,7 @@ export default function KeywordAnalysisPage() {
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -558,7 +558,7 @@ export default function KeywordAnalysisPage() {
             )}
 
             {/* Ad Sidebar */}
-            <AdPlaceholder size="sidebar" />
+            <AdSense size="sidebar" />
           </div>
         </div>
       </div>

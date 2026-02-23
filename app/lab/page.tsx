@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import PostImage from './PostImage';
-import AdPlaceholder from '../components/AdPlaceholder';
+import AdSense from '../components/AdSense';
 import fs from 'fs';
 import path from 'path';
 
@@ -52,7 +52,7 @@ export default async function LabPage() {
 
         {/* Ad Banner */}
         <div className="mb-6">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         {posts.length === 0 ? (
@@ -122,7 +122,7 @@ export default async function LabPage() {
 
         {/* 하단 Ad Banner */}
         <div className="mt-8">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
       </div>
     </div>

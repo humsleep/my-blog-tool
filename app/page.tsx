@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import AdPlaceholder from './components/AdPlaceholder';
+import AdSense from './components/AdSense';
 
 export default function Home() {
   const features = [
@@ -71,7 +71,7 @@ export default function Home() {
 
         {/* Ad Banner */}
         <div className="mb-12">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
 
         {/* Site Introduction */}
@@ -176,7 +176,7 @@ export default function Home() {
 
         {/* Ad Banner */}
         <div className="mb-12">
-          <AdPlaceholder size="banner" />
+          <AdSense size="banner" />
         </div>
       </div>
     </div>
