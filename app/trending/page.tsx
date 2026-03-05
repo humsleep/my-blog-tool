@@ -28,6 +28,14 @@ const CATEGORIES = [
   { value: '건강/운동', label: '건강/운동' },
   { value: '교육/학습', label: '교육/학습' },
   { value: '경제/투자', label: '경제/투자' },
+  { value: '육아/결혼', label: '육아/결혼' },
+  { value: '인테리어', label: '인테리어' },
+  { value: '반려동물', label: '반려동물' },
+  { value: '자동차', label: '자동차' },
+  { value: '스포츠', label: '스포츠' },
+  { value: '게임', label: '게임' },
+  { value: '부동산', label: '부동산' },
+  { value: '영화/드라마', label: '영화/드라마' },
 ];
 
 const PERIODS = [
@@ -81,44 +89,51 @@ export default function TrendingPage() {
         </div>
 
         {/* Filter Card */}
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 mb-6 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                카테고리
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                기간
-              </label>
-              <select
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              >
+        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 mb-6 shadow-sm space-y-4">
+
+          {/* 카테고리 칩 */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">카테고리</label>
+              <div className="flex gap-1">
                 {PERIODS.map((p) => (
-                  <option key={p.value} value={p.value}>{p.label}</option>
+                  <button
+                    key={p.value}
+                    onClick={() => setPeriod(p.value)}
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                      period === p.value
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
                 ))}
-              </select>
+                <button
+                  onClick={fetchTrendingKeywords}
+                  disabled={loading}
+                  className="ml-2 px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {loading ? '조회 중...' : '새로고침'}
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.value}
+                  onClick={() => setCategory(cat.value)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    category === cat.value
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
             </div>
           </div>
-          <button
-            onClick={fetchTrendingKeywords}
-            disabled={loading}
-            className="mt-4 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading ? '조회 중...' : '새로고침'}
-          </button>
         </div>
 
         {/* Loading state */}

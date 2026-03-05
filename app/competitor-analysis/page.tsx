@@ -128,6 +128,17 @@ export default function CompetitorAnalysisPage() {
               </div>
             </div>
 
+            {/* 💡 분석 인사이트 — 통계 바로 아래 */}
+            <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5">
+              <h3 className="font-semibold text-indigo-900 dark:text-indigo-300 mb-2">💡 분석 인사이트</h3>
+              <ul className="space-y-1.5 text-sm text-indigo-700 dark:text-indigo-400">
+                <li>• 평균 제목 길이: <strong>{data.averageTitleLength}자</strong> — 이 길이를 참고하여 제목을 작성하세요</li>
+                <li>• 자주 사용되는 단어를 활용하면 검색 노출 가능성이 높아집니다</li>
+                <li>• 상위 블로거들의 포스팅 패턴을 참고하여 콘텐츠 전략을 수립하세요</li>
+                <li>• 경쟁이 치열한 키워드입니다. 차별화된 콘텐츠가 필요합니다</li>
+              </ul>
+            </div>
+
             {/* 자주 사용되는 단어 */}
             {data.commonWords.length > 0 && (
               <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
@@ -211,16 +222,6 @@ export default function CompetitorAnalysisPage() {
               </div>
             </div>
 
-            {/* 인사이트 */}
-            <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5">
-              <h3 className="font-semibold text-indigo-900 dark:text-indigo-300 mb-2">💡 분석 인사이트</h3>
-              <ul className="space-y-1.5 text-sm text-indigo-700 dark:text-indigo-400">
-                <li>• 평균 제목 길이: <strong>{data.averageTitleLength}자</strong> — 이 길이를 참고하여 제목을 작성하세요</li>
-                <li>• 자주 사용되는 단어를 활용하면 검색 노출 가능성이 높아집니다</li>
-                <li>• 상위 블로거들의 포스팅 패턴을 참고하여 콘텐츠 전략을 수립하세요</li>
-                <li>• 경쟁이 치열한 키워드입니다. 차별화된 콘텐츠가 필요합니다</li>
-              </ul>
-            </div>
           </div>
         )}
 
