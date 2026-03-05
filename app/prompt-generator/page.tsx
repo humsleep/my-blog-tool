@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import GuideSection from '../components/GuideSection';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -674,32 +675,45 @@ function PromptGeneratorContent() {
           </div>
         </div>
 
-        {/* SEO Section */}
-        <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">AI 프롬프트 생성의 전문 가이드</h2>
-            <div className="space-y-6 text-sm text-slate-600 dark:text-slate-400">
-              <section>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">효과적인 프롬프트 작성의 핵심 원칙</h3>
-                <p className="leading-relaxed">
-                  AI를 활용한 블로그 포스팅에서 프롬프트의 품질은 최종 콘텐츠의 품질을 결정합니다. 좋은 프롬프트는 명확한 목적, 구체적인 요구사항, 그리고 원하는 톤과 스타일을 포함해야 합니다.
-                </p>
-              </section>
-              <section>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">카테고리별 프롬프트 최적화 전략</h3>
-                <p className="leading-relaxed">
-                  엔터테인먼트 카테고리는 감성적이고 흥미로운 스토리텔링이 중요합니다. 지식·동향 카테고리는 객관적이고 정확한 정보 전달이 우선이며, 최신 데이터와 통계를 활용하는 것이 효과적입니다.
-                </p>
-              </section>
-              <section>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">2026년 AI 프롬프트 작성 트렌드</h3>
-                <p className="leading-relaxed">
-                  AI 기술의 발전으로 프롬프트 작성의 중요성이 더욱 커지고 있습니다. 프롬프트에 맥락과 배경 정보를 포함하면, AI가 더 정확하고 관련성 높은 콘텐츠를 만들어냅니다.
-                </p>
-              </section>
-            </div>
-          </div>
-        </div>
+        {/* SEO 가이드 섹션 */}
+        <GuideSection
+          title="AI 프롬프트로 고품질 블로그 포스팅 만드는 완벽 가이드"
+          items={[
+            {
+              title: '좋은 프롬프트가 좋은 콘텐츠를 만든다',
+              content: `ChatGPT, Claude 등 AI 글쓰기 도구를 사용할 때 많은 사람들이 단순히 "~에 대해 블로그 글 써줘"라고 요청합니다. 하지만 이런 방식으로는 누구나 비슷한 결과물을 얻게 되어 차별화가 불가능합니다.
+
+프롬프트는 AI에게 주는 '작업 지시서'입니다. 구체적이고 세밀한 지시일수록 AI는 더 풍부하고 독창적인 콘텐츠를 생성합니다. 목표 독자, 톤(친근/전문/유머), 포함해야 할 소제목, 글자 수, SEO 키워드까지 프롬프트에 담으면 결과물의 품질이 완전히 달라집니다.`,
+            },
+            {
+              title: '카테고리별 프롬프트 최적화 전략',
+              content: `블로그 분야에 따라 효과적인 프롬프트 전략이 다릅니다.
+
+요리/생활정보: "단계별 과정을 번호로 구분하고, 초보자도 따라할 수 있게 쉬운 용어로 설명해달라"는 조건이 효과적입니다.
+
+IT/기술: "전문 용어는 처음 등장할 때 괄호 안에 쉬운 설명을 추가하고, 실제 사용 예시를 코드나 시나리오로 보여달라"고 요청하세요.
+
+여행/라이프스타일: "내가 직접 경험한 것처럼 1인칭 시점으로, 감각적인 묘사(시각·청각·미각)를 포함해달라"는 조건이 독자의 몰입도를 높입니다.
+
+경제/재테크: "구체적인 수치와 사례를 들고, 독자가 바로 실천할 수 있는 3가지 행동 계획으로 마무리해달라"고 지시하세요.`,
+            },
+            {
+              title: 'AI 콘텐츠를 네이버 최적화로 완성하는 법',
+              content: `AI가 생성한 글을 그대로 포스팅하면 저품질 위험이 있습니다. AI 글쓰기는 초안 생성의 도구로 활용하고, 다음 과정을 거쳐 완성도를 높이세요.
+
+1. 개인 경험 추가: 나만의 실제 경험이나 의견을 1~2문단 삽입하면 독창성이 높아집니다.
+2. 금칙어 제거: AI가 생성한 글에 광고성 표현이나 금칙어가 포함될 수 있습니다. 에디터 도구로 반드시 검토하세요.
+3. 이미지 보강: AI 글은 텍스트만 있어 이미지가 없습니다. 직접 촬영한 사진이나 저작권 free 이미지를 3~5장 추가하세요.
+4. 소제목 최적화: AI가 만든 소제목을 검색 키워드가 자연스럽게 포함된 형태로 수정하세요.`,
+            },
+            {
+              title: '프롬프트 재사용으로 블로그 운영 효율화하기',
+              content: `Boheme BlogLab의 프롬프트 생성기는 카테고리·키워드·스타일 조합에 따라 매번 새로운 프롬프트를 생성합니다. 한 번 좋은 결과가 나온 설정은 기억해두었다가 비슷한 주제에 재사용하면 운영 효율이 크게 높아집니다.
+
+또한 같은 키워드라도 톤과 스타일을 바꾸어 여러 버전의 프롬프트를 생성하고, 다양한 각도에서 포스팅을 작성하면 키워드 중복 없이 시리즈 형태의 연재 콘텐츠를 만들 수 있습니다. 이는 블로그의 전문성을 높이고 방문자의 재방문율을 높이는 데 효과적입니다.`,
+            },
+          ]}
+        />
       </div>
     </div>
   );

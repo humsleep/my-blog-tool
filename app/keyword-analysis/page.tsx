@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import GuideSection from '../components/GuideSection';
 
 interface KeywordData {
   keyword: string;
@@ -423,32 +424,47 @@ function KeywordAnalysisContent() {
           </div>
         </div>
 
-        {/* SEO Section */}
-        <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">키워드 분석의 핵심 가이드</h2>
-            <div className="space-y-6 text-slate-600 dark:text-slate-400">
-              <section>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">키워드 분석이 블로그 성공의 첫걸음인 이유</h3>
-                <p className="mb-2 leading-relaxed text-sm">
-                  블로그 포스팅의 성공은 올바른 키워드 선택에서 시작됩니다. 검색량, 경쟁 환경을 파악하고 자신의 블로그가 노출될 가능성을 평가하는 핵심 과정입니다.
-                </p>
-              </section>
-              <section>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">경쟁률 계산의 정확한 이해</h3>
-                <p className="mb-2 leading-relaxed text-sm">
-                  경쟁률은 문서 수를 검색량으로 나눈 값으로 계산됩니다. 경쟁률이 낮을수록 상위 노출 가능성이 높아지며, 높을수록 경쟁이 치열하다는 의미입니다.
-                </p>
-              </section>
-              <section>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">2026년 키워드 분석 트렌드</h3>
-                <p className="leading-relaxed text-sm">
-                  AI 기반 콘텐츠 생성 도구의 보급으로 키워드 경쟁이 더욱 치열해지고 있습니다. 단순 키워드 포함이 아닌 사용자에게 실제로 유용한 고품질 콘텐츠가 더욱 중요해졌습니다.
-                </p>
-              </section>
-            </div>
-          </div>
-        </div>
+        {/* SEO 가이드 섹션 */}
+        <GuideSection
+          title="키워드 분석 완벽 가이드 — 블로그 상위 노출의 첫걸음"
+          items={[
+            {
+              title: '키워드 분석이 블로그 성공의 첫걸음인 이유',
+              content: `블로그 포스팅의 성공은 올바른 키워드 선택에서 시작됩니다. 아무리 잘 쓴 글도 사람들이 검색하지 않는 키워드로 작성되었다면 트래픽을 얻기 어렵습니다. 반대로, 검색량이 충분하고 경쟁이 낮은 키워드를 선점하면 글 품질이 조금 부족해도 꾸준한 방문자를 유지할 수 있습니다.
+
+키워드 분석은 내가 쓰려는 주제로 얼마나 많은 사람들이 검색하는지(검색량), 그리고 얼마나 많은 글이 이미 작성되어 있는지(경쟁 환경)를 파악하여, 내 블로그가 실제로 상위에 노출될 가능성을 사전에 평가하는 필수 과정입니다.`,
+            },
+            {
+              title: '경쟁률 계산의 정확한 이해',
+              content: `경쟁률은 '네이버 문서 수 ÷ 월간 검색량'으로 계산됩니다. 이 수치가 낮을수록 같은 키워드를 다루는 문서는 많지 않지만 검색하는 사람은 많다는 의미이므로, 상위 노출 가능성이 높습니다.
+
+🟢 0.5 이하 (꿀키워드): 경쟁 문서가 매우 적어 신규 블로거도 상위 노출이 가능합니다. 이런 키워드를 집중 공략하세요.
+🟡 0.5 ~ 1.0 (우수): 경쟁률이 낮은 편으로 블로그 지수가 어느 정도 쌓이면 상단 노출 가능성이 충분합니다.
+⚫ 1.0 ~ 3.0 (보통): 블로그 지수와 콘텐츠 품질에 따라 결과가 달라집니다.
+🟠 3.0 ~ 7.0 (치열): 고퀄리티 포스팅과 꾸준한 업로드가 필요합니다.
+🔴 7.0 이상 (위험): 파워블로거나 전문 미디어 외에는 상위 노출이 매우 어렵습니다.`,
+            },
+            {
+              title: '효과적인 키워드 선택 전략 — 롱테일 키워드의 힘',
+              content: `단일 키워드보다 2~3개 단어를 조합한 '롱테일 키워드'가 블로그 초보자에게 훨씬 유리합니다. 예를 들어 '다이어트'는 경쟁률이 극히 높지만, '직장인 점심 간단 다이어트 식단'처럼 구체적인 키워드는 경쟁이 훨씬 낮으면서도 명확한 검색 의도를 가진 사람들을 타깃으로 합니다.
+
+롱테일 키워드의 장점:
+· 경쟁률이 낮아 상위 노출이 쉽습니다.
+· 검색 의도가 명확해 전환율(읽기, 댓글, 공유)이 높습니다.
+· 여러 롱테일 키워드를 꾸준히 공략하면 누적 트래픽이 빠르게 늘어납니다.`,
+            },
+            {
+              title: '키워드 분석 데이터를 포스팅에 활용하는 법',
+              content: `분석 결과를 얻었다면 이제 실제 포스팅에 적용할 차례입니다.
+
+제목 배치: 선택한 키워드를 제목 앞부분에 배치하세요. 네이버 검색 알고리즘은 제목 앞쪽의 키워드에 더 높은 가중치를 부여합니다.
+
+본문 밀도: 키워드를 너무 많이 반복하면 저품질 처리될 수 있습니다. 1,000자 기준 2~4회 자연스럽게 포함시키는 것이 적정합니다.
+
+연관 키워드 활용: 분석한 메인 키워드와 함께 관련 키워드(LSI Keywords)를 본문에 포함하면 주제 연관성 점수가 높아집니다. '키워드 분석' 도구에서 여러 연관 키워드를 함께 분석해 보세요.`,
+            },
+          ]}
+        />
       </div>
     </div>
   );
