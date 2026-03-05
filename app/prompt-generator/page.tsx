@@ -343,11 +343,11 @@ function PromptGeneratorContent() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">프롬프트 생성</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
             키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
           </p>
         </div>
@@ -355,13 +355,13 @@ function PromptGeneratorContent() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Input Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">프롬프트 설정</h2>
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
+              <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4 sm:mb-6">프롬프트 설정</h2>
               
               <div className="space-y-5 sm:space-y-6">
                 {/* Keyword Input */}
                 <div>
-                  <label htmlFor="keyword" className="block text-sm sm:text-base font-medium text-gray-700 mb-2">
+                  <label htmlFor="keyword" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     키워드 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -370,33 +370,32 @@ function PromptGeneratorContent() {
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="예: 수원 맛집 추천"
-                    className="w-full p-3 sm:p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     블로그 글의 주제가 될 키워드를 입력하세요
                   </p>
                 </div>
 
                 {/* Category Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     분야 <span className="text-red-500">*</span>
                   </label>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {Object.entries(CATEGORIES).map(([mainCat, subCats]) => (
-                      <div key={mainCat} className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                        <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-2">{mainCat}</h3>
-                        <div className="space-y-2">
+                      <div key={mainCat} className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                        <h3 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">{mainCat}</h3>
+                        <div className="space-y-1.5">
                           {subCats.map((subCat) => (
                             <button
                               key={subCat}
                               type="button"
                               onClick={() => setSelectedCategory(subCat)}
-                              className={`w-full p-2.5 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                              className={`w-full p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
                                 selectedCategory === subCat
-                                  ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                                  : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                               }`}
                             >
                               {subCat}
@@ -410,20 +409,20 @@ function PromptGeneratorContent() {
 
                 {/* Title Style Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     제목 스타일
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="flex flex-wrap gap-2">
                       {TITLE_STYLES.map((style) => (
                         <button
                           key={style}
                           type="button"
                           onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
-                          className={`flex-1 min-w-[120px] sm:min-w-[100px] p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             titleStyle === style
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {style}
@@ -435,20 +434,20 @@ function PromptGeneratorContent() {
 
                 {/* Content Style Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     글 스타일
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="flex flex-wrap gap-2">
                       {CONTENT_STYLES.map((style) => (
                         <button
                           key={style}
                           type="button"
                           onClick={() => setContentStyle(contentStyle === style ? '' : style)}
-                          className={`flex-1 min-w-[140px] sm:min-w-[120px] p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             contentStyle === style
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {style}
@@ -460,20 +459,20 @@ function PromptGeneratorContent() {
 
                 {/* Target Audience Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     타겟 독자
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="flex flex-wrap gap-2">
                       {TARGET_AUDIENCES.map((audience) => (
                         <button
                           key={audience}
                           type="button"
                           onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
-                          className={`flex-1 min-w-[120px] sm:min-w-[100px] p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             targetAudience === audience
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {audience}
@@ -485,20 +484,20 @@ function PromptGeneratorContent() {
 
                 {/* Tone Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     어투/톤앤매너 <span className="text-red-500">*</span>
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="flex flex-wrap gap-2">
                       {TONES.map((t) => (
                         <button
                           key={t}
                           type="button"
                           onClick={() => setTone(t)}
-                          className={`flex-1 min-w-full sm:min-w-[140px] p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             tone === t
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {t}
@@ -510,20 +509,20 @@ function PromptGeneratorContent() {
 
                 {/* Emoji Usage Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     이모지 활용도
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="flex flex-wrap gap-2">
                       {EMOJI_USAGE.map((usage) => (
                         <button
                           key={usage}
                           type="button"
                           onClick={() => setEmojiUsage(usage)}
-                          className={`flex-1 min-w-0 sm:min-w-[100px] p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             emojiUsage === usage
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {usage}
@@ -535,20 +534,20 @@ function PromptGeneratorContent() {
 
                 {/* Length Selection */}
                 <div>
-                  <label className="block text-sm sm:text-base font-medium text-gray-700 mb-3 sm:mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     글 길이
                   </label>
-                  <div className="border border-gray-200 rounded-lg p-3 sm:p-3 bg-gray-50">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {LENGTHS.map((l) => (
                         <button
                           key={l.value}
                           type="button"
                           onClick={() => setLength(l.value)}
-                          className={`w-full p-3 sm:p-2 rounded-lg border-2 transition-colors text-xs sm:text-sm font-medium text-center min-h-[44px] touch-manipulation ${
+                          className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             length === l.value
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 active:bg-blue-100'
-                              : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 active:bg-gray-50'
+                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
                           {l.label}
@@ -560,32 +559,32 @@ function PromptGeneratorContent() {
 
                 {/* Additional Options */}
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <label className="block text-sm font-medium text-gray-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                       추가 구성 옵션
                     </label>
                     <button
                       type="button"
                       onClick={toggleAllAdditionalOptions}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium px-2 py-1 rounded border border-blue-600 hover:bg-blue-50 transition-colors"
+                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium px-2 py-1 rounded border border-indigo-400 dark:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors"
                     >
                       {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
                     </button>
                   </div>
-                  <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-                    <div className="space-y-2">
+                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="space-y-1.5">
                       {ADDITIONAL_OPTIONS.map((option) => (
                         <label
                           key={option}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                          className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600/40 p-2 rounded-lg transition-colors"
                         >
                           <input
                             type="checkbox"
                             checked={additionalOptions.includes(option)}
                             onChange={() => toggleAdditionalOption(option)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            className="w-4 h-4 text-indigo-600 border-slate-300 dark:border-slate-500 rounded focus:ring-indigo-500 accent-indigo-600"
                           />
-                          <span className="text-sm text-gray-700">{option}</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
                         </label>
                       ))}
                     </div>
@@ -593,17 +592,17 @@ function PromptGeneratorContent() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
                     onClick={generatePrompt}
                     disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-blue-600 text-white px-6 py-3.5 sm:py-3 rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed shadow-sm min-h-[44px] touch-manipulation text-base sm:text-sm"
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
                   >
                     {isGenerating ? '생성 중...' : '프롬프트 생성'}
                   </button>
                   <button
                     onClick={resetForm}
-                    className="px-6 py-3.5 sm:py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 active:bg-gray-400 transition-colors min-h-[44px] touch-manipulation text-base sm:text-sm"
+                    className="px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors min-h-[44px] text-sm"
                   >
                     초기화
                   </button>
@@ -613,18 +612,18 @@ function PromptGeneratorContent() {
 
             {/* Generated Prompt */}
             {generatedPrompt && (
-              <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">생성된 프롬프트</h2>
+                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">생성된 프롬프트</h2>
                   <button
                     onClick={copyToClipboard}
-                    className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors shadow-sm"
                   >
                     복사하기
                   </button>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
+                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                  <pre className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 font-sans">
                     {generatedPrompt}
                   </pre>
                 </div>
@@ -633,133 +632,69 @@ function PromptGeneratorContent() {
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Info Card */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">사용 방법</h2>
-              <ol className="space-y-3 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">1.</span>
-                  <span>블로그 글의 주제가 될 키워드를 입력하세요 (필수)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">2.</span>
-                  <span>분야와 어투/톤앤매너를 선택하세요 (필수)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">3.</span>
-                  <span>제목 스타일, 글 스타일, 타겟 독자 등을 선택하세요 (선택)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">4.</span>
-                  <span>이모지 활용도, 글 길이, 추가 구성 옵션을 선택하세요 (선택)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">5.</span>
-                  <span>"프롬프트 생성" 버튼을 클릭하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">6.</span>
-                  <span>생성된 프롬프트를 복사하여 AI 도구에 사용하세요</span>
-                </li>
+          <div className="lg:col-span-1 space-y-4">
+            {/* How to use */}
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 방법</h2>
+              <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                {[
+                  '블로그 글의 주제가 될 키워드를 입력하세요 (필수)',
+                  '분야와 어투/톤앤매너를 선택하세요 (필수)',
+                  '제목 스타일, 글 스타일, 타겟 독자 등을 선택하세요 (선택)',
+                  '이모지 활용도, 글 길이, 추가 구성 옵션을 선택하세요 (선택)',
+                  '"프롬프트 생성" 버튼을 클릭하세요',
+                  '생성된 프롬프트를 복사하여 AI 도구에 사용하세요',
+                ].map((text, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span>{text}</span>
+                  </li>
+                ))}
               </ol>
             </div>
 
-            {/* Tips Card */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">팁</h2>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>키워드는 구체적이고 명확하게 입력하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>제목 스타일을 선택하면 상위 노출 확률을 높일 수 있습니다</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>타겟 독자를 선택하면 해당 독자층에 맞는 내용으로 작성됩니다</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>추가 구성 옵션을 선택하면 더욱 완성도 높은 프롬프트가 생성됩니다</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600">•</span>
-                  <span>생성된 프롬프트는 필요에 따라 수정하여 사용할 수 있습니다</span>
-                </li>
+            {/* Tips */}
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">팁</h2>
+              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                {[
+                  '키워드는 구체적이고 명확하게 입력하세요',
+                  '제목 스타일을 선택하면 상위 노출 확률을 높일 수 있습니다',
+                  '타겟 독자를 선택하면 해당 독자층에 맞는 내용으로 작성됩니다',
+                  '추가 구성 옵션을 선택하면 더욱 완성도 높은 프롬프트가 생성됩니다',
+                  '생성된 프롬프트는 필요에 따라 수정하여 사용할 수 있습니다',
+                ].map((text, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-indigo-600 dark:text-indigo-400">•</span>
+                    <span>{text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
 
-        {/* SEO 콘텐츠 섹션 */}
+        {/* SEO Section */}
         <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">AI 프롬프트 생성의 전문 가이드</h2>
-            
-            <div className="space-y-6 text-gray-700">
+          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">AI 프롬프트 생성의 전문 가이드</h2>
+            <div className="space-y-6 text-sm text-slate-600 dark:text-slate-400">
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">효과적인 프롬프트 작성의 핵심 원칙</h3>
-                <p className="mb-3 leading-relaxed">
-                  AI를 활용한 블로그 포스팅에서 프롬프트의 품질은 최종 콘텐츠의 품질을 결정합니다. 
-                  좋은 프롬프트는 명확한 목적, 구체적인 요구사항, 그리고 원하는 톤과 스타일을 포함해야 합니다. 
-                  단순히 "블로그 글 써줘"라고 요청하는 것보다, 주제, 대상 독자, 글의 목적, 포함할 내용 등을 
-                  상세히 명시하는 것이 훨씬 더 나은 결과를 만들어냅니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  프롬프트 생성 시 카테고리와 제목 스타일을 선택하는 것은 콘텐츠의 구조와 방향성을 결정하는 중요한 단계입니다. 
-                  각 카테고리는 고유한 특성과 독자 기대치를 가지고 있으며, 이를 고려한 프롬프트 작성이 필요합니다. 
-                  예를 들어, 리뷰 카테고리에서는 객관성과 경험이 중요하고, 가이드 카테고리는 단계별 설명과 실용성이 핵심입니다.
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">효과적인 프롬프트 작성의 핵심 원칙</h3>
+                <p className="leading-relaxed">
+                  AI를 활용한 블로그 포스팅에서 프롬프트의 품질은 최종 콘텐츠의 품질을 결정합니다. 좋은 프롬프트는 명확한 목적, 구체적인 요구사항, 그리고 원하는 톤과 스타일을 포함해야 합니다.
                 </p>
               </section>
-
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">카테고리별 프롬프트 최적화 전략</h3>
-                <p className="mb-3 leading-relaxed">
-                  엔터테인먼트 카테고리는 감성적이고 흥미로운 스토리텔링이 중요합니다. 독자의 감정을 자극하고 
-                  몰입도를 높이는 표현이 필요하며, 구체적인 사례와 경험이 포함되어야 합니다. 
-                  반면 지식·동향 카테고리는 객관적이고 정확한 정보 전달이 우선이며, 최신 데이터와 통계를 활용하는 것이 효과적입니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  생활·노하우 카테고리는 실용성과 접근성이 핵심입니다. 독자가 바로 적용할 수 있는 구체적인 방법과 
-                  팁을 제공해야 하며, 단계별 설명과 주의사항을 포함하는 것이 좋습니다. 
-                  취미·여가 카테고리는 개인적인 경험과 감상을 솔직하게 공유하는 것이 중요하며, 
-                  독자와의 공감대 형성을 위한 친근한 톤이 효과적입니다.
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">카테고리별 프롬프트 최적화 전략</h3>
+                <p className="leading-relaxed">
+                  엔터테인먼트 카테고리는 감성적이고 흥미로운 스토리텔링이 중요합니다. 지식·동향 카테고리는 객관적이고 정확한 정보 전달이 우선이며, 최신 데이터와 통계를 활용하는 것이 효과적입니다.
                 </p>
               </section>
-
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">제목 스타일이 콘텐츠에 미치는 영향</h3>
-                <p className="mb-3 leading-relaxed">
-                  제목 스타일은 독자의 첫인상을 결정하고, 클릭률에 직접적인 영향을 미칩니다. 
-                  리스트형 제목은 정보의 구조를 명확히 하고, 독자가 기대하는 내용을 쉽게 파악할 수 있게 해줍니다. 
-                  "5가지 방법", "10가지 팁"과 같은 숫자가 포함된 제목은 구체성과 실용성을 강조합니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  질문형 제목은 독자의 호기심을 자극하고, 문제 해결에 대한 기대를 높입니다. 
-                  "어떻게 하면...", "왜...인가"와 같은 형식은 독자가 자신의 문제와 연결시켜 생각하게 만듭니다. 
-                  비교형 제목은 대안을 제시하고, 독자가 선택을 고민할 수 있게 해줍니다. 
-                  각 제목 스타일은 콘텐츠의 구조와 내용 전개 방식에도 영향을 미치므로, 
-                  프롬프트 생성 시 신중하게 선택해야 합니다.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">2026년 AI 프롬프트 작성 트렌드</h3>
-                <p className="mb-3 leading-relaxed">
-                  AI 기술의 발전으로 프롬프트 작성의 중요성이 더욱 커지고 있습니다. 
-                  최신 AI 모델은 더 복잡하고 세밀한 지시를 이해할 수 있게 되었으며, 
-                  이를 활용하여 더욱 고품질의 콘텐츠를 생성할 수 있습니다. 
-                  프롬프트에 맥락과 배경 정보를 포함하면, AI가 더 정확하고 관련성 높은 콘텐츠를 만들어냅니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  또한 프롬프트를 반복적으로 개선하는 과정이 중요합니다. 
-                  첫 번째 생성 결과를 검토하고, 부족한 부분을 보완하여 프롬프트를 수정하면 
-                  점진적으로 더 나은 결과를 얻을 수 있습니다. 
-                  프롬프트 생성 도구를 활용하여 체계적이고 효과적인 프롬프트를 작성하는 것이 
-                  AI 기반 콘텐츠 제작의 핵심입니다.
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">2026년 AI 프롬프트 작성 트렌드</h3>
+                <p className="leading-relaxed">
+                  AI 기술의 발전으로 프롬프트 작성의 중요성이 더욱 커지고 있습니다. 프롬프트에 맥락과 배경 정보를 포함하면, AI가 더 정확하고 관련성 높은 콘텐츠를 만들어냅니다.
                 </p>
               </section>
             </div>
@@ -773,18 +708,15 @@ function PromptGeneratorContent() {
 export default function PromptGeneratorPage() {
   return (
     <Suspense fallback={
-      <div className="bg-gray-50 min-h-screen py-8">
+      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">프롬프트 생성</h1>
-            <p className="text-gray-600 mt-2">
-              키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
-            </p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
           </div>
-          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-4" />
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
             </div>
           </div>
         </div>

@@ -278,26 +278,26 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">프로페셔널 포스팅 에디터</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">실시간 금칙어 검사와 가독성 최적화 기능이 있는 전문적인 에디터입니다</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프로페셔널 포스팅 에디터</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">실시간 금칙어 검사와 가독성 최적화 기능이 있는 전문적인 에디터입니다</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Editor Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6">
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-                <label className="block text-sm sm:text-base font-medium text-gray-700">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                   본문 작성 {stats.foundWords.length > 0 && (
-                    <span className="text-red-600 text-xs sm:text-sm ml-2">
+                    <span className="text-red-600 dark:text-red-400 text-xs ml-2">
                       ({stats.foundWords.length}개 금칙어 발견)
                     </span>
                   )}
                 </label>
-                <div className="flex flex-wrap gap-2 sm:gap-3 items-stretch sm:items-center">
+                <div className="flex flex-wrap gap-2 items-center">
                   <button
                     onClick={() => {
                       if (typeof window !== 'undefined' && quillEditorRef.current) {
@@ -312,15 +312,15 @@ export default function EditorPage() {
                         }
                       }
                     }}
-                    className="px-4 py-2.5 text-sm text-blue-600 hover:text-blue-700 active:text-blue-800 hover:bg-blue-50 active:bg-blue-100 rounded-lg transition-colors min-h-[44px] touch-manipulation"
+                    className="px-3 py-2 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-lg transition-colors min-h-[36px]"
                   >
                     샘플 텍스트
                   </button>
                   <button
                     onClick={optimizeReadability}
-                    className="px-4 py-2.5 text-sm bg-green-600 text-white hover:bg-green-700 active:bg-green-800 rounded-lg transition-colors min-h-[44px] touch-manipulation font-medium"
+                    className="px-3 py-2 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors min-h-[36px] font-medium"
                   >
-                    가독성 자동 최적화
+                    가독성 최적화
                   </button>
                   <button
                     onClick={() => {
@@ -333,15 +333,15 @@ export default function EditorPage() {
                       }
                     }}
                     disabled={!content.trim()}
-                    className="px-4 py-2.5 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm min-h-[44px] touch-manipulation"
+                    className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
                   >
-                    복사 하기
+                    복사하기
                   </button>
                 </div>
               </div>
               
               {/* Quill Editor */}
-              <div className="border border-gray-300 rounded-lg overflow-hidden">
+              <div className="border border-slate-200 dark:border-slate-600 rounded-lg overflow-hidden">
                 <QuillEditor
                   key="quill-editor"
                   ref={quillEditorRef}
@@ -355,21 +355,21 @@ export default function EditorPage() {
               
               {/* 금칙어 위치 정보 및 대체 */}
               {stats.foundPositions.length > 0 && (
-                <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200 h-64 sm:h-96 flex flex-col">
-                  <h3 className="text-sm sm:text-base font-medium text-red-700 mb-3">
+                <div className="mt-4 p-3 sm:p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-800 h-64 sm:h-96 flex flex-col">
+                  <h3 className="text-sm font-medium text-red-700 dark:text-red-400 mb-3">
                     금칙어 발견 위치 ({stats.foundPositions.length}곳)
                   </h3>
-                  <div className="space-y-2 sm:space-y-3 overflow-y-auto flex-1">
+                  <div className="space-y-2 overflow-y-auto flex-1">
                     {stats.foundPositions.map((pos, idx) => {
                       const replacementKey = `${pos.index}-${pos.word}`;
                       const replacementValue = replacements[replacementKey] || '';
                       
                       return (
-                        <div key={idx} className="p-3 bg-white rounded-lg border border-red-200">
-                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center">
+                        <div key={idx} className="p-3 bg-white dark:bg-slate-800 rounded-lg border border-red-200 dark:border-red-800/50">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                             <div className="flex gap-2 items-center">
-                              <span className="font-semibold text-red-600 text-sm whitespace-nowrap">{pos.word}</span>
-                              <span className="text-xs text-gray-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
+                              <span className="font-semibold text-red-600 dark:text-red-400 text-sm whitespace-nowrap">{pos.word}</span>
+                              <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
                             </div>
                             <div className="flex-1 flex gap-2 items-center">
                               <input
@@ -380,11 +380,11 @@ export default function EditorPage() {
                                   [replacementKey]: e.target.value
                                 }))}
                                 placeholder="대체할 단어 입력"
-                                className="flex-1 px-3 py-2.5 text-base border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[44px]"
+                                className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[36px]"
                               />
                               <button
                                 onClick={() => handleReplace(pos, replacementValue)}
-                                className="flex-shrink-0 px-4 py-2.5 bg-blue-600 text-white text-sm sm:text-base font-medium rounded hover:bg-blue-700 active:bg-blue-800 transition-colors whitespace-nowrap min-h-[44px] min-w-[60px] touch-manipulation"
+                                className="flex-shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors whitespace-nowrap min-h-[36px] min-w-[50px]"
                               >
                                 적용
                               </button>
@@ -399,16 +399,16 @@ export default function EditorPage() {
             </div>
 
             {/* SEO 가이드 섹션 (아코디언) */}
-            <div className="mt-6 bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden">
+            <div className="mt-5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
               <button
                 onClick={() => setIsSeoGuideOpen(!isSeoGuideOpen)}
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
               >
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="font-semibold text-slate-900 dark:text-slate-100">
                   블로그 성공을 위한 포스팅 완벽 가이드
                 </h2>
                 <svg
-                  className={`w-6 h-6 text-gray-600 transform transition-transform ${isSeoGuideOpen ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-slate-500 dark:text-slate-400 transform transition-transform ${isSeoGuideOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -417,9 +417,9 @@ export default function EditorPage() {
                 </svg>
               </button>
               {isSeoGuideOpen && (
-                <div className="px-6 py-4 border-t border-gray-200">
+                <div className="px-5 py-4 border-t border-slate-200 dark:border-slate-700">
                   <div 
-                    className="prose prose-sm sm:prose-base max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-li:text-gray-700"
+                    className="prose prose-sm max-w-none prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-li:text-slate-600 dark:prose-li:text-slate-400"
                     dangerouslySetInnerHTML={{ __html: SEO_GUIDE_CONTENT }}
                   />
                 </div>
@@ -428,24 +428,24 @@ export default function EditorPage() {
           </div>
 
           {/* Sidebar with Stats */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4">
             {/* Stats Card */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">실시간 분석</h2>
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">실시간 분석</h2>
               
               {/* Character Count */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-3">글자 수</h3>
+              <div className="mb-5">
+                <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">글자 수</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span className="text-sm text-gray-600">공백 포함</span>
-                    <span className="text-lg font-semibold text-blue-600">
+                  <div className="flex justify-between items-center p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-lg">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">공백 포함</span>
+                    <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
                       {stats.withSpaces.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <span className="text-sm text-gray-600">공백 제외</span>
-                    <span className="text-lg font-semibold text-gray-700">
+                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-lg">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">공백 제외</span>
+                    <span className="text-lg font-bold text-slate-700 dark:text-slate-300">
                       {stats.withoutSpaces.toLocaleString()}
                     </span>
                   </div>
@@ -454,27 +454,25 @@ export default function EditorPage() {
 
               {/* Forbidden Words Check */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">금칙어 검사</h3>
+                <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">금칙어 검사</h3>
                 {stats.foundWords.length === 0 ? (
-                  <div className="p-3 bg-green-50 rounded-lg text-center">
-                    <span className="text-sm text-green-700 font-medium">✓ 금칙어 없음</span>
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg text-center border border-emerald-200 dark:border-emerald-800">
+                    <span className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">✓ 금칙어 없음</span>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <div className="p-3 bg-red-50 rounded-lg">
-                      <p className="text-xs text-red-600 font-medium mb-2">
-                        {stats.foundWords.length}개의 금칙어 발견
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {stats.foundWords.map((word) => (
-                          <span
-                            key={word}
-                            className="inline-block px-2 py-1 bg-red-200 text-red-800 text-xs font-semibold rounded"
-                          >
-                            {word}
-                          </span>
-                        ))}
-                      </div>
+                  <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
+                    <p className="text-xs text-red-600 dark:text-red-400 font-medium mb-2">
+                      {stats.foundWords.length}개의 금칙어 발견
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {stats.foundWords.map((word) => (
+                        <span
+                          key={word}
+                          className="inline-block px-2 py-0.5 bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300 text-xs font-semibold rounded"
+                        >
+                          {word}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 )}

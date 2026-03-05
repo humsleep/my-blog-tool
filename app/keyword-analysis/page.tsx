@@ -10,7 +10,7 @@ interface KeywordData {
   totalSearchVolume: number;
   documentCount: number;
   competitionRatio: number;
-  id: string; // 고유 ID 추가 (삭제용)
+  id: string;
 }
 
 function KeywordAnalysisContent() {
@@ -21,7 +21,6 @@ function KeywordAnalysisContent() {
   const [keywordData, setKeywordData] = useState<KeywordData[]>([]);
   const [currentProgress, setCurrentProgress] = useState('');
 
-  // URL 파라미터에서 키워드 읽기
   useEffect(() => {
     const keyword = searchParams.get('keyword');
     if (keyword) {
@@ -30,13 +29,9 @@ function KeywordAnalysisContent() {
   }, [searchParams]);
 
   const formatNumber = (num: number): string => {
-    if (num >= 10000) {
-      return `${(num / 10000).toFixed(1)}만`;
-    } else if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}천`;
-    } else {
-      return num.toString();
-    }
+    if (num >= 10000) return `${(num / 10000).toFixed(1)}만`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}천`;
+    return num.toString();
   };
 
   const searchDocumentCount = async (keyword: string): Promise<number> => {
@@ -54,18 +49,14 @@ function KeywordAnalysisContent() {
     }
   };
 
-
   const analyzeKeywords = async () => {
     if (!inputKeywords.trim()) {
       alert('키워드를 입력해주세요.');
       return;
     }
 
-    // 최대 100개 결과 제한 체크
     if (keywordData.length >= 100) {
-      if (!confirm('분석 결과가 100개를 초과합니다. 전체 삭제 후 진행하시겠습니까?')) {
-        return;
-      }
+      if (!confirm('분석 결과가 100개를 초과합니다. 전체 삭제 후 진행하시겠습니까?')) return;
       setKeywordData([]);
     }
 
@@ -73,8 +64,7 @@ function KeywordAnalysisContent() {
     setCurrentProgress('키워드 검색 중...');
 
     const keywords = inputKeywords.split(',').map((k) => k.trim()).filter((k) => k);
-    
-    // 최대 10개 키워드 제한
+
     if (keywords.length > 10) {
       alert('키워드는 최대 10개까지만 입력할 수 있습니다.');
       setIsLoading(false);
@@ -84,47 +74,33 @@ function KeywordAnalysisContent() {
 
     const newResults: KeywordData[] = [];
     const searched = new Set<string>();
-
-    // 기존 데이터의 키워드 ID 추출 (중복 체크용)
-    const existingKeywords = new Set(keywordData.map(item => item.keyword));
+    const existingKeywords = new Set(keywordData.map((item) => item.keyword));
 
     try {
       for (const originalKeyword of keywords) {
-        // 화면 표시용으로는 원본 키워드 유지, API 호출용으로는 띄어쓰기 제거
         const keywordForApi = originalKeyword.replace(/\s+/g, '');
-        
         if (searched.has(originalKeyword)) continue;
 
         setCurrentProgress(`'${originalKeyword}' 검색 중...`);
         searched.add(originalKeyword);
 
-        // 네이버 검색광고 API로 키워드 검색 (띄어쓰기 제거된 키워드 사용)
         const response = await fetch('/api/keywords', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ keyword: keywordForApi }),
         });
 
-        if (!response.ok) {
-          console.error(`'${originalKeyword}' 검색 실패`);
-          continue;
-        }
+        if (!response.ok) continue;
 
         const data = await response.json();
         const keywordList = data.keywordList || [];
 
-        // 입력한 키워드와 정확히 일치하는 항목만 찾기 (띄어쓰기 제거된 키워드로 비교)
         const matchedItem = keywordList.find((item: any) => {
           const relKeyword = (item.relKeyword || '').replace(/\s+/g, '');
           return relKeyword.toLowerCase() === keywordForApi.toLowerCase();
         });
 
-        if (!matchedItem) {
-          console.warn(`'${originalKeyword}'에 대한 정확한 매칭 결과를 찾을 수 없습니다.`);
-          continue;
-        }
-
-        // 이미 존재하는 키워드는 건너뛰기 (원본 키워드로 비교)
+        if (!matchedItem) continue;
         if (existingKeywords.has(originalKeyword)) continue;
 
         const pcCount = parseInt(matchedItem.monthlyPcQcCnt || '0') || 0;
@@ -132,24 +108,21 @@ function KeywordAnalysisContent() {
         const totalCount = pcCount + mobileCount;
 
         setCurrentProgress(`'${originalKeyword}' 문서수 조회 중...`);
-        // 문서수 조회도 띄어쓰기 제거된 키워드 사용
         const documentCount = await searchDocumentCount(keywordForApi);
-
         const competitionRatio = totalCount > 0 ? documentCount / totalCount : 0;
 
         const newResult = {
-          keyword: originalKeyword, // 화면에는 원본 키워드 표시
+          keyword: originalKeyword,
           pcSearchVolume: pcCount,
           mobileSearchVolume: mobileCount,
           totalSearchVolume: totalCount,
           documentCount,
           competitionRatio: Math.round(competitionRatio * 100) / 100,
-          id: `${originalKeyword}-${Date.now()}-${Math.random()}`, // 고유 ID 생성
+          id: `${originalKeyword}-${Date.now()}-${Math.random()}`,
         };
 
         newResults.push(newResult);
 
-        // 최대 100개 제한 체크
         if (keywordData.length + newResults.length >= 100) {
           alert('분석 결과가 100개를 초과합니다. 전체 삭제 후 진행해주세요.');
           setIsLoading(false);
@@ -157,14 +130,13 @@ function KeywordAnalysisContent() {
           return;
         }
 
-        // 기존 데이터에 새 결과 추가
-        setKeywordData(prev => [...prev, newResult]);
+        setKeywordData((prev) => [...prev, newResult]);
         existingKeywords.add(originalKeyword);
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       setCurrentProgress('완료!');
-      setInputKeywords(''); // 입력 필드 초기화
+      setInputKeywords('');
     } catch (error) {
       console.error('키워드 분석 오류:', error);
       alert('키워드 분석 중 오류가 발생했습니다.');
@@ -175,39 +147,20 @@ function KeywordAnalysisContent() {
   };
 
   const deleteKeyword = (id: string) => {
-    setKeywordData(prev => prev.filter(item => item.id !== id));
+    setKeywordData((prev) => prev.filter((item) => item.id !== id));
   };
 
   const downloadCSV = () => {
     if (keywordData.length === 0) return;
-
-    const headers = [
-      '키워드',
-      'PC검색량',
-      '모바일검색량',
-      '월간총검색량',
-      '문서수',
-      '경쟁율',
-    ];
-
+    const headers = ['키워드', 'PC검색량', '모바일검색량', '월간총검색량', '문서수', '경쟁율'];
     const rows = keywordData.map((item) => [
-      item.keyword,
-      item.pcSearchVolume,
-      item.mobileSearchVolume,
-      item.totalSearchVolume,
-      item.documentCount,
-      item.competitionRatio,
+      item.keyword, item.pcSearchVolume, item.mobileSearchVolume,
+      item.totalSearchVolume, item.documentCount, item.competitionRatio,
     ]);
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
-    ].join('\n');
-
+    const csvContent = [headers.join(','), ...rows.map((row) => row.map((cell) => `"${cell}"`).join(','))].join('\n');
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
+    link.setAttribute('href', URL.createObjectURL(blob));
     link.setAttribute('download', `키워드분석_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
@@ -215,345 +168,253 @@ function KeywordAnalysisContent() {
     document.body.removeChild(link);
   };
 
-  // 최신 입력이 위로 오도록 역순 정렬 (배열에 추가된 순서의 역순)
   const sortedKeywords = [...keywordData].reverse();
 
+  const competitionConfig = (ratio: number) => {
+    if (ratio <= 0.5) return { icon: '🟢', color: 'text-emerald-600 dark:text-emerald-400', label: '최상 (꿀키워드)' };
+    if (ratio <= 1.0) return { icon: '🟡', color: 'text-yellow-600 dark:text-yellow-400', label: '상 (우수)' };
+    if (ratio <= 3.0) return { icon: '⚫', color: 'text-slate-700 dark:text-slate-300', label: '중 (보통)' };
+    if (ratio <= 7.0) return { icon: '🟠', color: 'text-orange-600 dark:text-orange-400', label: '하 (치열)' };
+    return { icon: '🔴', color: 'text-red-600 dark:text-red-400', label: '최하 (위험)' };
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">키워드 분석</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
-            네이버 검색광고 API를 사용하여 키워드 검색량과 블로그 제목을 추천합니다
+
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">키워드 분석</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
+            네이버 검색광고 API를 사용하여 키워드 검색량과 경쟁률을 분석합니다
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Input Section */}
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="keywords-input"
-                    className="block text-sm sm:text-base font-medium text-gray-700 mb-2"
+
+          {/* Main Content */}
+          <div className="lg:col-span-3 space-y-4">
+
+            {/* Input Card */}
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
+              <div className="space-y-3">
+                <label htmlFor="keywords-input" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  검색할 키워드 <span className="text-slate-400 dark:text-slate-500 font-normal">(쉼표로 구분, 최대 10개)</span>
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    id="keywords-input"
+                    type="text"
+                    value={inputKeywords}
+                    onChange={(e) => setInputKeywords(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) analyzeKeywords();
+                    }}
+                    placeholder="예: 꽃배달, flower, 화환"
+                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    disabled={isLoading}
+                  />
+                  <button
+                    onClick={analyzeKeywords}
+                    disabled={isLoading || !inputKeywords.trim()}
+                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
                   >
-                    검색할 키워드 (쉼표로 구분, 최대 10개)
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <input
-                      id="keywords-input"
-                      type="text"
-                      value={inputKeywords}
-                      onChange={(e) => setInputKeywords(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) {
-                          analyzeKeywords();
-                        }
-                      }}
-                      placeholder="예: 꽃배달, flower, 화환"
-                      className="flex-1 p-3 sm:p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      disabled={isLoading}
-                    />
-                    <button
-                      onClick={analyzeKeywords}
-                      disabled={isLoading || !inputKeywords.trim()}
-                      className="px-6 py-3 sm:px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed shadow-sm flex items-center justify-center min-h-[44px] touch-manipulation"
-                      title="키워드 분석하기"
-                    >
-                      {isLoading ? (
-                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                      ) : (
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {isLoading ? (
+                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : (
+                      <>
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                      )}
-                    </button>
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">
-                    여러 키워드를 쉼표로 구분하여 입력하세요. (최대 10개, 결과는 최대 100개까지 표시)
-                  </p>
+                        분석
+                      </>
+                    )}
+                  </button>
                 </div>
-
-                {isLoading && currentProgress && (
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-2">
-                      <svg className="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      <p className="text-sm text-blue-700 font-medium">{currentProgress}</p>
-                    </div>
-                  </div>
-                )}
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  여러 키워드를 쉼표로 구분하여 입력하세요. 결과는 최대 100개까지 표시됩니다.
+                </p>
               </div>
+
+              {isLoading && currentProgress && (
+                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">{currentProgress}</p>
+                </div>
+              )}
             </div>
 
-            {/* Results */}
+            {/* Results Table */}
             {sortedKeywords.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md border border-gray-100 p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
-                  <div className="flex-1">
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-                      분석 결과 ({sortedKeywords.length}개)
+              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+                  <div>
+                    <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                      분석 결과 <span className="text-slate-500 dark:text-slate-400 font-normal text-sm">({sortedKeywords.length}개)</span>
                     </h2>
-                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                      💡 키워드를 클릭하면 해당 키워드로 프롬프트를 자동 생성할 수 있습니다.
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                      키워드 클릭 시 프롬프트 자동 생성
                     </p>
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="flex gap-2">
                     <button
                       onClick={downloadCSV}
-                      className="px-4 py-3 bg-green-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors shadow-sm whitespace-nowrap min-h-[44px] touch-manipulation"
+                      className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
                     >
                       CSV 다운로드
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm('모든 분석 결과를 삭제하시겠습니까?')) {
-                          setKeywordData([]);
-                        }
-                      }}
-                      className="px-4 py-3 bg-red-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors shadow-sm whitespace-nowrap min-h-[44px] touch-manipulation"
+                      onClick={() => confirm('모든 분석 결과를 삭제하시겠습니까?') && setKeywordData([])}
+                      className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
                     >
                       전체 삭제
                     </button>
                   </div>
                 </div>
 
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <div className="inline-block min-w-full align-middle">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              키워드
-                            </th>
-                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              PC
-                            </th>
-                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              모바일
-                            </th>
-                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              총검색량
-                            </th>
-                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              문서수
-                            </th>
-                            <th className="px-2 sm:px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                              경쟁율
-                            </th>
-                            <th className="px-3 sm:px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider w-14 sm:w-16">
-                              삭제
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {sortedKeywords.map((item) => (
-                            <tr key={item.id} className="hover:bg-blue-50 transition-colors">
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
-                                <div 
-                                  className="font-semibold text-sm sm:text-base text-gray-900 cursor-pointer hover:text-blue-600 active:text-blue-700 transition-colors touch-manipulation"
-                                  onClick={() => {
-                                    if (confirm(`"${item.keyword}" 키워드로 프롬프트를 생성하시겠습니까?`)) {
-                                      router.push(`/prompt-generator?keyword=${encodeURIComponent(item.keyword)}`);
-                                    }
-                                  }}
-                                >
-                                  {item.keyword}
-                                </div>
-                              </td>
-                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
-                                {formatNumber(item.pcSearchVolume)}
-                              </td>
-                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
-                                {formatNumber(item.mobileSearchVolume)}
-                              </td>
-                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
-                                <span className="font-semibold text-blue-600 text-sm sm:text-base">
-                                  {formatNumber(item.totalSearchVolume)}
-                                </span>
-                              </td>
-                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-700">
-                                {formatNumber(item.documentCount)}
-                              </td>
-                              <td className="px-2 sm:px-4 py-3 sm:py-4 whitespace-nowrap">
-                                {(() => {
-                                  const ratio = item.competitionRatio;
-                                  let icon = '';
-                                  let colorClass = '';
-                                  let label = '';
-                                  
-                                  if (ratio <= 0.5) {
-                                    icon = '🟢';
-                                    colorClass = 'text-green-600';
-                                    label = '최상 (꿀키워드)';
-                                  } else if (ratio <= 1.0) {
-                                    icon = '🟡';
-                                    colorClass = 'text-yellow-600';
-                                    label = '상 (우수)';
-                                  } else if (ratio <= 3.0) {
-                                    icon = '⚫';
-                                    colorClass = 'text-gray-900';
-                                    label = '중 (보통)';
-                                  } else if (ratio <= 7.0) {
-                                    icon = '🟠';
-                                    colorClass = 'text-orange-600';
-                                    label = '하 (치열)';
-                                  } else {
-                                    icon = '🔴';
-                                    colorClass = 'text-red-600';
-                                    label = '최하 (위험)';
+                <div className="overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead className="bg-slate-50 dark:bg-slate-900/50">
+                      <tr>
+                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', ''].map((h, i) => (
+                          <th
+                            key={i}
+                            className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                      {sortedKeywords.map((item) => {
+                        const comp = competitionConfig(item.competitionRatio);
+                        return (
+                          <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <button
+                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left"
+                                onClick={() => {
+                                  if (confirm(`"${item.keyword}" 키워드로 프롬프트를 생성하시겠습니까?`)) {
+                                    router.push(`/prompt-generator?keyword=${encodeURIComponent(item.keyword)}`);
                                   }
-                                  
-                                  return (
-                                    <div className="flex items-center gap-1 sm:gap-2">
-                                      <span className="text-base sm:text-lg">{icon}</span>
-                                      <span className={`text-xs sm:text-sm font-medium ${colorClass}`}>
-                                        {ratio.toFixed(2)}
-                                      </span>
-                                    </div>
-                                  );
-                                })()}
-                              </td>
-                              <td className="px-3 sm:px-4 py-3 sm:py-4 whitespace-nowrap text-center">
-                                <button
-                                  onClick={() => deleteKeyword(item.id)}
-                                  className="text-red-500 hover:text-red-700 active:text-red-800 hover:bg-red-100 active:bg-red-200 p-2 sm:p-2 rounded-full transition-all min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
-                                  title="삭제"
-                                >
-                                  <svg
-                                    className="w-5 h-5 sm:w-6 sm:h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                                }}
+                              >
+                                {item.keyword}
+                              </button>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                              {formatNumber(item.pcSearchVolume)}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                              {formatNumber(item.mobileSearchVolume)}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <span className="font-semibold text-indigo-600 dark:text-indigo-400 text-sm">
+                                {formatNumber(item.totalSearchVolume)}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                              {formatNumber(item.documentCount)}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-sm">{comp.icon}</span>
+                                <span className={`text-xs font-medium ${comp.color}`}>
+                                  {item.competitionRatio.toFixed(2)}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-center">
+                              <button
+                                onClick={() => deleteKeyword(item.id)}
+                                className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                                title="삭제"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
           </div>
 
           {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Info Card */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">사용 방법</h2>
-              <ol className="space-y-3 text-sm text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">1.</span>
-                  <span>검색할 키워드를 쉼표로 구분하여 입력하세요 (최대 10개)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">2.</span>
-                  <span>검색 아이콘을 클릭하여 분석하세요</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">3.</span>
-                  <span>결과는 최대 100개까지 표시됩니다</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">4.</span>
-                  <span>각 행의 삭제 아이콘으로 개별 삭제 가능합니다</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-600 font-semibold">5.</span>
-                  <span>결과를 CSV 파일로 다운로드하세요</span>
-                </li>
+          <div className="lg:col-span-1 space-y-4">
+
+            {/* How to use */}
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 방법</h2>
+              <ol className="space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+                {[
+                  '키워드를 쉼표로 구분하여 입력 (최대 10개)',
+                  '검색 버튼 클릭',
+                  '결과는 최대 100개까지 표시',
+                  '삭제 아이콘으로 개별 삭제 가능',
+                  'CSV 파일로 다운로드',
+                ].map((text, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span>{text}</span>
+                  </li>
+                ))}
               </ol>
             </div>
 
-            {/* Competition Ratio Guide */}
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">경쟁률 가이드</h2>
-              <div className="space-y-3 text-sm">
-                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xl">🟢</span>
-                    <span className="font-semibold text-green-700">최상 (꿀키워드)</span>
-                    <span className="ml-auto text-xs font-medium text-gray-600 bg-white px-2 py-0.5 rounded">0.5 이하</span>
+            {/* Competition Guide */}
+            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">경쟁률 가이드</h2>
+              <div className="space-y-2.5 text-sm">
+                {[
+                  { icon: '🟢', label: '최상 (꿀키워드)', range: '0.5 이하', desc: '검색량 대비 문서 매우 적음', bg: 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
+                  { icon: '🟡', label: '상 (우수)', range: '0.5 ~ 1.0', desc: '상단 노출 확률 높음', bg: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800', text: 'text-yellow-700 dark:text-yellow-400' },
+                  { icon: '⚫', label: '중 (보통)', range: '1.0 ~ 3.0', desc: '블로그 지수에 따라 결정', bg: 'bg-slate-50 dark:bg-slate-700/40 border-slate-200 dark:border-slate-600', text: 'text-slate-700 dark:text-slate-300' },
+                  { icon: '🟠', label: '하 (치열)', range: '3.0 ~ 7.0', desc: '고퀄리티 포스팅 필요', bg: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800', text: 'text-orange-700 dark:text-orange-400' },
+                  { icon: '🔴', label: '최하 (위험)', range: '7.0 이상', desc: '대형 블로그 외 노출 어려움', bg: 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800', text: 'text-red-700 dark:text-red-400' },
+                ].map((item) => (
+                  <div key={item.label} className={`p-3 rounded-lg border ${item.bg}`}>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span>{item.icon}</span>
+                      <span className={`font-semibold ${item.text}`}>{item.label}</span>
+                      <span className="ml-auto text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                        {item.range}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 ml-5">{item.desc}</p>
                   </div>
-                  <p className="text-xs text-gray-700 ml-8">검색량에 비해 문서가 매우 적음. 무조건 잡아야 함.</p>
-                </div>
-                <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xl">🟡</span>
-                    <span className="font-semibold text-yellow-700">상 (우수)</span>
-                    <span className="ml-auto text-xs font-medium text-gray-600 bg-white px-2 py-0.5 rounded">0.5 ~ 1.0</span>
-                  </div>
-                  <p className="text-xs text-gray-700 ml-8">경쟁력이 높은 상태. 상단 노출 확률이 매우 높음.</p>
-                </div>
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-300">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xl">⚫</span>
-                    <span className="font-semibold text-gray-900">중 (보통)</span>
-                    <span className="ml-auto text-xs font-medium text-gray-600 bg-white px-2 py-0.5 rounded">1.0 ~ 3.0</span>
-                  </div>
-                  <p className="text-xs text-gray-700 ml-8">일반적인 키워드. 블로그 지수에 따라 노출 결정.</p>
-                </div>
-                <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xl">🟠</span>
-                    <span className="font-semibold text-orange-700">하 (치열)</span>
-                    <span className="ml-auto text-xs font-medium text-gray-600 bg-white px-2 py-0.5 rounded">3.0 ~ 7.0</span>
-                  </div>
-                  <p className="text-xs text-gray-700 ml-8">경쟁이 상당함. 고퀄리티 포스팅이나 지수가 필요함.</p>
-                </div>
-                <div className="p-3 bg-red-50 rounded-lg border border-red-200">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xl">🔴</span>
-                    <span className="font-semibold text-red-700">최하 (위험)</span>
-                    <span className="ml-auto text-xs font-medium text-gray-600 bg-white px-2 py-0.5 rounded">7.0 이상</span>
-                  </div>
-                  <p className="text-xs text-gray-700 ml-8">문서가 넘쳐남. 대형 블로그가 아니면 상단 노출이 어려움.</p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-gray-200">
-                  <p className="text-xs text-center text-gray-500">
-                    <span className="font-medium">경쟁률 = 문서수 / 검색량</span>
-                  </p>
-                </div>
+                ))}
+                <p className="text-xs text-center text-slate-400 dark:text-slate-500 pt-1">
+                  경쟁률 = 문서수 ÷ 검색량
+                </p>
               </div>
             </div>
 
-            {/* Stats Card */}
+            {/* Stats */}
             {keywordData.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">통계</h2>
-                <div className="space-y-3">
+              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
+                <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">통계</h2>
+                <div className="space-y-2.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">총 키워드</span>
-                    <span className="font-semibold text-gray-900">
-                      {keywordData.length}개
-                    </span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">총 키워드</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">{keywordData.length}개</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">평균 검색량</span>
-                    <span className="font-semibold text-gray-900">
-                      {formatNumber(
-                        Math.round(
-                          keywordData.reduce((sum, item) => sum + item.totalSearchVolume, 0) /
-                            keywordData.length
-                        )
-                      )}
+                    <span className="text-sm text-slate-500 dark:text-slate-400">평균 검색량</span>
+                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      {formatNumber(Math.round(keywordData.reduce((s, i) => s + i.totalSearchVolume, 0) / keywordData.length))}
                     </span>
                   </div>
                 </div>
@@ -562,67 +423,27 @@ function KeywordAnalysisContent() {
           </div>
         </div>
 
-        {/* SEO 콘텐츠 섹션 */}
+        {/* SEO Section */}
         <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">키워드 분석의 핵심 가이드</h2>
-            
-            <div className="space-y-6 text-gray-700">
+          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">키워드 분석의 핵심 가이드</h2>
+            <div className="space-y-6 text-slate-600 dark:text-slate-400">
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">키워드 분석이 블로그 성공의 첫걸음인 이유</h3>
-                <p className="mb-3 leading-relaxed">
-                  블로그 포스팅의 성공은 올바른 키워드 선택에서 시작됩니다. 키워드 분석은 단순히 검색량을 확인하는 것이 아니라, 
-                  경쟁 환경을 파악하고 자신의 블로그가 노출될 가능성을 평가하는 핵심 과정입니다. 
-                  잘못된 키워드를 선택하면 아무리 훌륭한 콘텐츠를 작성해도 검색 결과 상단에 노출되지 않을 수 있습니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  효과적인 키워드 분석은 검색량, 경쟁률, 사용자 의도를 종합적으로 고려해야 합니다. 
-                  검색량이 높다고 무조건 좋은 키워드는 아닙니다. 경쟁이 치열한 키워드는 대형 블로그나 기업 사이트가 
-                  이미 상위를 차지하고 있어 신규 블로거가 진입하기 어렵습니다. 반대로 검색량이 너무 낮으면 
-                  아무리 상위에 노출되어도 실제 유입은 제한적일 수 있습니다.
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">키워드 분석이 블로그 성공의 첫걸음인 이유</h3>
+                <p className="mb-2 leading-relaxed text-sm">
+                  블로그 포스팅의 성공은 올바른 키워드 선택에서 시작됩니다. 검색량, 경쟁 환경을 파악하고 자신의 블로그가 노출될 가능성을 평가하는 핵심 과정입니다.
                 </p>
               </section>
-
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">경쟁률 계산의 정확한 이해</h3>
-                <p className="mb-3 leading-relaxed">
-                  경쟁률은 문서 수를 검색량으로 나눈 값으로 계산됩니다. 이 수치는 해당 키워드로 얼마나 많은 
-                  블로그 포스트가 작성되었는지를 보여줍니다. 경쟁률이 낮을수록 상위 노출 가능성이 높아지며, 
-                  높을수록 경쟁이 치열하다는 의미입니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  경쟁률 1.0 이하는 매우 유리한 키워드로, 검색량 대비 문서가 적어 상위 노출이 상대적으로 쉬운 편입니다. 
-                  1.0~3.0은 일반적인 수준으로, 블로그 지수와 콘텐츠 품질에 따라 노출이 결정됩니다. 
-                  3.0~7.0은 경쟁이 치열한 키워드로, 고품질 콘텐츠와 높은 블로그 지수가 필요합니다. 
-                  7.0 이상은 매우 위험한 수준으로, 대형 블로그가 아니면 상위 노출이 매우 어렵습니다.
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">경쟁률 계산의 정확한 이해</h3>
+                <p className="mb-2 leading-relaxed text-sm">
+                  경쟁률은 문서 수를 검색량으로 나눈 값으로 계산됩니다. 경쟁률이 낮을수록 상위 노출 가능성이 높아지며, 높을수록 경쟁이 치열하다는 의미입니다.
                 </p>
               </section>
-
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">장기 키워드 전략 수립 방법</h3>
-                <p className="mb-3 leading-relaxed">
-                  성공적인 블로그 운영을 위해서는 단기적인 키워드 선택뿐만 아니라 장기적인 키워드 전략이 필요합니다. 
-                  초기에는 경쟁률이 낮은 롱테일 키워드로 시작하여 점진적으로 경쟁이 치열한 키워드로 확장하는 것이 효과적입니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  키워드 분석 도구를 활용하여 주제별로 관련 키워드들을 수집하고, 각 키워드의 검색량과 경쟁률을 비교 분석하세요. 
-                  이를 통해 블로그의 주제 영역에서 가장 유리한 키워드들을 선별할 수 있습니다. 
-                  또한 시즌성 키워드와 트렌드 키워드를 미리 파악하여 콘텐츠 일정을 계획하는 것도 중요합니다.
-                </p>
-              </section>
-
-              <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">2026년 키워드 분석 트렌드</h3>
-                <p className="mb-3 leading-relaxed">
-                  최근 검색 엔진 알고리즘의 변화로 키워드 분석의 중요성이 더욱 커지고 있습니다. 
-                  단순한 키워드 매칭을 넘어서 사용자 의도와 맥락을 이해하는 것이 핵심이 되었습니다. 
-                  따라서 키워드 분석 시 검색량과 경쟁률뿐만 아니라 사용자가 그 키워드로 무엇을 찾고 있는지도 함께 고려해야 합니다.
-                </p>
-                <p className="mb-3 leading-relaxed">
-                  AI 기반 콘텐츠 생성 도구의 보급으로 키워드 경쟁이 더욱 치열해지고 있습니다. 
-                  이제는 단순히 키워드를 포함하는 것이 아니라, 사용자에게 실제로 유용한 정보를 제공하는 
-                  고품질 콘텐츠가 더욱 중요해졌습니다. 키워드 분석은 이러한 고품질 콘텐츠를 작성하기 위한 
-                  첫 단계이며, 올바른 키워드 선택이 콘텐츠의 성공을 좌우합니다.
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">2026년 키워드 분석 트렌드</h3>
+                <p className="leading-relaxed text-sm">
+                  AI 기반 콘텐츠 생성 도구의 보급으로 키워드 경쟁이 더욱 치열해지고 있습니다. 단순 키워드 포함이 아닌 사용자에게 실제로 유용한 고품질 콘텐츠가 더욱 중요해졌습니다.
                 </p>
               </section>
             </div>
@@ -635,7 +456,11 @@ function KeywordAnalysisContent() {
 
 export default function KeywordAnalysisPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="text-slate-500 dark:text-slate-400">로딩 중...</div>
+      </div>
+    }>
       <KeywordAnalysisContent />
     </Suspense>
   );

@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FontLoader from "./components/FontLoader";
 import AdSense from "./components/AdSense";
+import ThemeProvider from "./components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -61,14 +62,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className="antialiased flex flex-col min-h-screen">
-        <FontLoader />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <AdSense />
-        <Analytics />
+    <html lang="ko" suppressHydrationWarning>
+      <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
+        <ThemeProvider>
+          <FontLoader />
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <AdSense />
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

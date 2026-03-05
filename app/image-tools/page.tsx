@@ -1118,15 +1118,15 @@ export default function ImageToolsPage() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">이미지 편집 도구</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">이미지를 업로드하고 편집하세요</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">이미지 편집 도구</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">이미지를 업로드하고 편집하세요</p>
         </div>
 
         {/* 공통 기능 버튼 */}
-        <div className="mb-4 sm:mb-6 bg-white rounded-lg shadow-md border border-gray-100 p-3 sm:p-4">
+        <div className="mb-4 sm:mb-6 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-3 sm:p-4 shadow-sm">
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:justify-center">
             <button
               onClick={handleUndo}
@@ -1588,12 +1588,12 @@ export default function ImageToolsPage() {
 
         {/* SEO 콘텐츠 섹션 */}
         <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">블로그 이미지 최적화 완벽 가이드</h2>
+          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">블로그 이미지 최적화 완벽 가이드</h2>
             
-            <div className="space-y-6 text-gray-700">
+            <div className="space-y-6 text-sm text-slate-600 dark:text-slate-400">
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">블로그 이미지가 SEO와 사용자 경험에 미치는 영향</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">블로그 이미지가 SEO와 사용자 경험에 미치는 영향</h3>
                 <p className="mb-3 leading-relaxed">
                   블로그 포스팅에서 이미지는 단순한 장식이 아닙니다. 적절히 최적화된 이미지는 검색 엔진 최적화(SEO)에 
                   직접적인 영향을 미치며, 사용자의 체류 시간과 이탈률에도 중요한 역할을 합니다. 
@@ -1607,7 +1607,7 @@ export default function ImageToolsPage() {
               </section>
 
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">이미지 크기 조정과 비율 최적화의 중요성</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">이미지 크기 조정과 비율 최적화의 중요성</h3>
                 <p className="mb-3 leading-relaxed">
                   블로그 플랫폼마다 권장하는 이미지 크기와 비율이 다릅니다. 
                   네이버 블로그는 썸네일과 본문 이미지에 각각 최적화된 크기가 있으며, 
@@ -1623,7 +1623,7 @@ export default function ImageToolsPage() {
               </section>
 
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">프라이버시 보호를 위한 모자이크 처리</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">프라이버시 보호를 위한 모자이크 처리</h3>
                 <p className="mb-3 leading-relaxed">
                   블로그 포스팅에서 개인정보나 민감한 정보가 포함된 이미지를 사용할 때는 모자이크 처리가 필수입니다. 
                   얼굴, 주소, 전화번호, 계좌번호 등 개인을 식별할 수 있는 정보는 반드시 모자이크 처리해야 하며, 
@@ -1638,7 +1638,7 @@ export default function ImageToolsPage() {
               </section>
 
               <section>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">이미지 편집 도구를 활용한 전문적인 콘텐츠 제작</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">이미지 편집 도구를 활용한 전문적인 콘텐츠 제작</h3>
                 <p className="mb-3 leading-relaxed">
                   전문적인 블로그 포스팅을 위해서는 이미지 편집 도구의 효과적인 활용이 필수입니다. 
                   밝기, 대비, 채도 조정을 통해 이미지의 품질을 개선하고, 필터를 적용하여 일관된 시각적 스타일을 
