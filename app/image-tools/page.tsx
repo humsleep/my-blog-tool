@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import AdSense from '../components/AdSense';
 
 interface MosaicRegion {
   x: number;
@@ -1126,12 +1125,7 @@ export default function ImageToolsPage() {
           <p className="text-sm sm:text-base text-gray-600 mt-2">이미지를 업로드하고 편집하세요</p>
         </div>
 
-        {/* Ad Banner */}
-        <div className="mb-6">
-          <AdSense size="banner" />
-        </div>
-
-        {/* 공통 기능 버튼 - 광고 영역 바로 아래 */}
+        {/* 공통 기능 버튼 */}
         <div className="mb-4 sm:mb-6 bg-white rounded-lg shadow-md border border-gray-100 p-3 sm:p-4">
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:justify-center">
             <button
@@ -1589,9 +1583,75 @@ export default function ImageToolsPage() {
 
 
               </div>
+          </div>
+        </div>
 
-            {/* Ad Sidebar */}
-            <AdSense size="sidebar" />
+        {/* SEO 콘텐츠 섹션 */}
+        <div className="mt-12 max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">블로그 이미지 최적화 완벽 가이드</h2>
+            
+            <div className="space-y-6 text-gray-700">
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">블로그 이미지가 SEO와 사용자 경험에 미치는 영향</h3>
+                <p className="mb-3 leading-relaxed">
+                  블로그 포스팅에서 이미지는 단순한 장식이 아닙니다. 적절히 최적화된 이미지는 검색 엔진 최적화(SEO)에 
+                  직접적인 영향을 미치며, 사용자의 체류 시간과 이탈률에도 중요한 역할을 합니다. 
+                  고품질의 이미지는 콘텐츠의 신뢰성을 높이고, 독자의 이해를 돕고, 소셜 미디어 공유율을 증가시킵니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  이미지 최적화는 파일 크기, 해상도, 포맷, 그리고 적절한 크기 조정을 포함합니다. 
+                  너무 큰 이미지는 페이지 로딩 속도를 저하시켜 사용자 경험을 해치고, 검색 엔진 랭킹에도 부정적인 영향을 미칩니다. 
+                  반대로 너무 작거나 저해상도 이미지는 전문성을 떨어뜨리고, 모바일 환경에서 가독성을 해칩니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">이미지 크기 조정과 비율 최적화의 중요성</h3>
+                <p className="mb-3 leading-relaxed">
+                  블로그 플랫폼마다 권장하는 이미지 크기와 비율이 다릅니다. 
+                  네이버 블로그는 썸네일과 본문 이미지에 각각 최적화된 크기가 있으며, 
+                  티스토리는 대표 이미지와 본문 이미지의 권장 비율이 다릅니다. 
+                  이러한 플랫폼별 특성을 고려한 이미지 크기 조정이 필요합니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  이미지 비율은 콘텐츠의 시각적 일관성과 전문성을 결정합니다. 
+                  16:9 비율은 넓은 화면에서 효과적이며, 1:1 비율은 소셜 미디어 공유에 적합합니다. 
+                  4:3 비율은 전통적인 문서 형식에 잘 맞으며, 9:16 비율은 모바일 세로형 콘텐츠에 최적화되어 있습니다. 
+                  각 비율의 특성을 이해하고 콘텐츠의 목적에 맞게 선택하는 것이 중요합니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">프라이버시 보호를 위한 모자이크 처리</h3>
+                <p className="mb-3 leading-relaxed">
+                  블로그 포스팅에서 개인정보나 민감한 정보가 포함된 이미지를 사용할 때는 모자이크 처리가 필수입니다. 
+                  얼굴, 주소, 전화번호, 계좌번호 등 개인을 식별할 수 있는 정보는 반드시 모자이크 처리해야 하며, 
+                  이는 개인정보보호법 준수와 윤리적 콘텐츠 제작의 기본입니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  효과적인 모자이크 처리는 정보를 완전히 가리는 것과 가독성을 유지하는 것 사이의 균형이 중요합니다. 
+                  너무 약한 모자이크는 개인정보 보호 목적을 달성하지 못하고, 너무 강한 모자이크는 이미지의 맥락을 
+                  완전히 잃게 만들 수 있습니다. 적절한 모자이크 강도와 크기를 선택하여 프라이버시를 보호하면서도 
+                  콘텐츠의 의도를 전달할 수 있어야 합니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">이미지 편집 도구를 활용한 전문적인 콘텐츠 제작</h3>
+                <p className="mb-3 leading-relaxed">
+                  전문적인 블로그 포스팅을 위해서는 이미지 편집 도구의 효과적인 활용이 필수입니다. 
+                  밝기, 대비, 채도 조정을 통해 이미지의 품질을 개선하고, 필터를 적용하여 일관된 시각적 스타일을 
+                  만들어낼 수 있습니다. 회전과 뒤집기 기능은 이미지의 방향을 조정하여 콘텐츠의 레이아웃에 맞게 
+                  최적화할 수 있게 해줍니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  2026년 현재, 블로그 이미지 최적화는 단순한 크기 조정을 넘어서 사용자 경험과 SEO를 종합적으로 
+                  고려해야 합니다. 모바일 우선 인덱싱이 기본이 된 현재, 모바일 환경에서의 이미지 최적화가 더욱 중요해졌습니다. 
+                  빠른 로딩 속도, 적절한 해상도, 그리고 시각적 매력을 모두 갖춘 이미지가 성공적인 블로그 포스팅의 핵심입니다.
+                </p>
+              </section>
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import AdSense from '../components/AdSense';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface KeywordData {
   keyword: string;
@@ -14,12 +13,21 @@ interface KeywordData {
   id: string; // 고유 ID 추가 (삭제용)
 }
 
-export default function KeywordAnalysisPage() {
+function KeywordAnalysisContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [inputKeywords, setInputKeywords] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [keywordData, setKeywordData] = useState<KeywordData[]>([]);
   const [currentProgress, setCurrentProgress] = useState('');
+
+  // URL 파라미터에서 키워드 읽기
+  useEffect(() => {
+    const keyword = searchParams.get('keyword');
+    if (keyword) {
+      setInputKeywords(keyword);
+    }
+  }, [searchParams]);
 
   const formatNumber = (num: number): string => {
     if (num >= 10000) {
@@ -218,11 +226,6 @@ export default function KeywordAnalysisPage() {
           <p className="text-sm sm:text-base text-gray-600 mt-2">
             네이버 검색광고 API를 사용하여 키워드 검색량과 블로그 제목을 추천합니다
           </p>
-        </div>
-
-        {/* Ad Banner */}
-        <div className="mb-6">
-          <AdSense size="banner" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -556,12 +559,84 @@ export default function KeywordAnalysisPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
 
-            {/* Ad Sidebar */}
-            <AdSense size="sidebar" />
+        {/* SEO 콘텐츠 섹션 */}
+        <div className="mt-12 max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">키워드 분석의 핵심 가이드</h2>
+            
+            <div className="space-y-6 text-gray-700">
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">키워드 분석이 블로그 성공의 첫걸음인 이유</h3>
+                <p className="mb-3 leading-relaxed">
+                  블로그 포스팅의 성공은 올바른 키워드 선택에서 시작됩니다. 키워드 분석은 단순히 검색량을 확인하는 것이 아니라, 
+                  경쟁 환경을 파악하고 자신의 블로그가 노출될 가능성을 평가하는 핵심 과정입니다. 
+                  잘못된 키워드를 선택하면 아무리 훌륭한 콘텐츠를 작성해도 검색 결과 상단에 노출되지 않을 수 있습니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  효과적인 키워드 분석은 검색량, 경쟁률, 사용자 의도를 종합적으로 고려해야 합니다. 
+                  검색량이 높다고 무조건 좋은 키워드는 아닙니다. 경쟁이 치열한 키워드는 대형 블로그나 기업 사이트가 
+                  이미 상위를 차지하고 있어 신규 블로거가 진입하기 어렵습니다. 반대로 검색량이 너무 낮으면 
+                  아무리 상위에 노출되어도 실제 유입은 제한적일 수 있습니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">경쟁률 계산의 정확한 이해</h3>
+                <p className="mb-3 leading-relaxed">
+                  경쟁률은 문서 수를 검색량으로 나눈 값으로 계산됩니다. 이 수치는 해당 키워드로 얼마나 많은 
+                  블로그 포스트가 작성되었는지를 보여줍니다. 경쟁률이 낮을수록 상위 노출 가능성이 높아지며, 
+                  높을수록 경쟁이 치열하다는 의미입니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  경쟁률 1.0 이하는 매우 유리한 키워드로, 검색량 대비 문서가 적어 상위 노출이 상대적으로 쉬운 편입니다. 
+                  1.0~3.0은 일반적인 수준으로, 블로그 지수와 콘텐츠 품질에 따라 노출이 결정됩니다. 
+                  3.0~7.0은 경쟁이 치열한 키워드로, 고품질 콘텐츠와 높은 블로그 지수가 필요합니다. 
+                  7.0 이상은 매우 위험한 수준으로, 대형 블로그가 아니면 상위 노출이 매우 어렵습니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">장기 키워드 전략 수립 방법</h3>
+                <p className="mb-3 leading-relaxed">
+                  성공적인 블로그 운영을 위해서는 단기적인 키워드 선택뿐만 아니라 장기적인 키워드 전략이 필요합니다. 
+                  초기에는 경쟁률이 낮은 롱테일 키워드로 시작하여 점진적으로 경쟁이 치열한 키워드로 확장하는 것이 효과적입니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  키워드 분석 도구를 활용하여 주제별로 관련 키워드들을 수집하고, 각 키워드의 검색량과 경쟁률을 비교 분석하세요. 
+                  이를 통해 블로그의 주제 영역에서 가장 유리한 키워드들을 선별할 수 있습니다. 
+                  또한 시즌성 키워드와 트렌드 키워드를 미리 파악하여 콘텐츠 일정을 계획하는 것도 중요합니다.
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">2026년 키워드 분석 트렌드</h3>
+                <p className="mb-3 leading-relaxed">
+                  최근 검색 엔진 알고리즘의 변화로 키워드 분석의 중요성이 더욱 커지고 있습니다. 
+                  단순한 키워드 매칭을 넘어서 사용자 의도와 맥락을 이해하는 것이 핵심이 되었습니다. 
+                  따라서 키워드 분석 시 검색량과 경쟁률뿐만 아니라 사용자가 그 키워드로 무엇을 찾고 있는지도 함께 고려해야 합니다.
+                </p>
+                <p className="mb-3 leading-relaxed">
+                  AI 기반 콘텐츠 생성 도구의 보급으로 키워드 경쟁이 더욱 치열해지고 있습니다. 
+                  이제는 단순히 키워드를 포함하는 것이 아니라, 사용자에게 실제로 유용한 정보를 제공하는 
+                  고품질 콘텐츠가 더욱 중요해졌습니다. 키워드 분석은 이러한 고품질 콘텐츠를 작성하기 위한 
+                  첫 단계이며, 올바른 키워드 선택이 콘텐츠의 성공을 좌우합니다.
+                </p>
+              </section>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function KeywordAnalysisPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
+      <KeywordAnalysisContent />
+    </Suspense>
   );
 }

@@ -10,11 +10,13 @@ export default function Navbar() {
 
   const menuItems = [
     { href: '/', label: '홈' },
-    { href: '/lab', label: '포스팅 연구실', highlight: true },
+    { href: '/trending', label: '인기 검색어', highlight: true },
+    { href: '/competitor-analysis', label: '경쟁 분석', highlight: true },
     { href: '/keyword-analysis', label: '키워드 분석' },
     { href: '/prompt-generator', label: '프롬프트 생성' },
     { href: '/editor', label: '금칙어 검사기' },
     { href: '/image-tools', label: '이미지 편집' },
+    { href: '/lab', label: '포스팅 연구실' },
   ];
 
   return (

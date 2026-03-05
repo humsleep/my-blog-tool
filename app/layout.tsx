@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FontLoader from "./components/FontLoader";
+import AdSense from "./components/AdSense";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
@@ -53,9 +53,6 @@ export const metadata: Metadata = {
       "naver-site-verification": "fad34bb27da5fb6118f0b437b4143d7c4e2bb750",
     },
   },
-  other: {
-    "google-adsense-account": "ca-pub-4073994600346533",
-  },
 };
 
 export default function RootLayout({
@@ -70,13 +67,8 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <AdSense />
         <Analytics />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4073994600346533"
-          crossOrigin="anonymous"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );

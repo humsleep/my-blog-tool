@@ -36,12 +36,21 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">문의</h3>
-            <a
-              href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
-              className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium block mb-2"
-            >
-              boheme88@naver.com
-            </a>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li>
+                <a href="/contact" className="hover:text-blue-600">
+                  문의하기
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
+                  className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
+                >
+                  boheme88@naver.com
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-200">
@@ -50,6 +59,9 @@ export default function Footer() {
             <div className="flex gap-4">
               <a href="/about" className="hover:text-blue-600 hover:underline">
                 서비스 소개
+              </a>
+              <a href="/contact" className="hover:text-blue-600 hover:underline">
+                문의하기
               </a>
               <a href="/terms" className="hover:text-blue-600 hover:underline">
                 이용약관

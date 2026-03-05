@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import PostImage from './PostImage';
-import AdSense from '../components/AdSense';
 import fs from 'fs';
 import path from 'path';
 
@@ -48,11 +47,6 @@ export default async function LabPage() {
           <p className="text-sm sm:text-base text-gray-600">
             블로그 포스팅 관련 연구와 실험 결과를 공유합니다.
           </p>
-        </div>
-
-        {/* Ad Banner */}
-        <div className="mb-6">
-          <AdSense size="banner" />
         </div>
 
         {posts.length === 0 ? (
@@ -119,11 +113,6 @@ export default async function LabPage() {
             })}
           </div>
         )}
-
-        {/* 하단 Ad Banner */}
-        <div className="mt-8">
-          <AdSense size="banner" />
-        </div>
       </div>
     </div>
   );

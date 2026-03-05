@@ -31,7 +31,6 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-6 mt-4 space-y-2">
                 <li><strong>문의사항 접수 시:</strong> 이메일 주소 (선택사항, 문의사항 응대를 위한 목적)</li>
                 <li><strong>서비스 제공을 위한 기술적 정보:</strong> IP 주소, 쿠키 등 (자동 수집, 서비스 운영 및 보안을 위한 목적)</li>
-                <li><strong>광고 서비스 제공:</strong> Google AdSense를 통한 쿠키 및 기기 식별자 (광고 게재를 위한 목적)</li>
               </ul>
             </section>
 
@@ -44,7 +43,6 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-6 mt-4 space-y-2">
                 <li><strong>이메일 주소:</strong> 문의사항 접수 시에만 수집되며, 문의사항 처리 완료 후 즉시 파기합니다. (단, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관)</li>
                 <li><strong>기술적 정보 (IP 주소, 쿠키 등):</strong> 서비스 제공 및 보안을 위해 자동으로 수집되며, 서비스 제공 기간 동안 보관 후 파기합니다.</li>
-                <li><strong>Google AdSense 쿠키:</strong> Google의 개인정보 처리방침에 따라 관리되며, 사용자가 브라우저 설정에서 쿠키를 삭제하거나 차단할 수 있습니다.</li>
               </ul>
             </section>
 
@@ -63,7 +61,6 @@ export default function PrivacyPage() {
                     <li>IP 주소 (서비스 제공 및 보안을 위한 목적)</li>
                     <li>쿠키 (서비스 이용 통계 및 사용자 환경 설정 저장)</li>
                     <li>서비스 이용 기록 및 방문 기록 (서비스 개선을 위한 통계 목적)</li>
-                    <li>Google AdSense 쿠키 및 기기 식별자 (광고 게재를 위한 목적)</li>
                   </ul>
                 </li>
               </ul>
@@ -91,15 +88,9 @@ export default function PrivacyPage() {
               <ul className="list-disc pl-6 mt-4 space-y-2">
                 <li><strong>호스팅 서비스:</strong> Vercel Inc. (서버 운영 및 관리)</li>
                 <li><strong>분석 서비스:</strong> Google Analytics (서비스 이용 통계 분석)</li>
-                <li><strong>광고 서비스:</strong> Google AdSense (광고 게재 및 분석)</li>
               </ul>
               <p className="mt-4">
                 위탁업체의 개인정보 처리 관련 지시엄수, 비밀유지, 제3자 제공 금지 등에 관한 사항을 계약서 등 문서에 명시하고, 수시로 감독하고 있습니다.
-              </p>
-              <p className="mt-4">
-                Google AdSense의 경우, 광고 게재를 위해 쿠키 및 기기 식별자를 사용할 수 있으며, 
-                이를 통해 사용자의 광고 선호도 및 관심사에 맞는 광고를 제공합니다. 
-                Google의 개인정보 처리방침은 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">https://policies.google.com/privacy</a>에서 확인하실 수 있습니다.
               </p>
             </section>
 
@@ -144,14 +135,10 @@ export default function PrivacyPage() {
                 <li>서비스 이용 통계 분석 (Vercel Analytics)</li>
                 <li>사용자 환경 설정 저장</li>
                 <li>서비스 품질 개선</li>
-                <li>광고 게재 및 분석 (Google AdSense)</li>
               </ul>
               <p className="mt-4">
                 사용자는 쿠키 설치에 대한 선택권을 가지고 있으며, 웹브라우저 설정을 통해 쿠키 허용, 쿠키 차단 등의 설정을 할 수 있습니다. 
                 다만, 쿠키 설치를 거부할 경우 일부 서비스 이용에 어려움이 있을 수 있습니다.
-              </p>
-              <p className="mt-4 text-sm text-gray-600">
-                ※ Google AdSense 쿠키에 대한 자세한 내용은 <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google 개인정보 처리방침</a>을 참고하시기 바랍니다.
               </p>
             </section>
 
