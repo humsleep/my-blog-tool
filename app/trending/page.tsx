@@ -40,23 +40,66 @@ const CATEGORIES = [
 ];
 
 const PERIODS = [
+  { value: 'daily',   label: '일간' },
+  { value: 'weekly',  label: '주간' },
   { value: 'monthly', label: '월간' },
-  { value: 'weekly', label: '주간' },
-  { value: 'daily', label: '일간' },
+  { value: 'custom',  label: '직접 설정' },
 ];
+
+/** YYYY-MM-DD 형식으로 반환 */
+function toDateStr(d: Date) {
+  return d.toISOString().slice(0, 10);
+}
+
+/** 날짜 유효성 검사: max 1년 */
+function clampEndDate(start: string, end: string): string {
+  const s = new Date(start);
+  const e = new Date(end);
+  const maxEnd = new Date(s);
+  maxEnd.setFullYear(maxEnd.getFullYear() + 1);
+  return e > maxEnd ? toDateStr(maxEnd) : end;
+}
 
 export default function TrendingPage() {
   const [category, setCategory] = useState('전체');
-  const [period, setPeriod] = useState('monthly');
+  const [period, setPeriod] = useState('daily');
   const [data, setData] = useState<TrendingData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 직접 설정 날짜 상태 (기본값: 최근 30일)
+  const today = toDateStr(new Date());
+  const defaultStart = toDateStr(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+  const [startDate, setStartDate] = useState(defaultStart);
+  const [endDate, setEndDate] = useState(today);
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  const maxDate = today;
+
+  const validateDates = (s: string, e: string): string | null => {
+    if (!s || !e) return '시작일과 종료일을 모두 입력해주세요.';
+    if (new Date(s) > new Date(e)) return '시작일이 종료일보다 클 수 없습니다.';
+    const diff = (new Date(e).getTime() - new Date(s).getTime()) / (1000 * 60 * 60 * 24);
+    if (diff > 365) return '조회 기간은 최대 1년(365일)입니다.';
+    return null;
+  };
+
   const fetchTrendingKeywords = async () => {
+    if (period === 'custom') {
+      const err = validateDates(startDate, endDate);
+      if (err) { setDateError(err); return; }
+      setDateError(null);
+    }
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/trending-keywords?category=${encodeURIComponent(category)}&period=${period}&limit=50`);
+      const params = new URLSearchParams({
+        category,
+        period,
+        limit: '50',
+        ...(period === 'custom' ? { startDate, endDate } : {}),
+      });
+      const response = await fetch(`/api/trending-keywords?${params.toString()}`);
       if (!response.ok) throw new Error('인기 검색어를 불러오는데 실패했습니다.');
       const result = await response.json();
       setData(result);
@@ -68,7 +111,9 @@ export default function TrendingPage() {
   };
 
   useEffect(() => {
-    fetchTrendingKeywords();
+    if (period !== 'custom') fetchTrendingKeywords();
+    // custom 모드는 조회 버튼을 눌러야 실행
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, period]);
 
   const handleKeywordClick = (keyword: string) => {
@@ -93,15 +138,16 @@ export default function TrendingPage() {
         <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden">
 
           {/* 조회 기간 행 */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">조회 기간</span>
+              {/* 세그먼트 컨트롤 */}
               <div className="flex bg-slate-100 dark:bg-slate-700/60 rounded-lg p-0.5">
                 {PERIODS.map((p) => (
                   <button
                     key={p.value}
                     onClick={() => setPeriod(p.value)}
-                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150 ${
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                       period === p.value
                         ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-300 shadow-sm'
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -113,14 +159,14 @@ export default function TrendingPage() {
               </div>
             </div>
 
-            {/* 새로고침 버튼 */}
+            {/* 조회 버튼 */}
             <button
               onClick={fetchTrendingKeywords}
               disabled={loading}
               className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
             >
               <svg
-                className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
+                className={`w-4 h-4 flex-shrink-0 ${loading ? 'animate-spin' : ''}`}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -129,6 +175,62 @@ export default function TrendingPage() {
               {loading ? '조회 중...' : '조회'}
             </button>
           </div>
+
+          {/* 직접 설정 날짜 피커 */}
+          {period === 'custom' && (
+            <div className="px-5 py-4 bg-indigo-50/60 dark:bg-indigo-950/20 border-b border-slate-100 dark:border-slate-700/60">
+              <div className="flex flex-wrap items-end gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">시작일</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    max={endDate || maxDate}
+                    onChange={(e) => {
+                      setStartDate(e.target.value);
+                      // 종료일이 1년 초과 시 자동 보정
+                      if (endDate) setEndDate(clampEndDate(e.target.value, endDate));
+                      setDateError(null);
+                    }}
+                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="flex items-end pb-[9px] text-slate-400 dark:text-slate-500 text-sm font-medium select-none">~</div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">종료일</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    min={startDate}
+                    max={maxDate}
+                    onChange={(e) => {
+                      const clamped = clampEndDate(startDate, e.target.value);
+                      setEndDate(clamped);
+                      if (clamped !== e.target.value) setDateError('최대 1년(365일)까지 설정할 수 있습니다.');
+                      else setDateError(null);
+                    }}
+                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                {startDate && endDate && !dateError && (
+                  <span className="text-xs text-slate-400 dark:text-slate-500 pb-[10px]">
+                    {Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))}일
+                  </span>
+                )}
+              </div>
+              {dateError && (
+                <p className="mt-2 text-xs text-red-500 dark:text-red-400 flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  {dateError}
+                </p>
+              )}
+              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+                최대 조회 기간은 <strong>1년(365일)</strong>입니다.
+              </p>
+            </div>
+          )}
 
           {/* 카테고리 행 */}
           <div className="px-5 py-4">
@@ -175,7 +277,9 @@ export default function TrendingPage() {
                 <span className="text-slate-500 dark:text-slate-400 font-normal text-sm">({data.total}개)</span>
               </h2>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                {PERIODS.find((p) => p.value === period)?.label} 검색량 기준
+                {period === 'custom'
+                  ? `${startDate} ~ ${endDate} 기간 검색량 기준`
+                  : `${PERIODS.find((p) => p.value === period)?.label} 검색량 기준`}
               </p>
             </div>
 
@@ -183,7 +287,12 @@ export default function TrendingPage() {
               <table className="w-full">
                 <thead className="bg-slate-50 dark:bg-slate-900/30">
                   <tr>
-                    {['순위', '검색어', 'PC 검색량', '모바일 검색량', '총 검색량', '분석'].map((h, i) => (
+                    {['순위', '검색어',
+                      `PC 검색량${period === 'daily' ? ' (일)' : period === 'weekly' ? ' (주)' : period === 'custom' ? ' (기간)' : ' (월)'}`,
+                      `모바일 검색량${period === 'daily' ? ' (일)' : period === 'weekly' ? ' (주)' : period === 'custom' ? ' (기간)' : ' (월)'}`,
+                      `총 검색량${period === 'daily' ? ' (일)' : period === 'weekly' ? ' (주)' : period === 'custom' ? ' (기간)' : ' (월)'}`,
+                      '분석',
+                    ].map((h, i) => (
                       <th
                         key={i}
                         className={`px-5 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${

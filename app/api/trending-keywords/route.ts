@@ -35,12 +35,36 @@ const CATEGORY_HINTS: Record<string, string[]> = {
   '영화/드라마': ['영화', '드라마', '넷플릭스', '애니메이션', 'OTT'],
 };
 
+/**
+ * period 별 기준 일수 (월간 평균 기준으로 역산)
+ * 네이버 /keywordstool API는 항상 월간 평균(30일)을 반환합니다.
+ * 선택된 기간에 맞게 검색량을 비례 변환하여 표시합니다.
+ */
+function getPeriodDays(period: string, startDate?: string, endDate?: string): number {
+  if (period === 'daily')   return 1;
+  if (period === 'weekly')  return 7;
+  if (period === 'monthly') return 30;
+  if (period === 'custom' && startDate && endDate) {
+    const diff = Math.round(
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return Math.max(1, Math.min(diff, 365));
+  }
+  return 30;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category') || '전체';
-    const period = searchParams.get('period') || 'monthly'; // daily, weekly, monthly
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const category  = searchParams.get('category')  || '전체';
+    const period    = searchParams.get('period')     || 'daily';
+    const startDate = searchParams.get('startDate')  || undefined;
+    const endDate   = searchParams.get('endDate')    || undefined;
+    const limit     = parseInt(searchParams.get('limit') || '20');
+
+    // 기간 일수 → 월간 평균 데이터에 비례 적용 (30일 기준)
+    const periodDays  = getPeriodDays(period, startDate, endDate);
+    const scaleFactor = periodDays / 30;
 
     const hints = CATEGORY_HINTS[category] || CATEGORY_HINTS['전체'];
     const allKeywords: Array<{
@@ -82,11 +106,14 @@ export async function GET(request: NextRequest) {
           const keywordList = data.keywordList || [];
           
           keywordList.forEach((item: any) => {
-            const pcCount = parseInt(item.monthlyPcQcCnt || '0') || 0;
-            const mobileCount = parseInt(item.monthlyMobileQcCnt || '0') || 0;
-            const totalCount = pcCount + mobileCount;
+            const pcMonthly     = parseInt(item.monthlyPcQcCnt     || '0') || 0;
+            const mobileMonthly = parseInt(item.monthlyMobileQcCnt || '0') || 0;
+
+            // 선택된 기간에 맞게 검색량 비례 변환
+            const pcCount     = Math.round(pcMonthly     * scaleFactor);
+            const mobileCount = Math.round(mobileMonthly * scaleFactor);
+            const totalCount  = pcCount + mobileCount;
             
-            // 검색량이 있는 키워드만 추가
             if (totalCount > 0) {
               allKeywords.push({
                 keyword: item.relKeyword || '',
@@ -133,6 +160,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       period,
       category,
+      startDate: startDate ?? null,
+      endDate:   endDate   ?? null,
+      periodDays,
       keywords: sortedKeywords,
       total: sortedKeywords.length,
     });
