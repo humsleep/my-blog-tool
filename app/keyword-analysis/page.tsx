@@ -22,10 +22,13 @@ function KeywordAnalysisContent() {
   const [keywordData, setKeywordData] = useState<KeywordData[]>([]);
   const [currentProgress, setCurrentProgress] = useState('');
 
+  const [shouldAutoAnalyze, setShouldAutoAnalyze] = useState(false);
+
   useEffect(() => {
     const keyword = searchParams.get('keyword');
     if (keyword) {
       setInputKeywords(keyword);
+      setShouldAutoAnalyze(true);
     }
   }, [searchParams]);
 
@@ -137,7 +140,6 @@ function KeywordAnalysisContent() {
       }
 
       setCurrentProgress('완료!');
-      setInputKeywords('');
     } catch (error) {
       console.error('키워드 분석 오류:', error);
       alert('키워드 분석 중 오류가 발생했습니다.');
@@ -146,6 +148,13 @@ function KeywordAnalysisContent() {
       setCurrentProgress('');
     }
   };
+
+  useEffect(() => {
+    if (shouldAutoAnalyze && inputKeywords.trim() && !isLoading) {
+      setShouldAutoAnalyze(false);
+      analyzeKeywords();
+    }
+  }, [shouldAutoAnalyze, inputKeywords]);
 
   const deleteKeyword = (id: string) => {
     setKeywordData((prev) => prev.filter((item) => item.id !== id));
