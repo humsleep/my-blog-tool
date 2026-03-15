@@ -154,7 +154,7 @@ function KeywordAnalysisContent() {
       setShouldAutoAnalyze(false);
       analyzeKeywords();
     }
-  }, [shouldAutoAnalyze, inputKeywords]);
+  }, [shouldAutoAnalyze, inputKeywords, isLoading]);
 
   const deleteKeyword = (id: string) => {
     setKeywordData((prev) => prev.filter((item) => item.id !== id));
