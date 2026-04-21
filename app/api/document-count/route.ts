@@ -1,48 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { env } from '@/app/lib/env';
+import { getCache } from '@/app/lib/cache';
+import { fetchWithRetry } from '@/app/lib/fetchRetry';
 
-// 네이버 검색 API 클라이언트 정보
-const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID || "tth9fnsKBgcMDWVf96EV";
-const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET || "tgW9pUVIRc";
+const cache = getCache<{ count: number }>('document-count', 10 * 60 * 1000);
 
 export async function POST(request: NextRequest) {
   try {
     const { keyword } = await request.json();
 
     if (!keyword) {
-      return NextResponse.json(
-        { error: '키워드가 필요합니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '키워드가 필요합니다.' }, { status: 400 });
+    }
+
+    const cacheKey = String(keyword).trim().toLowerCase();
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
     }
 
     const encodedKeyword = encodeURIComponent(keyword);
     const url = `https://openapi.naver.com/v1/search/blog?query=${encodedKeyword}`;
 
-    const response = await fetch(url, {
+    const response = await fetchWithRetry(url, {
       method: 'GET',
       headers: {
-        'X-Naver-Client-Id': NAVER_CLIENT_ID,
-        'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+        'X-Naver-Client-Id': env.naverClientId,
+        'X-Naver-Client-Secret': env.naverClientSecret,
       },
     });
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: '문서수 조회 실패' },
-        { status: response.status }
-      );
+      return NextResponse.json({ error: '문서수 조회 실패' }, { status: response.status });
     }
 
     const data = await response.json();
-    const blogCount = data.total || 0;
-
-    return NextResponse.json({ count: blogCount });
+    const result = { count: data.total || 0 };
+    cache.set(cacheKey, result);
+    return NextResponse.json(result, { headers: { 'x-cache': 'MISS' } });
   } catch (error) {
     console.error('문서수 조회 오류:', error);
-    return NextResponse.json(
-      { error: '문서수 조회 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : '문서수 조회 중 오류가 발생했습니다.';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

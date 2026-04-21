@@ -1,18 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { env } from '@/app/lib/env';
+import { getCache } from '@/app/lib/cache';
+import { fetchWithRetry } from '@/app/lib/fetchRetry';
 
-// 네이버 검색광고 API 인증 정보
-const API_KEY = process.env.NAVER_SEARCH_AD_API_KEY || "01000000005d84e573bf51b1af97bd55d80b4d161478ae089b8b686db032a1b9d3addb3ad3";
-const SECRET_KEY = process.env.NAVER_SEARCH_AD_SECRET_KEY || "AQAAAABdhOVzv1Gxr5e9VdgLTRYUk3Gl94kmw7v5tmIXJb3Rrg==";
-const CUSTOMER_ID = process.env.NAVER_SEARCH_AD_CUSTOMER_ID || "3495013";
+interface TrendingKeywordItem {
+  rank: number;
+  keyword: string;
+  monthlyPcQcCnt: number;
+  monthlyMobileQcCnt: number;
+  totalCount: number;
+  category: string;
+}
+
+interface TrendingResponse {
+  period: string;
+  category: string;
+  startDate: string | null;
+  endDate: string | null;
+  periodDays: number;
+  keywords: TrendingKeywordItem[];
+  total: number;
+}
+
+interface NaverKeywordItem {
+  relKeyword?: string;
+  monthlyPcQcCnt?: string | number;
+  monthlyMobileQcCnt?: string | number;
+}
+
+const cache = getCache<TrendingResponse>('trending', 10 * 60 * 1000);
 
 function generateSignature(timestamp: string, method: string, uri: string, secretKey: string): string {
   const message = `${timestamp}.${method}.${uri}`;
-  const signature = crypto
-    .createHmac('sha256', secretKey)
-    .update(message)
-    .digest('base64');
-  return signature;
+  return crypto.createHmac('sha256', secretKey).update(message).digest('base64');
 }
 
 // 인기 키워드 카테고리별 힌트 키워드
@@ -66,6 +87,12 @@ export async function GET(request: NextRequest) {
     const periodDays  = getPeriodDays(period, startDate, endDate);
     const scaleFactor = periodDays / 30;
 
+    const cacheKey = JSON.stringify({ category, period, startDate, endDate, limit });
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
+    }
+
     const hints = CATEGORY_HINTS[category] || CATEGORY_HINTS['전체'];
     const allKeywords: Array<{
       keyword: string;
@@ -87,15 +114,15 @@ export async function GET(request: NextRequest) {
           showDetail: '1',
         });
         
-        const signature = generateSignature(timestamp, method, uri, SECRET_KEY);
+        const signature = generateSignature(timestamp, method, uri, env.naverSearchAdSecretKey);
         const url = `https://api.searchad.naver.com${uri}?${queryParams.toString()}`;
 
-        const response = await fetch(url, {
+        const response = await fetchWithRetry(url, {
           method: 'GET',
           headers: {
             'X-Timestamp': timestamp,
-            'X-API-KEY': API_KEY,
-            'X-Customer': CUSTOMER_ID,
+            'X-API-KEY': env.naverSearchAdApiKey,
+            'X-Customer': env.naverSearchAdCustomerId,
             'X-Signature': signature,
             'Content-Type': 'application/json',
           },
@@ -103,11 +130,11 @@ export async function GET(request: NextRequest) {
 
         if (response.ok) {
           const data = await response.json();
-          const keywordList = data.keywordList || [];
-          
-          keywordList.forEach((item: any) => {
-            const pcMonthly     = parseInt(item.monthlyPcQcCnt     || '0') || 0;
-            const mobileMonthly = parseInt(item.monthlyMobileQcCnt || '0') || 0;
+          const keywordList: NaverKeywordItem[] = data.keywordList || [];
+
+          keywordList.forEach((item) => {
+            const pcMonthly     = parseInt(String(item.monthlyPcQcCnt     ?? '0')) || 0;
+            const mobileMonthly = parseInt(String(item.monthlyMobileQcCnt ?? '0')) || 0;
 
             // 선택된 기간에 맞게 검색량 비례 변환
             const pcCount     = Math.round(pcMonthly     * scaleFactor);
@@ -157,7 +184,7 @@ export async function GET(request: NextRequest) {
         category: item.category,
       }));
 
-    return NextResponse.json({
+    const payload: TrendingResponse = {
       period,
       category,
       startDate: startDate ?? null,
@@ -165,13 +192,13 @@ export async function GET(request: NextRequest) {
       periodDays,
       keywords: sortedKeywords,
       total: sortedKeywords.length,
-    });
+    };
+    cache.set(cacheKey, payload);
+    return NextResponse.json(payload, { headers: { 'x-cache': 'MISS' } });
   } catch (error) {
     console.error('인기 검색어 조회 오류:', error);
-    return NextResponse.json(
-      { error: '인기 검색어 조회 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : '인기 검색어 조회 중 오류가 발생했습니다.';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

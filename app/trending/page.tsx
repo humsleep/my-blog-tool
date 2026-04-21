@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import GuideSection from '../components/GuideSection';
+import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
 interface TrendingKeyword {
   rank: number;
@@ -99,12 +100,17 @@ export default function TrendingPage() {
         limit: '50',
         ...(period === 'custom' ? { startDate, endDate } : {}),
       });
-      const response = await fetch(`/api/trending-keywords?${params.toString()}`);
-      if (!response.ok) throw new Error('인기 검색어를 불러오는데 실패했습니다.');
-      const result = await response.json();
+      const result = await clientFetchJson<TrendingData>(
+        `/api/trending-keywords?${params.toString()}`
+      );
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
+      const message = err instanceof ApiError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : '알 수 없는 오류가 발생했습니다.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -263,8 +269,14 @@ export default function TrendingPage() {
 
         {/* Error state */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6 flex items-center justify-between gap-3">
             <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+            <button
+              onClick={fetchTrendingKeywords}
+              className="px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors whitespace-nowrap"
+            >
+              다시 시도
+            </button>
           </div>
         )}
 

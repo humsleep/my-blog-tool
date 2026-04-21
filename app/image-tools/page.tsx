@@ -158,6 +158,47 @@ export default function ImageToolsPage() {
     reader.readAsDataURL(file);
   };
 
+  const loadImageFromDataUrl = (dataUrl: string) => {
+    const img = new Image();
+    img.onload = () => {
+      setImage(img);
+      originalImageRef.current = img;
+      setImageUrl(dataUrl);
+      originalImageUrlRef.current = dataUrl;
+      setWidth(img.width);
+      setHeight(img.height);
+      originalWidthRef.current = img.width;
+      originalHeightRef.current = img.height;
+      originalAspectRatioRef.current = img.width / img.height;
+      setMaintainAspectRatio(true);
+      setCropRegion(null);
+      setCropStart(null);
+      setCropEnd(null);
+      setCropHistory([]);
+      resetImageEffects();
+    };
+    img.src = dataUrl;
+  };
+
+  // 이미지 검색 페이지에서 전달된 이미지 로드
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const raw = sessionStorage.getItem('pendingImage');
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as { dataUrl?: string };
+      if (parsed?.dataUrl) {
+        loadImageFromDataUrl(parsed.dataUrl);
+      }
+    } catch {
+      // ignore parse failure
+    } finally {
+      sessionStorage.removeItem('pendingImage');
+    }
+    // 마운트 시 한 번만
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -1121,9 +1162,20 @@ export default function ImageToolsPage() {
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">이미지 편집 도구</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">이미지를 업로드하고 편집하세요</p>
+        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">이미지 편집 도구</h1>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">이미지를 업로드하고 편집하세요</p>
+          </div>
+          <a
+            href="/image-search"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors self-start sm:self-auto"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            무료 이미지 검색
+          </a>
         </div>
 
         {/* 공통 기능 버튼 */}

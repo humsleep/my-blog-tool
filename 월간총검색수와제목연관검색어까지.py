@@ -42,9 +42,31 @@ except ImportError:
     print("[WARNING] pandas가 설치되지 않았습니다. CSV 파일로 저장합니다.")
     print("[TIP] pandas를 설치하려면: pip install pandas openpyxl")
 
+import os
+from pathlib import Path
+
+def _load_env():
+    """프로젝트 루트의 .env.local 파일을 읽어 os.environ에 주입"""
+    env_path = Path(__file__).parent / ".env.local"
+    if env_path.exists():
+        for line in env_path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            os.environ.setdefault(key.strip(), value.strip())
+
+_load_env()
+
+def _require(name):
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError(f"환경변수 {name}이(가) 설정되지 않았습니다. .env.local을 확인하세요.")
+    return value
+
 # 네이버 검색 API 클라이언트 정보 (문서수 검색용)
-NAVER_CLIENT_ID = "tth9fnsKBgcMDWVf96EV"
-NAVER_CLIENT_SECRET = "tgW9pUVIRc"
+NAVER_CLIENT_ID = _require("NAVER_CLIENT_ID")
+NAVER_CLIENT_SECRET = _require("NAVER_CLIENT_SECRET")
 
 class NaverRelatedKeywordExtractor:
     """네이버 검색 결과에서 연관 검색어를 추출하는 클래스"""
@@ -562,10 +584,10 @@ def save_to_csv(all_keyword_data, filename):
 
 def main():
     """메인 함수"""
-    # API 인증 정보
-    API_KEY = "01000000005d84e573bf51b1af97bd55d80b4d161478ae089b8b686db032a1b9d3addb3ad3"
-    SECRET_KEY = "AQAAAABdhOVzv1Gxr5e9VdgLTRYUk3Gl94kmw7v5tmIXJb3Rrg=="
-    CUSTOMER_ID = 3495013
+    # API 인증 정보 (.env.local에서 로드)
+    API_KEY = _require("NAVER_SEARCH_AD_API_KEY")
+    SECRET_KEY = _require("NAVER_SEARCH_AD_SECRET_KEY")
+    CUSTOMER_ID = _require("NAVER_SEARCH_AD_CUSTOMER_ID")
     
     # 사용자 입력 받기
     print("=" * 60)

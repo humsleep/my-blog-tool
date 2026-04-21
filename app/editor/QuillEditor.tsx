@@ -1,18 +1,36 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import Quill from 'quill';
+import Quill, { Delta } from 'quill';
+import type { EmitterSource } from 'quill';
 import 'quill/dist/quill.snow.css';
+
+type QuillModules = Record<string, unknown>;
+
+export interface QuillEditorHandle {
+  getEditor: () => Quill | null;
+  getText: () => string;
+  getHTML: () => string;
+  setContents: (delta: Delta, source?: EmitterSource) => void;
+  formatText: (
+    index: number,
+    length: number,
+    format: string,
+    value: unknown,
+    source?: EmitterSource
+  ) => void;
+  replaceRange: (index: number, length: number, replacement: string) => void;
+}
 
 interface QuillEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  modules?: any;
+  modules?: QuillModules;
   formats?: string[];
 }
 
-const QuillEditor = forwardRef<any, QuillEditorProps>(
+const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
   ({ value, onChange, placeholder = '여기에 글을 작성하세요...', modules, formats }, ref) => {
     const editorRef = useRef<HTMLDivElement>(null);
     const quillRef = useRef<Quill | null>(null);
@@ -105,15 +123,23 @@ const QuillEditor = forwardRef<any, QuillEditorProps>(
       getEditor: () => quillRef.current,
       getText: () => quillRef.current?.getText() || '',
       getHTML: () => quillRef.current?.root.innerHTML || '',
-      setContents: (delta: any, source?: 'user' | 'api' | 'silent') => {
-        if (quillRef.current) {
-          quillRef.current.setContents(delta, source || 'user');
-        }
+      setContents: (delta: Delta, source: EmitterSource = 'user') => {
+        quillRef.current?.setContents(delta, source);
       },
-      formatText: (index: number, length: number, format: string, value: any, source?: 'user' | 'api' | 'silent') => {
-        if (quillRef.current) {
-          quillRef.current.formatText(index, length, format, value, source || 'user');
-        }
+      formatText: (
+        index: number,
+        length: number,
+        format: string,
+        value: unknown,
+        source: EmitterSource = 'user'
+      ) => {
+        quillRef.current?.formatText(index, length, format, value, source);
+      },
+      replaceRange: (index: number, length: number, replacement: string) => {
+        const quill = quillRef.current;
+        if (!quill) return;
+        quill.deleteText(index, length, 'user');
+        quill.insertText(index, replacement, 'user');
       },
     }));
 

@@ -16,7 +16,8 @@ export default function Navbar() {
     { href: '/competitor-analysis', label: '경쟁분석' },
     { href: '/keyword-analysis', label: '키워드분석' },
     { href: '/prompt-generator', label: '프롬프트' },
-    { href: '/editor', label: '금칙어' },
+    { href: '/editor', label: '금칙어·맞춤법' },
+    { href: '/image-search', label: '이미지검색' },
     { href: '/image-tools', label: '이미지편집' },
     { href: '/lab', label: '연구실' },
   ];

@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { env } from '@/app/lib/env';
+import { getCache } from '@/app/lib/cache';
+import { fetchWithRetry } from '@/app/lib/fetchRetry';
 
-// 네이버 검색광고 API 인증 정보
-const API_KEY = process.env.NAVER_SEARCH_AD_API_KEY || "01000000005d84e573bf51b1af97bd55d80b4d161478ae089b8b686db032a1b9d3addb3ad3";
-const SECRET_KEY = process.env.NAVER_SEARCH_AD_SECRET_KEY || "AQAAAABdhOVzv1Gxr5e9VdgLTRYUk3Gl94kmw7v5tmIXJb3Rrg==";
-const CUSTOMER_ID = process.env.NAVER_SEARCH_AD_CUSTOMER_ID || "3495013";
+const cache = getCache<unknown>('keywords', 5 * 60 * 1000);
 
 function generateSignature(timestamp: string, method: string, uri: string, secretKey: string): string {
   const message = `${timestamp}.${method}.${uri}`;
-  const signature = crypto
-    .createHmac('sha256', secretKey)
-    .update(message)
-    .digest('base64');
-  return signature;
+  return crypto.createHmac('sha256', secretKey).update(message).digest('base64');
 }
 
 export async function POST(request: NextRequest) {
@@ -20,32 +16,33 @@ export async function POST(request: NextRequest) {
     const { keyword } = await request.json();
 
     if (!keyword) {
-      return NextResponse.json(
-        { error: '키워드가 필요합니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '키워드가 필요합니다.' }, { status: 400 });
+    }
+
+    const cacheKey = String(keyword).trim().toLowerCase();
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
     }
 
     const timestamp = Date.now().toString();
     const uri = '/keywordstool';
     const method = 'GET';
-    
+
     const queryParams = new URLSearchParams({
       hintKeywords: keyword,
       showDetail: '1',
     });
-    
-    // 서명은 URI만 사용 (Python 스크립트와 동일)
-    const signature = generateSignature(timestamp, method, uri, SECRET_KEY);
 
+    const signature = generateSignature(timestamp, method, uri, env.naverSearchAdSecretKey);
     const url = `https://api.searchad.naver.com${uri}?${queryParams.toString()}`;
 
-    const response = await fetch(url, {
+    const response = await fetchWithRetry(url, {
       method: 'GET',
       headers: {
         'X-Timestamp': timestamp,
-        'X-API-KEY': API_KEY,
-        'X-Customer': CUSTOMER_ID,
+        'X-API-KEY': env.naverSearchAdApiKey,
+        'X-Customer': env.naverSearchAdCustomerId,
         'X-Signature': signature,
         'Content-Type': 'application/json',
       },
@@ -60,13 +57,11 @@ export async function POST(request: NextRequest) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    cache.set(cacheKey, data);
+    return NextResponse.json(data, { headers: { 'x-cache': 'MISS' } });
   } catch (error) {
     console.error('키워드 검색 오류:', error);
-    return NextResponse.json(
-      { error: '키워드 검색 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : '키워드 검색 중 오류가 발생했습니다.';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

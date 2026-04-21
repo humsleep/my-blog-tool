@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// 네이버 검색 API 클라이언트 정보
-const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID || "tth9fnsKBgcMDWVf96EV";
-const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET || "tgW9pUVIRc";
+import { env } from '@/app/lib/env';
+import { getCache } from '@/app/lib/cache';
+import { fetchWithRetry } from '@/app/lib/fetchRetry';
 
 interface BlogPost {
   title: string;
@@ -21,45 +20,45 @@ interface AnalysisResult {
   dateDistribution: Record<string, number>;
 }
 
+const cache = getCache<AnalysisResult>('competitor', 10 * 60 * 1000);
+
 export async function POST(request: NextRequest) {
   try {
     const { keyword, limit = 10 } = await request.json();
 
     if (!keyword) {
-      return NextResponse.json(
-        { error: '키워드가 필요합니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '키워드가 필요합니다.' }, { status: 400 });
+    }
+
+    const cacheKey = `${String(keyword).trim().toLowerCase()}::${limit}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
     }
 
     const encodedKeyword = encodeURIComponent(keyword);
     const url = `https://openapi.naver.com/v1/search/blog?query=${encodedKeyword}&display=${Math.min(limit, 100)}&sort=sim`;
 
-    const response = await fetch(url, {
+    const response = await fetchWithRetry(url, {
       method: 'GET',
       headers: {
-        'X-Naver-Client-Id': NAVER_CLIENT_ID,
-        'X-Naver-Client-Secret': NAVER_CLIENT_SECRET,
+        'X-Naver-Client-Id': env.naverClientId,
+        'X-Naver-Client-Secret': env.naverClientSecret,
       },
     });
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: '경쟁 블로그 분석 실패' },
-        { status: response.status }
-      );
+      return NextResponse.json({ error: '경쟁 블로그 분석 실패' }, { status: response.status });
     }
 
     const data = await response.json();
     const posts: BlogPost[] = data.items || [];
 
-    // 제목 길이 분석
     const titleLengths = posts.map(post => post.title.replace(/<[^>]*>/g, '').length);
     const averageTitleLength = titleLengths.length > 0
       ? Math.round(titleLengths.reduce((a, b) => a + b, 0) / titleLengths.length)
       : 0;
 
-    // 자주 사용되는 단어 분석
     const wordCount: Record<string, number> = {};
     posts.forEach(post => {
       const title = post.title.replace(/<[^>]*>/g, '').toLowerCase();
@@ -76,7 +75,6 @@ export async function POST(request: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
 
-    // 상위 블로거 분석
     const bloggerCount: Record<string, number> = {};
     posts.forEach(post => {
       bloggerCount[post.bloggername] = (bloggerCount[post.bloggername] || 0) + 1;
@@ -87,10 +85,9 @@ export async function POST(request: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // 날짜 분포 분석
     const dateDistribution: Record<string, number> = {};
     posts.forEach(post => {
-      const date = post.postdate.substring(0, 6); // YYYYMM
+      const date = post.postdate.substring(0, 6);
       dateDistribution[date] = (dateDistribution[date] || 0) + 1;
     });
 
@@ -103,13 +100,11 @@ export async function POST(request: NextRequest) {
       dateDistribution,
     };
 
-    return NextResponse.json(analysisResult);
+    cache.set(cacheKey, analysisResult);
+    return NextResponse.json(analysisResult, { headers: { 'x-cache': 'MISS' } });
   } catch (error) {
     console.error('경쟁 블로그 분석 오류:', error);
-    return NextResponse.json(
-      { error: '경쟁 블로그 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : '경쟁 블로그 분석 중 오류가 발생했습니다.';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

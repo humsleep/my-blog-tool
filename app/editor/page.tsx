@@ -3,6 +3,8 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import GuideSection from '../components/GuideSection';
+import SpellCheckPanel from '../components/SpellCheckPanel';
+import type { QuillEditorHandle } from './QuillEditor';
 
 // Quill을 직접 사용 (React 19 호환)
 const QuillEditor = dynamic(
@@ -101,7 +103,7 @@ export default function EditorPage() {
   const [content, setContent] = useState('');
   const [replacements, setReplacements] = useState<Record<string, string>>({});
   const [isSeoGuideOpen, setIsSeoGuideOpen] = useState(false);
-  const quillEditorRef = useRef<any>(null);
+  const quillEditorRef = useRef<QuillEditorHandle | null>(null);
 
   // Quill 모듈 설정
   const modules = useMemo(() => ({
@@ -478,6 +480,16 @@ export default function EditorPage() {
                   </div>
                 )}
               </div>
+
+              {/* Spellcheck */}
+              <SpellCheckPanel
+                getText={() => quillEditorRef.current?.getText() ?? ''}
+                onReplace={(offset, length, replacement) => {
+                  quillEditorRef.current?.replaceRange(offset, length, replacement);
+                  const html = quillEditorRef.current?.getHTML();
+                  if (html) setContent(html);
+                }}
+              />
             </div>
           </div>
         </div>

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import GuideSection from '../components/GuideSection';
+import NewsPanel from '../components/NewsPanel';
+import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
 interface BlogPost {
   title: string;
@@ -26,6 +27,7 @@ export default function CompetitorAnalysisPage() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [analyzedKeyword, setAnalyzedKeyword] = useState<string>('');
 
   const analyzeCompetitors = async () => {
     if (!keyword.trim()) {
@@ -37,20 +39,20 @@ export default function CompetitorAnalysisPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/competitor-analysis', {
+      const result = await clientFetchJson<AnalysisResult>('/api/competitor-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ keyword: keyword.trim(), limit: 50 }),
       });
-
-      if (!response.ok) {
-        throw new Error('분석에 실패했습니다.');
-      }
-
-      const result = await response.json();
       setData(result);
+      setAnalyzedKeyword(keyword.trim());
     } catch (err) {
-      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
+      const message = err instanceof ApiError
+        ? err.message
+        : err instanceof Error
+          ? err.message
+          : '알 수 없는 오류가 발생했습니다.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -106,8 +108,14 @@ export default function CompetitorAnalysisPage() {
         )}
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
+          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6 flex items-center justify-between gap-3">
             <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+            <button
+              onClick={analyzeCompetitors}
+              className="px-3 py-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors whitespace-nowrap"
+            >
+              다시 시도
+            </button>
           </div>
         )}
 
@@ -244,6 +252,13 @@ export default function CompetitorAnalysisPage() {
                 </li>
               ))}
             </ol>
+          </div>
+        )}
+
+        {/* 📰 이 키워드 관련 최신 뉴스 */}
+        {data && analyzedKeyword && (
+          <div className="mt-5">
+            <NewsPanel keyword={analyzedKeyword} display={10} sort="date" />
           </div>
         )}
 
