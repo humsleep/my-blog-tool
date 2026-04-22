@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import GuideSection from '../components/GuideSection';
+import FlowNav from '../components/FlowNav';
 import SpellCheckPanel from '../components/SpellCheckPanel';
 import type { QuillEditorHandle } from './QuillEditor';
 
@@ -493,6 +494,23 @@ export default function EditorPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* 다음 단계 */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <FlowNav
+          currentStep={5}
+          totalSteps={7}
+          stepLabel="금칙어·맞춤법"
+          note="글을 다듬었다면 이제 블로그에 어울리는 이미지를 찾아볼 차례입니다."
+          actions={[
+            {
+              href: '/image-search',
+              label: '무료 이미지 찾기',
+              description: 'Pexels + Unsplash 저작권 이미지',
+            },
+          ]}
+        />
       </div>
 
       {/* 가이드 콘텐츠 */}

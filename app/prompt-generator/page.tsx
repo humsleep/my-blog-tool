@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import GuideSection from '../components/GuideSection';
+import FlowNav from '../components/FlowNav';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -674,6 +675,29 @@ function PromptGeneratorContent() {
             </div>
           </div>
         </div>
+
+        {/* 다음 단계 */}
+        {generatedPrompt && (
+          <FlowNav
+            currentStep={4}
+            totalSteps={7}
+            stepLabel="프롬프트 생성"
+            note="프롬프트를 복사해 AI에 붙여넣은 뒤, 생성된 글을 에디터에서 다듬어보세요."
+            actions={[
+              {
+                href: '/editor',
+                label: '포스팅 에디터로 이동',
+                description: '금칙어·맞춤법 검사',
+              },
+              {
+                href: '/image-search',
+                label: '이미지 먼저 찾기',
+                description: '무료 저작권 이미지',
+                variant: 'secondary',
+              },
+            ]}
+          />
+        )}
 
         {/* SEO 가이드 섹션 */}
         <GuideSection

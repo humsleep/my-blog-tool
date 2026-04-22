@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import GuideSection from '../components/GuideSection';
+import FlowNav from '../components/FlowNav';
 
 interface ImageItem {
   id: string;
@@ -245,11 +245,19 @@ export default function ImageSearchPage() {
           </p>
         </div>
 
-        <div className="mt-4">
-          <Link href="/image-tools" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
-            → 이미지 편집 도구로 이동
-          </Link>
-        </div>
+        <FlowNav
+          currentStep={6}
+          totalSteps={7}
+          stepLabel="이미지 검색"
+          note="이미지 카드의 '편집기로 보내기' 버튼을 누르면 편집 도구로 바로 전송됩니다."
+          actions={[
+            {
+              href: '/image-tools',
+              label: '이미지 편집 도구로 이동',
+              description: '크롭·모자이크·필터 편집',
+            },
+          ]}
+        />
 
         <GuideSection
           title="무료 이미지, 블로그에 안전하게 활용하는 법"

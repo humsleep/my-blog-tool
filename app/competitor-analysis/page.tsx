@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import GuideSection from '../components/GuideSection';
 import NewsPanel from '../components/NewsPanel';
+import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
 interface BlogPost {
@@ -22,12 +24,22 @@ interface AnalysisResult {
   dateDistribution: Record<string, number>;
 }
 
-export default function CompetitorAnalysisPage() {
+function CompetitorAnalysisContent() {
+  const searchParams = useSearchParams();
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [analyzedKeyword, setAnalyzedKeyword] = useState<string>('');
+  const [shouldAutoAnalyze, setShouldAutoAnalyze] = useState(false);
+
+  useEffect(() => {
+    const kw = searchParams.get('keyword');
+    if (kw) {
+      setKeyword(kw);
+      setShouldAutoAnalyze(true);
+    }
+  }, [searchParams]);
 
   const analyzeCompetitors = async () => {
     if (!keyword.trim()) {
@@ -58,6 +70,14 @@ export default function CompetitorAnalysisPage() {
     }
   };
 
+  useEffect(() => {
+    if (shouldAutoAnalyze && keyword.trim() && !loading) {
+      setShouldAutoAnalyze(false);
+      analyzeCompetitors();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldAutoAnalyze, keyword]);
+
   const formatDate = (dateStr: string) => {
     if (dateStr.length === 8) {
       return `${dateStr.substring(0, 4)}년 ${dateStr.substring(4, 6)}월 ${dateStr.substring(6, 8)}일`;
@@ -72,10 +92,10 @@ export default function CompetitorAnalysisPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-            경쟁 블로그 분석
+            상위노출 분석
           </h1>
           <p className="text-slate-500 dark:text-slate-400">
-            특정 키워드로 상위 노출된 블로그 포스트를 분석하여 경쟁력을 파악하세요
+            네이버 상위 노출 블로그 포스트를 분석하여 제목 길이·사용 단어·상위 블로거 패턴을 파악하세요
           </p>
         </div>
 
@@ -262,12 +282,37 @@ export default function CompetitorAnalysisPage() {
           </div>
         )}
 
+        {/* 다음 단계 */}
+        <FlowNav
+          currentStep={3}
+          totalSteps={7}
+          stepLabel="상위노출 분석"
+          note={analyzedKeyword
+            ? `"${analyzedKeyword}" 키워드로 바로 프롬프트를 생성할 수 있습니다.`
+            : '키워드 분석이 끝났다면 프롬프트 생성으로 이동하세요.'}
+          actions={[
+            {
+              href: analyzedKeyword
+                ? `/prompt-generator?keyword=${encodeURIComponent(analyzedKeyword)}`
+                : '/prompt-generator',
+              label: '프롬프트 생성하기',
+              description: 'AI 글쓰기용 맞춤 프롬프트',
+            },
+            {
+              href: '/keyword-analysis',
+              label: '키워드 추가 분석',
+              description: '다른 키워드 더 분석하기',
+              variant: 'secondary',
+            },
+          ]}
+        />
+
         {/* 가이드 콘텐츠 */}
         <GuideSection
-          title="경쟁 블로그 분석으로 차별화된 콘텐츠 전략 세우기"
+          title="상위노출 분석으로 차별화된 콘텐츠 전략 세우기"
           items={[
             {
-              title: '경쟁 블로그 분석이 중요한 이유',
+              title: '상위노출 분석이 중요한 이유',
               content: `블로그 운영에서 가장 흔한 실수 중 하나는 '좋은 글을 쓰면 알아서 노출된다'는 믿음입니다. 현실은 다릅니다. 같은 키워드로 이미 수십 개의 블로그가 경쟁하고 있으며, 이들의 패턴을 모르고 글을 쓰는 것은 눈을 감고 과녁을 맞히려는 것과 같습니다.
 
 경쟁 블로그 분석은 상위 노출된 블로거들이 어떤 제목을 쓰고, 어떤 단어를 반복 사용하며, 어떤 구조로 글을 작성하는지 파악하는 과정입니다. 이 데이터를 바탕으로 더 나은 전략을 수립하면, 같은 시간을 투자하고도 훨씬 높은 성과를 거둘 수 있습니다.`,
@@ -303,3 +348,14 @@ export default function CompetitorAnalysisPage() {
   );
 }
 
+export default function CompetitorAnalysisPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="text-slate-500 dark:text-slate-400">로딩 중...</div>
+      </div>
+    }>
+      <CompetitorAnalysisContent />
+    </Suspense>
+  );
+}

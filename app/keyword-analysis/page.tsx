@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import GuideSection from '../components/GuideSection';
 import NewsPanel from '../components/NewsPanel';
+import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
 interface KeywordData {
@@ -33,6 +34,7 @@ function KeywordAnalysisContent() {
   const [lastInput, setLastInput] = useState('');
   const [wikiViews, setWikiViews] = useState<Record<string, number | null>>({});
   const [newsKeyword, setNewsKeyword] = useState<string | null>(null);
+  const [actionKeyword, setActionKeyword] = useState<string | null>(null);
 
   const [shouldAutoAnalyze, setShouldAutoAnalyze] = useState(false);
 
@@ -323,7 +325,7 @@ function KeywordAnalysisContent() {
                       분석 결과 <span className="text-slate-500 dark:text-slate-400 font-normal text-sm">({sortedKeywords.length}개)</span>
                     </h2>
                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                      키워드 클릭 시 프롬프트 자동 생성
+                      키워드 클릭 시 다음 단계 선택 (상위노출 분석 / 프롬프트 생성)
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -364,11 +366,7 @@ function KeywordAnalysisContent() {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
                                 className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left"
-                                onClick={() => {
-                                  if (confirm(`"${item.keyword}" 키워드로 프롬프트를 생성하시겠습니까?`)) {
-                                    router.push(`/prompt-generator?keyword=${encodeURIComponent(item.keyword)}`);
-                                  }
-                                }}
+                                onClick={() => setActionKeyword(item.keyword)}
                               >
                                 {item.keyword}
                               </button>
@@ -509,6 +507,66 @@ function KeywordAnalysisContent() {
           </div>
         </div>
 
+        {/* 액션 선택 모달 */}
+        {actionKeyword && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+            onClick={() => setActionKeyword(null)}
+          >
+            <div
+              className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                  &ldquo;{actionKeyword}&rdquo; 다음 단계 선택
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  이 키워드로 어떻게 진행하시겠어요?
+                </p>
+              </div>
+              <div className="p-4 space-y-2">
+                <button
+                  onClick={() => {
+                    router.push(`/competitor-analysis?keyword=${encodeURIComponent(actionKeyword)}`);
+                  }}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                >
+                  <div className="text-left">
+                    <div className="font-semibold text-sm">상위노출 분석</div>
+                    <div className="text-xs text-indigo-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
+                  </div>
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => {
+                    router.push(`/prompt-generator?keyword=${encodeURIComponent(actionKeyword)}`);
+                  }}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg transition-colors"
+                >
+                  <div className="text-left">
+                    <div className="font-semibold text-sm">프롬프트 바로 생성</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">경쟁 분석 건너뛰고 글쓰기</div>
+                  </div>
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </button>
+              </div>
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => setActionKeyword(null)}
+                  className="w-full px-4 py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 뉴스 모달 */}
         {newsKeyword && (
           <div
@@ -538,6 +596,29 @@ function KeywordAnalysisContent() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* 다음 단계 */}
+        {keywordData.length > 0 && (
+          <FlowNav
+            currentStep={2}
+            totalSteps={7}
+            stepLabel="키워드분석"
+            note={`"${sortedKeywords[0].keyword}" 키워드로 이어서 진행할 수 있습니다.`}
+            actions={[
+              {
+                href: `/competitor-analysis?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
+                label: '상위노출 분석',
+                description: '상위 블로그 포스트 분석',
+              },
+              {
+                href: `/prompt-generator?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
+                label: '프롬프트 바로 생성',
+                description: '경쟁 분석 건너뛰고 글쓰기',
+                variant: 'secondary',
+              },
+            ]}
+          />
         )}
 
         {/* SEO 가이드 섹션 */}
