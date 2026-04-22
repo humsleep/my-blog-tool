@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import GuideSection from '../components/GuideSection';
+import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
 interface TrendingKeyword {
@@ -389,6 +390,23 @@ export default function TrendingPage() {
             ))}
           </ul>
         </div>
+
+        {/* 다음 단계 */}
+        {data && data.keywords.length > 0 && (
+          <FlowNav
+            currentStep={1}
+            totalSteps={7}
+            stepLabel="인기검색어"
+            note="마음에 드는 키워드를 발견했다면 자세히 분석해보세요. 위 목록에서 키워드를 바로 클릭해도 됩니다."
+            actions={[
+              {
+                href: '/keyword-analysis',
+                label: '키워드 분석 시작',
+                description: '검색량·경쟁률 직접 입력해 분석',
+              },
+            ]}
+          />
+        )}
 
         {/* 가이드 콘텐츠 */}
         <GuideSection

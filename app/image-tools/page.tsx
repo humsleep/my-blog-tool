@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import GuideSection from '../components/GuideSection';
+import FlowNav from '../components/FlowNav';
 
 interface MosaicRegion {
   x: number;
@@ -1638,6 +1639,27 @@ export default function ImageToolsPage() {
               </div>
           </div>
         </div>
+
+        {/* 다음 단계 */}
+        <FlowNav
+          currentStep={7}
+          totalSteps={7}
+          stepLabel="이미지 편집"
+          note="포스팅 준비가 거의 완료되었습니다. 다음 포스팅을 위해 새로운 키워드를 찾아보세요."
+          actions={[
+            {
+              href: '/trending',
+              label: '새로운 키워드 찾기',
+              description: '인기 검색어로 다시 시작',
+            },
+            {
+              href: '/keyword-analysis',
+              label: '키워드 추가 분석',
+              description: '직접 키워드 입력하기',
+              variant: 'secondary',
+            },
+          ]}
+        />
 
         {/* SEO 가이드 섹션 */}
         <GuideSection
