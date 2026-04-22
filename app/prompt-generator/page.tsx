@@ -2,8 +2,10 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import GuideSection from '../components/GuideSection';
 import FlowNav from '../components/FlowNav';
+import { useUser } from '../lib/supabase/useUser';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -104,6 +106,8 @@ const ADDITIONAL_OPTIONS = [
 
 function PromptGeneratorContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user, configured } = useUser();
   const [keyword, setKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [titleStyle, setTitleStyle] = useState('');
@@ -115,6 +119,57 @@ function PromptGeneratorContent() {
   const [additionalOptions, setAdditionalOptions] = useState<string[]>([]);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDrafting, setIsDrafting] = useState(false);
+  const [draftError, setDraftError] = useState<string | null>(null);
+  const [usageInfo, setUsageInfo] = useState<{ used: number; limit: number; remaining: number } | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setUsageInfo(null);
+      return;
+    }
+    fetch('/api/ai-draft')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.authenticated) {
+          setUsageInfo({ used: d.used, limit: d.limit, remaining: d.remaining });
+        }
+      })
+      .catch(() => {});
+  }, [user]);
+
+  const generateDraft = async () => {
+    if (!generatedPrompt) return;
+    if (!user) {
+      router.push('/login?next=' + encodeURIComponent('/prompt-generator'));
+      return;
+    }
+    setIsDrafting(true);
+    setDraftError(null);
+    try {
+      const res = await fetch('/api/ai-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: generatedPrompt, keyword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDraftError(data.error || 'AI 초안 생성 실패');
+        if (data.usage) setUsageInfo(data.usage);
+        return;
+      }
+      if (data.usage) setUsageInfo(data.usage);
+      sessionStorage.setItem(
+        'aiDraft',
+        JSON.stringify({ content: data.draft, keyword: data.keyword, createdAt: Date.now() })
+      );
+      router.push('/editor');
+    } catch (err) {
+      setDraftError(err instanceof Error ? err.message : 'AI 호출 실패');
+    } finally {
+      setIsDrafting(false);
+    }
+  };
 
   // URL 쿼리 파라미터에서 키워드 가져오기
   useEffect(() => {
@@ -614,20 +669,92 @@ function PromptGeneratorContent() {
 
             {/* Generated Prompt */}
             {generatedPrompt && (
-              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-                <div className="flex justify-between items-center mb-4">
+              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
+                <div className="flex justify-between items-center">
                   <h2 className="font-semibold text-slate-900 dark:text-slate-100">생성된 프롬프트</h2>
                   <button
                     onClick={copyToClipboard}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors shadow-sm"
+                    className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg transition-colors"
                   >
                     복사하기
                   </button>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700 max-h-80 overflow-y-auto">
                   <pre className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 font-sans">
                     {generatedPrompt}
                   </pre>
+                </div>
+
+                {/* AI Draft CTA */}
+                <div className="bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                        AI 초안 자동 생성
+                      </h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        {user
+                          ? '프롬프트를 복사할 필요 없이 Claude가 바로 블로그 초안을 작성해 에디터로 보내드려요.'
+                          : '로그인 시 Claude AI가 하루 2회 무료로 블로그 초안을 작성해드립니다.'}
+                      </p>
+                      {user && usageInfo && (
+                        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1.5 font-medium">
+                          오늘 남은 사용: {usageInfo.remaining} / {usageInfo.limit}회
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {draftError && (
+                    <div className="mb-3 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg text-xs text-red-700 dark:text-red-400">
+                      {draftError}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={generateDraft}
+                    disabled={isDrafting || (user !== null && usageInfo?.remaining === 0)}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all shadow-sm"
+                  >
+                    {isDrafting ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        AI가 초안 작성 중... (10~30초)
+                      </>
+                    ) : user ? (
+                      usageInfo?.remaining === 0 ? (
+                        '오늘 사용량 소진 — 내일 다시 이용해주세요'
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          AI 초안 생성하고 에디터로 이동
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        로그인하고 AI 초안 생성
+                      </>
+                    )}
+                  </button>
+
+                  {!configured && (
+                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-400 text-center">
+                      ⚠️ AI 기능이 아직 설정 중입니다
+                    </p>
+                  )}
                 </div>
               </div>
             )}

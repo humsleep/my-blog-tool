@@ -18,30 +18,19 @@ export default function Home() {
 
   const features = [
     {
-      title: '경쟁 블로그 분석',
-      description: '상위 노출 경쟁 블로그를 분석하여 차별화 전략을 수립하세요.',
-      href: '/competitor-analysis',
+      title: '인기 검색어',
+      description: '네이버 실시간 인기 검색어로 지금 뜨는 주제를 발견하세요.',
+      href: '/trending',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
         </svg>
       ),
-      color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50',
-    },
-    {
-      title: '포스팅 연구실',
-      description: '블로그 포스팅 관련 연구와 실험 결과를 공유합니다.',
-      href: '/lab',
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-      ),
-      color: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50',
+      color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50',
     },
     {
       title: '키워드 분석',
-      description: '검색량, 경쟁률, 문서 수를 한 번에 분석하고 추천합니다.',
+      description: '검색량·경쟁률·문서 수를 한 번에 분석합니다.',
       href: '/keyword-analysis',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,8 +40,19 @@ export default function Home() {
       color: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50',
     },
     {
+      title: '상위노출 분석',
+      description: '상위 노출 블로그 포스트의 패턴을 파악합니다.',
+      href: '/competitor-analysis',
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
+      color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50',
+    },
+    {
       title: '프롬프트 생성',
-      description: '키워드로 블로그 글 작성을 위한 최적의 프롬프트를 생성합니다.',
+      description: 'AI 글쓰기용 프롬프트를 자동으로 만들어드립니다.',
       href: '/prompt-generator',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,8 +62,8 @@ export default function Home() {
       color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50',
     },
     {
-      title: '금칙어 검사기',
-      description: '실시간 글자 수 세기와 금칙어 검사 기능을 갖춘 전문 에디터입니다.',
+      title: '금칙어·맞춤법',
+      description: '실시간 금칙어 검사와 맞춤법 교정을 제공합니다.',
       href: '/editor',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,23 +73,23 @@ export default function Home() {
       color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50',
     },
     {
-      title: '이미지 편집',
-      description: '이미지 리사이징과 모자이크 처리 등 간단한 편집 기능을 제공합니다.',
-      href: '/image-tools',
+      title: '이미지 검색 + 편집',
+      description: '무료 저작권 이미지를 찾고 크롭·모자이크까지 한 번에.',
+      href: '/image-search',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       ),
-      color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50',
+      color: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50',
     },
   ];
 
   const steps = [
-    { step: '01', title: '키워드 찾기', desc: '검색량·경쟁률을 분석합니다', href: '/keyword-analysis' },
-    { step: '02', title: '프롬프트 생성', desc: '최적의 글쓰기 프롬프트를 만듭니다', href: '/prompt-generator' },
-    { step: '03', title: '금칙어 검사', desc: '작성한 포스팅을 검토합니다', href: '/editor' },
-    { step: '04', title: '이미지 편집', desc: '첨부 이미지를 최적화합니다', href: '/image-tools' },
+    { step: '01', title: '키워드 찾기', desc: '검색량·경쟁률 분석', href: '/keyword-analysis' },
+    { step: '02', title: 'AI 초안 생성', desc: '프롬프트로 글 초안 작성', href: '/prompt-generator' },
+    { step: '03', title: '금칙어·맞춤법', desc: '저품질 위험 사전 차단', href: '/editor' },
+    { step: '04', title: '이미지 편집', desc: '블로그용 이미지 마무리', href: '/image-tools' },
   ];
 
   return (
@@ -118,7 +118,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-xl mx-auto mb-10">
-              키워드 분석부터 이미지 편집까지, 블로그 포스팅의 모든 과정을 한 곳에서
+              키워드 리서치부터 AI 초안 생성, 이미지 편집까지 한 곳에서
             </p>
 
             {/* Search Box */}

@@ -100,11 +100,94 @@ const SEO_GUIDE_CONTENT = `
 <p>이러한 전략을 꾸준히 적용하면, 단기적으로는 검색 엔진의 평가를 받고, 장기적으로는 독자들의 신뢰를 얻어 지속적인 트래픽을 확보할 수 있습니다. 2026년의 SEO는 더 이상 기술적 트릭이 아니라, 진정한 콘텐츠 품질과 사용자 경험에 기반한 경쟁입니다.</p>
 `;
 
+/** 간단한 마크다운 → HTML 변환 (AI 초안용) */
+function markdownToHtml(md: string): string {
+  const lines = md.split('\n');
+  const out: string[] = [];
+  let inList = false;
+
+  const inline = (s: string) =>
+    s
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`(.+?)`/g, '<code>$1</code>');
+
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    if (/^###\s+/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<h3>${inline(line.replace(/^###\s+/, ''))}</h3>`);
+    } else if (/^##\s+/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<h2>${inline(line.replace(/^##\s+/, ''))}</h2>`);
+    } else if (/^#\s+/.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<h1>${inline(line.replace(/^#\s+/, ''))}</h1>`);
+    } else if (/^[-*]\s+/.test(line)) {
+      if (!inList) { out.push('<ul>'); inList = true; }
+      out.push(`<li>${inline(line.replace(/^[-*]\s+/, ''))}</li>`);
+    } else if (line.trim() === '') {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push('<p><br></p>');
+    } else {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<p>${inline(line)}</p>`);
+    }
+  }
+  if (inList) out.push('</ul>');
+  return out.join('\n');
+}
+
 export default function EditorPage() {
   const [content, setContent] = useState('');
   const [replacements, setReplacements] = useState<Record<string, string>>({});
   const [isSeoGuideOpen, setIsSeoGuideOpen] = useState(false);
+  const [draftNotice, setDraftNotice] = useState<string | null>(null);
   const quillEditorRef = useRef<QuillEditorHandle | null>(null);
+
+  // AI 초안이 sessionStorage에 있으면 자동으로 불러오기 (Quill 초기화 대기)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const raw = sessionStorage.getItem('aiDraft');
+    if (!raw) return;
+
+    let parsed: { content: string; keyword?: string };
+    try {
+      parsed = JSON.parse(raw) as { content: string; keyword?: string };
+      if (!parsed.content) {
+        sessionStorage.removeItem('aiDraft');
+        return;
+      }
+    } catch {
+      sessionStorage.removeItem('aiDraft');
+      return;
+    }
+
+    const html = markdownToHtml(parsed.content);
+    sessionStorage.removeItem('aiDraft');
+    setDraftNotice(
+      parsed.keyword
+        ? `"${parsed.keyword}" 키워드로 생성한 AI 초안을 불러왔습니다. 내용을 다듬어 보세요.`
+        : 'AI 초안을 불러왔습니다. 내용을 다듬어 보세요.'
+    );
+
+    // Quill이 초기화되면 setContents로 넣기 (초기 value prop은 안 먹음)
+    let cancelled = false;
+    const tryLoad = (attempt = 0) => {
+      if (cancelled) return;
+      const quill = quillEditorRef.current?.getEditor();
+      if (quill && quill.clipboard && typeof quill.clipboard.convert === 'function') {
+        const delta = quill.clipboard.convert({ html });
+        quill.setContents(delta, 'silent');
+        const finalHtml = quillEditorRef.current?.getHTML();
+        if (finalHtml) setContent(finalHtml);
+      } else if (attempt < 40) {
+        setTimeout(() => tryLoad(attempt + 1), 100);
+      }
+    };
+    tryLoad();
+    return () => { cancelled = true; };
+  }, []);
 
   // Quill 모듈 설정
   const modules = useMemo(() => ({
@@ -285,9 +368,32 @@ export default function EditorPage() {
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프로페셔널 포스팅 에디터</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">실시간 금칙어 검사와 가독성 최적화 기능이 있는 전문적인 에디터입니다</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">포스팅 에디터</h1>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">실시간 금칙어 검사와 맞춤법 교정을 지원합니다</p>
         </div>
+
+        {draftNotice && (
+          <div className="mb-4 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
+            <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm text-indigo-900 dark:text-indigo-200 font-medium">{draftNotice}</p>
+              <p className="text-xs text-indigo-700 dark:text-indigo-400 mt-1">
+                [나의 경험 삽입] 플레이스홀더를 직접 작성한 경험으로 바꾸면 AI 티 없는 글이 됩니다.
+              </p>
+            </div>
+            <button
+              onClick={() => setDraftNotice(null)}
+              className="text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 flex-shrink-0"
+              aria-label="닫기"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Editor Section */}
