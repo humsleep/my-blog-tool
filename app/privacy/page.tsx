@@ -1,183 +1,242 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '개인정보처리방침 - Boheme PostLab',
-  description: 'Boheme PostLab의 개인정보처리방침입니다.',
+  title: '개인정보처리방침 - Boheme BlogLab',
+  description: 'Boheme BlogLab의 개인정보처리방침입니다. 수집하는 개인정보 항목, 처리 목적, 제3자 제공, 정보주체의 권리 등을 안내합니다.',
 };
 
 export default function PrivacyPage() {
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-md border border-gray-100 p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">개인정보처리방침</h1>
-          
-          <div className="prose prose-sm max-w-none text-gray-700 space-y-6">
-            <p className="text-sm text-gray-500 mb-6">
-              <strong>최종 수정일:</strong> 2026년 1월 27일
-            </p>
+        <div className="bg-white dark:bg-slate-800/80 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sm:p-10">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">개인정보처리방침</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-10">
+            <strong>최종 수정일:</strong> 2026년 4월 23일 &middot; <strong>시행일:</strong> 2026년 4월 23일
+          </p>
+
+          <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 space-y-10">
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">1. 개인정보 수집 및 처리 원칙</h2>
-              <p className="mb-4">
-                Boheme PostLab(이하 "본 사이트")는 <strong>회원가입 기능이 없는 서비스</strong>로, 
-                사용자로부터 자발적으로 제공받는 개인정보를 수집하지 않습니다. 
-                본 사이트는 서비스 이용을 위해 회원가입이나 로그인이 필요하지 않으며, 
-                별도의 개인정보 입력 없이 모든 서비스를 이용하실 수 있습니다.
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">1. 총칙</h2>
+              <p className="leading-relaxed">
+                Boheme BlogLab(이하 &ldquo;서비스&rdquo;)은 이용자의 개인정보를 매우 중요하게 생각하며, &ldquo;개인정보 보호법&rdquo; 등
+                관련 법령을 준수하고 있습니다. 본 개인정보처리방침은 서비스가 수집하는 개인정보의 항목, 처리 목적, 보유 기간,
+                제3자 제공 및 처리위탁, 이용자의 권리 등을 안내하기 위해 마련되었습니다.
               </p>
-              <p className="mb-4">
-                다만, 다음의 경우에 한하여 최소한의 정보를 처리할 수 있습니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>문의사항 접수 시:</strong> 이메일 주소 (선택사항, 문의사항 응대를 위한 목적)</li>
-                <li><strong>서비스 제공을 위한 기술적 정보:</strong> IP 주소, 쿠키 등 (자동 수집, 서비스 운영 및 보안을 위한 목적)</li>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">2. 수집하는 개인정보 항목 및 수집 방법</h2>
+              <p className="mb-3">서비스는 다음과 같은 개인정보를 수집합니다.</p>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">가. 회원가입(Google 소셜 로그인) 시</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>필수: 이메일 주소, 구글 계정 고유 식별자(sub), 이름</li>
+                <li>선택: 프로필 이미지 URL</li>
+                <li>수집 방법: Google OAuth 2.0 인증을 통한 제공</li>
+              </ul>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">나. AI 초안 생성 기능 이용 시</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>이용자가 입력한 프롬프트 내용 및 키워드</li>
+                <li>일일 사용 횟수 및 이용 날짜</li>
+                <li>수집 방법: 서비스 내 &ldquo;AI 초안 생성&rdquo; 기능 이용 시 자동 기록</li>
+              </ul>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">다. 문의사항 접수 시</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>이메일 주소, 문의 내용</li>
+                <li>수집 방법: 이메일을 통한 자발적 제공</li>
+              </ul>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">라. 자동 수집 항목</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>IP 주소, 쿠키, 접속 일시, 서비스 이용 기록, User-Agent 등 기기 정보</li>
+                <li>수집 방법: 서비스 이용 과정에서 자동 생성&middot;수집</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">2. 개인정보의 처리 및 보유기간</h2>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">3. 개인정보의 처리 목적</h2>
+              <p className="mb-3">수집된 개인정보는 다음의 목적을 위해서만 처리되며, 이용 목적이 변경될 경우 사전 동의를 구합니다.</p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li><strong>회원 식별 및 인증:</strong> Google 계정을 통한 로그인 처리 및 본인 확인</li>
+                <li><strong>서비스 제공:</strong> AI 초안 생성 기능 제공, 일일 무료 사용 횟수 관리</li>
+                <li><strong>부정 이용 방지:</strong> 사용량 한도 초과 및 비정상적 접근 차단</li>
+                <li><strong>문의사항 응대:</strong> 이용자 문의에 대한 회신</li>
+                <li><strong>서비스 개선:</strong> 접속 로그 및 이용 통계 분석</li>
+                <li><strong>법령상 의무 이행:</strong> 관계 법령에 따른 보존 및 조사 협조</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">4. 개인정보의 보유 및 이용 기간</h2>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li><strong>회원 정보:</strong> 회원 탈퇴 시까지. 회원 탈퇴 요청을 받은 즉시 관련 데이터를 파기합니다.</li>
+                <li><strong>AI 초안 생성 사용 기록(일일 카운트):</strong> 수집일로부터 90일간 보유 후 파기</li>
+                <li><strong>이용자가 입력한 프롬프트 내용:</strong> 별도 저장하지 않으며, AI 초안 생성 응답 직후 폐기(처리위탁사 내부 로그 제외)</li>
+                <li><strong>접속 로그, IP 주소 등:</strong> 통신비밀보호법에 따라 3개월간 보관 후 파기</li>
+                <li><strong>문의 내역:</strong> 문의 응대 완료 후 1년간 보관 후 파기</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">5. 개인정보의 제3자 제공</h2>
               <p>
-                본 사이트는 회원가입 기능이 없으므로, 사용자로부터 직접 수집하는 개인정보가 없습니다. 
-                다만, 다음의 경우에 한하여 정보를 처리하며, 목적 달성 후 즉시 파기합니다:
+                서비스는 이용자의 개인정보를 제3자에게 제공하지 않습니다. 다만, 아래의 경우는 예외로 합니다.
               </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>이메일 주소:</strong> 문의사항 접수 시에만 수집되며, 문의사항 처리 완료 후 즉시 파기합니다. (단, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관)</li>
-                <li><strong>기술적 정보 (IP 주소, 쿠키 등):</strong> 서비스 제공 및 보안을 위해 자동으로 수집되며, 서비스 제공 기간 동안 보관 후 파기합니다.</li>
+              <ul className="list-disc pl-6 mt-3 space-y-1.5">
+                <li>이용자가 사전에 동의한 경우</li>
+                <li>법령의 규정에 의거하거나 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">3. 처리하는 정보의 항목</h2>
-              <p className="mb-4">
-                본 사이트는 <strong>회원가입 기능이 없으므로</strong> 사용자로부터 직접 수집하는 개인정보가 없습니다. 
-                서비스 이용을 위해 이름, 전화번호, 주소 등의 개인정보를 요구하지 않습니다.
-              </p>
-              <p className="mb-4">다만, 서비스 제공 및 운영을 위해 다음의 정보가 자동으로 수집될 수 있습니다:</p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>자발적 제공 정보:</strong> 없음 (회원가입 없음)</li>
-                <li><strong>선택적 제공 정보:</strong> 이메일 주소 (문의사항 접수 시에만, 선택사항)</li>
-                <li><strong>자동 수집 정보:</strong> 
-                  <ul className="list-disc pl-6 mt-2 space-y-1">
-                    <li>IP 주소 (서비스 제공 및 보안을 위한 목적)</li>
-                    <li>쿠키 (서비스 이용 통계 및 사용자 환경 설정 저장)</li>
-                    <li>서비스 이용 기록 및 방문 기록 (서비스 개선을 위한 통계 목적)</li>
-                  </ul>
-                </li>
-              </ul>
-              <p className="mt-4 text-sm text-gray-600">
-                ※ 위 자동 수집 정보는 개인을 식별할 수 없는 기술적 정보이며, 서비스 제공 및 보안을 위한 최소한의 정보입니다.
-              </p>
-            </section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">6. 개인정보 처리 위탁</h2>
+              <p className="mb-3">서비스는 원활한 운영을 위해 다음의 업체에 개인정보 처리를 위탁하고 있습니다.</p>
 
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">4. 개인정보의 제3자 제공</h2>
-              <p>
-                본 사이트는 원칙적으로 정보주체의 개인정보를 제3자에게 제공하지 않습니다. 다만, 다음의 경우에는 예외로 합니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li>정보주체가 사전에 동의한 경우</li>
-                <li>법령의 규정에 의거하거나, 수사 목적으로 법령에 정해진 절차와 방법에 따라 수사기관의 요구가 있는 경우</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">5. 개인정보처리의 위탁</h2>
-              <p>
-                본 사이트는 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>호스팅 서비스:</strong> Vercel Inc. (서버 운영 및 관리)</li>
-                <li><strong>분석 서비스:</strong> Google Analytics (서비스 이용 통계 분석)</li>
-              </ul>
-              <p className="mt-4">
-                위탁업체의 개인정보 처리 관련 지시엄수, 비밀유지, 제3자 제공 금지 등에 관한 사항을 계약서 등 문서에 명시하고, 수시로 감독하고 있습니다.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">6. 정보주체의 권리·의무 및 행사방법</h2>
-              <p>
-                정보주체는 다음과 같은 권리를 행사할 수 있습니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li>개인정보 열람 요구</li>
-                <li>개인정보 정정·삭제 요구</li>
-                <li>개인정보 처리정지 요구</li>
-              </ul>
-              <p className="mt-4">
-                위 권리 행사는 본 사이트에 대해 서면, 전자우편 등을 통하여 하실 수 있으며, 본 사이트는 이에 대해 지체 없이 조치하겠습니다.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">7. 개인정보의 파기</h2>
-              <p>
-                본 사이트는 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다.
-              </p>
-              <p className="mt-4">
-                파기의 절차 및 방법은 다음과 같습니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>파기절차:</strong> 불필요한 개인정보 및 개인정보파일은 내부 방침 및 기타 관련 법령에 따라 파기</li>
-                <li><strong>파기방법:</strong> 전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용하여 삭제</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">8. 쿠키의 운영 및 거부</h2>
-              <p>
-                본 사이트는 서비스 제공 및 개선을 위해 쿠키를 사용할 수 있습니다. 쿠키는 웹사이트를 방문할 때 사용자의 컴퓨터에 저장되는 작은 텍스트 파일입니다.
-              </p>
-              <p className="mt-4">
-                쿠키 사용 목적:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li>서비스 이용 통계 분석 (Vercel Analytics)</li>
-                <li>사용자 환경 설정 저장</li>
-                <li>서비스 품질 개선</li>
-              </ul>
-              <p className="mt-4">
-                사용자는 쿠키 설치에 대한 선택권을 가지고 있으며, 웹브라우저 설정을 통해 쿠키 허용, 쿠키 차단 등의 설정을 할 수 있습니다. 
-                다만, 쿠키 설치를 거부할 경우 일부 서비스 이용에 어려움이 있을 수 있습니다.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">9. 개인정보 보호책임자</h2>
-              <p>
-                본 사이트는 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.
-              </p>
-              <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                <p><strong>개인정보 보호책임자</strong></p>
-                <p>이메일: boheme88@naver.com</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead className="bg-slate-100 dark:bg-slate-700/50">
+                    <tr>
+                      <th className="border border-slate-200 dark:border-slate-600 px-3 py-2 text-left font-semibold">수탁업체</th>
+                      <th className="border border-slate-200 dark:border-slate-600 px-3 py-2 text-left font-semibold">위탁 업무 내용</th>
+                      <th className="border border-slate-200 dark:border-slate-600 px-3 py-2 text-left font-semibold">보유&middot;이용 기간</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Google LLC</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">OAuth 2.0 인증 처리</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">로그인 처리 완료 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Supabase, Inc.</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">사용자 인증 세션 관리 및 데이터베이스 운영</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">위탁 계약 종료 시 또는 회원 탈퇴 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Anthropic, PBC</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">AI 초안 생성 (Claude API 호출)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지 (Anthropic 자체 정책에 따라 일정 기간 로그 보관 가능)</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Vercel, Inc.</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">웹사이트 호스팅 및 접속 로그 처리</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">위탁 계약 종료 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">네이버 주식회사</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">키워드&middot;블로그&middot;뉴스 검색 API 호출 (개인정보 미전송)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <p className="mt-4">
-                정보주체께서는 본 사이트의 서비스를 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만처리, 피해구제 등에 관한 사항을 개인정보 보호책임자에게 문의하실 수 있습니다.
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">7. 개인정보의 국외 이전</h2>
+              <p className="mb-3">
+                서비스 이용 과정에서 일부 개인정보가 국외에 위치한 서버로 이전될 수 있습니다.
+              </p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li><strong>Google LLC:</strong> 미국 (OAuth 인증 처리)</li>
+                <li><strong>Supabase, Inc.:</strong> 미국 등 (서비스 선택 리전에 따라 보관 위치 결정)</li>
+                <li><strong>Anthropic, PBC:</strong> 미국 (Claude API 처리)</li>
+                <li><strong>Vercel, Inc.:</strong> 글로벌 (Edge Network)</li>
+              </ul>
+              <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+                이전 항목: 이메일, 이름, 프로필 이미지, 프롬프트 내용, IP 주소 등 &middot;
+                이전 방법: HTTPS 암호화 통신 &middot;
+                이전받는 자의 개인정보 보호책임자: 각 사 개인정보처리방침 참조
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">10. 개인정보 처리방침 변경</h2>
-              <p>
-                이 개인정보처리방침은 법령·정책 또는 보안기술의 변경에 따라 내용의 추가·삭제 및 수정이 있을 시에는 변경사항의 시행 7일 전부터 본 사이트의 공지사항을 통하여 고지할 것입니다.
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">8. 이용자 및 법정대리인의 권리와 행사 방법</h2>
+              <p className="mb-3">이용자는 언제든지 다음 권리를 행사할 수 있습니다.</p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>개인정보 열람 요청</li>
+                <li>개인정보 정정&middot;삭제 요청</li>
+                <li>개인정보 처리 정지 요청</li>
+                <li>회원 탈퇴 요청 (로그인 후 이메일로 요청)</li>
+              </ul>
+              <p className="mt-3">
+                권리 행사는 이메일(
+                <a href="mailto:boheme88@naver.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">boheme88@naver.com</a>
+                )을 통해 요청할 수 있으며, 서비스는 지체 없이 조치합니다.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">11. 개인정보의 안전성 확보조치</h2>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">9. 개인정보의 파기</h2>
               <p>
-                본 사이트는 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다:
+                보유기간 만료, 처리 목적 달성, 이용자의 탈퇴 요청 등 개인정보가 불필요하게 되었을 때 지체 없이 파기합니다.
+                전자적 파일 형태의 정보는 복구 및 재생할 수 없는 기술적 방법을 사용하여 삭제하며,
+                종이에 출력된 개인정보는 분쇄기로 분쇄하거나 소각합니다.
               </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li>관리적 조치: 내부관리계획 수립·시행, 정기적 직원 교육 등</li>
-                <li>기술적 조치: 개인정보처리시스템 등의 접근권한 관리, 접근통제시스템 설치, 고유식별정보 등의 암호화, 보안프로그램 설치</li>
-                <li>물리적 조치: 전산실, 자료보관실 등의 접근통제</li>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">10. 쿠키(Cookie)의 사용</h2>
+              <p className="mb-3">
+                서비스는 이용자에게 최적화된 정보 제공 및 로그인 세션 유지를 위해 쿠키를 사용합니다.
+              </p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li><strong>필수 쿠키:</strong> Supabase 인증 세션 쿠키 (로그인 유지)</li>
+                <li><strong>분석 쿠키:</strong> Vercel Analytics를 통한 익명 방문 통계</li>
+              </ul>
+              <p className="mt-3 text-sm">
+                이용자는 브라우저 설정에서 쿠키 저장을 거부할 수 있으나, 이 경우 로그인 기반 기능(AI 초안 생성 등)의 이용이 제한될 수 있습니다.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">11. 개인정보의 안전성 확보 조치</h2>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>비밀번호는 수집하지 않으며, 인증은 Google OAuth에 위임됩니다.</li>
+                <li>데이터베이스 접근은 RLS(Row Level Security)로 본인 데이터만 접근 가능하도록 제한됩니다.</li>
+                <li>모든 통신은 HTTPS(TLS)로 암호화됩니다.</li>
+                <li>API 키 등 민감 정보는 서버 환경 변수로만 관리되며, 클라이언트에 노출되지 않습니다.</li>
               </ul>
             </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">12. 개인정보 보호책임자</h2>
+              <div className="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 rounded-lg p-5 space-y-1.5">
+                <p><strong>개인정보 보호책임자:</strong> Boheme BlogLab 운영자</p>
+                <p><strong>이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">boheme88@naver.com</a></p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 pt-2">
+                  이용자는 서비스를 이용하면서 발생한 개인정보 보호 관련 문의, 불만처리, 피해구제 등을 위 이메일로 요청할 수 있으며,
+                  서비스는 이용자의 문의에 대해 지체 없이 답변 및 처리해드립니다.
+                </p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">13. 권익침해 구제방법</h2>
+              <p className="mb-3">개인정보 침해로 인한 신고 및 상담은 아래 기관에 문의하실 수 있습니다.</p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>개인정보분쟁조정위원회: (국번없이) 1833-6972 &middot; <a href="https://www.kopico.go.kr" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">kopico.go.kr</a></li>
+                <li>개인정보침해신고센터: (국번없이) 118 &middot; <a href="https://privacy.kisa.or.kr" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">privacy.kisa.or.kr</a></li>
+                <li>대검찰청 사이버수사과: (국번없이) 1301 &middot; <a href="https://www.spo.go.kr" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">spo.go.kr</a></li>
+                <li>경찰청 사이버수사국: (국번없이) 182 &middot; <a href="https://ecrm.police.go.kr" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">ecrm.police.go.kr</a></li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">14. 개인정보처리방침의 변경</h2>
+              <p>
+                본 방침은 법령&middot;정책 또는 보안기술의 변경에 따라 내용의 추가&middot;삭제 및 수정이 있을 수 있으며,
+                변경 시 홈페이지 공지사항을 통해 사전에 고지합니다. 중대한 변경이 있는 경우 최소 7일 전에 공지합니다.
+              </p>
+            </section>
+
           </div>
         </div>
       </div>
     </div>
   );
 }
-
