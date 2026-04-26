@@ -21,75 +21,87 @@ export default function Home() {
       title: '인기 검색어',
       description: '네이버 실시간 인기 검색어로 지금 뜨는 주제를 발견하세요.',
       href: '/trending',
+      group: '리서치',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
         </svg>
       ),
-      color: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50',
     },
     {
       title: '키워드 분석',
       description: '검색량·경쟁률·문서 수를 한 번에 분석합니다.',
       href: '/keyword-analysis',
+      group: '리서치',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       ),
-      color: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50',
     },
     {
       title: '상위노출 분석',
       description: '상위 노출 블로그 포스트의 패턴을 파악합니다.',
       href: '/competitor-analysis',
+      group: '리서치',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       ),
-      color: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50',
     },
     {
       title: '프롬프트 생성',
-      description: 'AI 글쓰기용 프롬프트를 자동으로 만들어드립니다.',
+      description: 'AI 글쓰기용 프롬프트를 자동으로 만들어드립니다. (무료 무제한)',
       href: '/prompt-generator',
+      group: '글쓰기',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
         </svg>
       ),
-      color: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50',
+    },
+    {
+      title: 'AI 글쓰기',
+      description: 'Claude AI가 완성된 블로그 글을 작성합니다. HTML·마크다운·일반 3가지 포맷.',
+      href: '/ai-writer',
+      group: '글쓰기',
+      badge: 'NEW',
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
     },
     {
       title: '금칙어·맞춤법',
       description: '실시간 금칙어 검사와 맞춤법 교정을 제공합니다.',
       href: '/editor',
+      group: '글쓰기',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
         </svg>
       ),
-      color: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50',
     },
     {
       title: '이미지 검색 + 편집',
       description: '무료 저작권 이미지를 찾고 크롭·모자이크까지 한 번에.',
       href: '/image-search',
+      group: '이미지',
       icon: (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       ),
-      color: 'text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/50',
     },
   ];
 
   const steps = [
     { step: '01', title: '키워드 찾기', desc: '검색량·경쟁률 분석', href: '/keyword-analysis' },
-    { step: '02', title: 'AI 초안 생성', desc: '프롬프트로 글 초안 작성', href: '/prompt-generator' },
-    { step: '03', title: '금칙어·맞춤법', desc: '저품질 위험 사전 차단', href: '/editor' },
-    { step: '04', title: '이미지 편집', desc: '블로그용 이미지 마무리', href: '/image-tools' },
+    { step: '02', title: '프롬프트 생성', desc: '맞춤형 AI 지시문', href: '/prompt-generator' },
+    { step: '03', title: 'AI 글쓰기', desc: 'Claude가 완성 초안', href: '/ai-writer' },
+    { step: '04', title: '금칙어·이미지', desc: '발행 전 마무리', href: '/editor' },
   ];
 
   return (
@@ -220,10 +232,18 @@ export default function Home() {
               <Link
                 key={feature.href}
                 href={feature.href}
-                className="group bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl p-5 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-lg dark:hover:shadow-slate-900/50 transition-all"
+                className="group card p-5 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all relative"
               >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${feature.color}`}>
+                {feature.badge && (
+                  <span className="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-bold tracking-wider">
+                    {feature.badge}
+                  </span>
+                )}
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
                   {feature.icon}
+                </div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                  {feature.group}
                 </div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {feature.title}

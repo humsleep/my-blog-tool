@@ -40,12 +40,13 @@
 .dark {
   --bg-base:        #0f172a;
   --bg-surface:     #1e293b;
-  --bg-elevated:    #1e293b;
+  --bg-elevated:    #273548;
   --bg-overlay:     rgba(15,23,42,0.85);
 
+  /* WCAG AA: text-secondary 대비 4.5:1+ 보장 (#a3afc4 vs #1e293b ≈ 4.7:1) */
   --text-primary:   #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted:     #64748b;
+  --text-secondary: #a3afc4;
+  --text-muted:     #7e8aa0;
 
   --border:         #334155;
   --border-subtle:  #1e293b;
@@ -53,7 +54,11 @@
   --accent:         #818cf8;
   --accent-hover:   #6366f1;
   --accent-subtle:  #1e1b4b;
-  --accent-text:    #a5b4fc;
+  --accent-text:    #c7d2fe;
+
+  --danger:         #f87171;
+  --success:        #34d399;
+  --warning:        #fbbf24;
 
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
@@ -122,26 +127,86 @@ body {
 }
 .input-base:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.15);
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.25);
+}
+.dark .input-base:focus {
+  box-shadow: 0 0 0 3px rgb(129 140 248 / 0.35);
 }
 
-/* ── Btn primary ── */
+/* ── Buttons (variant: primary | secondary | ghost | danger) ── */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.1s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+.btn-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-base:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.btn-base:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.35);
+}
+
+/* sizes */
+.btn-sm { padding: 0.375rem 0.875rem; font-size: 0.8125rem; min-height: 32px; }
+.btn-md { padding: 0.625rem 1.25rem; font-size: 0.875rem; min-height: 40px; }
+.btn-lg { padding: 0.875rem 1.5rem; font-size: 1rem; min-height: 48px; }
+
+/* primary */
 .btn-primary {
   background-color: var(--accent);
   color: #ffffff;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  padding: 0.625rem 1.25rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   box-shadow: var(--shadow-sm);
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background-color: var(--accent-hover);
   box-shadow: var(--shadow-md);
 }
-.btn-primary:active {
-  transform: scale(0.98);
+
+/* secondary (bordered surface) */
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-elevated);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* ghost (transparent) */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+/* danger */
+.btn-danger {
+  background-color: var(--danger);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 /* ── Scrollbar (dark mode) ── */

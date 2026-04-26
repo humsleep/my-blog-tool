@@ -1642,8 +1642,8 @@ export default function ImageToolsPage() {
 
         {/* 다음 단계 */}
         <FlowNav
-          currentStep={7}
-          totalSteps={7}
+          currentStep={8}
+          totalSteps={8}
           stepLabel="이미지 편집"
           note="포스팅 준비가 거의 완료되었습니다. 다음 포스팅을 위해 새로운 키워드를 찾아보세요."
           actions={[

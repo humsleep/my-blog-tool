@@ -285,7 +285,7 @@ function CompetitorAnalysisContent() {
         {/* 다음 단계 */}
         <FlowNav
           currentStep={3}
-          totalSteps={7}
+          totalSteps={8}
           stepLabel="상위노출 분석"
           note={analyzedKeyword
             ? `"${analyzedKeyword}" 키워드로 바로 프롬프트를 생성할 수 있습니다.`

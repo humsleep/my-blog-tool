@@ -602,7 +602,7 @@ function KeywordAnalysisContent() {
         {keywordData.length > 0 && (
           <FlowNav
             currentStep={2}
-            totalSteps={7}
+            totalSteps={8}
             stepLabel="키워드분석"
             note={`"${sortedKeywords[0].keyword}" 키워드로 이어서 진행할 수 있습니다.`}
             actions={[

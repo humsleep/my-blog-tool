@@ -55,6 +55,14 @@ export default function PrivacyPage() {
                 <li>IP 주소, 쿠키, 접속 일시, 서비스 이용 기록, User-Agent 등 기기 정보</li>
                 <li>수집 방법: 서비스 이용 과정에서 자동 생성&middot;수집</li>
               </ul>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">마. 비로그인 이용자의 일일 한도 적용을 위한 IP 해시</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>비로그인 상태에서 AI 글쓰기 기능을 이용하는 경우, 일일 무료 한도(1회) 적용을 위해 접속 IP를 SHA-256 알고리즘으로 단방향 해시한 값과 이용 일자를 저장합니다.</li>
+                <li>원본 IP 주소는 별도로 저장되지 않으며, 해시 값으로부터 원본 IP를 복원할 수 없습니다.</li>
+                <li>보유 기간: 30일 (이후 자동 삭제). 일일 한도 초기화는 매일 자정(KST) 기준으로 새 row가 생성되어 자연스럽게 이루어집니다.</li>
+                <li>로그인 이용자에게는 적용되지 않으며, 회원 ID 기준으로 한도가 관리됩니다.</li>
+              </ul>
             </section>
 
             <section>

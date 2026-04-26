@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@/app/lib/supabase/server';
+import { getAdminClient } from '@/app/lib/supabase/admin';
+import { getClientIp, hashIp } from '@/app/lib/security/ip-hash';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
-const DAILY_LIMIT = 2;
+const LIMITS = { authed: 5, anon: 1 } as const;
 const MODEL = 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `당신은 네이버 블로그 상위 노출 전문 글쓰기 도우미입니다.
@@ -19,6 +21,73 @@ const SYSTEM_PROMPT = `당신은 네이버 블로그 상위 노출 전문 글쓰
 6. HTML이 아닌 마크다운 형식으로 작성 (네이버 에디터에 붙여넣기 쉽도록)
 7. 개인적 경험이 포함될 만한 부분은 "[나의 경험 삽입]" 같은 placeholder로 표시`;
 
+function today(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+interface UsageState {
+  used: number;
+  limit: number;
+  authenticated: boolean;
+}
+
+async function getAuthedUsage(userId: string): Promise<UsageState | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('ai_draft_usage')
+    .select('count')
+    .eq('user_id', userId)
+    .eq('date', today())
+    .maybeSingle();
+  return {
+    used: data?.count ?? 0,
+    limit: LIMITS.authed,
+    authenticated: true,
+  };
+}
+
+async function getAnonUsage(ipHash: string): Promise<UsageState | null> {
+  const admin = getAdminClient();
+  if (!admin) return null;
+  const { data } = await admin
+    .from('anon_draft_usage')
+    .select('count')
+    .eq('ip_hash', ipHash)
+    .eq('date', today())
+    .maybeSingle();
+  return {
+    used: data?.count ?? 0,
+    limit: LIMITS.anon,
+    authenticated: false,
+  };
+}
+
+async function incrementAuthedUsage(userId: string, newCount: number) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('ai_draft_usage')
+    .upsert(
+      { user_id: userId, date: today(), count: newCount },
+      { onConflict: 'user_id,date' }
+    );
+  if (error) console.error('ai_draft_usage upsert failed:', error);
+}
+
+async function incrementAnonUsage(ipHash: string, newCount: number) {
+  const admin = getAdminClient();
+  if (!admin) {
+    console.error('Admin client unavailable; cannot record anon usage.');
+    return;
+  }
+  const { error } = await admin
+    .from('anon_draft_usage')
+    .upsert(
+      { ip_hash: ipHash, date: today(), count: newCount },
+      { onConflict: 'ip_hash,date' }
+    );
+  if (error) console.error('anon_draft_usage upsert failed:', error);
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -29,32 +98,39 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    return NextResponse.json(
-      { error: '로그인이 필요합니다.', code: 'UNAUTHENTICATED' },
-      { status: 401 }
-    );
+  let usage: UsageState | null;
+  let ipHash: string | null = null;
+
+  if (user) {
+    usage = await getAuthedUsage(user.id);
+  } else {
+    const ip = getClientIp(request);
+    ipHash = hashIp(ip);
+    usage = await getAnonUsage(ipHash);
+    if (!usage) {
+      return NextResponse.json(
+        { error: '비로그인 사용자 추적 시스템이 설정되지 않았습니다. 로그인 후 이용해주세요.', code: 'ADMIN_NOT_CONFIGURED' },
+        { status: 503 }
+      );
+    }
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  if (!usage) {
+    return NextResponse.json({ error: '사용량 조회에 실패했습니다.' }, { status: 500 });
+  }
 
-  const { data: usage } = await supabase
-    .from('ai_draft_usage')
-    .select('count')
-    .eq('user_id', user.id)
-    .eq('date', today)
-    .maybeSingle();
-
-  const usedCount = usage?.count ?? 0;
-  if (usedCount >= DAILY_LIMIT) {
+  if (usage.used >= usage.limit) {
     return NextResponse.json(
       {
-        error: `하루 무료 생성 한도(${DAILY_LIMIT}회)를 모두 사용했습니다. 내일 다시 시도해주세요.`,
+        error: user
+          ? `오늘 무료 생성 한도(${usage.limit}회)를 모두 사용했습니다. 내일 다시 시도해주세요.`
+          : `비로그인 일일 한도(${usage.limit}회)를 사용했습니다. 로그인하면 하루 ${LIMITS.authed}회까지 가능합니다.`,
         code: 'RATE_LIMITED',
-        used: usedCount,
-        limit: DAILY_LIMIT,
+        used: usage.used,
+        limit: usage.limit,
+        authenticated: usage.authenticated,
       },
       { status: 429 }
     );
@@ -88,9 +164,7 @@ export async function POST(request: Request) {
           cache_control: { type: 'ephemeral' },
         },
       ],
-      messages: [
-        { role: 'user', content: prompt },
-      ],
+      messages: [{ role: 'user', content: prompt }],
     });
 
     const textBlock = response.content.find((b) => b.type === 'text');
@@ -100,25 +174,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'AI가 빈 응답을 반환했습니다. 다시 시도해주세요.' }, { status: 502 });
     }
 
-    // Increment usage count (upsert)
-    const { error: upsertError } = await supabase
-      .from('ai_draft_usage')
-      .upsert(
-        { user_id: user.id, date: today, count: usedCount + 1 },
-        { onConflict: 'user_id,date' }
-      );
-
-    if (upsertError) {
-      console.error('ai_draft_usage upsert failed:', upsertError);
+    const newCount = usage.used + 1;
+    if (user) {
+      await incrementAuthedUsage(user.id, newCount);
+    } else if (ipHash) {
+      await incrementAnonUsage(ipHash, newCount);
     }
 
     return NextResponse.json({
       draft: draftText,
       keyword: keyword ?? null,
+      authenticated: usage.authenticated,
       usage: {
-        used: usedCount + 1,
-        limit: DAILY_LIMIT,
-        remaining: Math.max(0, DAILY_LIMIT - usedCount - 1),
+        used: newCount,
+        limit: usage.limit,
+        remaining: Math.max(0, usage.limit - newCount),
       },
     });
   } catch (err) {
@@ -128,30 +198,42 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (user) {
+    const usage = await getAuthedUsage(user.id);
+    if (!usage) {
+      return NextResponse.json({ authenticated: true, used: 0, limit: LIMITS.authed, remaining: LIMITS.authed });
+    }
     return NextResponse.json({
-      authenticated: false,
-      limit: DAILY_LIMIT,
+      authenticated: true,
+      used: usage.used,
+      limit: usage.limit,
+      remaining: Math.max(0, usage.limit - usage.used),
     });
   }
 
-  const today = new Date().toISOString().slice(0, 10);
-  const { data: usage } = await supabase
-    .from('ai_draft_usage')
-    .select('count')
-    .eq('user_id', user.id)
-    .eq('date', today)
-    .maybeSingle();
+  const ip = getClientIp(request);
+  const ipHash = hashIp(ip);
+  const usage = await getAnonUsage(ipHash);
 
-  const used = usage?.count ?? 0;
+  if (!usage) {
+    return NextResponse.json({
+      authenticated: false,
+      used: 0,
+      limit: LIMITS.anon,
+      remaining: LIMITS.anon,
+      authedLimit: LIMITS.authed,
+    });
+  }
+
   return NextResponse.json({
-    authenticated: true,
-    used,
-    limit: DAILY_LIMIT,
-    remaining: Math.max(0, DAILY_LIMIT - used),
+    authenticated: false,
+    used: usage.used,
+    limit: usage.limit,
+    remaining: Math.max(0, usage.limit - usage.used),
+    authedLimit: LIMITS.authed,
   });
 }

@@ -246,8 +246,8 @@ export default function ImageSearchPage() {
         </div>
 
         <FlowNav
-          currentStep={6}
-          totalSteps={7}
+          currentStep={7}
+          totalSteps={8}
           stepLabel="이미지 검색"
           note="이미지 카드의 '편집기로 보내기' 버튼을 누르면 편집 도구로 바로 전송됩니다."
           actions={[

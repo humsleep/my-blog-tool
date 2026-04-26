@@ -15,11 +15,12 @@
 - **배포**: Vercel (자동 배포, main 브랜치 → 프로덕션)
 - **운영 도메인**: bohemebloglab.com (추정 — Vercel 기본 도메인일 수도 있음, 확인 필요)
 
-### 사용자 워크플로우 (7단계 선형 흐름)
+### 사용자 워크플로우 (8단계 선형 흐름)
 ```
-1. 인기검색어 → 2. 키워드분석 → 3. 상위노출 분석 → 4. 프롬프트 생성
-                                                  ↘ AI 초안 생성 (회원, 일일 2회)
-5. 금칙어·맞춤법 → 6. 이미지 검색 → 7. 이미지 편집
+1. 인기검색어 → 2. 키워드분석 → 3. 상위노출 분석
+→ 4. 프롬프트 생성(무료 무제한, AI API 미사용)
+→ 5. AI 글쓰기 (비로그인 1회/일, 로그인 5회/일 - Claude API)
+→ 6. 금칙어·맞춤법 → 7. 이미지 검색 → 8. 이미지 편집
 ```
 
 ---
@@ -32,7 +33,7 @@
 | 스타일 | Tailwind CSS v4 |
 | 에디터 | Quill 2.x (dynamic import, `app/editor/QuillEditor.tsx`) |
 | 인증 | Supabase Auth (Google OAuth만 사용) |
-| DB | Supabase Postgres (`ai_draft_usage` 테이블 1개, RLS 적용) |
+| DB | Supabase Postgres (`ai_draft_usage`, `anon_draft_usage` 2개 테이블, RLS 적용) |
 | AI | Anthropic Claude Sonnet 4.6 (`claude-sonnet-4-6`), prompt caching 사용 |
 | 외부 API | 네이버 검색광고/오픈API, Pexels, Unsplash, Wikipedia, LanguageTool |
 | 호스팅 | Vercel + Vercel Analytics |
@@ -114,11 +115,12 @@ SETUP.md                     # Supabase + Google OAuth + Anthropic 셋업 가이
 - "경쟁분석"은 "**상위노출 분석**"으로 리네이밍 (라우트는 `/competitor-analysis` 유지)
 
 ### AI 초안 정책
-- 비로그인: "로그인하고 AI 초안 생성" 버튼 → `/login`으로 이동
-- 로그인: "AI 초안 생성하고 에디터로 이동" → Claude 호출 → 마크다운→HTML 변환 → 에디터 자동 로드
-- **일일 2회 무료** (`DAILY_LIMIT = 2` in `app/api/ai-draft/route.ts`)
+- **신규 페이지**: `/ai-writer` — Claude API로 완성된 글을 받아 HTML/마크다운/일반 3가지 포맷 탭으로 표시 + 복사 버튼
+- 한도: 비로그인 **1회/일** (IP 해시 기반), 로그인 **5회/일** (`LIMITS = { authed: 5, anon: 1 }`)
+- 비로그인 IP 해시: SHA-256(salt + IP). 평문 IP 미저장. 30일 후 자동 삭제. 환경변수 `IP_HASH_SALT` + `SUPABASE_SERVICE_ROLE_KEY` 필요.
 - 모델: `claude-sonnet-4-6`, max_tokens 4096, prompt caching ON
 - 시스템 프롬프트에 "[나의 경험 삽입]" placeholder 지시 포함 → 사용자가 직접 채우도록 유도
+- 흐름: `/prompt-generator`에서 프롬프트 만들기(무료 무제한) → "AI 글쓰기로 이동" 버튼 → sessionStorage `aiWriterPrompt` 키로 전달 → `/ai-writer`에서 생성 → 복사 또는 "에디터로 보내기" → `/editor`
 
 ---
 

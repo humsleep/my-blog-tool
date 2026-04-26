@@ -36,7 +36,8 @@ const MENU: MenuItem[] = [
   {
     label: '글쓰기',
     children: [
-      { href: '/prompt-generator', label: '프롬프트 생성', description: 'AI 글쓰기용 프롬프트' },
+      { href: '/prompt-generator', label: '프롬프트 생성', description: '무료 무제한 (AI 호출 없음)' },
+      { href: '/ai-writer', label: 'AI 글쓰기', description: 'Claude AI 자동 작성' },
       { href: '/editor', label: '금칙어·맞춤법', description: '포스팅 에디터' },
     ],
   },

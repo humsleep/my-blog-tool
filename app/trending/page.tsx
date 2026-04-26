@@ -395,7 +395,7 @@ export default function TrendingPage() {
         {data && data.keywords.length > 0 && (
           <FlowNav
             currentStep={1}
-            totalSteps={7}
+            totalSteps={8}
             stepLabel="인기검색어"
             note="마음에 드는 키워드를 발견했다면 자세히 분석해보세요. 위 목록에서 키워드를 바로 클릭해도 됩니다."
             actions={[

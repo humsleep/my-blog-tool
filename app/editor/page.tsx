@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import GuideSection from '../components/GuideSection';
 import FlowNav from '../components/FlowNav';
 import SpellCheckPanel from '../components/SpellCheckPanel';
+import { markdownToHtml } from '../lib/format/article-formats';
 import type { QuillEditorHandle } from './QuillEditor';
 
 // Quill을 직접 사용 (React 19 호환)
@@ -99,44 +100,6 @@ const SEO_GUIDE_CONTENT = `
 
 <p>이러한 전략을 꾸준히 적용하면, 단기적으로는 검색 엔진의 평가를 받고, 장기적으로는 독자들의 신뢰를 얻어 지속적인 트래픽을 확보할 수 있습니다. 2026년의 SEO는 더 이상 기술적 트릭이 아니라, 진정한 콘텐츠 품질과 사용자 경험에 기반한 경쟁입니다.</p>
 `;
-
-/** 간단한 마크다운 → HTML 변환 (AI 초안용) */
-function markdownToHtml(md: string): string {
-  const lines = md.split('\n');
-  const out: string[] = [];
-  let inList = false;
-
-  const inline = (s: string) =>
-    s
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/`(.+?)`/g, '<code>$1</code>');
-
-  for (const raw of lines) {
-    const line = raw.trimEnd();
-    if (/^###\s+/.test(line)) {
-      if (inList) { out.push('</ul>'); inList = false; }
-      out.push(`<h3>${inline(line.replace(/^###\s+/, ''))}</h3>`);
-    } else if (/^##\s+/.test(line)) {
-      if (inList) { out.push('</ul>'); inList = false; }
-      out.push(`<h2>${inline(line.replace(/^##\s+/, ''))}</h2>`);
-    } else if (/^#\s+/.test(line)) {
-      if (inList) { out.push('</ul>'); inList = false; }
-      out.push(`<h1>${inline(line.replace(/^#\s+/, ''))}</h1>`);
-    } else if (/^[-*]\s+/.test(line)) {
-      if (!inList) { out.push('<ul>'); inList = true; }
-      out.push(`<li>${inline(line.replace(/^[-*]\s+/, ''))}</li>`);
-    } else if (line.trim() === '') {
-      if (inList) { out.push('</ul>'); inList = false; }
-      out.push('<p><br></p>');
-    } else {
-      if (inList) { out.push('</ul>'); inList = false; }
-      out.push(`<p>${inline(line)}</p>`);
-    }
-  }
-  if (inList) out.push('</ul>');
-  return out.join('\n');
-}
 
 export default function EditorPage() {
   const [content, setContent] = useState('');
@@ -605,8 +568,8 @@ export default function EditorPage() {
       {/* 다음 단계 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FlowNav
-          currentStep={5}
-          totalSteps={7}
+          currentStep={6}
+          totalSteps={8}
           stepLabel="금칙어·맞춤법"
           note="글을 다듬었다면 이제 블로그에 어울리는 이미지를 찾아볼 차례입니다."
           actions={[
