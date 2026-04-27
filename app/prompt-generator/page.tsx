@@ -122,6 +122,7 @@ function PromptGeneratorContent() {
   const [isDrafting, setIsDrafting] = useState(false);
   const [draftError, setDraftError] = useState<string | null>(null);
   const [usageInfo, setUsageInfo] = useState<{ used: number; limit: number; remaining: number } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -208,19 +209,7 @@ function PromptGeneratorContent() {
   };
 
   const generatePrompt = () => {
-    if (!keyword.trim()) {
-      alert('키워드를 입력해주세요.');
-      return;
-    }
-    if (!selectedCategory) {
-      alert('분야를 선택해주세요.');
-      return;
-    }
-    if (!tone) {
-      alert('어투를 선택해주세요.');
-      return;
-    }
-
+    if (!keyword.trim() || !selectedCategory || !tone) return;
     setIsGenerating(true);
 
     const { mainCategory, subCategory } = getCategoryInfo(selectedCategory);
@@ -383,7 +372,8 @@ function PromptGeneratorContent() {
   const copyToClipboard = () => {
     if (!generatedPrompt) return;
     navigator.clipboard.writeText(generatedPrompt);
-    alert('프롬프트가 클립보드에 복사되었습니다.');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const resetForm = () => {
@@ -676,7 +666,7 @@ function PromptGeneratorContent() {
                     onClick={copyToClipboard}
                     className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg transition-colors"
                   >
-                    복사하기
+                    {copied ? '복사됨!' : '복사하기'}
                   </button>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700 max-h-80 overflow-y-auto">

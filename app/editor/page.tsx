@@ -16,7 +16,6 @@ const QuillEditor = dynamic(
   }
 );
 
-// 확장된 금칙어 리스트
 const FORBIDDEN_WORDS = [
   // 불법/위험 관련
   '도박', '마약', '사기', '사행성', '불법', '해킹', '피싱', '스팸',
@@ -31,7 +30,6 @@ const FORBIDDEN_WORDS = [
   '클릭', '링크', '바로가기', '지금 바로', '한정 특가'
 ];
 
-// 금칙어 테스트용 샘플 텍스트
 const SAMPLE_TEXT = `안녕하세요. 오늘은 블로그 포스트를 작성하려고 합니다.
 
 이 글에는 여러 금칙어가 포함되어 있어요. 예를 들어, 최저가로 구매할 수 있는 특가 상품을 소개하고 싶습니다. 
@@ -51,7 +49,6 @@ const SAMPLE_TEXT = `안녕하세요. 오늘은 블로그 포스트를 작성하
 
 성인 콘텐츠나 음란물, 폭력적인 내용, 혐오 표현은 포함하지 않겠습니다.`;
 
-// SEO 가이드 콘텐츠 (2,500자 이상) - 포스팅 에디터와 금칙어 검사에 집중
 const SEO_GUIDE_CONTENT = `
 <h2>프로페셔널 포스팅 에디터 활용 가이드</h2>
 
@@ -143,6 +140,7 @@ export default function EditorPage() {
   const [replacements, setReplacements] = useState<Record<string, string>>({});
   const [isSeoGuideOpen, setIsSeoGuideOpen] = useState(false);
   const [draftNotice, setDraftNotice] = useState<string | null>(null);
+  const [clipboardCopied, setClipboardCopied] = useState(false);
   const quillEditorRef = useRef<QuillEditorHandle | null>(null);
 
   // AI 초안이 sessionStorage에 있으면 자동으로 불러오기 (Quill 초기화 대기)
@@ -248,7 +246,7 @@ export default function EditorPage() {
     return { withSpaces, withoutSpaces, foundWords, foundPositions };
   }, [content]);
 
-  // 금칙어 하이라이트를 위한 커스텀 스타일 적용 (debounce 사용)
+  // 금칙어 변경마다 Quill 에디터 내 배경색 하이라이트 갱신 (500ms debounce)
   useEffect(() => {
     if (typeof window === 'undefined' || !content || !quillEditorRef.current) return;
     
@@ -262,14 +260,12 @@ export default function EditorPage() {
         
         if (length === 0) return;
         
-        // 기존 하이라이트 제거
         try {
           quill.formatText(0, length - 1, 'background', false, 'user');
-        } catch (e) {
+        } catch {
           // 무시
         }
-        
-        // 금칙어 찾아서 하이라이트
+
         FORBIDDEN_WORDS.forEach((word) => {
           const regex = new RegExp(word, 'gi');
           let match;
@@ -279,20 +275,19 @@ export default function EditorPage() {
               if (match.index < length && typeof quill.formatText === 'function') {
                 quill.formatText(match.index, Math.min(word.length, length - match.index), 'background', '#fee2e2', 'user');
               }
-            } catch (e) {
+            } catch {
               // 인덱스 오류 무시
             }
           }
         });
-      } catch (e) {
+      } catch {
         // 에러 무시
       }
-    }, 500); // 500ms debounce
-    
+    }, 500);
+
     return () => clearTimeout(timeoutId);
   }, [content]);
 
-  // 가독성 자동 최적화 함수
   const optimizeReadability = useCallback(() => {
     if (typeof window === 'undefined' || !quillEditorRef.current) return;
     
@@ -302,17 +297,14 @@ export default function EditorPage() {
       
       let text = quill.getText();
       
-      // 마침표와 쉼표 뒤에 줄바꿈 추가 (이미 줄바꿈이 있으면 중복 방지)
+      // 마침표·쉼표 뒤 줄바꿈 추가 (이미 줄바꿈 있으면 중복 방지), 3연속 이상 줄바꿈 축소
       text = text.replace(/([.,])(?!\s*\n)/g, '$1\n');
-      // 연속된 줄바꿈 정리 (3개 이상을 2개로)
       text = text.replace(/\n{3,}/g, '\n\n');
-      
-      // Quill에 텍스트 설정
+
       if (quill.clipboard && typeof quill.clipboard.convert === 'function') {
         const delta = quill.clipboard.convert({ html: text.replace(/\n/g, '<br>') });
         quill.setContents(delta, 'silent');
-        
-        // content state 업데이트
+
         const html = quillEditorRef.current?.getHTML();
         if (html) {
           setContent(html);
@@ -323,12 +315,8 @@ export default function EditorPage() {
     }
   }, []);
 
-  // 금칙어 대체 함수
   const handleReplace = useCallback((pos: { word: string; index: number; lineNumber: number; column: number }, replacementValue: string) => {
-    if (!replacementValue.trim()) {
-      alert('대체 단어를 입력해주세요.');
-      return;
-    }
+    if (!replacementValue.trim()) return;
     
     if (typeof window === 'undefined' || !quillEditorRef.current) return;
     
@@ -345,14 +333,13 @@ export default function EditorPage() {
       if (quill.clipboard && typeof quill.clipboard.convert === 'function') {
         const delta = quill.clipboard.convert({ html: newText.replace(/\n/g, '<br>') });
         quill.setContents(delta, 'silent');
-        
+
         const html = quillEditorRef.current?.getHTML();
         if (html) {
           setContent(html);
         }
       }
-      
-      // 대체 입력 필드 초기화
+
       const replacementKey = `${pos.index}-${pos.word}`;
       setReplacements(prev => {
         const newReplacements = { ...prev };
@@ -438,14 +425,15 @@ export default function EditorPage() {
                         const text = quillEditorRef.current?.getText();
                         if (text) {
                           navigator.clipboard.writeText(text);
-                          alert('내용이 클립보드에 복사되었습니다.');
+                          setClipboardCopied(true);
+                          setTimeout(() => setClipboardCopied(false), 2000);
                         }
                       }
                     }}
                     disabled={!content.trim()}
                     className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
                   >
-                    복사하기
+                    {clipboardCopied ? '복사됨!' : '복사하기'}
                   </button>
                 </div>
               </div>

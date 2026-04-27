@@ -100,7 +100,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'AI가 빈 응답을 반환했습니다. 다시 시도해주세요.' }, { status: 502 });
     }
 
-    // Increment usage count (upsert)
     const { error: upsertError } = await supabase
       .from('ai_draft_usage')
       .upsert(
