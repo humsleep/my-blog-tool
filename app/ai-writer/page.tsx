@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '../components/Navbar';
 import FlowNav from '../components/FlowNav';
 import GuideSection from '../components/GuideSection';
 import PageHeader from '../components/ui/PageHeader';
@@ -121,7 +120,6 @@ export default function AiWriterPage() {
 
   return (
     <>
-      <Navbar />
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <PageHeader
