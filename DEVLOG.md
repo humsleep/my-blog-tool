@@ -5,6 +5,48 @@
 
 ---
 
+## 2026-04-27 — Phase 6: 뉴스→프롬프트 흐름 + 관련도 필터링
+
+**커밋**: 단일 커밋 (이번 작업)
+**배경**: 사용자가 키워드 분석의 "관련 뉴스" 기능이 글쓰기 방향 결정에 핵심적이라 평가 → 버튼이 작아서 발견 어렵고, 뉴스 본 뒤 프롬프트로 이어지는 흐름이 단절됨. 또한 본문에 키워드 한 번만 있어도 노출되는 관련도 문제 지적.
+
+### 6-1. NewsPanel 강화 (`app/components/NewsPanel.tsx` 재작성)
+- **API 정렬 기본값 `sort=sim`** (정확도순) — 기존 `date`(최신순)에서 변경. props로 override 가능.
+- **클라이언트 사이드 점수**: 제목 매칭 +10 (반복 +3), 설명 매칭 +1, 모든 토큰 제목 포함 +5, 7일 이내 +2.
+- **"관련도 낮은 항목 숨김" 토글** (기본 ON) — 점수 < 5 항목 숨김. 모두 필터링되면 안전망으로 무시.
+- **정렬 토글 UI**: 정확도순 ↔ 최신순 segment control.
+- **체크박스 + CTA** (selectable=true 시): 최대 3건 선택, 하단 sticky 버튼 "선택한 뉴스로 프롬프트 만들기".
+- `onCreatePrompt` 콜백 prop으로 부모에 위임 (router 결합도 분리).
+- `display` 기본 10 → 15 (필터 후에도 충분한 항목 남기기).
+
+### 6-2. 키워드 분석 — "뉴스" 컬럼 분리 + chip 버튼 (`app/keyword-analysis/page.tsx`)
+- 테이블 헤더에 "뉴스" 컬럼 신설 (액션 컬럼 앞).
+- 기존 신문 아이콘(16×16)을 indigo chip 버튼 "📰 뉴스 보기"로 교체 (`btn`-스타일, min-h-[32px], 텍스트+아이콘).
+- 액션 컬럼은 삭제 아이콘만 남김.
+- 모달의 NewsPanel에 `selectable` + `onCreatePrompt` 콜백 전달:
+  - `sessionStorage.setItem('promptNewsContext', { keyword, items })`
+  - 모달 닫고 `/prompt-generator?keyword=...`로 라우팅.
+
+### 6-3. 프롬프트 생성 — 뉴스 컨텍스트 수신 + UI + prompt prefix (`app/prompt-generator/page.tsx`)
+- mount 시 `promptNewsContext` 읽고 state 적재 후 sessionStorage 즉시 정리 (1회성).
+- "프롬프트 설정" 카드 상단에 indigo 컨텍스트 카드 추가:
+  - 뉴스 N건 표시, 제목 1줄씩 line-clamp.
+  - "제거" 버튼으로 컨텍스트 해제 가능.
+- `generatePrompt()`에 prefix 주입 — 뉴스 N건의 제목·요약·날짜를 list로 정리 + "위 뉴스 흐름을 본문에 자연스럽게 반영하되, 그대로 인용하지 말고 재구성하라"는 가이드 문장.
+
+### 흐름 요약
+```
+키워드 분석 [뉴스 보기] → NewsPanel 모달 (정확도순+필터) → 체크박스 1~3건 선택
+→ "선택한 뉴스로 프롬프트 만들기" → /prompt-generator
+→ 컨텍스트 카드 자동 표시 + 프롬프트 생성 시 뉴스 prefix 자동 포함
+→ AI 글쓰기로 보내면 시의성·구체성 강한 글 생성
+```
+
+### 비용
+관련 뉴스 호출은 **네이버 오픈API의 뉴스 검색** (무료, 일 25,000회 한도). 클로드 API와 무관 — AI 비용 0원.
+
+---
+
 ## 2026-04-27 — Phase 5: 세션 메모리 자동화 + UI/UX 1차 정리
 
 **커밋**: `4d72885` → `25cefa2` → `e3b7194` → `ec791a8` (모두 main 반영, Vercel 자동 배포)

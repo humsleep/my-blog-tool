@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import GuideSection from '../components/GuideSection';
-import NewsPanel from '../components/NewsPanel';
+import NewsPanel, { type NewsItem } from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 
@@ -348,7 +348,7 @@ function KeywordAnalysisContent() {
                   <table className="min-w-full">
                     <thead className="bg-slate-50 dark:bg-slate-900/50">
                       <tr>
-                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '액션'].map((h, i) => (
+                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '뉴스', '액션'].map((h, i) => (
                           <th
                             key={i}
                             className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
@@ -404,27 +404,28 @@ function KeywordAnalysisContent() {
                                 </span>
                               )}
                             </td>
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <button
+                                onClick={() => setNewsKeyword(item.keyword)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all min-h-[32px]"
+                                title="관련 뉴스 보기 + 프롬프트로 가져가기"
+                              >
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                </svg>
+                                뉴스 보기
+                              </button>
+                            </td>
                             <td className="px-4 py-3 whitespace-nowrap text-center">
-                              <div className="flex items-center justify-center gap-1">
-                                <button
-                                  onClick={() => setNewsKeyword(item.keyword)}
-                                  className="text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 p-1.5 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-all"
-                                  title="관련 뉴스 보기"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => deleteKeyword(item.id)}
-                                  className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
-                                  title="삭제"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
-                              </div>
+                              <button
+                                onClick={() => deleteKeyword(item.id)}
+                                className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                                title="삭제"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
                             </td>
                           </tr>
                         );
@@ -592,7 +593,21 @@ function KeywordAnalysisContent() {
                 </button>
               </div>
               <div className="overflow-y-auto px-5 py-4">
-                <NewsPanel keyword={newsKeyword} variant="modal" display={10} sort="date" />
+                <NewsPanel
+                  keyword={newsKeyword}
+                  variant="modal"
+                  display={15}
+                  sort="sim"
+                  selectable
+                  onCreatePrompt={(items: NewsItem[]) => {
+                    sessionStorage.setItem(
+                      'promptNewsContext',
+                      JSON.stringify({ keyword: newsKeyword, items }),
+                    );
+                    setNewsKeyword(null);
+                    router.push(`/prompt-generator?keyword=${encodeURIComponent(newsKeyword)}`);
+                  }}
+                />
               </div>
             </div>
           </div>

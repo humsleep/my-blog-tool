@@ -118,6 +118,10 @@ function PromptGeneratorContent() {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [newsContext, setNewsContext] = useState<{
+    keyword: string;
+    items: Array<{ title: string; description: string; pubDate: string; link: string }>;
+  } | null>(null);
 
   const sendToAiWriter = () => {
     if (!generatedPrompt) return;
@@ -133,6 +137,23 @@ function PromptGeneratorContent() {
       setKeyword(decodeURIComponent(keywordParam));
     }
   }, [searchParams]);
+
+  // sessionStorage의 뉴스 컨텍스트 수신 (키워드 분석 → 뉴스 모달 → 프롬프트 만들기 흐름)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const raw = sessionStorage.getItem('promptNewsContext');
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as typeof newsContext;
+      if (parsed && parsed.keyword && Array.isArray(parsed.items) && parsed.items.length > 0) {
+        setNewsContext(parsed);
+        setKeyword(parsed.keyword);
+      }
+    } catch {
+      // ignore malformed
+    }
+    sessionStorage.removeItem('promptNewsContext');
+  }, []);
 
   // 선택된 카테고리에서 대분류와 세부 분야 추출
   const getCategoryInfo = (category: string) => {
@@ -328,6 +349,23 @@ function PromptGeneratorContent() {
 
     prompt += `위 조건에 맞는 완성도 높은 네이버 블로그 글을 작성해주세요.`;
 
+    // 뉴스 컨텍스트가 있으면 프롬프트 상단에 prefix로 주입
+    if (newsContext && newsContext.items.length > 0) {
+      const stripHtml = (s: string) =>
+        s.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ');
+      const formatDate = (raw: string) => {
+        const d = new Date(raw);
+        return Number.isNaN(d.getTime()) ? raw : d.toLocaleDateString('ko-KR');
+      };
+      let prefix = `**참고할 최근 관련 뉴스 (${newsContext.items.length}건)**:\n`;
+      newsContext.items.forEach((it, idx) => {
+        prefix += `${idx + 1}. ${stripHtml(it.title)} (${formatDate(it.pubDate)})\n`;
+        if (it.description) prefix += `   - ${stripHtml(it.description)}\n`;
+      });
+      prefix += `\n위 뉴스에서 드러나는 최근 흐름·이슈·키워드를 자연스럽게 본문에 반영하되, 뉴스를 그대로 인용하지 말고 독자에게 유용한 정보로 재구성해주세요.\n\n`;
+      prompt = prefix + prompt;
+    }
+
     // 약간의 딜레이를 주어 생성 중임을 표시
     setTimeout(() => {
       setGeneratedPrompt(prompt);
@@ -369,7 +407,42 @@ function PromptGeneratorContent() {
           <div className="lg:col-span-3">
             <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
               <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4 sm:mb-6">프롬프트 설정</h2>
-              
+
+              {/* 뉴스 컨텍스트 — 키워드 분석 → 뉴스 모달에서 가져온 경우 */}
+              {newsContext && newsContext.items.length > 0 && (
+                <div className="mb-5 sm:mb-6 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-950/30 p-4">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                      <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                        참고 뉴스 컨텍스트 ({newsContext.items.length}건)
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setNewsContext(null)}
+                      className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 flex-shrink-0"
+                      title="뉴스 컨텍스트 제거"
+                    >
+                      제거
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                    아래 뉴스의 흐름이 프롬프트 상단에 자동으로 포함되어 글에 반영됩니다.
+                  </p>
+                  <ul className="space-y-1.5">
+                    {newsContext.items.map((it, i) => (
+                      <li key={`${it.link}-${i}`} className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
+                        <span className="text-indigo-600 dark:text-indigo-400 font-medium mr-1">{i + 1}.</span>
+                        {it.title.replace(/<[^>]*>/g, '')}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="space-y-5 sm:space-y-6">
                 {/* Keyword Input */}
                 <div>
