@@ -117,6 +117,7 @@ function PromptGeneratorContent() {
   const [additionalOptions, setAdditionalOptions] = useState<string[]>([]);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
 
   const sendToAiWriter = () => {
     if (!generatedPrompt) return;
@@ -388,33 +389,73 @@ function PromptGeneratorContent() {
                   </p>
                 </div>
 
-                {/* Category Selection */}
+                {/* Category Selection — Accordion */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     분야 <span className="text-red-500">*</span>
+                    {selectedCategory && (
+                      <span className="ml-2 text-xs text-indigo-600 dark:text-indigo-400 font-normal">
+                        선택됨: {selectedCategory}
+                      </span>
+                    )}
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {Object.entries(CATEGORIES).map(([mainCat, subCats]) => (
-                      <div key={mainCat} className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
-                        <h3 className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">{mainCat}</h3>
-                        <div className="space-y-1.5">
-                          {subCats.map((subCat) => (
-                            <button
-                              key={subCat}
-                              type="button"
-                              onClick={() => setSelectedCategory(subCat)}
-                              className={`w-full p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
-                                selectedCategory === subCat
-                                  ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
-                                  : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
-                              }`}
+                  <div className="space-y-2">
+                    {Object.entries(CATEGORIES).map(([mainCat, subCats]) => {
+                      const hasSelected = subCats.includes(selectedCategory);
+                      const isOpen = openCategory === mainCat || hasSelected;
+                      return (
+                        <div
+                          key={mainCat}
+                          className={`border rounded-lg overflow-hidden transition-colors ${
+                            hasSelected
+                              ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/30 dark:bg-indigo-950/20'
+                              : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40'
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setOpenCategory(isOpen && !hasSelected ? null : mainCat)}
+                            className="w-full flex items-center justify-between px-4 py-3 text-left min-h-[44px] hover:bg-slate-100/60 dark:hover:bg-slate-700/60 transition-colors"
+                            aria-expanded={isOpen}
+                          >
+                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                              {mainCat}
+                              <span className="ml-2 text-xs font-normal text-slate-400 dark:text-slate-500">
+                                {subCats.length}개
+                              </span>
+                            </span>
+                            <svg
+                              className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
                             >
-                              {subCat}
-                            </button>
-                          ))}
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          {isOpen && (
+                            <div className="px-3 pb-3 pt-1">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+                                {subCats.map((subCat) => (
+                                  <button
+                                    key={subCat}
+                                    type="button"
+                                    onClick={() => setSelectedCategory(subCat)}
+                                    className={`p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
+                                      selectedCategory === subCat
+                                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                                        : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                    }`}
+                                  >
+                                    {subCat}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -790,7 +831,7 @@ export default function PromptGeneratorPage() {
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">프롬프트 생성</h1>
           </div>
           <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <div className="animate-pulse">

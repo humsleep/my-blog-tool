@@ -30,7 +30,7 @@ const STEP_LABELS = [
 
 export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, note }: FlowNavProps) {
   return (
-    <div className="mt-8 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5 sm:p-6">
+    <div className="hidden md:block mt-8 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5 sm:p-6">
       {/* Progress */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">

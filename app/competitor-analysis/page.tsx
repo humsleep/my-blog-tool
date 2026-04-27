@@ -91,7 +91,7 @@ function CompetitorAnalysisContent() {
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">
             상위노출 분석
           </h1>
           <p className="text-slate-500 dark:text-slate-400">
