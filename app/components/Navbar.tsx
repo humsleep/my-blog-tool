@@ -6,69 +6,81 @@ import { usePathname } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { useUser, signOut } from '../lib/supabase/useUser';
 
-interface MenuChild {
+interface ToolItem {
+  step: number;
   href: string;
   label: string;
-  description?: string;
+  description: string;
 }
 
-interface MenuGroup {
-  label: string;
-  children: MenuChild[];
+interface ToolGroup {
+  groupLabel: string;
+  range: string;
+  items: ToolItem[];
 }
 
-interface MenuLink {
-  href: string;
-  label: string;
-}
-
-type MenuItem = MenuGroup | MenuLink;
-
-const MENU: MenuItem[] = [
-  {
-    label: '키워드 리서치',
-    children: [
-      { href: '/trending', label: '인기검색어', description: '네이버 실시간 인기 키워드' },
-      { href: '/keyword-analysis', label: '키워드분석', description: '검색량·경쟁률 분석' },
-      { href: '/competitor-analysis', label: '상위노출 분석', description: '상위 블로그 포스트 분석' },
-    ],
-  },
-  {
-    label: '글쓰기',
-    children: [
-      { href: '/prompt-generator', label: '프롬프트 생성', description: '무료 무제한 (AI 호출 없음)' },
-      { href: '/ai-writer', label: 'AI 글쓰기', description: 'Claude AI 자동 작성' },
-      { href: '/editor', label: '금칙어·맞춤법', description: '포스팅 에디터' },
-    ],
-  },
-  {
-    label: '이미지',
-    children: [
-      { href: '/image-search', label: '이미지 검색', description: '무료 저작권 이미지' },
-      { href: '/image-tools', label: '이미지 편집', description: '크롭·모자이크·필터' },
-    ],
-  },
-  { href: '/lab', label: '연구실' },
+/** 핵심 도구 — 평면 노출 (가장 자주 쓰는 노드) */
+const CORE_TOOLS: { href: string; label: string }[] = [
+  { href: '/keyword-analysis', label: '키워드분석' },
+  { href: '/ai-writer', label: 'AI 글쓰기' },
+  { href: '/editor', label: '에디터' },
 ];
 
-function isGroup(item: MenuItem): item is MenuGroup {
-  return 'children' in item;
+/** 8단계 워크플로우 — "모든 도구" 메가패널에 워크플로우 순서로 노출 */
+const WORKFLOW: ToolGroup[] = [
+  {
+    groupLabel: '키워드 리서치',
+    range: '1~3',
+    items: [
+      { step: 1, href: '/trending', label: '인기검색어', description: '네이버 실시간 인기 키워드' },
+      { step: 2, href: '/keyword-analysis', label: '키워드분석', description: '검색량·경쟁률 분석' },
+      { step: 3, href: '/competitor-analysis', label: '상위노출 분석', description: '상위 블로그 패턴 분석' },
+    ],
+  },
+  {
+    groupLabel: '글쓰기',
+    range: '4~6',
+    items: [
+      { step: 4, href: '/prompt-generator', label: '프롬프트 생성', description: '무료 무제한 (AI 호출 없음)' },
+      { step: 5, href: '/ai-writer', label: 'AI 글쓰기', description: 'Claude AI 자동 작성' },
+      { step: 6, href: '/editor', label: '금칙어·맞춤법', description: '포스팅 에디터' },
+    ],
+  },
+  {
+    groupLabel: '이미지',
+    range: '7~8',
+    items: [
+      { step: 7, href: '/image-search', label: '이미지 검색', description: '무료 저작권 이미지' },
+      { step: 8, href: '/image-tools', label: '이미지 편집', description: '크롭·모자이크·필터' },
+    ],
+  },
+];
+
+/** 현재 경로가 워크플로우 어느 단계에 해당하는지 — Navbar에 STEP 배지 표시용 */
+function findCurrentStep(pathname: string): { step: number; label: string } | null {
+  for (const group of WORKFLOW) {
+    const hit = group.items.find((it) => it.href === pathname);
+    if (hit) return { step: hit.step, label: hit.label };
+  }
+  return null;
 }
 
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [megaOpen, setMegaOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, configured } = useUser();
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const megaRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpenDropdown(null);
+      if (megaRef.current && !megaRef.current.contains(e.target as Node)) {
+        setMegaOpen(false);
       }
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserMenuOpen(false);
@@ -78,114 +90,172 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 페이지 이동 시 모든 메뉴 닫기
   useEffect(() => {
-    setOpenDropdown((prev) => (prev === null ? prev : null));
-    setIsMobileOpen((prev) => (prev ? false : prev));
-    setUserMenuOpen((prev) => (prev ? false : prev));
+    setMegaOpen(false);
+    setIsMobileOpen(false);
+    setUserMenuOpen(false);
   }, [pathname]);
 
-  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '';
+  const openMega = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setMegaOpen(true);
+  };
+
+  const scheduleCloseMega = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    // 메뉴와 패널 사이 간격을 마우스가 지나갈 시간 확보
+    closeTimerRef.current = setTimeout(() => setMegaOpen(false), 150);
+  };
+
+  const displayName =
+    user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '';
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
   const initial = displayName?.charAt(0).toUpperCase() || '?';
 
-  const isChildActive = (group: MenuGroup) =>
-    group.children.some((c) => c.href === pathname);
+  const currentStep = findCurrentStep(pathname);
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-700/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:shadow-indigo-200 dark:group-hover:shadow-indigo-900 transition-shadow">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </div>
-            <span className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-              Boheme <span className="text-indigo-600 dark:text-indigo-400">BlogLab</span>
-            </span>
-          </Link>
+          {/* Logo + 현재 단계 배지 */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:shadow-indigo-200 dark:group-hover:shadow-indigo-900 transition-shadow">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+              <span className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                Boheme <span className="text-indigo-600 dark:text-indigo-400">BlogLab</span>
+              </span>
+            </Link>
+            {currentStep && (
+              <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[11px] font-semibold border border-indigo-200 dark:border-indigo-800">
+                STEP {currentStep.step}/8
+              </span>
+            )}
+          </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex md:items-center md:gap-1" ref={dropdownRef}>
-            {MENU.map((item) => {
-              if (!isGroup(item)) {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
-                      isActive
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              }
-
-              const isOpen = openDropdown === item.label;
-              const groupActive = isChildActive(item);
-
+          <div className="hidden md:flex md:items-center md:gap-1">
+            {/* 핵심 도구 평면 */}
+            {CORE_TOOLS.map((t) => {
+              const isActive = pathname === t.href;
               return (
-                <div key={item.label} className="relative">
-                  <button
-                    onClick={() => setOpenDropdown(isOpen ? null : item.label)}
-                    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
-                      groupActive
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    {item.label}
-                    <svg
-                      className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {isOpen && (
-                    <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                      {item.children.map((child) => {
-                        const isActive = pathname === child.href;
-                        return (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            onClick={() => setOpenDropdown(null)}
-                            className={`block px-4 py-3 text-sm transition-colors ${
-                              isActive
-                                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
-                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
-                            }`}
-                          >
-                            <div className="font-medium">{child.label}</div>
-                            {child.description && (
-                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                                {child.description}
-                              </div>
-                            )}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                <Link
+                  key={t.href}
+                  href={t.href}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  {t.label}
+                </Link>
               );
             })}
+
+            {/* 모든 도구 — 호버 / 클릭 메가패널 */}
+            <div
+              className="relative"
+              ref={megaRef}
+              onMouseEnter={openMega}
+              onMouseLeave={scheduleCloseMega}
+            >
+              <button
+                type="button"
+                onClick={() => setMegaOpen((v) => !v)}
+                aria-expanded={megaOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                  megaOpen
+                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                모든 도구
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform ${megaOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {megaOpen && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[680px] max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+                  role="menu"
+                >
+                  <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700/60">
+                    {WORKFLOW.map((group) => (
+                      <div key={group.groupLabel} className="p-3">
+                        <div className="px-2 mb-2 flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                            STEP {group.range}
+                          </span>
+                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                            {group.groupLabel}
+                          </span>
+                        </div>
+                        <div className="space-y-0.5">
+                          {group.items.map((it) => {
+                            const isActive = pathname === it.href;
+                            return (
+                              <Link
+                                key={it.href}
+                                href={it.href}
+                                onClick={() => setMegaOpen(false)}
+                                className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
+                                  isActive
+                                    ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
+                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                }`}
+                              >
+                                <div className="flex items-baseline gap-1.5">
+                                  <span className={`text-[11px] font-bold ${isActive ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                    {it.step}
+                                  </span>
+                                  <span className="font-medium">{it.label}</span>
+                                </div>
+                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-indigo-600/80 dark:text-indigo-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                                  {it.description}
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 연구실 */}
+            <Link
+              href="/lab"
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                pathname === '/lab' || pathname.startsWith('/lab/')
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              연구실
+            </Link>
           </div>
 
           {/* Right side: Auth + Dark toggle + Mobile hamburger */}
           <div className="flex items-center gap-2">
-            {/* Auth */}
             {configured && (
               user ? (
                 <div className="relative hidden md:block" ref={userMenuRef}>
@@ -265,10 +335,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — 8단계 워크플로우 평면 노출 */}
       {isMobileOpen && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[calc(100vh-56px)] overflow-y-auto">
-          <div className="px-3 py-3 space-y-3">
+          <div className="px-3 py-3 space-y-4">
             {/* Auth on mobile */}
             {configured && (
               user ? (
@@ -305,56 +375,58 @@ export default function Navbar() {
               )
             )}
 
-            {MENU.map((item) => {
-              if (!isGroup(item)) {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMobileOpen(false)}
-                    className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
-                      isActive
-                        ? 'bg-indigo-600 text-white'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              }
-              return (
-                <div key={item.label} className="space-y-1">
-                  <div className="px-4 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    {item.label}
-                  </div>
-                  {item.children.map((child) => {
-                    const isActive = pathname === child.href;
-                    return (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        onClick={() => setIsMobileOpen(false)}
-                        className={`flex flex-col px-4 py-2.5 rounded-lg min-h-[44px] ${
-                          isActive
-                            ? 'bg-indigo-600 text-white'
-                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                        }`}
-                      >
-                        <span className="text-sm font-medium">{child.label}</span>
-                        {child.description && (
-                          <span className={`text-xs mt-0.5 ${
-                            isActive ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'
-                          }`}>
-                            {child.description}
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
+            {WORKFLOW.map((group) => (
+              <div key={group.groupLabel} className="space-y-1">
+                <div className="px-4 flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                    STEP {group.range}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    {group.groupLabel}
+                  </span>
                 </div>
-              );
-            })}
+                {group.items.map((it) => {
+                  const isActive = pathname === it.href;
+                  return (
+                    <Link
+                      key={it.href}
+                      href={it.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                        isActive
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-indigo-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {it.step}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium">{it.label}</div>
+                        <div className={`text-xs mt-0.5 ${isActive ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                          {it.description}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
+
+            {/* 연구실 */}
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+              <Link
+                href="/lab"
+                onClick={() => setIsMobileOpen(false)}
+                className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
+                  pathname === '/lab' || pathname.startsWith('/lab/')
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                연구실
+              </Link>
+            </div>
           </div>
         </div>
       )}

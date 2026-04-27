@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import FlowNav from '../components/FlowNav';
-import GuideSection from '../components/GuideSection';
 import PageHeader from '../components/ui/PageHeader';
 import Card from '../components/ui/Card';
 import { Button, LinkButton } from '../components/ui/Button';
@@ -362,23 +361,18 @@ export default function AiWriterPage() {
             />
           )}
 
-          <GuideSection
-            title="AI 글쓰기를 효과적으로 사용하는 법"
-            items={[
-              {
-                title: '왜 프롬프트 생성과 분리되어 있나요?',
-                content: `프롬프트 생성 단계는 AI API를 호출하지 않는 클라이언트 측 텍스트 조합 작업이라 무제한 무료입니다. 반면 이 페이지의 'AI 글쓰기'는 Claude API를 직접 호출해 비용이 발생하므로, 비로그인 1회/일·로그인 5회/일로 한도를 둔 무료 베타 정책을 운영합니다. 시간이 지나며 사용 패턴을 보고 멤버십 형태로 확장할 예정입니다.`,
-              },
-              {
-                title: '결과를 그대로 발행해도 되나요?',
-                content: `네이버 블로그 알고리즘은 '내 경험과 의견'이 담긴 콘텐츠를 선호합니다. AI가 생성한 글은 좋은 초안이지만, 본문의 1~2개 단락은 직접 본인의 경험·관점으로 다시 써주세요. '[나의 경험 삽입]' 자리표시자가 포함되어 있으니 그 부분을 채우는 것을 권장합니다. 또한 발행 전 에디터의 금칙어 검사를 반드시 거치세요.`,
-              },
-              {
-                title: 'HTML 모드와 일반 모드 차이',
-                content: `네이버 스마트에디터는 우상단의 "HTML" 토글을 켜면 마크업이 적용된 글을 그대로 받아들입니다. 본문에 소제목, 강조, 목록 구조를 살리고 싶다면 HTML 탭을 사용하세요. 반면 일반 입력란에 단순히 붙여넣고 싶을 때는 '일반' 탭이 가장 깔끔합니다. 마크다운 탭은 외부 마크다운 에디터(Notion, Bear 등)로 옮길 때 사용합니다.`,
-              },
-            ]}
-          />
+                  {/* 자세한 사용법은 연구실로 안내 */}
+        <div className="mt-10 text-center">
+          <a
+            href="/lab"
+            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            더 자세한 사용법은 연구실에서 확인하세요
+          </a>
+        </div>
         </div>
       </div>
     </>

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
-import GuideSection from '../components/GuideSection';
 import FlowNav from '../components/FlowNav';
 
 interface ImageItem {
@@ -259,23 +258,18 @@ export default function ImageSearchPage() {
           ]}
         />
 
-        <GuideSection
-          title="무료 이미지, 블로그에 안전하게 활용하는 법"
-          items={[
-            {
-              title: '무료 이미지 API의 가치',
-              content: `블로그 포스팅에서 이미지의 역할은 생각보다 큽니다. 텍스트만 있는 글은 이탈률이 높지만, 적절한 이미지가 있는 글은 체류시간과 공유율이 크게 증가합니다. Pexels와 Unsplash는 전 세계 사진작가들이 기부한 고해상도 이미지를 무료로 제공하며, 상업적 이용까지 허용되는 관대한 라이선스를 채택하고 있습니다.`,
-            },
-            {
-              title: '검색 키워드 전략',
-              content: `Pexels와 Unsplash는 기본적으로 영문 태그 기반이므로, 영문 키워드가 훨씬 풍부한 결과를 반환합니다. "카페" 대신 "coffee shop", "음식" 대신 "food photography" 같은 구체적 영문 키워드를 사용하세요. 여러 키워드를 조합하면(예: "woman writing laptop") 원하는 구도의 이미지를 찾기 쉽습니다.`,
-            },
-            {
-              title: '저작권 안전하게 사용하기',
-              content: `두 플랫폼 모두 저작자 표기를 강제하지 않지만, 블로그 하단에 "Photo by [작가명] on [플랫폼]" 형식으로 크레딧을 넣는 것이 예의이자 안전장치입니다. 또한 이미지에 등장한 인물의 초상권, 로고/브랜드 이미지 사용 시 주의가 필요하며, 민감한 주제(의료/법률 등)의 글에서는 해당 이미지를 사용할 때 오해의 소지가 없는지 점검하는 것이 좋습니다.`,
-            },
-          ]}
-        />
+                {/* 자세한 사용법은 연구실로 안내 */}
+        <div className="mt-10 text-center">
+          <a
+            href="/lab"
+            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            더 자세한 사용법은 연구실에서 확인하세요
+          </a>
+        </div>
       </div>
     </div>
   );

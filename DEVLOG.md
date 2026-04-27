@@ -5,6 +5,38 @@
 
 ---
 
+## 2026-04-27 — Phase 7: IA 정리 — 메뉴 메가패널 + 가이드를 lab으로
+
+**커밋**: 단일 커밋 (이번 작업)
+**배경**: 사용자가 두 가지 IA 문제 지적 — (1) 모든 도구 페이지 하단의 GuideSection이 워크플로우 흐름을 깨고 반복적이며 부자연스러움. (2) 메뉴 그룹핑이 깊어 도구 발견에 매번 두 번 클릭.
+
+### 7-1. GuideSection 일괄 제거 (9개 도구 페이지)
+- `app/page.tsx`, `trending/page.tsx`, `keyword-analysis/page.tsx`, `competitor-analysis/page.tsx`, `prompt-generator/page.tsx`, `ai-writer/page.tsx`, `editor/page.tsx`, `image-search/page.tsx`, `image-tools/page.tsx`에서 `<GuideSection ... />` JSX 블록과 `import GuideSection` 제거.
+- 자리에 작은 lab 링크 1줄 ("📖 더 자세한 사용법은 연구실에서 확인하세요 →")로 교체. 도구 흐름은 깨끗하게, 학습 욕구는 lab으로 유도.
+- `app/lab/page.tsx`는 그대로 유지 — lab이 학습 허브 역할이니 GuideSection 자연스러움.
+- `GuideSection.tsx` 컴포넌트는 lab에서 계속 쓰니 보존.
+- 순 -150여 라인 코드 간소화. 가이드 콘텐츠 자체는 git 히스토리에 보존(추후 lab 글로 점진 마이그레이션 가능).
+
+### 7-2. Navbar 메가패널로 재구성 (`app/components/Navbar.tsx` 재작성)
+- **데스크톱 평면 노출**: `[로고 + STEP 배지] | 키워드분석 | AI 글쓰기 | 에디터 | 모든 도구 ▾ | 연구실` — 가장 자주 쓰는 핵심 도구 3개가 한 클릭에 접근.
+- **현재 단계 배지**: pathname을 8단계 워크플로우와 매칭해 로고 옆에 `STEP N/8` 칩 표시 (lg+ 화면).
+- **"모든 도구" 메가패널**: 호버(150ms 닫힘 딜레이) 또는 클릭으로 펼침. 3-컬럼 그리드로 워크플로우 좌→우 표시:
+  - STEP 1~3 키워드 리서치 (인기검색어 / 키워드분석 / 상위노출 분석)
+  - STEP 4~6 글쓰기 (프롬프트 생성 / AI 글쓰기 / 금칙어·맞춤법)
+  - STEP 7~8 이미지 (이미지 검색 / 이미지 편집)
+  각 항목에 step 번호 + label + description 함께 노출. 현재 페이지면 indigo bg 강조.
+- 외부 클릭/페이지 이동/Esc 시 자동 닫힘.
+- **모바일 햄버거**: 그룹 헤딩(STEP N~N + 그룹명) + 8단계 평면 항목 + 연구실 별도. 항목마다 step 번호, label, description, min-h-[44px] iOS 터치 타겟.
+- WORKFLOW 데이터 구조 단일 소스로 관리 — 데스크톱 메가패널·모바일 메뉴·STEP 배지가 같은 배열에서 파생.
+
+### 영향 / 효과
+- 도구 페이지에서 시선 분산 요소 제거, 워크플로우(FlowNav)와 가이드(lab 링크)가 한 줄씩 자기 역할만 함.
+- 핵심 도구 3개는 한 클릭, 나머지 5개는 호버 1회 + 클릭으로 모두 워크플로우 순서 그대로 노출.
+- "지금 몇 단계인가"가 로고 옆 STEP 배지 + 메가패널 강조로 두 곳에서 시각화.
+- 빌드 + tsc 클린.
+
+---
+
 ## 2026-04-27 — Phase 6: 뉴스→프롬프트 흐름 + 관련도 필터링
 
 **커밋**: 단일 커밋 (이번 작업)
