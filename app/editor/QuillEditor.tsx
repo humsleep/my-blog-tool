@@ -37,31 +37,24 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
     const isInitializedRef = useRef(false);
     const handleTextChangeRef = useRef<(() => void) | null>(null);
 
-    // useLayoutEffect를 사용하여 DOM 업데이트 전에 동기적으로 실행
+    // useLayoutEffect: DOM 마운트 직후 동기 실행이 필요 (Quill이 DOM 크기를 즉시 읽음)
     useLayoutEffect(() => {
       if (!editorRef.current) return;
 
-      // DOM에 이미 Quill이 있는지 확인 (가장 확실한 방법)
       const existingToolbar = editorRef.current.querySelector('.ql-toolbar');
       const existingContainer = editorRef.current.querySelector('.ql-container');
-      
-      // 이미 Quill이 초기화되어 있으면 생성하지 않음
+
       if (existingToolbar && existingContainer) {
         return;
       }
 
-      // 이미 초기화 플래그가 설정되어 있으면 생성하지 않음
       if (isInitializedRef.current) {
         return;
       }
 
-      // 컨테이너 완전히 비우기
       editorRef.current.innerHTML = '';
-
-      // 마킹: 초기화 시작
       isInitializedRef.current = true;
 
-      // Quill 인스턴스 생성
       const quill = new Quill(editorRef.current, {
         theme: 'snow',
         placeholder,
@@ -86,12 +79,10 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
 
       quillRef.current = quill;
 
-      // 초기 값 설정
       if (value) {
         quill.root.innerHTML = value;
       }
 
-      // 텍스트 변경 이벤트 리스너
       const handleTextChange = () => {
         if (!quillRef.current) return;
         const html = quillRef.current.root.innerHTML;
@@ -102,23 +93,20 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
       quill.on('text-change', handleTextChange);
 
       return () => {
-        // cleanup: React StrictMode에서 실행될 수 있지만,
-        // DOM 체크와 isInitializedRef로 인해 재생성되지 않음
+        // React StrictMode에서 cleanup이 실행돼도 DOM 체크 + isInitializedRef로 재생성 방지
         if (quillRef.current && handleTextChangeRef.current) {
           try {
             quillRef.current.off('text-change', handleTextChangeRef.current);
-          } catch (e) {
-            // 무시
+          } catch {
+            // Quill이 이미 destroy된 경우 무시
           }
         }
-        // cleanup에서는 인스턴스만 null로 설정하고, isInitializedRef는 유지
         quillRef.current = null;
         handleTextChangeRef.current = null;
-        // isInitializedRef.current는 false로 설정하지 않음 (중복 생성 방지)
+        // isInitializedRef는 false로 되돌리지 않음 — StrictMode 이중 마운트 시 중복 생성 방지
       };
-    }, []); // 한 번만 실행
+    }, []);
 
-    // 외부에서 Quill 인스턴스에 접근할 수 있도록 ref 노출
     useImperativeHandle(ref, () => ({
       getEditor: () => quillRef.current,
       getText: () => quillRef.current?.getText() || '',
@@ -143,7 +131,6 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
       },
     }));
 
-    // value prop이 변경되면 에디터 업데이트 (외부에서 변경된 경우)
     useEffect(() => {
       if (quillRef.current && value !== quillRef.current.root.innerHTML) {
         const selection = quillRef.current.getSelection();
