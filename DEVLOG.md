@@ -5,6 +5,49 @@
 
 ---
 
+## 2026-04-27 — Phase 5: 세션 메모리 자동화 + UI/UX 1차 정리
+
+**커밋**: `4d72885` → `25cefa2` → `e3b7194` → `ec791a8` (모두 main 반영, Vercel 자동 배포)
+
+### 5-1. 세션 메모리 자동화 (`4d72885`)
+- `CLAUDE.md` 222→146줄 (-34%) 슬림화: 진행/완료/아이디어를 DEVLOG로 분리
+- `DEVLOG.md` 신설 — 시간순 작업 일지
+- `.claude/commands/resume.md` — `/resume` 슬래시 커맨드 (DEVLOG 최근 + git log/status 한 번에 로드)
+- `.claude/session-start.sh` + `.claude/settings.json` — SessionStart 훅, 매 세션 시작 시 5줄 이내로 브랜치/마지막 커밋/dirty state 출력
+- 토큰 비용: 매 세션 ~1.5K (CLAUDE.md만), `/resume` 호출 시만 +1K
+
+### 5-2. Navbar 중복 버그 fix (`25cefa2`)
+- 증상: 스크롤 내렸다 올리면 Navbar 2개 노출
+- 원인: `app/ai-writer/page.tsx:6,124`에서 `<Navbar />`를 또 import/render. root layout(`layout.tsx:69`)이 이미 모든 페이지에 Navbar 제공. 둘 다 `sticky top-0`라 두 번째 sticky가 첫 번째 아래로 다시 등장
+- 수정: ai-writer/page.tsx의 import + render 제거 (2줄)
+- 다른 페이지 grep 확인 결과 동일 패턴 없음
+
+### 5-3. UI/UX HIGH 일괄 (`e3b7194`)
+시니어 디자이너 검수 → "복잡함의 근원은 정보 구조와 시각 위계". 4가지 즉효 수정:
+- **globals.css 타이포 베이스라인**: body `line-height: 1.6`, headings `1.3`, antialiased 렌더링
+- **h1 사이즈 통일** → PageHeader 표준 `text-2xl sm:text-3xl tracking-tight`
+  - trending/page.tsx:136, competitor-analysis/page.tsx:94, prompt-generator(Suspense fallback) 정렬. 홈 hero만 예외
+- **FlowNav 모바일 숨김** (`hidden md:block`) — 모바일에서 Navbar와 신호 중복 제거
+- **prompt-generator 카테고리 아코디언화** — 4×N grid(≈70 버튼) → 세로 4행 접고 펼치기, 초기 모두 접힘, 선택 시 자동 펼침 + 부모 행 하이라이트, "선택됨: XXX" 라벨
+
+### 5-4. UI/UX MID + LOW 일괄 (`ec791a8`) — globals.css 단일 파일
+- **status 토큰 풀 세트**: `--success-bg/-text/-border`, `--warning-bg/-text/-border`, `--danger-bg/-text/-border` (light + dark). 향후 emerald/amber/red 하드코딩 대신 토큰으로 점진 마이그레이션
+- **본문 가독성**: `p, li { line-height: 1.65 }` — 페이지마다 `leading-relaxed` 반복 제거
+- **버튼/카드 hover 마이크로 인터랙션**:
+  - `.btn-primary/.btn-secondary/.btn-danger` → `translateY(-1px)` + `shadow-lg` (자연스러운 lift)
+  - `.card` hover → `border-color: var(--accent)` + `shadow-md`
+- **모서리 미세조정**: `.card` 0.75rem → 0.625rem
+- **그림자 재조정**: sm/md는 더 은은하게, lg는 0.12로 깊이감 → hover lift 가시성 확보
+- **iOS 터치 타겟**: `.input-base { min-height: 44px }`
+- **0개 페이지 파일 수정** — 모든 .card/.input-base/.btn-* 소비처가 자동 상속
+
+### 사용자 후속 작업
+- [x] Vercel 배포 자동 반영 확인
+- [ ] (선택) emerald/amber 하드코딩 페이지 → status 토큰 점진 마이그레이션
+- [ ] (선택) `app/components/ui/Card.tsx`가 `.card` 클래스 쓰는지 확인하고 새 hover 동작 활용
+
+---
+
 ## 2026-04-27 — Phase 4: AI 글쓰기 분리 + 디자인 시스템
 
 **커밋**: `ababcc2`
@@ -68,7 +111,8 @@
 
 - ⏳ Google OAuth 동의화면 정식 게시 검토 (현재 테스트 중, 100명 한도)
 - ⏳ Supabase Custom Domain (Pro $25/월 + $10 애드온) — 사용자 늘면 검토
-- ⏳ 디자인 시스템 점진 마이그레이션: trending/keyword-analysis/competitor-analysis/lab/login 등 나머지 페이지
+- ⏳ 디자인 시스템 점진 마이그레이션: trending/keyword-analysis/competitor-analysis/lab/login 등 나머지 페이지 (Phase 5에서 globals.css 베이스라인 정돈 완료, 페이지별 PageHeader 적용은 진행 중)
+- ⏳ status 토큰 도입한 기존 emerald/amber 하드코딩 페이지 마이그레이션
 
 ---
 

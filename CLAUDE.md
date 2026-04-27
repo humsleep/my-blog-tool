@@ -76,6 +76,7 @@ supabase/migrations/0001_ai_draft_usage.sql, 0002_anon_draft_usage.sql
 - **main 브랜치 직접 commit + push** (PR 안 만듦)
 - 커밋 메시지는 영어로, 본문에 한국어 가능
 - 매 커밋 Vercel 자동 배포
+- **🔴 main에 push한 직후에는 반드시 `DEVLOG.md` 업데이트** — 같은 응답 안에서 묶어서 추가 commit + push까지 완료. 예외 없음. (`.claude/hooks/post-push-reminder.sh`가 알림으로 강제하지만 잊지 말 것)
 
 ### 메뉴 구조 (확정)
 ```
