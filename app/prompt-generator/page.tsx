@@ -409,13 +409,13 @@ function PromptGeneratorContent() {
 
               {/* 뉴스 컨텍스트 — 키워드 분석 → 뉴스 모달에서 가져온 경우 */}
               {newsContext && newsContext.items.length > 0 && (
-                <div className="mb-5 sm:mb-6 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50/60 dark:bg-indigo-950/30 p-4">
+                <div className="mb-5 sm:mb-6 rounded-lg border border-orange-200 dark:border-orange-700 bg-orange-50/60 dark:bg-orange-950/30 p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-orange-500 dark:text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
-                      <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                      <span className="text-sm font-semibold text-orange-600 dark:text-orange-300">
                         참고 뉴스 컨텍스트 ({newsContext.items.length}건)
                       </span>
                     </div>
@@ -434,7 +434,7 @@ function PromptGeneratorContent() {
                   <ul className="space-y-1.5">
                     {newsContext.items.map((it, i) => (
                       <li key={`${it.link}-${i}`} className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
-                        <span className="text-indigo-600 dark:text-indigo-400 font-medium mr-1">{i + 1}.</span>
+                        <span className="text-orange-500 dark:text-orange-400 font-medium mr-1">{i + 1}.</span>
                         {it.title.replace(/<[^>]*>/g, '')}
                       </li>
                     ))}
@@ -454,7 +454,7 @@ function PromptGeneratorContent() {
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="예: 수원 맛집 추천"
-                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   />
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     블로그 글의 주제가 될 키워드를 입력하세요
@@ -466,7 +466,7 @@ function PromptGeneratorContent() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     분야 <span className="text-red-500">*</span>
                     {selectedCategory && (
-                      <span className="ml-2 text-xs text-indigo-600 dark:text-indigo-400 font-normal">
+                      <span className="ml-2 text-xs text-orange-500 dark:text-orange-400 font-normal">
                         선택됨: {selectedCategory}
                       </span>
                     )}
@@ -480,7 +480,7 @@ function PromptGeneratorContent() {
                           key={mainCat}
                           className={`border rounded-lg overflow-hidden transition-colors ${
                             hasSelected
-                              ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/30 dark:bg-indigo-950/20'
+                              ? 'border-orange-300 dark:border-orange-600 bg-orange-50/30 dark:bg-orange-950/20'
                               : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40'
                           }`}
                         >
@@ -515,7 +515,7 @@ function PromptGeneratorContent() {
                                     onClick={() => setSelectedCategory(subCat)}
                                     className={`p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
                                       selectedCategory === subCat
-                                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                                         : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                                     }`}
                                   >
@@ -545,7 +545,7 @@ function PromptGeneratorContent() {
                           onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             titleStyle === style
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -570,7 +570,7 @@ function PromptGeneratorContent() {
                           onClick={() => setContentStyle(contentStyle === style ? '' : style)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             contentStyle === style
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -595,7 +595,7 @@ function PromptGeneratorContent() {
                           onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             targetAudience === audience
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -620,7 +620,7 @@ function PromptGeneratorContent() {
                           onClick={() => setTone(t)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             tone === t
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -645,7 +645,7 @@ function PromptGeneratorContent() {
                           onClick={() => setEmojiUsage(usage)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             emojiUsage === usage
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -670,7 +670,7 @@ function PromptGeneratorContent() {
                           onClick={() => setLength(l.value)}
                           className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             length === l.value
-                              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -690,7 +690,7 @@ function PromptGeneratorContent() {
                     <button
                       type="button"
                       onClick={toggleAllAdditionalOptions}
-                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium px-2 py-1 rounded border border-indigo-400 dark:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors"
+                      className="text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 font-medium px-2 py-1 rounded border border-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                     >
                       {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
                     </button>
@@ -706,7 +706,7 @@ function PromptGeneratorContent() {
                             type="checkbox"
                             checked={additionalOptions.includes(option)}
                             onChange={() => toggleAdditionalOption(option)}
-                            className="w-4 h-4 text-indigo-600 border-slate-300 dark:border-slate-500 rounded focus:ring-indigo-500 accent-indigo-600"
+                            className="w-4 h-4 text-orange-500 border-slate-300 dark:border-slate-500 rounded focus:ring-orange-500 accent-orange-500"
                           />
                           <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
                         </label>
@@ -720,7 +720,7 @@ function PromptGeneratorContent() {
                   <button
                     onClick={generatePrompt}
                     disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
                   >
                     {isGenerating ? '생성 중...' : '프롬프트 생성'}
                   </button>
@@ -753,9 +753,9 @@ function PromptGeneratorContent() {
                 </div>
 
                 {/* AI 글쓰기로 이동 */}
-                <div className="bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5">
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center flex-shrink-0">
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
@@ -802,7 +802,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트를 복사하여 AI 도구에 사용하세요',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-orange-500 dark:text-orange-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -821,7 +821,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트는 필요에 따라 수정하여 사용할 수 있습니다',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-indigo-600 dark:text-indigo-400">•</span>
+                    <span className="text-orange-500 dark:text-orange-400">•</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -857,7 +857,7 @@ function PromptGeneratorContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

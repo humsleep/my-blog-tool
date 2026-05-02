@@ -47,7 +47,7 @@ function chipClass(active: boolean) {
     'px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
     'border',
     active
-      ? 'bg-indigo-600 text-white border-indigo-600'
+      ? 'bg-orange-500 text-white border-orange-500'
       : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700',
   ].join(' ');
 }

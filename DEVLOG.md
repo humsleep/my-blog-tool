@@ -5,6 +5,50 @@
 
 ---
 
+## 2026-05-02 — Phase 10: 브랜드 컬러 주황색 + 커뮤니티 모더나이즈 + PWA + 모바일 하단 탭
+
+**범위**: ① 보라색(indigo/violet) → 주황색(orange/amber) 일괄 컨셉컬러 변경. ② 커뮤니티 메뉴 UI 최신 트렌드(bento grid + 그라데이션 + soft shadow) 모더나이즈. ③ 사이트 전체 통일성. ④ 모바일 PWA 형태(manifest + viewport + safe-area + 하단 탭).
+
+### 10-A. 브랜드 컬러 시스템 변경
+- `app/globals.css` 토큰: `--accent` indigo `#6366f1` → orange `#f97316`. dark mode `#fb923c`. focus-ring · selection · input shadow도 주황 RGB로.
+- 35개 파일에서 `bg/text/border/ring/from/to-{indigo|violet}-*` → `orange/amber-*`로 sed 일괄 치환. 잔존 클래스 0개 확인.
+- `indigo-600` → `orange-500`, `indigo-700` → `orange-600` 매핑 (한 단계 어두운 색이 hover로 작동하도록).
+
+### 10-B. PWA 기반
+- `app/manifest.ts` 신규: name/short_name, `theme_color #f97316`, `display: standalone`, SVG 아이콘.
+- `public/icon.svg` 신규: 그라데이션 + 펜 아이콘.
+- `app/layout.tsx`: `Viewport` export 추가 (width device-width, viewportFit cover, themeColor light/dark).
+- `globals.css`: `safe-top/bottom/left/right` 유틸 + `@media display-mode standalone` overscroll-behavior.
+
+### 10-C. 모바일 하단 탭 네비게이션
+- `app/components/MobileBottomNav.tsx` 신규: 4탭(홈/도구/커뮤니티/연구실). md:hidden, fixed bottom, backdrop-blur, safe-bottom.
+- 활성 탭은 주황색 + 굵은 stroke (`strokeWidth 2.4`), 비활성은 slate-500.
+- 에디터·로그인·OAuth callback 페이지에선 자동 숨김 (몰입감).
+- `globals.css` `body { padding-bottom }` 모바일에서 64px 추가하여 탭바와 콘텐츠 겹침 방지.
+
+### 10-D. 커뮤니티 모더나이즈
+- **허브** (`/community`): bento grid (서이추는 `md:col-span-2`), 그라데이션 배경 카드, 12px 이모지 아이콘 박스, 우상단 배지, blur 오브 데코, hover lift. 하단 3개 안내 카드(읽기/쓰기/안전).
+- **서이추 / 정보공유 / 체험단 목록**: breadcrumb를 "›"로 통일, 헤더에 이모지 prefix (🤝/💡/🚶‍♂️), 작성 버튼을 `rounded-full` + 그라데이션 (`from-orange-500 to-orange-600`).
+- 카드: `rounded-2xl` 통일, hover 시 `border-orange-200`로 강조, `hover:-translate-y-0.5 + shadow-lg`.
+- 검색 input: `rounded-xl` + 포커스 시 `bg-white` 트랜지션.
+
+### 10-E. 통일성
+- 모든 카드 라운드: `rounded-2xl`.
+- 작성 버튼: `rounded-full` + orange 그라데이션.
+- breadcrumb 구분자: `›`.
+- focus ring 컬러: `focus:ring-orange-500` 통일.
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `npm run build`: 38 페이지 (이전 37 + `/manifest.webmanifest` 자동 생성).
+- 모바일 Lighthouse 항목 향상: viewport 메타, theme-color, manifest 모두 충족.
+
+### 사용자 안내
+- ⚠️ Vercel 배포 후 모바일 브라우저에서 "홈 화면에 추가"하면 standalone PWA로 실행됩니다.
+- ⚠️ `public/icon.svg`는 SVG라 모든 사이즈 대응. 필요 시 192/512 PNG는 추후 추가 가능.
+
+---
+
 ## 2026-05-02 — Phase 9.1: 커뮤니티 fetch/error 핸들링 hotfix
 
 **증상 보고**: 게시물 등록 후 목록 화면이 갱신되지 않고, 본인이 등록한 글도 안 보임.

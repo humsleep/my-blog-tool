@@ -84,24 +84,26 @@ export default function CompanionsPage() {
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-              <Link href="/community" className="hover:text-indigo-600 dark:hover:text-indigo-400">커뮤니티</Link>
-              <span>/</span>
-              <span>체험단 동행해요</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">체험단 동행해요</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
-              체험단 선정 후 함께 갈 동행자를 찾아보세요.
-            </p>
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
+            <span>›</span>
+            <span className="text-slate-700 dark:text-slate-300 font-medium">체험단 동행해요</span>
           </div>
-          <Link
-            href="/community/companions/new"
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm"
-          >
-            + 모집글 작성
-          </Link>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">🚶‍♂️ 체험단 동행해요</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+                체험단 선정 후 함께 갈 동행자를 찾아보세요
+              </p>
+            </div>
+            <Link
+              href="/community/companions/new"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+            >
+              + 모집글 작성
+            </Link>
+          </div>
         </div>
 
         <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm mb-5 flex flex-col sm:flex-row sm:items-center gap-3">
@@ -110,7 +112,7 @@ export default function CompanionsPage() {
             <select
               value={region ?? ''}
               onChange={(e) => setRegion(e.target.value || null)}
-              className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="">전체</option>
               {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
@@ -121,7 +123,7 @@ export default function CompanionsPage() {
               type="checkbox"
               checked={openOnly}
               onChange={(e) => setOpenOnly(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              className="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500"
             />
             모집중만 보기
           </label>
@@ -139,7 +141,7 @@ export default function CompanionsPage() {
             title="아직 모집글이 없습니다."
             description="첫 모집글을 등록해 함께할 동행자를 찾아보세요."
             action={
-              <Link href="/community/companions/new" className="inline-flex px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg">
+              <Link href="/community/companions/new" className="inline-flex px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg">
                 모집글 작성
               </Link>
             }
@@ -175,7 +177,7 @@ function CompanionCard({ post }: { post: CompanionPost }) {
   return (
     <Link
       href={`/community/companions/${post.id}`}
-      className="block bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
+      className="group block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange-200 dark:hover:border-orange-900/60 transition-all duration-300"
     >
       <div className="flex items-start justify-between mb-2">
         <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
@@ -183,7 +185,7 @@ function CompanionCard({ post }: { post: CompanionPost }) {
             ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
             : post.status === '마감'
               ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-              : 'bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300'
+              : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
         }`}>
           {post.status}
         </span>

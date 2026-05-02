@@ -184,7 +184,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4 text-center">
           <p className="text-slate-700 dark:text-slate-200 font-medium">{error || '게시글을 찾을 수 없습니다.'}</p>
-          <Link href="/community/tips" className="inline-block mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+          <Link href="/community/tips" className="inline-block mt-4 text-sm text-orange-500 dark:text-orange-400 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
@@ -198,7 +198,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+          <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
             ← 목록으로
           </Link>
         </div>
@@ -299,7 +299,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               maxLength={1000}
               rows={3}
               placeholder={authed ? '댓글을 입력하세요 (최대 1000자)' : '댓글을 작성하려면 로그인이 필요합니다.'}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               disabled={!authed}
             />
             <div className="flex justify-between items-center">
@@ -307,7 +307,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               <button
                 type="submit"
                 disabled={submittingComment || !commentBody.trim() || !authed}
-                className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+                className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
               >
                 {!authed ? '로그인 후 작성' : submittingComment ? '등록 중...' : '댓글 등록'}
               </button>

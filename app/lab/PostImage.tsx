@@ -13,7 +13,7 @@ export default function PostImage({ src, alt }: PostImageProps) {
 
   if (imageError) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-orange-100">
         <svg className="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"

@@ -155,17 +155,17 @@ export default function Navbar() {
           {/* Logo + 현재 단계 배지 */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:shadow-indigo-200 dark:group-hover:shadow-indigo-900 transition-shadow">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm group-hover:shadow-orange-200 dark:group-hover:shadow-orange-800 transition-shadow">
                 <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </div>
               <span className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                Boheme <span className="text-indigo-600 dark:text-indigo-400">BlogLab</span>
+                Boheme <span className="text-orange-500 dark:text-orange-400">BlogLab</span>
               </span>
             </Link>
             {currentStep && (
-              <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[11px] font-semibold border border-indigo-200 dark:border-indigo-800">
+              <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300 text-[11px] font-semibold border border-orange-200 dark:border-orange-700">
                 STEP {currentStep.step}/8
               </span>
             )}
@@ -182,7 +182,7 @@ export default function Navbar() {
                   href={t.href}
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-orange-500 text-white shadow-sm'
                       : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -229,7 +229,7 @@ export default function Navbar() {
                     {WORKFLOW.map((group) => (
                       <div key={group.groupLabel} className="p-3">
                         <div className="px-2 mb-2 flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                          <span className="text-[10px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                             STEP {group.range}
                           </span>
                           <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
@@ -246,17 +246,17 @@ export default function Navbar() {
                                 onClick={() => setMegaOpen(false)}
                                 className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
                                   isActive
-                                    ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
+                                    ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
                                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                                 }`}
                               >
                                 <div className="flex items-baseline gap-1.5">
-                                  <span className={`text-[11px] font-bold ${isActive ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                  <span className={`text-[11px] font-bold ${isActive ? 'text-orange-500 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500'}`}>
                                     {it.step}
                                   </span>
                                   <span className="font-medium">{it.label}</span>
                                 </div>
-                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-indigo-600/80 dark:text-indigo-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
                                   {it.description}
                                 </div>
                               </Link>
@@ -284,7 +284,7 @@ export default function Navbar() {
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                   isCommunityActive
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-orange-500 text-white shadow-sm'
                     : communityOpen
                       ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
                       : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -315,12 +315,12 @@ export default function Navbar() {
                         onClick={() => setCommunityOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
-                            ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
+                            ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
                             : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                         }`}
                       >
                         <div className="font-medium">{it.label}</div>
-                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-indigo-600/80 dark:text-indigo-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           {it.description}
                         </div>
                       </Link>
@@ -335,7 +335,7 @@ export default function Navbar() {
               href="/lab"
               className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                 pathname === '/lab' || pathname.startsWith('/lab/')
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-orange-500 text-white shadow-sm'
                   : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -362,7 +362,7 @@ export default function Navbar() {
                         unoptimized
                       />
                     ) : (
-                      <span className="w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-semibold flex items-center justify-center">
+                      <span className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center">
                         {initial}
                       </span>
                     )}
@@ -388,7 +388,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg transition-colors"
+                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-orange-500 dark:hover:text-orange-400 rounded-lg transition-colors"
                 >
                   로그인
                 </Link>
@@ -449,7 +449,7 @@ export default function Navbar() {
                         unoptimized
                       />
                     ) : (
-                      <span className="w-8 h-8 rounded-full bg-indigo-600 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
+                      <span className="w-8 h-8 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                         {initial}
                       </span>
                     )}
@@ -469,7 +469,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileOpen(false)}
-                  className="block px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
+                  className="block px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
                 >
                   로그인 · Google
                 </Link>
@@ -479,7 +479,7 @@ export default function Navbar() {
             {WORKFLOW.map((group) => (
               <div key={group.groupLabel} className="space-y-1">
                 <div className="px-4 flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                     STEP {group.range}
                   </span>
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
@@ -495,16 +495,16 @@ export default function Navbar() {
                       onClick={() => setIsMobileOpen(false)}
                       className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                         isActive
-                          ? 'bg-indigo-600 text-white'
+                          ? 'bg-orange-500 text-white'
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
-                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-indigo-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-orange-100' : 'text-slate-400 dark:text-slate-500'}`}>
                         {it.step}
                       </span>
                       <div className="min-w-0">
                         <div className="text-sm font-medium">{it.label}</div>
-                        <div className={`text-xs mt-0.5 ${isActive ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'}`}>
                           {it.description}
                         </div>
                       </div>
@@ -528,13 +528,13 @@ export default function Navbar() {
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                       isActive
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-orange-500 text-white'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-medium">{it.label}</div>
-                      <div className={`text-xs mt-0.5 ${isActive ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'}`}>
                         {it.description}
                       </div>
                     </div>
@@ -550,7 +550,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileOpen(false)}
                 className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
                   pathname === '/lab' || pathname.startsWith('/lab/')
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-orange-500 text-white'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >

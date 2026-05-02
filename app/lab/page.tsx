@@ -75,7 +75,7 @@ export default async function LabPage() {
                   
                   {/* 콘텐츠 영역 */}
                   <div className="p-5">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors">
                       {post.title}
                     </h2>
                     {post.description && (
@@ -92,7 +92,7 @@ export default async function LabPage() {
                         })}
                       </p>
                     )}
-                    <div className="flex items-center text-indigo-600 dark:text-indigo-400 text-sm font-medium mt-4">
+                    <div className="flex items-center text-orange-500 dark:text-orange-400 text-sm font-medium mt-4">
                       <span>자세히 보기</span>
                       <svg
                         className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"

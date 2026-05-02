@@ -30,11 +30,11 @@ const STEP_LABELS = [
 
 export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, note }: FlowNavProps) {
   return (
-    <div className="hidden md:block mt-8 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5 sm:p-6">
+    <div className="hidden md:block mt-8 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5 sm:p-6">
       {/* Progress */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+          <div className="text-xs font-semibold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
             STEP {currentStep} / {totalSteps}
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -47,7 +47,7 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
                 i < currentStep
-                  ? 'bg-indigo-500 dark:bg-indigo-400'
+                  ? 'bg-orange-500 dark:bg-orange-400'
                   : 'bg-slate-200 dark:bg-slate-700'
               }`}
               title={STEP_LABELS[i]}
@@ -74,8 +74,8 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
               href={action.href}
               className={`group flex items-center justify-between gap-3 px-5 py-4 rounded-lg border transition-all ${
                 isPrimary
-                  ? 'bg-indigo-600 hover:bg-indigo-700 border-indigo-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-indigo-400 dark:hover:border-indigo-500'
+                  ? 'bg-orange-500 hover:bg-orange-600 border-orange-500 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-orange-400 dark:hover:border-orange-500'
               }`}
             >
               <div className="min-w-0 flex-1">
@@ -83,7 +83,7 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
                 {action.description && (
                   <div
                     className={`text-xs mt-0.5 ${
-                      isPrimary ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'
+                      isPrimary ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'
                     }`}
                   >
                     {action.description}

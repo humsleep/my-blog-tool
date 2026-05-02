@@ -94,7 +94,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
         <button
           onClick={run}
           disabled={loading}
-          className="px-2.5 py-1 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded disabled:opacity-50 transition-colors"
+          className="px-2.5 py-1 text-xs font-medium bg-orange-500 hover:bg-orange-600 text-white rounded disabled:opacity-50 transition-colors"
         >
           {loading ? '검사 중...' : result ? '다시 검사' : '검사 실행'}
         </button>
@@ -146,7 +146,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
                         onReplace(match.offset, match.length, rep);
                         dismiss(match);
                       }}
-                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded transition-colors"
                     >
                       {rep}
                     </button>

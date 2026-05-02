@@ -134,7 +134,7 @@ export default function AiWriterPage() {
               <div
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${
                   usage.remaining > 0
-                    ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800'
+                    ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-700'
                     : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800'
                 }`}
               >
@@ -180,7 +180,7 @@ export default function AiWriterPage() {
                   <span>{prompt.length.toLocaleString()} / 8,000자</span>
                   <Link
                     href="/prompt-generator"
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="text-orange-500 dark:text-orange-400 hover:underline"
                   >
                     프롬프트 생성기로 만들기 →
                   </Link>
@@ -263,7 +263,7 @@ export default function AiWriterPage() {
                         onClick={() => setTab(t.key)}
                         className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                           tab === t.key
-                            ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                            ? 'bg-white dark:bg-slate-700 text-orange-500 dark:text-orange-400 shadow-sm'
                             : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'
                         }`}
                         title={t.desc}
@@ -291,7 +291,7 @@ export default function AiWriterPage() {
                     <CopyButton text={tabContent} label={`${tab === 'html' ? 'HTML' : tab === 'markdown' ? '마크다운' : '일반'} 복사`} />
                   </div>
 
-                  <div className="mt-4 p-3 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                  <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-lg text-xs text-orange-700 dark:text-orange-200 leading-relaxed">
                     💡 <strong>네이버 블로그 붙여넣기 팁</strong>: 에디터 우상단 “HTML” 토글을 켜고 <strong>HTML 탭</strong>을 붙여넣으면 제목·소제목·강조가 그대로 적용됩니다. 일반 입력에는 “일반” 탭이 깔끔합니다.
                   </div>
                 </Card>
@@ -304,15 +304,15 @@ export default function AiWriterPage() {
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 한도</h3>
                 <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
                   <li className="flex items-start gap-2">
-                    <span className="text-indigo-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>비로그인: 하루 1회 무료</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-indigo-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>로그인: 하루 5회 무료</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-indigo-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>매일 자정(KST) 초기화</span>
                   </li>
                 </ul>
@@ -365,7 +365,7 @@ export default function AiWriterPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

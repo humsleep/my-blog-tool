@@ -20,11 +20,11 @@
   --border:         #e2e8f0;
   --border-subtle:  #f1f5f9;
 
-  /* Accent — Indigo/Violet */
-  --accent:         #6366f1;
-  --accent-hover:   #4f46e5;
-  --accent-subtle:  #eef2ff;
-  --accent-text:    #4338ca;
+  /* Accent — Brand Orange */
+  --accent:         #f97316;  /* orange-500 */
+  --accent-hover:   #ea580c;  /* orange-600 */
+  --accent-subtle:  #fff7ed;  /* orange-50 */
+  --accent-text:    #c2410c;  /* orange-700 */
 
   /* Status — base + subtle bg / text / border for token-based status UI */
   --success:        #10b981;
@@ -62,10 +62,10 @@
   --border:         #334155;
   --border-subtle:  #1e293b;
 
-  --accent:         #818cf8;
-  --accent-hover:   #6366f1;
-  --accent-subtle:  #1e1b4b;
-  --accent-text:    #c7d2fe;
+  --accent:         #fb923c;  /* orange-400 */
+  --accent-hover:   #f97316;  /* orange-500 */
+  --accent-subtle:  #431407;  /* orange-950 */
+  --accent-text:    #fed7aa;  /* orange-200 */
 
   --success:        #34d399;
   --success-bg:     rgb(16 185 129 / 0.15);
@@ -164,10 +164,10 @@ p, li {
 }
 .input-base:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.25);
+  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.25);
 }
 .dark .input-base:focus {
-  box-shadow: 0 0 0 3px rgb(129 140 248 / 0.35);
+  box-shadow: 0 0 0 3px rgb(251 146 60 / 0.35);
 }
 
 /* ── Buttons (variant: primary | secondary | ghost | danger) ── */
@@ -193,7 +193,7 @@ p, li {
 }
 .btn-base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.35);
+  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.35);
 }
 
 /* sizes */
@@ -288,6 +288,28 @@ p, li {
 
 /* ── Selection ── */
 ::selection {
-  background-color: rgb(99 102 241 / 0.3);
+  background-color: rgb(249 115 22 / 0.3);
   color: var(--text-primary);
+}
+
+/* ── Mobile safe-area (PWA / 노치 대응) ── */
+@supports (padding: max(0px)) {
+  .safe-top    { padding-top:    max(0.5rem, env(safe-area-inset-top)); }
+  .safe-bottom { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+  .safe-left   { padding-left:   max(0.5rem, env(safe-area-inset-left)); }
+  .safe-right  { padding-right:  max(0.5rem, env(safe-area-inset-right)); }
+}
+
+/* ── 모바일 하단 탭 바 공간 확보 (모바일에서만) ── */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ── PWA: 모바일에서 앱처럼 보이게 (당김새로고침 비활성, 텍스트 선택 일부 제어) ── */
+@media (display-mode: standalone), (max-width: 767px) {
+  html {
+    overscroll-behavior-y: contain;
+  }
 }

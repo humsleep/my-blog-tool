@@ -91,7 +91,7 @@ export default function TermsPage() {
               <p>
                 이용자는 자신의 Google 계정을 안전하게 관리할 책임이 있으며, 계정의 부정 사용으로 인한 책임은
                 이용자 본인에게 있습니다. 회원 탈퇴는 이메일(
-                <a href="mailto:boheme88@naver.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">boheme88@naver.com</a>
+                <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a>
                 )로 요청할 수 있습니다.
               </p>
             </section>
@@ -188,7 +188,7 @@ export default function TermsPage() {
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제14조 (문의 및 연락처)</h2>
               <div className="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 rounded-lg p-5 space-y-1.5">
                 <p><strong>서비스명:</strong> Boheme BlogLab</p>
-                <p><strong>운영 이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-indigo-600 dark:text-indigo-400 hover:underline">boheme88@naver.com</a></p>
+                <p><strong>운영 이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a></p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 pt-2">
                   약관 또는 서비스 이용 관련 문의는 위 이메일로 연락 주시기 바랍니다.
                 </p>

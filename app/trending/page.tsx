@@ -155,7 +155,7 @@ export default function TrendingPage() {
                     onClick={() => setPeriod(p.value)}
                     className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                       period === p.value
-                        ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-300 shadow-sm'
+                        ? 'bg-white dark:bg-slate-600 text-orange-500 dark:text-orange-300 shadow-sm'
                         : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                     }`}
                   >
@@ -169,7 +169,7 @@ export default function TrendingPage() {
             <button
               onClick={fetchTrendingKeywords}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-400 text-white text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
             >
               <svg
                 className={`w-4 h-4 flex-shrink-0 ${loading ? 'animate-spin' : ''}`}
@@ -184,7 +184,7 @@ export default function TrendingPage() {
 
           {/* 직접 설정 날짜 피커 */}
           {period === 'custom' && (
-            <div className="px-5 py-4 bg-indigo-50/60 dark:bg-indigo-950/20 border-b border-slate-100 dark:border-slate-700/60">
+            <div className="px-5 py-4 bg-orange-50/60 dark:bg-orange-950/20 border-b border-slate-100 dark:border-slate-700/60">
               <div className="flex flex-wrap items-end gap-4">
                 <div>
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">시작일</label>
@@ -198,7 +198,7 @@ export default function TrendingPage() {
                       if (endDate) setEndDate(clampEndDate(e.target.value, endDate));
                       setDateError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div className="flex items-end pb-[9px] text-slate-400 dark:text-slate-500 text-sm font-medium select-none">~</div>
@@ -215,7 +215,7 @@ export default function TrendingPage() {
                       if (clamped !== e.target.value) setDateError('최대 1년(365일)까지 설정할 수 있습니다.');
                       else setDateError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 {startDate && endDate && !dateError && (
@@ -248,8 +248,8 @@ export default function TrendingPage() {
                   onClick={() => setCategory(cat.value)}
                   className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-150 border ${
                     category === cat.value
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 dark:hover:border-indigo-500 dark:hover:text-indigo-400'
+                      ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-orange-400 hover:text-orange-500 dark:hover:border-orange-500 dark:hover:text-orange-400'
                   }`}
                 >
                   {cat.label}
@@ -262,7 +262,7 @@ export default function TrendingPage() {
         {/* Loading state */}
         {loading && !data && (
           <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-sm">
-            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400 mb-4" />
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 dark:border-orange-400 mb-4" />
             <p className="text-slate-500 dark:text-slate-400">인기 검색어를 불러오는 중...</p>
           </div>
         )}
@@ -324,7 +324,7 @@ export default function TrendingPage() {
                           item.rank <= 3
                             ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300'
                             : item.rank <= 10
-                            ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-300'
+                            ? 'bg-orange-100 dark:bg-orange-800/50 text-orange-700 dark:text-orange-300'
                             : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
                         }`}>
                           {item.rank}
@@ -333,7 +333,7 @@ export default function TrendingPage() {
                       <td className="px-5 py-3.5">
                         <button
                           onClick={() => handleKeywordClick(item.keyword)}
-                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline font-medium text-sm text-left"
+                          className="text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300 hover:underline font-medium text-sm text-left"
                         >
                           {item.keyword}
                         </button>
@@ -352,7 +352,7 @@ export default function TrendingPage() {
                       <td className="px-5 py-3.5 whitespace-nowrap text-center">
                         <Link
                           href={`/keyword-analysis?keyword=${encodeURIComponent(item.keyword)}`}
-                          className="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors"
                         >
                           분석하기
                         </Link>
@@ -372,9 +372,9 @@ export default function TrendingPage() {
         )}
 
         {/* 이용 안내 */}
-        <div className="mt-6 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-indigo-900 dark:text-indigo-300 mb-2">💡 이용 안내</h3>
-          <ul className="space-y-1.5 text-sm text-indigo-700 dark:text-indigo-400">
+        <div className="mt-6 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-orange-800 dark:text-orange-300 mb-2">💡 이용 안내</h3>
+          <ul className="space-y-1.5 text-sm text-orange-600 dark:text-orange-400">
             {[
               '인기 검색어는 네이버 검색광고 API를 통해 제공됩니다.',
               '검색량은 월간 기준으로 표시됩니다.',
@@ -411,7 +411,7 @@ export default function TrendingPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

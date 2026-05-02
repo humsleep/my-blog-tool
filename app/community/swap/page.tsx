@@ -157,28 +157,30 @@ export default function SwapPage() {
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-              <Link href="/community" className="hover:text-indigo-600 dark:hover:text-indigo-400">커뮤니티</Link>
-              <span>/</span>
-              <span>서이추 해요</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">서이추 해요</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
-              같은 분야 블로거를 만나 서로이웃 추가하세요. 하루 1회 작성 가능합니다.
-            </p>
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
+            <span>›</span>
+            <span className="text-slate-700 dark:text-slate-300 font-medium">서이추 해요</span>
           </div>
-          <button
-            type="button"
-            onClick={onClickWrite}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
-          >
-            + 내 글 작성
-          </button>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">🤝 서이추 해요</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+                같은 분야 블로거를 만나 서로이웃 추가하세요 · 하루 1회 작성
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClickWrite}
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+            >
+              + 내 글 작성
+            </button>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm mb-5 space-y-3">
+        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm mb-5 space-y-3">
           <CategoryChips selected={category} onSelect={setCategory} />
           <div className="relative">
             <input
@@ -186,7 +188,7 @@ export default function SwapPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="닉네임으로 검색"
-              className="w-full pl-9 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
             />
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -209,7 +211,7 @@ export default function SwapPage() {
               <button
                 type="button"
                 onClick={onClickWrite}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg"
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
               >
                 내 글 작성하기
               </button>
@@ -274,9 +276,9 @@ function SwapCard({
 }: { post: SwapPost; isMine: boolean; onEdit: () => void; onDelete: () => void }) {
   const formatted = useMemo(() => formatRelativeKr(post.created_at), [post.created_at]);
   return (
-    <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div className="group relative bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange-200 dark:hover:border-orange-900/60 transition-all duration-300">
       <div className="flex items-start justify-between mb-2">
-        <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">
+        <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300">
           {post.category}
         </span>
         {isMine && (
@@ -284,7 +286,7 @@ function SwapCard({
             <button
               type="button"
               onClick={onEdit}
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 px-1.5"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 px-1.5"
             >
               수정
             </button>
@@ -310,7 +312,7 @@ function SwapCard({
           href={post.blog_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+          className="inline-flex items-center gap-1 text-xs font-medium text-orange-500 dark:text-orange-400 hover:underline"
         >
           블로그 방문
           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

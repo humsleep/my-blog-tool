@@ -197,7 +197,7 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
           <button
             type="submit"
             disabled={submitting}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+            className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
           >
             {submitting ? '저장 중...' : isEdit ? '수정 저장' : '작성 완료'}
           </button>
@@ -208,4 +208,4 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

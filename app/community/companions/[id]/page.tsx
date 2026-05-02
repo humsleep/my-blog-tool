@@ -95,7 +95,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4 text-center">
           <p className="text-slate-700 dark:text-slate-200 font-medium">{error || '모집글을 찾을 수 없습니다.'}</p>
-          <Link href="/community/companions" className="inline-block mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:underline">
+          <Link href="/community/companions" className="inline-block mt-4 text-sm text-orange-500 dark:text-orange-400 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
@@ -113,7 +113,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link href="/community/companions" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+          <Link href="/community/companions" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
             ← 목록으로
           </Link>
         </div>
@@ -125,7 +125,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
                 ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
                 : post.status === '마감'
                   ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-                  : 'bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300'
+                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
             }`}>
               {post.status}
             </span>
@@ -160,19 +160,19 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
             </p>
           </div>
 
-          <div className="p-4 bg-indigo-50 dark:bg-indigo-950/40 rounded-lg">
-            <h2 className="text-sm font-semibold text-indigo-900 dark:text-indigo-200 mb-1">📞 연락 방법</h2>
+          <div className="p-4 bg-orange-50 dark:bg-orange-950/40 rounded-lg">
+            <h2 className="text-sm font-semibold text-orange-800 dark:text-orange-200 mb-1">📞 연락 방법</h2>
             {isUrl ? (
               <a
                 href={post.contact_method}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-indigo-700 dark:text-indigo-300 hover:underline break-all"
+                className="text-sm text-orange-600 dark:text-orange-300 hover:underline break-all"
               >
                 {post.contact_method}
               </a>
             ) : (
-              <p className="text-sm text-indigo-800 dark:text-indigo-300 break-words">{post.contact_method}</p>
+              <p className="text-sm text-orange-700 dark:text-orange-300 break-words">{post.contact_method}</p>
             )}
           </div>
 

@@ -1,11 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FontLoader from "./components/FontLoader";
 import AdSense from "./components/AdSense";
 import ThemeProvider from "./components/ThemeProvider";
+import MobileBottomNav from "./components/MobileBottomNav";
 import { Analytics } from "@vercel/analytics/next";
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)',  color: '#0f172a' },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bohemebloglab.com"),
@@ -69,6 +81,7 @@ export default function RootLayout({
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
+          <MobileBottomNav />
           <AdSense />
           <Analytics />
         </ThemeProvider>

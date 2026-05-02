@@ -335,19 +335,19 @@ export default function EditorPage() {
         </div>
 
         {draftNotice && (
-          <div className="mb-4 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/40 dark:to-violet-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
-            <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mb-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-4 flex items-start gap-3">
+            <svg className="w-5 h-5 text-orange-500 dark:text-orange-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-indigo-900 dark:text-indigo-200 font-medium">{draftNotice}</p>
-              <p className="text-xs text-indigo-700 dark:text-indigo-400 mt-1">
+              <p className="text-sm text-orange-800 dark:text-orange-200 font-medium">{draftNotice}</p>
+              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
                 [나의 경험 삽입] 플레이스홀더를 직접 작성한 경험으로 바꾸면 AI 티 없는 글이 됩니다.
               </p>
             </div>
             <button
               onClick={() => setDraftNotice(null)}
-              className="text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 flex-shrink-0"
+              className="text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 flex-shrink-0"
               aria-label="닫기"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -384,7 +384,7 @@ export default function EditorPage() {
                         }
                       }
                     }}
-                    className="px-3 py-2 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-lg transition-colors min-h-[36px]"
+                    className="px-3 py-2 text-xs text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 rounded-lg transition-colors min-h-[36px]"
                   >
                     샘플 텍스트
                   </button>
@@ -405,7 +405,7 @@ export default function EditorPage() {
                       }
                     }}
                     disabled={!content.trim()}
-                    className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
+                    className="px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
                   >
                     복사하기
                   </button>
@@ -452,11 +452,11 @@ export default function EditorPage() {
                                   [replacementKey]: e.target.value
                                 }))}
                                 placeholder="대체할 단어 입력"
-                                className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[36px]"
+                                className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[36px]"
                               />
                               <button
                                 onClick={() => handleReplace(pos, replacementValue)}
-                                className="flex-shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors whitespace-nowrap min-h-[36px] min-w-[50px]"
+                                className="flex-shrink-0 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded transition-colors whitespace-nowrap min-h-[36px] min-w-[50px]"
                               >
                                 적용
                               </button>
@@ -509,9 +509,9 @@ export default function EditorPage() {
               <div className="mb-5">
                 <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">글자 수</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-lg">
+                  <div className="flex justify-between items-center p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg">
                     <span className="text-sm text-slate-600 dark:text-slate-400">공백 포함</span>
-                    <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                    <span className="text-lg font-bold text-orange-500 dark:text-orange-400">
                       {stats.withSpaces.toLocaleString()}
                     </span>
                   </div>
@@ -587,7 +587,7 @@ export default function EditorPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

@@ -147,7 +147,7 @@ function TipsNewPage() {
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">로그인이 필요합니다</h1>
             <Link
               href={`/login?next=${encodeURIComponent('/community/tips/new')}`}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg"
+              className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
             </Link>
@@ -162,7 +162,7 @@ function TipsNewPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <Link href="/community/tips" className="hover:text-indigo-600 dark:hover:text-indigo-400">정보 공유</Link>
+            <Link href="/community/tips" className="hover:text-orange-500 dark:hover:text-orange-400">정보 공유</Link>
             <span>/</span>
             <span>{editId ? '글 수정' : '글쓰기'}</span>
           </div>
@@ -208,7 +208,7 @@ function TipsNewPage() {
               <button
                 type="button"
                 onClick={() => setPreview((v) => !v)}
-                className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="text-xs font-medium text-orange-500 dark:text-orange-400 hover:underline"
               >
                 {preview ? '편집 보기' : '미리보기'}
               </button>
@@ -247,7 +247,7 @@ function TipsNewPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : editId ? '수정 저장' : '작성 완료'}
             </button>
@@ -259,4 +259,4 @@ function TipsNewPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

@@ -17,7 +17,7 @@ export default function PageHeader({ title, subtitle, step, totalSteps, badge, a
           {(step && totalSteps) || badge ? (
             <div className="flex items-center gap-2 mb-2">
               {step && totalSteps ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold border border-indigo-200 dark:border-indigo-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300 text-xs font-semibold border border-orange-200 dark:border-orange-700">
                   STEP {step} / {totalSteps}
                 </span>
               ) : null}

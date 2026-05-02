@@ -263,13 +263,13 @@ function KeywordAnalysisContent() {
                       if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) analyzeKeywords();
                     }}
                     placeholder="예: 꽃배달, flower, 화환"
-                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                     disabled={isLoading}
                   />
                   <button
                     onClick={analyzeKeywords}
                     disabled={isLoading || !inputKeywords.trim()}
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
+                    className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     {isLoading ? (
                       <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -292,12 +292,12 @@ function KeywordAnalysisContent() {
               </div>
 
               {isLoading && currentProgress && (
-                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-lg border border-indigo-200 dark:border-indigo-800 flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/50 rounded-lg border border-orange-200 dark:border-orange-700 flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-orange-500 dark:text-orange-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  <p className="text-sm text-indigo-700 dark:text-indigo-300 font-medium">{currentProgress}</p>
+                  <p className="text-sm text-orange-600 dark:text-orange-300 font-medium">{currentProgress}</p>
                 </div>
               )}
               {errorMessage && !isLoading && (
@@ -364,7 +364,7 @@ function KeywordAnalysisContent() {
                           <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
-                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left"
+                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-left"
                                 onClick={() => setActionKeyword(item.keyword)}
                               >
                                 {item.keyword}
@@ -377,7 +377,7 @@ function KeywordAnalysisContent() {
                               {formatNumber(item.mobileSearchVolume)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-semibold text-indigo-600 dark:text-indigo-400 text-sm">
+                              <span className="font-semibold text-orange-500 dark:text-orange-400 text-sm">
                                 {formatNumber(item.totalSearchVolume)}
                               </span>
                             </td>
@@ -398,7 +398,7 @@ function KeywordAnalysisContent() {
                               ) : wikiViews[item.keyword] === null ? (
                                 <span className="text-slate-400 dark:text-slate-500">—</span>
                               ) : (
-                                <span className="text-violet-600 dark:text-violet-400 font-medium">
+                                <span className="text-amber-600 dark:text-amber-400 font-medium">
                                   {formatNumber(wikiViews[item.keyword] as number)}
                                 </span>
                               )}
@@ -406,7 +406,7 @@ function KeywordAnalysisContent() {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
                                 onClick={() => setNewsKeyword(item.keyword)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all min-h-[32px]"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
                                 title="관련 뉴스 보기 + 프롬프트로 가져가기"
                               >
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -451,7 +451,7 @@ function KeywordAnalysisContent() {
                   'CSV 파일로 다운로드',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-orange-500 dark:text-orange-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -530,11 +530,11 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/competitor-analysis?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">상위노출 분석</div>
-                    <div className="text-xs text-indigo-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
+                    <div className="text-xs text-orange-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
                   </div>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -544,7 +544,7 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/prompt-generator?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-orange-400 dark:hover:border-orange-500 rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">프롬프트 바로 생성</div>
@@ -639,7 +639,7 @@ function KeywordAnalysisContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

@@ -9,13 +9,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm">
                 <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
               </div>
               <span className="font-bold text-slate-900 dark:text-slate-100">
-                Boheme <span className="text-indigo-600 dark:text-indigo-400">BlogLab</span>
+                Boheme <span className="text-orange-500 dark:text-orange-400">BlogLab</span>
               </span>
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
@@ -38,7 +38,7 @@ export default function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    className="text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -52,14 +52,14 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 uppercase tracking-wider">문의</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
                   문의하기
                 </Link>
               </li>
               <li>
                 <a
                   href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
-                  className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                  className="text-sm text-orange-500 dark:text-orange-400 hover:underline font-medium"
                 >
                   boheme88@naver.com
                 </a>
@@ -82,7 +82,7 @@ export default function Footer() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                  className="hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
                 >
                   {item.label}
                 </Link>

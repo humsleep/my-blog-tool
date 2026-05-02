@@ -105,24 +105,26 @@ export default function TipsListPage() {
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-              <Link href="/community" className="hover:text-indigo-600 dark:hover:text-indigo-400">커뮤니티</Link>
-              <span>/</span>
-              <span>정보 공유</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">정보 공유</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
-              운영 노하우·질문·트러블슈팅을 자유롭게 나눠요.
-            </p>
+        <div className="mb-5">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
+            <span>›</span>
+            <span className="text-slate-700 dark:text-slate-300 font-medium">정보 공유</span>
           </div>
-          <Link
-            href="/community/tips/new"
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm"
-          >
-            + 글쓰기
-          </Link>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">💡 정보 공유</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+                운영 노하우·질문·트러블슈팅을 자유롭게 나눠요
+              </p>
+            </div>
+            <Link
+              href="/community/tips/new"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+            >
+              + 글쓰기
+            </Link>
+          </div>
         </div>
 
         <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4">
@@ -139,7 +141,7 @@ export default function TipsListPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="제목으로 검색"
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -164,7 +166,7 @@ export default function TipsListPage() {
             title="아직 게시글이 없습니다."
             description="첫 글을 작성해 다른 블로거들과 정보를 나눠보세요."
             action={
-              <Link href="/community/tips/new" className="inline-flex px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg">
+              <Link href="/community/tips/new" className="inline-flex px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg">
                 글쓰기
               </Link>
             }
@@ -202,7 +204,7 @@ function TipsRow({ post }: { post: TipsPost }) {
               {post.title}
             </h3>
             {post.comment_count > 0 && (
-              <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 flex-shrink-0">
+              <span className="text-xs font-semibold text-orange-500 dark:text-orange-400 flex-shrink-0">
                 💬 {post.comment_count}
               </span>
             )}
@@ -229,7 +231,7 @@ function CategoryTab({ active, onClick, label }: { active: boolean; onClick: () 
       onClick={onClick}
       className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
         active
-          ? 'bg-indigo-600 text-white border-indigo-600'
+          ? 'bg-orange-500 text-white border-orange-500'
           : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
       }`}
     >
@@ -277,7 +279,7 @@ function Pagination({ page, totalPages, onChange }: { page: number; totalPages: 
           onClick={() => onChange(p)}
           className={`w-9 h-9 text-sm rounded-lg transition-colors ${
             p === page
-              ? 'bg-indigo-600 text-white font-semibold'
+              ? 'bg-orange-500 text-white font-semibold'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
           }`}
         >
