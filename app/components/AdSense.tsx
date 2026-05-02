@@ -3,13 +3,19 @@
 import Script from 'next/script';
 import { useEffect } from 'react';
 
+declare global {
+  interface Window {
+    adsbygoogle?: Array<Record<string, unknown>>;
+  }
+}
+
 export default function AdSense() {
   const adsenseId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID;
 
   useEffect(() => {
     if (adsenseId && typeof window !== 'undefined') {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
       } catch (e) {
         console.error('AdSense error:', e);
       }

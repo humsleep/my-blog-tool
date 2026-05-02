@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '문서수 조회 실패' }, { status: response.status });
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as { total?: number };
     const result = { count: data.total || 0 };
     cache.set(cacheKey, result);
     return NextResponse.json(result, { headers: { 'x-cache': 'MISS' } });

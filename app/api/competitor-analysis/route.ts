@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '경쟁 블로그 분석 실패' }, { status: response.status });
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as { total?: number; items?: BlogPost[] };
     const posts: BlogPost[] = data.items || [];
 
     const titleLengths = posts.map(post => post.title.replace(/<[^>]*>/g, '').length);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import FlowNav from '../components/FlowNav';
@@ -190,13 +191,16 @@ export default function ImageSearchPage() {
                   key={item.id}
                   className="group relative rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.thumbUrl}
-                    alt={item.alt}
-                    className="w-full h-48 object-cover"
-                    loading="lazy"
-                  />
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={item.thumbUrl}
+                      alt={item.alt}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                   <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold bg-black/70 text-white rounded uppercase">
                     {item.source}
                   </div>

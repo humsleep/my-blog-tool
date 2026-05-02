@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
@@ -264,8 +265,14 @@ export default function Navbar() {
                     className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
                   >
                     {avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={avatarUrl} alt={displayName} className="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700" />
+                      <Image
+                        src={avatarUrl}
+                        alt={displayName}
+                        width={28}
+                        height={28}
+                        className="rounded-full border border-slate-200 dark:border-slate-700"
+                        unoptimized
+                      />
                     ) : (
                       <span className="w-7 h-7 rounded-full bg-indigo-600 text-white text-xs font-semibold flex items-center justify-center">
                         {initial}
@@ -345,8 +352,14 @@ export default function Navbar() {
                 <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <div className="flex items-center gap-2 min-w-0">
                     {avatarUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={avatarUrl} alt={displayName} className="w-8 h-8 rounded-full flex-shrink-0" />
+                      <Image
+                        src={avatarUrl}
+                        alt={displayName}
+                        width={32}
+                        height={32}
+                        className="rounded-full flex-shrink-0"
+                        unoptimized
+                      />
                     ) : (
                       <span className="w-8 h-8 rounded-full bg-indigo-600 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                         {initial}

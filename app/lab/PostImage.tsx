@@ -6,10 +6,9 @@ import { useState } from 'react';
 interface PostImageProps {
   src: string;
   alt: string;
-  slug: string;
 }
 
-export default function PostImage({ src, alt, slug }: PostImageProps) {
+export default function PostImage({ src, alt }: PostImageProps) {
   const [imageError, setImageError] = useState(false);
 
   if (imageError) {

@@ -27,14 +27,6 @@ export class TTLCache<T> {
     }
     this.store.set(key, { value, expiresAt: Date.now() + this.ttlMs });
   }
-
-  async wrap(key: string, loader: () => Promise<T>): Promise<T> {
-    const cached = this.get(key);
-    if (cached !== undefined) return cached;
-    const value = await loader();
-    this.set(key, value);
-    return value;
-  }
 }
 
 declare global {

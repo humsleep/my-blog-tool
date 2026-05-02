@@ -48,22 +48,3 @@ export async function fetchWithRetry(
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-export async function fetchJsonWithRetry<T>(
-  input: string,
-  options: FetchRetryOptions = {}
-): Promise<T> {
-  const response = await fetchWithRetry(input, options);
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new FetchError(response.status, text || response.statusText);
-  }
-  return response.json() as Promise<T>;
-}
-
-export class FetchError extends Error {
-  constructor(public status: number, message: string) {
-    super(message);
-    this.name = 'FetchError';
-  }
-}

@@ -4,7 +4,23 @@ import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
 
-const cache = getCache<unknown>('keywords', 5 * 60 * 1000);
+export interface NaverKeywordToolItem {
+  relKeyword: string;
+  monthlyPcQcCnt: string | number;
+  monthlyMobileQcCnt: string | number;
+  monthlyAvePcClkCnt?: string | number;
+  monthlyAveMobileClkCnt?: string | number;
+  monthlyAvePcCtr?: string | number;
+  monthlyAveMobileCtr?: string | number;
+  plAvgDepth?: string | number;
+  compIdx?: string;
+}
+
+export interface NaverKeywordToolResponse {
+  keywordList: NaverKeywordToolItem[];
+}
+
+const cache = getCache<NaverKeywordToolResponse>('keywords', 5 * 60 * 1000);
 
 function generateSignature(timestamp: string, method: string, uri: string, secretKey: string): string {
   const message = `${timestamp}.${method}.${uri}`;
@@ -56,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as NaverKeywordToolResponse;
     cache.set(cacheKey, data);
     return NextResponse.json(data, { headers: { 'x-cache': 'MISS' } });
   } catch (error) {

@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data = (await response.json()) as { keywordList?: NaverKeywordItem[] };
           const keywordList: NaverKeywordItem[] = data.keywordList || [];
 
           keywordList.forEach((item) => {

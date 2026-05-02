@@ -17,6 +17,9 @@ export function getClientIp(req: Request): string {
 }
 
 export function hashIp(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || 'boheme-bloglab-default-salt';
+  const salt = process.env.IP_HASH_SALT;
+  if (!salt || salt.length < 16) {
+    throw new Error('IP_HASH_SALT 환경변수가 설정되지 않았거나 너무 짧습니다 (최소 16자).');
+  }
   return crypto.createHash('sha256').update(`${salt}|${ip}`).digest('hex');
 }

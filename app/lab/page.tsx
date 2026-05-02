@@ -70,7 +70,7 @@ export default async function LabPage() {
                 >
                   {/* 이미지 영역 */}
                   <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
-                    <PostImage src={imagePath} alt={post.title} slug={post.slug} />
+                    <PostImage src={imagePath} alt={post.title} />
                   </div>
                   
                   {/* 콘텐츠 영역 */}

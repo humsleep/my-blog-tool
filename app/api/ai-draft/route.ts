@@ -106,8 +106,16 @@ export async function POST(request: Request) {
   if (user) {
     usage = await getAuthedUsage(user.id);
   } else {
-    const ip = getClientIp(request);
-    ipHash = hashIp(ip);
+    try {
+      const ip = getClientIp(request);
+      ipHash = hashIp(ip);
+    } catch (err) {
+      console.error('IP 해시 실패:', err);
+      return NextResponse.json(
+        { error: '비로그인 사용자 추적 시스템이 설정되지 않았습니다. 로그인 후 이용해주세요.', code: 'IP_HASH_NOT_CONFIGURED' },
+        { status: 503 }
+      );
+    }
     usage = await getAnonUsage(ipHash);
     if (!usage) {
       return NextResponse.json(
@@ -215,8 +223,18 @@ export async function GET(request: Request) {
     });
   }
 
-  const ip = getClientIp(request);
-  const ipHash = hashIp(ip);
+  let ipHash: string;
+  try {
+    ipHash = hashIp(getClientIp(request));
+  } catch {
+    return NextResponse.json({
+      authenticated: false,
+      used: 0,
+      limit: LIMITS.anon,
+      remaining: LIMITS.anon,
+      authedLimit: LIMITS.authed,
+    });
+  }
   const usage = await getAnonUsage(ipHash);
 
   if (!usage) {
