@@ -78,13 +78,20 @@ export default function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] transition-colors ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] transition-colors ${
                 active
                   ? 'text-orange-500 dark:text-orange-400'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
               aria-current={active ? 'page' : undefined}
             >
+              {/* 활성 인디케이터 — 상단 라인 */}
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-orange-500 dark:bg-orange-400"
+                />
+              )}
               {item.icon(active)}
               <span className={`text-[10px] ${active ? 'font-bold' : 'font-medium'}`}>
                 {item.label}

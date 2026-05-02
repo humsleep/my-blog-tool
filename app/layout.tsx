@@ -6,6 +6,7 @@ import FontLoader from "./components/FontLoader";
 import AdSense from "./components/AdSense";
 import ThemeProvider from "./components/ThemeProvider";
 import MobileBottomNav from "./components/MobileBottomNav";
+import ToastProvider from "./components/ui/Toast";
 import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
@@ -77,13 +78,15 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
         <ThemeProvider>
-          <FontLoader />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <MobileBottomNav />
-          <AdSense />
-          <Analytics />
+          <ToastProvider>
+            <FontLoader />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <MobileBottomNav />
+            <AdSense />
+            <Analytics />
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

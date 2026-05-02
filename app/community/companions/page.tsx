@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { REGIONS, type CompanionStatus } from '@/app/lib/community/regions';
 import EmptyState from '@/app/components/community/EmptyState';
+import Pagination from '@/app/components/community/Pagination';
+import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import { formatRelativeKr } from '@/app/lib/format/relative-time';
 
 interface CompanionPost {
   id: number;
@@ -21,31 +24,40 @@ interface CompanionPost {
   created_at: string;
 }
 
+const PAGE_SIZE = 20;
+
 export default function CompanionsPage() {
   const [posts, setPosts] = useState<CompanionPost[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [region, setRegion] = useState<string | null>(null);
   const [openOnly, setOpenOnly] = useState(true);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => { setPage(1); }, [region, openOnly]);
 
   const fetchPosts = async (silent: boolean) => {
     const supabase = createClient();
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
     let q = supabase
       .from('companion_posts')
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('visit_date', { ascending: true })
       .order('created_at', { ascending: false })
-      .limit(100);
+      .range(from, to);
     if (region) q = q.eq('region', region);
     if (openOnly) q = q.eq('status', '모집중');
-    const { data, error: fetchErr } = await q;
+    const { data, error: fetchErr, count } = await q;
     if (fetchErr) {
       console.error('companion fetch failed:', fetchErr);
-      if (!silent) { setError(fetchErr.message); setPosts([]); }
+      if (!silent) { setError(fetchErr.message); setPosts([]); setTotal(0); }
       return;
     }
     setPosts((data as CompanionPost[]) ?? []);
+    setTotal(count ?? 0);
     if (!silent) setError(null);
   };
 
@@ -65,7 +77,7 @@ export default function CompanionsPage() {
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, openOnly]);
+  }, [region, openOnly, page]);
 
   useEffect(() => {
     const onFocus = () => {
@@ -79,11 +91,13 @@ export default function CompanionsPage() {
       window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, openOnly]);
+  }, [region, openOnly, page]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
             <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
@@ -106,42 +120,51 @@ export default function CompanionsPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4">
-          <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto scrollbar-hide">
-            <label className="flex-shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">지역</label>
-            <select
-              value={region ?? ''}
-              onChange={(e) => setRegion(e.target.value || null)}
-              className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <option value="">전체</option>
-              {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
-            </select>
-            <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-slate-200 dark:border-slate-700">
-              <input
-                type="checkbox"
-                checked={openOnly}
-                onChange={(e) => setOpenOnly(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500 accent-orange-500"
-              />
-              모집중만
-            </label>
+        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md mb-4">
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm">
+            <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto scrollbar-hide">
+              <label className="flex-shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">지역</label>
+              <select
+                value={region ?? ''}
+                onChange={(e) => setRegion(e.target.value || null)}
+                className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              >
+                <option value="">전체</option>
+                {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+              </select>
+              <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-slate-200 dark:border-slate-700">
+                <input
+                  type="checkbox"
+                  checked={openOnly}
+                  onChange={(e) => setOpenOnly(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500 accent-orange-500"
+                />
+                모집중만
+              </label>
+            </div>
           </div>
         </div>
 
-        {loading && <p className="text-sm text-slate-500">불러오는 중...</p>}
         {error && (
           <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400 mb-4">
             {error}
           </div>
         )}
 
+        {loading && <BoardSkeleton rows={6} />}
+
         {!loading && posts.length === 0 && !error && (
           <EmptyState
-            title="아직 모집글이 없습니다."
+            variant="companions"
+            title="아직 모집글이 없습니다"
             description="첫 모집글을 등록해 함께할 동행자를 찾아보세요."
+            hints={[
+              '체험단 정보, 방문 일자, 원하는 동행자 스타일을 적어주세요',
+              '연락은 오픈채팅 URL로 받는 것을 권장합니다',
+              '본인 글은 [모집중 → 마감 → 완료] 상태 변경 가능',
+            ]}
             action={
-              <Link href="/community/companions/new" className="inline-flex px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg">
+              <Link href="/community/companions/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 모집글 작성
               </Link>
             }
@@ -150,7 +173,7 @@ export default function CompanionsPage() {
 
         {!loading && posts.length > 0 && (
           <>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {posts.length}건</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {total}건</p>
             <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
               <div className="hidden md:grid grid-cols-[72px_1fr_80px_140px_120px_100px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 <span>상태</span>
@@ -164,6 +187,7 @@ export default function CompanionsPage() {
                 {posts.map((post) => <CompanionRow key={post.id} post={post} />)}
               </ul>
             </div>
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </>
         )}
 
@@ -238,18 +262,4 @@ function CompanionRow({ post }: { post: CompanionPost }) {
   );
 }
 
-function formatRelativeKr(iso: string): string {
-  const now = Date.now();
-  const t = new Date(iso).getTime();
-  const diff = Math.max(0, now - t);
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return '방금 전';
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}일 전`;
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
 

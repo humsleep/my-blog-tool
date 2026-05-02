@@ -5,6 +5,40 @@
 
 ---
 
+## 2026-05-02 — Phase 11: UI 우선순위 높음+중간 일괄 개선
+
+**범위**: 사용자 요청 — 우선순위 높음 4개 + 중간 6개 항목 일괄 개선.
+
+### 신규 공통 컴포넌트/유틸
+- **`app/lib/format/relative-time.ts`** — `formatRelativeKr` / `formatAbsoluteKr` 추출 (3개 파일에 중복되어 있던 함수 제거).
+- **`app/components/ui/Toast.tsx`** — ToastProvider + useToast hook. success/error/info 3종, 우상단 fixed, 3초 자동 닫힘, slide-in 애니메이션, safe-top 적용.
+- **`app/components/community/Pagination.tsx`** — 공유 페이지네이션. **키보드 ←/→** 단축키 (input/textarea 포커스 중엔 자동 비활성), `aria-current`, 가운데 정렬 안정화 (start 5개 내에서 슬라이드).
+- **`app/components/community/BoardSkeleton.tsx`** — 게시판 행 리스트용 N행 스켈레톤. `animate-pulse` + 헤더 placeholder.
+
+### 우선순위 높음 (4개)
+1. **페이지 폭 통일**: 목록(`/swap`, `/tips`, `/companions`) `max-w-6xl`, 상세(`tips/[id]`, `companions/[id]`) `max-w-3xl`. 상하 패딩도 `pt-6 pb-10`로 통일.
+2. **로딩 스켈레톤**: 텍스트 "불러오는 중..." 제거 → `<BoardSkeleton rows={6} />`로 교체. 시각적 깜빡임 해소.
+3. **alert() 토스트 대체**: `app/layout.tsx`에 `ToastProvider` 마운트. swap 모달/tips 상세/companions 상세에서 `alert()` → `toast(message, variant)` 일관 교체. 성공·실패·정보 색상 분리.
+4. **페이지네이션 일관 적용**: swap/companions에 PAGE_SIZE 20 + count: 'exact'로 페이지네이션 추가. 모든 게시판이 동일한 키보드 화살표 지원.
+
+### 우선순위 중간 (6개)
+5. **상단 sticky 필터**: 카테고리 칩 + 검색 + 정렬 영역을 `sticky top-14` (Navbar 56px 아래) + `bg-slate-50/90 backdrop-blur-md`로 고정. 스크롤해도 필터 항상 접근.
+6. **다크모드 주황 톤다운**: `--accent`을 dark에서 `#fb923c`(orange-400) → `#fdba74`(orange-300)로 한 단계 부드럽게.
+7. **EmptyState 일러스트**: 단순 텍스트 → 그라데이션 원형 + 이모지 + `hints[]` 가이드 항목. variant prop (`swap`/`tips`/`companions`)별 색상.
+8. **상세 페이지 작성자 메타**: 닉네임만 표시 → **아바타(이니셜 + 그라데이션) + 분야 칩 + 블로그 링크 버튼**. `fetchProfileByUserId(post.user_id)`로 별도 fetch.
+9. **MobileBottomNav 활성 인디케이터**: 활성 탭 상단에 `w-8 h-1` 주황 라인 추가 (시인성 향상).
+10. **검색 input 디바운스 spinner**: `query.trim() !== debouncedQuery` 동안 input 우측에 4×4 회전 원 표시.
+
+### 코드 품질
+- 3개 파일에 중복되던 `formatRelativeKr` 제거 (swap/tips/companions/[id]).
+- tips 페이지의 인라인 `Pagination` 함수 → 공유 컴포넌트로 교체.
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `npm run build`: 38 페이지.
+
+---
+
 ## 2026-05-02 — Phase 10.1: 커뮤니티 게시판형 UI + 필터 한 줄 고정
 
 **증상 보고**: ① 커뮤니티가 일반 게시판처럼 보이지 않음 (카드 그리드라 리스트 가독성 떨어짐). ② 필터 칩이 줄바꿈됨.

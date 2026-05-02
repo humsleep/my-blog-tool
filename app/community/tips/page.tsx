@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { TIPS_CATEGORIES, categoryBadgeClass } from '@/app/lib/community/tips';
 import EmptyState from '@/app/components/community/EmptyState';
+import Pagination from '@/app/components/community/Pagination';
+import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import { formatRelativeKr } from '@/app/lib/format/relative-time';
 
 interface TipsPost {
   id: number;
@@ -32,6 +35,8 @@ export default function TipsListPage() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [page, setPage] = useState(1);
+
+  const isDebouncing = query.trim() !== debouncedQuery;
 
   useEffect(() => {
     const t = setTimeout(() => { setDebouncedQuery(query.trim()); setPage(1); }, 300);
@@ -103,8 +108,8 @@ export default function TipsListPage() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
             <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
@@ -127,50 +132,60 @@ export default function TipsListPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4 space-y-2">
-          {/* 카테고리 탭 — 항상 한 줄, 가로 스크롤 */}
-          <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
-              <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
-              {TIPS_CATEGORIES.map((c) => (
-                <CategoryTab key={c} active={category === c} onClick={() => setCategory(c)} label={c} />
-              ))}
+        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md mb-4">
+          <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm space-y-2">
+            <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
+                <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
+                {TIPS_CATEGORIES.map((c) => (
+                  <CategoryTab key={c} active={category === c} onClick={() => setCategory(c)} label={c} />
+                ))}
+              </div>
             </div>
-          </div>
-          {/* 검색 + 정렬 — 한 줄 고정 */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 min-w-0">
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="제목으로 검색"
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
-              />
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <div className="inline-flex flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
-              <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
-              <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="제목으로 검색"
+                  className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                />
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                {isDebouncing && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-orange-500 rounded-full animate-spin" />
+                )}
+              </div>
+              <div className="inline-flex flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
+                <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
+                <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
+              </div>
             </div>
           </div>
         </div>
 
-        {loading && <p className="text-sm text-slate-500 dark:text-slate-400">불러오는 중...</p>}
         {error && (
           <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400 mb-4">
             {error}
           </div>
         )}
 
+        {loading && <BoardSkeleton rows={6} />}
+
         {!loading && posts.length === 0 && !error && (
           <EmptyState
-            title="아직 게시글이 없습니다."
+            variant="tips"
+            title="아직 게시글이 없습니다"
             description="첫 글을 작성해 다른 블로거들과 정보를 나눠보세요."
+            hints={[
+              '카테고리: 질문 / 정보공유 / 노하우 / 트러블슈팅 / 수익후기 / 잡담',
+              '본문은 마크다운으로 작성할 수 있어요',
+              '댓글과 좋아요로 활발한 소통이 가능합니다',
+            ]}
             action={
-              <Link href="/community/tips/new" className="inline-flex px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg">
+              <Link href="/community/tips/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 글쓰기
               </Link>
             }
@@ -193,9 +208,7 @@ export default function TipsListPage() {
                 {posts.map((p) => <TipsRow key={p.id} post={p} />)}
               </ul>
             </div>
-            {totalPages > 1 && (
-              <Pagination page={page} totalPages={totalPages} onChange={setPage} />
-            )}
+            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
           </>
         )}
       </div>
@@ -290,59 +303,3 @@ function SortButton({ active, onClick, children }: { active: boolean; onClick: (
   );
 }
 
-function Pagination({ page, totalPages, onChange }: { page: number; totalPages: number; onChange: (p: number) => void }) {
-  const pages: number[] = [];
-  const start = Math.max(1, page - 2);
-  const end = Math.min(totalPages, start + 4);
-  for (let i = start; i <= end; i++) pages.push(i);
-
-  return (
-    <div className="mt-5 flex items-center justify-center gap-1">
-      <button
-        type="button"
-        onClick={() => onChange(Math.max(1, page - 1))}
-        disabled={page === 1}
-        className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700"
-      >
-        이전
-      </button>
-      {pages.map((p) => (
-        <button
-          key={p}
-          type="button"
-          onClick={() => onChange(p)}
-          className={`w-9 h-9 text-sm rounded-lg transition-colors ${
-            p === page
-              ? 'bg-orange-500 text-white font-semibold'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-          }`}
-        >
-          {p}
-        </button>
-      ))}
-      <button
-        type="button"
-        onClick={() => onChange(Math.min(totalPages, page + 1))}
-        disabled={page === totalPages}
-        className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 disabled:opacity-40 hover:bg-slate-100 dark:hover:bg-slate-700"
-      >
-        다음
-      </button>
-    </div>
-  );
-}
-
-function formatRelativeKr(iso: string): string {
-  const now = Date.now();
-  const t = new Date(iso).getTime();
-  const diff = Math.max(0, now - t);
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return '방금 전';
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}일 전`;
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}

@@ -4,9 +4,11 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
-import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
+import { fetchMyProfile, fetchProfileByUserId, type Profile } from '@/app/lib/community/profile';
 import { categoryBadgeClass } from '@/app/lib/community/tips';
 import { markdownToHtml } from '@/app/lib/format/article-formats';
+import { formatRelativeKr, formatAbsoluteKr } from '@/app/lib/format/relative-time';
+import { useToast } from '@/app/components/ui/Toast';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
 
 interface TipsPost {
@@ -36,8 +38,10 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   const { id } = use(params);
   const postId = Number(id);
   const router = useRouter();
+  const { toast } = useToast();
 
   const [post, setPost] = useState<TipsPost | null>(null);
+  const [author, setAuthor] = useState<Profile | null>(null);
   const [comments, setComments] = useState<TipsComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,6 +81,11 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
 
       setPost(postData as TipsPost);
       setComments((commentsData as TipsComment[]) ?? []);
+
+      // 작성자 프로필 정보 (블로그 링크/분야)
+      void fetchProfileByUserId((postData as TipsPost).user_id).then((p) => {
+        if (!cancelled) setAuthor(p);
+      });
 
       if (auth.user) {
         setAuthed(true);
@@ -148,9 +157,10 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
         .select('*')
         .single();
       if (insErr) {
-        alert(insErr.message);
+        toast('댓글 등록 실패: ' + insErr.message, 'error');
         return;
       }
+      toast('댓글이 등록되었습니다.', 'success');
       setComments([...comments, data as TipsComment]);
       setCommentBody('');
       if (post) setPost({ ...post, comment_count: post.comment_count + 1 });
@@ -162,16 +172,24 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   const onDeleteComment = async () => {
     if (!deletingCommentId || !profile) return;
     const supabase = createClient();
-    await supabase.from('tips_comments').delete().eq('id', deletingCommentId).eq('user_id', profile.user_id);
+    const { error: delErr } = await supabase
+      .from('tips_comments').delete()
+      .eq('id', deletingCommentId).eq('user_id', profile.user_id);
+    if (delErr) { toast('댓글 삭제 실패: ' + delErr.message, 'error'); return; }
     setComments(comments.filter((c) => c.id !== deletingCommentId));
     if (post) setPost({ ...post, comment_count: Math.max(0, post.comment_count - 1) });
     setDeletingCommentId(null);
+    toast('댓글이 삭제되었습니다.', 'success');
   };
 
   const onDeletePost = async () => {
     if (!post || !profile) return;
     const supabase = createClient();
-    await supabase.from('tips_posts').delete().eq('id', post.id).eq('user_id', profile.user_id);
+    const { error: delErr } = await supabase
+      .from('tips_posts').delete()
+      .eq('id', post.id).eq('user_id', profile.user_id);
+    if (delErr) { toast('삭제 실패: ' + delErr.message, 'error'); return; }
+    toast('글이 삭제되었습니다.', 'success');
     router.push('/community/tips');
   };
 
@@ -195,7 +213,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   const isMine = profile?.user_id === post.user_id;
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
           <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
@@ -203,23 +221,52 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
           </Link>
         </div>
 
-        <article className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-7 shadow-sm">
+        <article className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 sm:p-7 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className={`px-2 py-0.5 text-[11px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
               {post.category}
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3 break-words">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4 break-words">
             {post.title}
           </h1>
 
-          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mb-5 pb-5 border-b border-slate-100 dark:border-slate-700">
-            <span className="font-medium text-slate-700 dark:text-slate-300">{post.nickname}</span>
-            <span>·</span>
-            <span>{formatAbsoluteKr(post.created_at)}</span>
-            <span>·</span>
-            <span>조회 {post.view_count}</span>
+          {/* 작성자 메타 */}
+          <div className="flex items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100 dark:border-slate-700">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {post.nickname.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{post.nickname}</span>
+                  {author?.category && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                      {author.category}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                  <span>{formatAbsoluteKr(post.created_at)}</span>
+                  <span>·</span>
+                  <span>조회 {post.view_count}</span>
+                </div>
+              </div>
+            </div>
+            {author?.blog_url && (
+              <a
+                href={author.blog_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline"
+              >
+                블로그
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            )}
           </div>
 
           <div
@@ -259,7 +306,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </article>
 
-        <section className="mt-6 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
+        <section className="mt-6 bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
           <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">
             댓글 {post.comment_count}
           </h2>
@@ -338,21 +385,3 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   );
 }
 
-function formatRelativeKr(iso: string): string {
-  const now = Date.now();
-  const t = new Date(iso).getTime();
-  const diff = Math.max(0, now - t);
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return '방금 전';
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}일 전`;
-  return formatAbsoluteKr(iso);
-}
-
-function formatAbsoluteKr(iso: string): string {
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-}

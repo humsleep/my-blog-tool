@@ -62,8 +62,9 @@
   --border:         #334155;
   --border-subtle:  #1e293b;
 
-  --accent:         #fb923c;  /* orange-400 */
-  --accent-hover:   #f97316;  /* orange-500 */
+  /* dark에서는 한 단계 톤다운 (가독성 향상) */
+  --accent:         #fdba74;  /* orange-300 */
+  --accent-hover:   #fb923c;  /* orange-400 */
   --accent-subtle:  #431407;  /* orange-950 */
   --accent-text:    #fed7aa;  /* orange-200 */
 
