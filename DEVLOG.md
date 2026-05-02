@@ -5,6 +5,23 @@
 
 ---
 
+## 2026-05-02 — main 머지 (Phase 8 + Phase 9 production 반영)
+
+`claude/analyze-source-code-rncaC` → `main` fast-forward 머지. origin/main이 `0ed5fb6` → `2877d54`로 이동. Vercel 자동 배포 트리거됨.
+
+**main에 들어간 커밋 (11개)**:
+- 2877d54 Phase 9 community features
+- 388b259 Phase 8 DEVLOG entry
+- 232f732 Phase 8 보안·타입 강화 + 데드 코드 제거
+- 0ed5fb6 (이미 origin/main에 있던 IA cleanup) 외 8개
+
+**🔴 배포 체크리스트 (Vercel 환경에 반드시)**
+1. Supabase SQL Editor에서 `0003_profiles.sql` → `0004_swap_posts.sql` → `0005_tips.sql` → `0006_companions.sql` 순서대로 실행
+2. Vercel 환경변수 `IP_HASH_SALT`에 32자 이상 랜덤값 설정 (`openssl rand -hex 16`) — **미설정 시 비로그인 AI 글쓰기 503**
+3. `pg_trgm` 확장 권한 확인 (0003에서 자동 시도)
+
+---
+
 ## 2026-05-02 — Phase 9: 커뮤니티 기능 1차 구축 (서이추 / 정보공유 / 체험단동행)
 
 **브랜치**: `claude/analyze-source-code-rncaC`
