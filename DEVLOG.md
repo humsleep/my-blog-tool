@@ -5,6 +5,52 @@
 
 ---
 
+## 2026-05-02 — Phase 8: 보안·타입 강화 + 데드 코드 정리
+
+**커밋**: `232f732` (브랜치 `claude/analyze-source-code-rncaC`)
+**배경**: 전체 소스코드 분석 결과 5개 개선 항목 도출 — 그 중 실제 미적용분만 수정, 동시에 미사용 코드 정리.
+
+### 분석에서 이미 적용 확인됨 (수정 불필요)
+- `/api/images/proxy`: ALLOWED_HOSTS 화이트리스트 이미 적용됨 (Pexels/Unsplash 호스트만 허용).
+- `/api/news`, `/api/spellcheck`, `/api/competitor-analysis`, `/api/wiki-pageviews`, `/api/images/search`: 응답 타입 인터페이스 모두 이미 정의됨.
+- `app/lab/PostImage.tsx`: next/image 이미 사용 중.
+- 테스트 파일/디렉토리: 처음부터 없음.
+
+### 8-1. IP_HASH_SALT 평문 fallback 제거 (`app/lib/security/ip-hash.ts`)
+- 기존: `process.env.IP_HASH_SALT || 'boheme-bloglab-default-salt'` — 환경변수 미설정 시 코드에 박힌 평문이 그대로 사용돼 비로그인 IP 해시가 사실상 익명화 안 됨.
+- 변경: salt 미설정 또는 16자 미만이면 throw. `app/api/ai-draft/route.ts` POST/GET 양쪽에서 try/catch로 감싸 503 `IP_HASH_NOT_CONFIGURED` 응답 처리.
+
+### 8-2. next/image 마이그레이션 + 도메인 화이트리스트
+- `next.config.ts`: `images.remotePatterns`에 pexels/unsplash/google avatar 도메인 추가.
+- `app/components/Navbar.tsx`: 데스크톱·모바일 사용자 아바타 `<img>` → `<Image unoptimized>` (Google CDN URL 잦은 변경 대응).
+- `app/image-search/page.tsx`: 검색 결과 그리드 `<img>` → `<Image fill sizes>` (썸네일 12장 자동 최적화 + lazy loading).
+
+### 8-3. `any` 제거 + API 응답 타입화
+- `app/components/AdSense.tsx`: `(window as any).adsbygoogle` → `declare global { Window.adsbygoogle?: ... }` augmentation.
+- `app/api/keywords/route.ts`: `NaverKeywordToolItem` / `NaverKeywordToolResponse` 인터페이스 추가, `cache.get<unknown>` → `<NaverKeywordToolResponse>`.
+- `app/api/document-count/route.ts`: `data: any` → `{ total?: number }`.
+- `app/api/competitor-analysis/route.ts`: `data: any` → `{ total?: number; items?: BlogPost[] }`.
+- `app/api/trending-keywords/route.ts`: keywordList 응답에 `{ keywordList?: NaverKeywordItem[] }` 캐스팅.
+
+### 8-4. 데드 코드 제거
+- `app/components/AdPlaceholder.tsx`: 어디서도 import되지 않은 미사용 컴포넌트 — 파일 자체 삭제.
+- `app/lib/fetchRetry.ts`: 미사용 `fetchJsonWithRetry`, `FetchError` 클래스 제거.
+- `app/lib/cache.ts`: 미사용 `TTLCache.wrap` 메서드 제거.
+- `app/lab/PostImage.tsx`: 사용되지 않던 `slug` prop 제거 (호출부 `app/lab/page.tsx`도 정리).
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `IP_HASH_SALT=...` `npm run build`: 30개 페이지 모두 정상 생성, Turbopack 컴파일 21.6s.
+- 변경 라인: +92 / -89 (15 files changed).
+
+### 영향 / 후속
+- 비로그인 IP 해시가 운영 환경에서 진짜 익명화됨 (salt 강제 → Vercel env에 미설정 시 명확한 503).
+- 이미지 그리드의 LCP·CLS 개선 (next/image 자동 최적화).
+- 향후 Naver 검색광고 API 응답 추가 필드 활용 시 타입 도움말 자동 제공.
+- ⚠️ 배포 전 Vercel 환경변수에 `IP_HASH_SALT` (32자 이상 권장, `openssl rand -hex 16`)가 설정되어 있는지 확인 필수.
+
+---
+
 ## 2026-04-27 — Phase 7: IA 정리 — 메뉴 메가패널 + 가이드를 lab으로
 
 **커밋**: 단일 커밋 (이번 작업)
