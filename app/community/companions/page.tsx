@@ -106,27 +106,27 @@ export default function CompanionsPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm mb-5 flex flex-col sm:flex-row sm:items-center gap-3">
-          <div>
-            <label className="text-xs font-medium text-slate-500 dark:text-slate-400 mr-2">지역</label>
+        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4">
+          <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto scrollbar-hide">
+            <label className="flex-shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">지역</label>
             <select
               value={region ?? ''}
               onChange={(e) => setRegion(e.target.value || null)}
-              className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="">전체</option>
               {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
+            <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-slate-200 dark:border-slate-700">
+              <input
+                type="checkbox"
+                checked={openOnly}
+                onChange={(e) => setOpenOnly(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500 accent-orange-500"
+              />
+              모집중만
+            </label>
           </div>
-          <label className="inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={openOnly}
-              onChange={(e) => setOpenOnly(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 text-orange-500 focus:ring-orange-500"
-            />
-            모집중만 보기
-          </label>
         </div>
 
         {loading && <p className="text-sm text-slate-500">불러오는 중...</p>}
@@ -151,8 +151,18 @@ export default function CompanionsPage() {
         {!loading && posts.length > 0 && (
           <>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {posts.length}건</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {posts.map((post) => <CompanionCard key={post.id} post={post} />)}
+            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              <div className="hidden md:grid grid-cols-[72px_1fr_80px_140px_120px_100px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span>상태</span>
+                <span>제목</span>
+                <span>지역</span>
+                <span>방문일</span>
+                <span>작성자</span>
+                <span>작성일</span>
+              </div>
+              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+                {posts.map((post) => <CompanionRow key={post.id} post={post} />)}
+              </ul>
             </div>
           </>
         )}
@@ -170,50 +180,76 @@ export default function CompanionsPage() {
   );
 }
 
-function CompanionCard({ post }: { post: CompanionPost }) {
+function CompanionRow({ post }: { post: CompanionPost }) {
   const dateStr = post.visit_date;
   const dow = new Date(dateStr).toLocaleDateString('ko-KR', { weekday: 'short' });
+  const statusCls =
+    post.status === '모집중'
+      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+      : post.status === '마감'
+        ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+        : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300';
+  const created = formatRelativeKr(post.created_at);
 
   return (
-    <Link
-      href={`/community/companions/${post.id}`}
-      className="group block bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange-200 dark:hover:border-orange-900/60 transition-all duration-300"
-    >
-      <div className="flex items-start justify-between mb-2">
-        <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-full ${
-          post.status === '모집중'
-            ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-            : post.status === '마감'
-              ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
-              : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
-        }`}>
-          {post.status}
-        </span>
-        <span className="text-[11px] text-slate-400 dark:text-slate-500">
-          {post.nickname}
-        </span>
-      </div>
-      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1 line-clamp-1">
-        {post.title}
-      </h3>
-      {post.brand_name && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-2 truncate">📍 {post.brand_name}</p>
-      )}
-      <div className="flex flex-wrap gap-1.5 mb-3 text-[11px]">
-        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-          📍 {post.region}
-        </span>
-        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-          📅 {dateStr} ({dow}){post.visit_time_slot ? ` · ${post.visit_time_slot}` : ''}
-        </span>
-        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-          👥 {post.participants}명
-        </span>
-      </div>
-      <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 whitespace-pre-wrap break-words">
-        {post.message}
-      </p>
-    </Link>
+    <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+      <Link href={`/community/companions/${post.id}`} className="block">
+        {/* 데스크톱 — 그리드 행 */}
+        <div className="hidden md:grid grid-cols-[72px_1fr_80px_140px_120px_100px] gap-3 items-center px-5 py-3">
+          <span className={`justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded-full ${statusCls}`}>
+            {post.status}
+          </span>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.title}</p>
+            {post.brand_name && (
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">📍 {post.brand_name}</p>
+            )}
+          </div>
+          <span className="text-xs text-slate-600 dark:text-slate-300">{post.region}</span>
+          <span className="text-xs text-slate-600 dark:text-slate-300">
+            {dateStr} ({dow})
+          </span>
+          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{post.nickname}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{created}</span>
+        </div>
+
+        {/* 모바일 — 컴팩트 */}
+        <div className="md:hidden px-4 py-3">
+          <div className="flex items-start gap-2 mb-1.5">
+            <span className={`flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${statusCls}`}>
+              {post.status}
+            </span>
+            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-1">
+              {post.title}
+            </h3>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 flex-wrap">
+            <span>📍 {post.region}</span>
+            <span>·</span>
+            <span>📅 {dateStr}</span>
+            <span>·</span>
+            <span>{post.nickname}</span>
+            <span>·</span>
+            <span>{created}</span>
+          </div>
+        </div>
+      </Link>
+    </li>
   );
+}
+
+function formatRelativeKr(iso: string): string {
+  const now = Date.now();
+  const t = new Date(iso).getTime();
+  const diff = Math.max(0, now - t);
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return '방금 전';
+  if (minutes < 60) return `${minutes}분 전`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}시간 전`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}일 전`;
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 

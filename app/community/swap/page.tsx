@@ -180,7 +180,7 @@ export default function SwapPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 shadow-sm mb-5 space-y-3">
+        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4 space-y-2">
           <CategoryChips selected={category} onSelect={setCategory} />
           <div className="relative">
             <input
@@ -188,7 +188,7 @@ export default function SwapPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="닉네임으로 검색"
-              className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
             />
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -222,16 +222,27 @@ export default function SwapPage() {
         {!loading && posts.length > 0 && (
           <>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {posts.length}건</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {posts.map((post) => (
-                <SwapCard
-                  key={post.id}
-                  post={post}
-                  isMine={!!myUserId && post.user_id === myUserId}
-                  onEdit={() => onEdit(post)}
-                  onDelete={() => setDeleteTarget(post)}
-                />
-              ))}
+            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              {/* 컬럼 헤더 — 데스크톱만 */}
+              <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span>분야</span>
+                <span>닉네임</span>
+                <span>한마디</span>
+                <span>작성일</span>
+                <span>블로그</span>
+                <span className="text-right">관리</span>
+              </div>
+              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+                {posts.map((post) => (
+                  <SwapRow
+                    key={post.id}
+                    post={post}
+                    isMine={!!myUserId && post.user_id === myUserId}
+                    onEdit={() => onEdit(post)}
+                    onDelete={() => setDeleteTarget(post)}
+                  />
+                ))}
+              </ul>
             </div>
           </>
         )}
@@ -271,56 +282,81 @@ export default function SwapPage() {
   );
 }
 
-function SwapCard({
+function SwapRow({
   post, isMine, onEdit, onDelete,
 }: { post: SwapPost; isMine: boolean; onEdit: () => void; onDelete: () => void }) {
   const formatted = useMemo(() => formatRelativeKr(post.created_at), [post.created_at]);
   return (
-    <div className="group relative bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange-200 dark:hover:border-orange-900/60 transition-all duration-300">
-      <div className="flex items-start justify-between mb-2">
-        <span className="px-2 py-0.5 text-[11px] font-semibold rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300">
+    <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+      {/* 데스크톱 — 그리드 행 */}
+      <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3">
+        <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
           {post.category}
         </span>
-        {isMine && (
-          <div className="flex gap-1">
-            <button
-              type="button"
-              onClick={onEdit}
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 px-1.5"
-            >
-              수정
-            </button>
-            <button
-              type="button"
-              onClick={onDelete}
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 px-1.5"
-            >
-              삭제
-            </button>
-          </div>
-        )}
-      </div>
-      <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2 truncate">
-        {post.nickname}
-      </h3>
-      <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-3 whitespace-pre-wrap break-words">
-        {post.message}
-      </p>
-      <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
-        <span className="text-[11px] text-slate-400 dark:text-slate-500">{formatted}</span>
+        <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+          {post.nickname}
+        </span>
+        <span className="text-sm text-slate-600 dark:text-slate-300 truncate" title={post.message}>
+          {post.message}
+        </span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">{formatted}</span>
         <a
           href={post.blog_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-orange-500 dark:text-orange-400 hover:underline"
+          onClick={(e) => e.stopPropagation()}
+          className="inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline truncate"
         >
-          블로그 방문
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          방문하기
+          <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </a>
+        <div className="flex justify-end gap-1">
+          {isMine ? (
+            <>
+              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 px-1.5">수정</button>
+              <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 px-1.5">삭제</button>
+            </>
+          ) : (
+            <span className="text-[11px] text-slate-300 dark:text-slate-600">—</span>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* 모바일 — 컴팩트 카드 행 */}
+      <div className="md:hidden px-4 py-3">
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
+              {post.category}
+            </span>
+            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
+          </div>
+          {isMine && (
+            <div className="flex flex-shrink-0 gap-1">
+              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 px-1">수정</button>
+              <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 px-1">삭제</button>
+            </div>
+          )}
+        </div>
+        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-2">{post.message}</p>
+        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+          <span>{formatted}</span>
+          <a
+            href={post.blog_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 font-medium text-orange-600 dark:text-orange-400"
+          >
+            블로그 방문
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </li>
   );
 }
 

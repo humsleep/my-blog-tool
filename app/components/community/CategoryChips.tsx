@@ -18,33 +18,35 @@ export default function CategoryChips({
   options = CATEGORIES,
 }: CategoryChipsProps) {
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {includeAll && (
-        <button
-          type="button"
-          onClick={() => onSelect(null)}
-          className={chipClass(selected === null)}
-        >
-          전체
-        </button>
-      )}
-      {options.map((cat) => (
-        <button
-          key={cat}
-          type="button"
-          onClick={() => onSelect(cat)}
-          className={chipClass(selected === cat)}
-        >
-          {cat}
-        </button>
-      ))}
+    <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
+        {includeAll && (
+          <button
+            type="button"
+            onClick={() => onSelect(null)}
+            className={chipClass(selected === null)}
+          >
+            전체
+          </button>
+        )}
+        {options.map((cat) => (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => onSelect(cat)}
+            className={chipClass(selected === cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
 function chipClass(active: boolean) {
   return [
-    'px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
+    'flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
     'border',
     active
       ? 'bg-orange-500 text-white border-orange-500'

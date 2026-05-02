@@ -292,6 +292,15 @@ p, li {
   color: var(--text-primary);
 }
 
+/* ── Scrollbar 숨김 (가로 스크롤 영역) ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Mobile safe-area (PWA / 노치 대응) ── */
 @supports (padding: max(0px)) {
   .safe-top    { padding-top:    max(0.5rem, env(safe-area-inset-top)); }

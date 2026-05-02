@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-05-02 — Phase 10.1: 커뮤니티 게시판형 UI + 필터 한 줄 고정
+
+**증상 보고**: ① 커뮤니티가 일반 게시판처럼 보이지 않음 (카드 그리드라 리스트 가독성 떨어짐). ② 필터 칩이 줄바꿈됨.
+
+### 10.1-A. CategoryChips 컴포넌트 자체를 nowrap + 가로 스크롤로
+- `flex-wrap` 제거 → `whitespace-nowrap overflow-x-auto scrollbar-hide`. 칩 자체에 `flex-shrink-0` 부여.
+- `globals.css`: `.scrollbar-hide` 유틸 추가 (webkit·firefox·IE 대응).
+
+### 10.1-B. 게시판형 행 리스트로 전환
+- **서이추** (`/community/swap`): 카드 그리드 → 그리드 행(`grid-cols-[88px_140px_1fr_120px_100px_80px]`). 컬럼: 분야 / 닉네임 / 한마디 / 작성일 / 블로그 / 관리. 모바일은 컴팩트 카드 행 유지.
+- **체험단** (`/community/companions`): 카드 그리드 → 행 리스트. 컬럼: 상태 / 제목 / 지역 / 방문일 / 작성자 / 작성일.
+- **정보공유** (`/community/tips`): 기존 행 리스트에 컬럼 헤더 추가. 컬럼: 분류 / 제목 / 작성자 / 작성일 / 조회 / 추천. `tabular-nums`로 숫자 정렬.
+- 공통: 리스트 컨테이너 `rounded-2xl`, 헤더 `bg-slate-50 dark:bg-slate-900/50` + uppercase tracking-wider.
+
+### 10.1-C. 필터 한 줄 고정
+- tips 카테고리 탭: `flex-wrap` 제거 → 가로 스크롤.
+- 검색 + 정렬: `flex-col sm:flex-row` → `flex items-center` 한 줄 고정.
+- companions 지역 select + 모집중 토글: 한 줄 + `whitespace-nowrap overflow-x-auto`.
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `npm run build`: 38 페이지.
+
+---
+
 ## 2026-05-02 — Phase 10: 브랜드 컬러 주황색 + 커뮤니티 모더나이즈 + PWA + 모바일 하단 탭
 
 **범위**: ① 보라색(indigo/violet) → 주황색(orange/amber) 일괄 컨셉컬러 변경. ② 커뮤니티 메뉴 UI 최신 트렌드(bento grid + 그라데이션 + soft shadow) 모더나이즈. ③ 사이트 전체 통일성. ④ 모바일 PWA 형태(manifest + viewport + safe-area + 하단 탭).

@@ -127,27 +127,31 @@ export default function TipsListPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4">
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
-            {TIPS_CATEGORIES.map((c) => (
-              <CategoryTab key={c} active={category === c} onClick={() => setCategory(c)} label={c} />
-            ))}
+        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm mb-4 space-y-2">
+          {/* 카테고리 탭 — 항상 한 줄, 가로 스크롤 */}
+          <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
+              <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
+              {TIPS_CATEGORIES.map((c) => (
+                <CategoryTab key={c} active={category === c} onClick={() => setCategory(c)} label={c} />
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <div className="relative flex-1">
+          {/* 검색 + 정렬 — 한 줄 고정 */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 min-w-0">
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="제목으로 검색"
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <div className="inline-flex bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
+            <div className="inline-flex flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
               <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
               <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
             </div>
@@ -175,8 +179,19 @@ export default function TipsListPage() {
 
         {!loading && posts.length > 0 && (
           <>
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden divide-y divide-slate-100 dark:divide-slate-700">
-              {posts.map((p) => <TipsRow key={p.id} post={p} />)}
+            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+              {/* 컬럼 헤더 — 데스크톱만 */}
+              <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span>분류</span>
+                <span>제목</span>
+                <span>작성자</span>
+                <span>작성일</span>
+                <span className="text-right">조회</span>
+                <span className="text-right">추천</span>
+              </div>
+              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+                {posts.map((p) => <TipsRow key={p.id} post={p} />)}
+              </ul>
             </div>
             {totalPages > 1 && (
               <Pagination page={page} totalPages={totalPages} onChange={setPage} />
@@ -190,37 +205,56 @@ export default function TipsListPage() {
 
 function TipsRow({ post }: { post: TipsPost }) {
   return (
-    <Link
-      href={`/community/tips/${post.id}`}
-      className="block px-4 sm:px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
-    >
-      <div className="flex items-start gap-3">
-        <span className={`flex-shrink-0 px-2 py-0.5 text-[11px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
-          {post.category}
-        </span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-2">
-            <h3 className="text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 truncate">
+    <li>
+      <Link
+        href={`/community/tips/${post.id}`}
+        className="block hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
+      >
+        {/* 데스크톱 — 그리드 컬럼 */}
+        <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 items-center px-5 py-3">
+          <span className={`justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
+            {post.category}
+          </span>
+          <div className="min-w-0 flex items-center gap-1.5">
+            <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
               {post.title}
-            </h3>
+            </span>
             {post.comment_count > 0 && (
-              <span className="text-xs font-semibold text-orange-500 dark:text-orange-400 flex-shrink-0">
-                💬 {post.comment_count}
+              <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
+                [{post.comment_count}]
               </span>
             )}
           </div>
-          <div className="mt-1 flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400">
-            <span>{post.nickname}</span>
-            <span>·</span>
-            <span>{formatRelativeKr(post.created_at)}</span>
-            <span>·</span>
-            <span>조회 {post.view_count}</span>
-            <span>·</span>
-            <span>♡ {post.like_count}</span>
+          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{post.nickname}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">{formatRelativeKr(post.created_at)}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 text-right tabular-nums">{post.view_count}</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 text-right tabular-nums">{post.like_count}</span>
+        </div>
+        {/* 모바일 — 컴팩트 */}
+        <div className="md:hidden px-4 py-3 flex items-start gap-2.5">
+          <span className={`flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
+            {post.category}
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-1.5">
+              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.title}</h3>
+              {post.comment_count > 0 && (
+                <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
+                  [{post.comment_count}]
+                </span>
+              )}
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="truncate">{post.nickname}</span>
+              <span>·</span>
+              <span>{formatRelativeKr(post.created_at)}</span>
+              <span>·</span>
+              <span>조회 {post.view_count}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </li>
   );
 }
 
