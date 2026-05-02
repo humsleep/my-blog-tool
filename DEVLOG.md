@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-05-02 — Phase 9.1: 커뮤니티 fetch/error 핸들링 hotfix
+
+**증상 보고**: 게시물 등록 후 목록 화면이 갱신되지 않고, 본인이 등록한 글도 안 보임.
+
+**가능한 원인**: ① Supabase 마이그레이션 0003~0006 미실행으로 INSERT가 RLS·테이블 부재로 silent fail / ② Next.js Router cache 30s로 list 페이지가 stale / ③ 에러가 `setError`로만 화면 끝에 노출되어 사용자가 인지 못 함.
+
+### 9.1-A. fetch 자동 갱신
+- `/community/swap/page.tsx`, `/community/tips/page.tsx`, `/community/companions/page.tsx`: `fetchPosts(silent)` 함수로 분리 + `visibilitychange` / `window focus` 리스너 등록 → 다른 탭/페이지에서 돌아오면 silent 재fetch.
+- `/community/tips/new/page.tsx`, `/community/companions/new/page.tsx`: INSERT/UPDATE 성공 후 `router.push` 직전에 `router.refresh()` 호출 → RSC 캐시 무효화.
+
+### 9.1-B. 에러 피드백 강화
+- swap 모달 / tips/new / companions/new: INSERT 실패 시 `setError` + `alert()` + `console.error` 동시 호출.
+- swap 모달: PostgreSQL 에러 코드별 친절 메시지 매핑 (42501=RLS차단=24h제한 / 42P01=테이블없음=마이그레이션 안내).
+- INSERT 응답 `data`가 `null`이면 "RLS 정책 확인" 안내 alert.
+
+### 9.1-C. 진단 헬퍼
+- `supabase/diagnose_community.sql` 신규 — 5가지 점검 쿼리 (테이블 존재, 행 수, RLS 활성화, SELECT 정책, pg_trgm 설치)를 한 번에 실행.
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `npm run build`: 37 페이지 정상 생성.
+
+---
+
 ## 2026-05-02 — main 머지 (Phase 8 + Phase 9 production 반영)
 
 `claude/analyze-source-code-rncaC` → `main` fast-forward 머지. origin/main이 `0ed5fb6` → `2877d54`로 이동. Vercel 자동 배포 트리거됨.

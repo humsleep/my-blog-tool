@@ -40,6 +40,34 @@ export default function TipsListPage() {
 
   useEffect(() => { setPage(1); }, [category, sort]);
 
+  const fetchPosts = async (silent: boolean) => {
+    const supabase = createClient();
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    let q = supabase
+      .from('tips_posts')
+      .select('id,user_id,nickname,category,title,view_count,like_count,comment_count,created_at',
+              { count: 'exact' })
+      .range(from, to);
+    if (sort === 'popular') {
+      q = q.order('like_count', { ascending: false }).order('created_at', { ascending: false });
+    } else {
+      q = q.order('created_at', { ascending: false });
+    }
+    if (category) q = q.eq('category', category);
+    if (debouncedQuery) q = q.ilike('title', `%${debouncedQuery}%`);
+
+    const { data, error: fetchError, count } = await q;
+    if (fetchError) {
+      console.error('tips fetch failed:', fetchError);
+      if (!silent) { setError(fetchError.message); setPosts([]); setTotal(0); }
+      return;
+    }
+    setPosts((data as TipsPost[]) ?? []);
+    setTotal(count ?? 0);
+    if (!silent) setError(null);
+  };
+
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       setLoading(false);
@@ -50,36 +78,26 @@ export default function TipsListPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-      let q = supabase
-        .from('tips_posts')
-        .select('id,user_id,nickname,category,title,view_count,like_count,comment_count,created_at',
-                { count: 'exact' })
-        .range(from, to);
-
-      if (sort === 'popular') {
-        q = q.order('like_count', { ascending: false }).order('created_at', { ascending: false });
-      } else {
-        q = q.order('created_at', { ascending: false });
-      }
-      if (category) q = q.eq('category', category);
-      if (debouncedQuery) q = q.ilike('title', `%${debouncedQuery}%`);
-
-      const { data, error: fetchError, count } = await q;
+      await fetchPosts(false);
       if (cancelled) return;
-      if (fetchError) {
-        setError(fetchError.message);
-        setPosts([]);
-        setTotal(0);
-      } else {
-        setPosts((data as TipsPost[]) ?? []);
-        setTotal(count ?? 0);
-      }
       setLoading(false);
     })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, sort, debouncedQuery, page]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      if (document.visibilityState !== 'visible') return;
+      void fetchPosts(true);
+    };
+    document.addEventListener('visibilitychange', onFocus);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onFocus);
+      window.removeEventListener('focus', onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, sort, debouncedQuery, page]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));

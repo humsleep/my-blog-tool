@@ -74,7 +74,10 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
           .eq('id', initial.id)
           .eq('user_id', profile.user_id);
         if (updateError) {
-          setError(updateError.message || '수정에 실패했습니다.');
+          console.error('swap update failed:', updateError);
+          const msg = updateError.message || '수정에 실패했습니다.';
+          setError(msg);
+          alert('수정 실패: ' + msg);
           return;
         }
       } else {
@@ -88,11 +91,17 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
             message: trimmedMsg,
           });
         if (insertError) {
+          console.error('swap insert failed:', insertError);
+          let msg: string;
           if (insertError.code === '42501' || insertError.message?.includes('row-level security')) {
-            setError('하루에 한 번만 작성할 수 있습니다. 24시간 후 다시 시도해주세요.');
+            msg = '하루에 한 번만 작성할 수 있습니다. 24시간 후 다시 시도해주세요.';
+          } else if (insertError.code === '42P01') {
+            msg = 'swap_posts 테이블이 없습니다. Supabase에서 마이그레이션 0004를 실행해주세요.';
           } else {
-            setError(insertError.message || '작성에 실패했습니다.');
+            msg = insertError.message || '작성에 실패했습니다.';
           }
+          setError(msg);
+          alert('작성 실패: ' + msg);
           return;
         }
       }

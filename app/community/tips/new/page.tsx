@@ -95,7 +95,13 @@ function TipsNewPage() {
           .update({ category, title: t, body: b, nickname: profile.nickname })
           .eq('id', editId)
           .eq('user_id', profile.user_id);
-        if (updErr) { setError(updErr.message); return; }
+        if (updErr) {
+          console.error('tips update failed:', updErr);
+          setError(updErr.message);
+          alert('수정 실패: ' + updErr.message);
+          return;
+        }
+        router.refresh();
         router.push(`/community/tips/${editId}`);
       } else {
         const { data, error: insErr } = await supabase
@@ -109,7 +115,19 @@ function TipsNewPage() {
           })
           .select('id')
           .single();
-        if (insErr) { setError(insErr.message); return; }
+        if (insErr) {
+          console.error('tips insert failed:', insErr);
+          setError(insErr.message);
+          alert('작성 실패: ' + insErr.message);
+          return;
+        }
+        if (!data) {
+          const msg = '서버에서 글 ID를 반환하지 않았습니다. RLS 정책을 확인해주세요.';
+          setError(msg);
+          alert(msg);
+          return;
+        }
+        router.refresh();
         router.push(`/community/tips/${data.id}`);
       }
     } finally {

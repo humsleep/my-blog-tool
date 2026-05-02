@@ -57,7 +57,24 @@ export default function SwapPage() {
     })();
   }, []);
 
-  // 게시글 로드
+  const fetchPosts = async () => {
+    const supabase = createClient();
+    let q = supabase
+      .from('swap_posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(60);
+    if (category) q = q.eq('category', category);
+    if (debouncedQuery) q = q.ilike('nickname', `%${debouncedQuery}%`);
+    const { data, error: fetchError } = await q;
+    if (fetchError) {
+      console.error('swap fetch failed:', fetchError);
+      return { data: null as SwapPost[] | null, error: fetchError.message };
+    }
+    return { data: (data as SwapPost[]) ?? [], error: null };
+  };
+
+  // 게시글 로드 (필터 변경 시)
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       setLoading(false);
@@ -68,38 +85,39 @@ export default function SwapPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
-      let q = supabase
-        .from('swap_posts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(60);
-      if (category) q = q.eq('category', category);
-      if (debouncedQuery) q = q.ilike('nickname', `%${debouncedQuery}%`);
-      const { data, error: fetchError } = await q;
+      const result = await fetchPosts();
       if (cancelled) return;
-      if (fetchError) {
-        setError(fetchError.message);
+      if (result.error) {
+        setError(result.error);
         setPosts([]);
-      } else {
-        setPosts((data as SwapPost[]) ?? []);
+      } else if (result.data) {
+        setPosts(result.data);
       }
       setLoading(false);
     })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, debouncedQuery]);
+
+  // 탭/창이 다시 활성화되면 silent 재fetch
+  useEffect(() => {
+    const onFocus = async () => {
+      if (document.visibilityState !== 'visible') return;
+      const result = await fetchPosts();
+      if (result.data) setPosts(result.data);
+    };
+    document.addEventListener('visibilitychange', onFocus);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onFocus);
+      window.removeEventListener('focus', onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, debouncedQuery]);
 
   const reload = async () => {
-    const supabase = createClient();
-    let q = supabase
-      .from('swap_posts')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(60);
-    if (category) q = q.eq('category', category);
-    if (debouncedQuery) q = q.ilike('nickname', `%${debouncedQuery}%`);
-    const { data } = await q;
-    setPosts((data as SwapPost[]) ?? []);
+    const result = await fetchPosts();
+    if (result.data) setPosts(result.data);
   };
 
   const onClickWrite = () => {

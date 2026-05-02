@@ -29,6 +29,26 @@ export default function CompanionsPage() {
   const [region, setRegion] = useState<string | null>(null);
   const [openOnly, setOpenOnly] = useState(true);
 
+  const fetchPosts = async (silent: boolean) => {
+    const supabase = createClient();
+    let q = supabase
+      .from('companion_posts')
+      .select('*')
+      .order('visit_date', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (region) q = q.eq('region', region);
+    if (openOnly) q = q.eq('status', '모집중');
+    const { data, error: fetchErr } = await q;
+    if (fetchErr) {
+      console.error('companion fetch failed:', fetchErr);
+      if (!silent) { setError(fetchErr.message); setPosts([]); }
+      return;
+    }
+    setPosts((data as CompanionPost[]) ?? []);
+    if (!silent) setError(null);
+  };
+
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       setLoading(false);
@@ -39,26 +59,26 @@ export default function CompanionsPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      const supabase = createClient();
-      let q = supabase
-        .from('companion_posts')
-        .select('*')
-        .order('visit_date', { ascending: true })
-        .order('created_at', { ascending: false })
-        .limit(100);
-      if (region) q = q.eq('region', region);
-      if (openOnly) q = q.eq('status', '모집중');
-      const { data, error: fetchErr } = await q;
+      await fetchPosts(false);
       if (cancelled) return;
-      if (fetchErr) {
-        setError(fetchErr.message);
-        setPosts([]);
-      } else {
-        setPosts((data as CompanionPost[]) ?? []);
-      }
       setLoading(false);
     })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [region, openOnly]);
+
+  useEffect(() => {
+    const onFocus = () => {
+      if (document.visibilityState !== 'visible') return;
+      void fetchPosts(true);
+    };
+    document.addEventListener('visibilitychange', onFocus);
+    window.addEventListener('focus', onFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', onFocus);
+      window.removeEventListener('focus', onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [region, openOnly]);
 
   return (
