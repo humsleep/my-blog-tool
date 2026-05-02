@@ -27,6 +27,13 @@ const CORE_TOOLS: { href: string; label: string }[] = [
   { href: '/editor', label: '에디터' },
 ];
 
+/** 커뮤니티 — 메뉴 (드롭다운) */
+const COMMUNITY_MENU: { href: string; label: string; description: string }[] = [
+  { href: '/community/swap', label: '서이추 해요', description: '같은 분야 블로거 매칭' },
+  { href: '/community/tips', label: '정보 공유', description: '운영 노하우·질문 게시판' },
+  { href: '/community/companions', label: '체험단 동행해요', description: '체험단 동행자 모집' },
+];
+
 /** 8단계 워크플로우 — "모든 도구" 메가패널에 워크플로우 순서로 노출 */
 const WORKFLOW: ToolGroup[] = [
   {
@@ -69,19 +76,25 @@ function findCurrentStep(pathname: string): { step: number; label: string } | nu
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [communityOpen, setCommunityOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, configured } = useUser();
   const megaRef = useRef<HTMLDivElement>(null);
+  const communityRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const communityCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (megaRef.current && !megaRef.current.contains(e.target as Node)) {
         setMegaOpen(false);
+      }
+      if (communityRef.current && !communityRef.current.contains(e.target as Node)) {
+        setCommunityOpen(false);
       }
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
         setUserMenuOpen(false);
@@ -94,6 +107,7 @@ export default function Navbar() {
   // 페이지 이동 시 모든 메뉴 닫기
   useEffect(() => {
     setMegaOpen(false);
+    setCommunityOpen(false);
     setIsMobileOpen(false);
     setUserMenuOpen(false);
   }, [pathname]);
@@ -108,9 +122,23 @@ export default function Navbar() {
 
   const scheduleCloseMega = () => {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-    // 메뉴와 패널 사이 간격을 마우스가 지나갈 시간 확보
     closeTimerRef.current = setTimeout(() => setMegaOpen(false), 150);
   };
+
+  const openCommunity = () => {
+    if (communityCloseTimerRef.current) {
+      clearTimeout(communityCloseTimerRef.current);
+      communityCloseTimerRef.current = null;
+    }
+    setCommunityOpen(true);
+  };
+
+  const scheduleCloseCommunity = () => {
+    if (communityCloseTimerRef.current) clearTimeout(communityCloseTimerRef.current);
+    communityCloseTimerRef.current = setTimeout(() => setCommunityOpen(false), 150);
+  };
+
+  const isCommunityActive = pathname.startsWith('/community');
 
   const displayName =
     user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '';
@@ -238,6 +266,66 @@ export default function Navbar() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+            </div>
+
+            {/* 커뮤니티 — 호버 / 클릭 드롭다운 */}
+            <div
+              className="relative"
+              ref={communityRef}
+              onMouseEnter={openCommunity}
+              onMouseLeave={scheduleCloseCommunity}
+            >
+              <button
+                type="button"
+                onClick={() => setCommunityOpen((v) => !v)}
+                aria-expanded={communityOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                  isCommunityActive
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : communityOpen
+                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                커뮤니티
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform ${communityOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {communityOpen && (
+                <div
+                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden p-2"
+                  role="menu"
+                >
+                  {COMMUNITY_MENU.map((it) => {
+                    const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                    return (
+                      <Link
+                        key={it.href}
+                        href={it.href}
+                        onClick={() => setCommunityOpen(false)}
+                        className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                          isActive
+                            ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300'
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                        }`}
+                      >
+                        <div className="font-medium">{it.label}</div>
+                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-indigo-600/80 dark:text-indigo-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                          {it.description}
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -425,6 +513,35 @@ export default function Navbar() {
                 })}
               </div>
             ))}
+
+            {/* 커뮤니티 */}
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1">
+              <div className="px-4">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">커뮤니티</span>
+              </div>
+              {COMMUNITY_MENU.map((it) => {
+                const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                return (
+                  <Link
+                    key={it.href}
+                    href={it.href}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                      isActive
+                        ? 'bg-indigo-600 text-white'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium">{it.label}</div>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-indigo-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                        {it.description}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
 
             {/* 연구실 */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-700">

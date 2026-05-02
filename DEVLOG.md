@@ -5,6 +5,77 @@
 
 ---
 
+## 2026-05-02 — Phase 9: 커뮤니티 기능 1차 구축 (서이추 / 정보공유 / 체험단동행)
+
+**브랜치**: `claude/analyze-source-code-rncaC`
+**배경**: 사용자 요청 — 회원 간 커뮤니티 3종 (서이추, 정보공유, 체험단동행) 신설. 기획서 작성 후 결정 사항 6개 확정 → Phase A → B → C(정보공유) → E(체험단) 일괄 구현.
+
+### 결정 사항 (확정)
+- 메뉴 명칭: **커뮤니티**
+- 비로그인 정책: 읽기 누구나, 쓰기·댓글·좋아요는 로그인 필요
+- 닉네임 변경 정책: 24시간 1회 (트리거로 강제)
+- 서이추 1일 1글 (RLS policy로 강제)
+- 체험단 연락 방법: 자유 텍스트 (오픈채팅 URL 권장)
+
+### 9-A. 공통 기반
+- **마이그레이션 0003 `profiles`**: nickname unique(2~16자), blog_url, category, bio, nickname_changed_at, RLS(모두 읽기 / 본인만 쓰기), pg_trgm 닉네임 검색 인덱스, 닉네임 24h cooldown 트리거.
+- **`app/lib/community/`**: `categories.ts` (16개 분야 + 일상/맛집), `regions.ts` (지역·시간대·companion status), `profile.ts` (검증·CRUD 헬퍼).
+- **공통 컴포넌트**: `CategoryChips`, `NicknameBadge`, `EmptyState`, `ConfirmModal` (각 메뉴 재사용).
+- **`app/profile/setup/page.tsx`**: 닉네임/블로그URL/분야/소개 등록·수정. Suspense 래핑 (useSearchParams).
+- **`app/community/page.tsx`**: 3개 카드 허브 (그라데이션 액센트 + 안내문).
+- **Navbar**: "커뮤니티" 드롭다운 추가 (호버/클릭, 외부클릭 닫기 150ms 딜레이). 모바일 메뉴 평면 노출.
+
+### 9-B. 서이추 해요 (`/community/swap`)
+- **마이그레이션 0004 `swap_posts`**: nickname/blog_url/category/message(200자), pg_trgm 닉네임 인덱스, **RLS INSERT 정책에 24시간 내 작성 이력 검사 강제** (sub-select). 본인만 UPDATE/DELETE.
+- **목록**: 카드 그리드 (분야 필터 칩 + 닉네임 ilike 검색 debounce 300ms), 본인 글이면 [수정][삭제] 노출.
+- **작성 모달**: 1일 1글 안내 + profile에서 닉네임/블로그URL 자동 채움. RLS 차단 시 "하루에 한 번만 작성할 수 있습니다" 안내. 수정은 cooldown 무관.
+
+### 9-C. 정보 공유 (`/community/tips`, `/new`, `/[id]`)
+- **마이그레이션 0005 `tips_posts/comments/likes`**:
+  - `tips_category` enum (질문/정보공유/노하우/트러블슈팅/수익후기/잡담)
+  - `tips_posts`: title(2~80자), body(10000자), view/like/comment count, pg_trgm 제목 인덱스, 카테고리·인기·최신 다중 인덱스.
+  - `tips_comments`: post_id FK cascade, 1000자 제한.
+  - `tips_likes`: composite PK, INSERT/DELETE trigger로 like_count 동기화.
+  - 댓글 INSERT/DELETE trigger로 comment_count 동기화.
+  - `tips_increment_view(post_id)` SECURITY DEFINER RPC (anon/authenticated 모두 호출 가능).
+- **`app/lib/community/tips.ts`**: TIPS_CATEGORIES + 카테고리 배지 색상 매핑.
+- **목록**: 행 리스트 (카테고리 배지 + 제목 + 댓글수 / 닉네임·시간·조회·추천), 카테고리 탭, 제목 검색, 최신순/인기순 토글, 페이지네이션 (20개/페이지, count: exact).
+- **작성** (`new`): 마크다운 textarea + 미리보기 토글 (`markdownToHtml` 재사용). `?id=` 쿼리로 수정 모드.
+- **상세** (`[id]`): 마크다운 렌더링, 좋아요 토글, 댓글 작성/삭제, 조회수 sessionStorage 중복 방지, 본인 글 수정/삭제.
+
+### 9-E. 체험단 동행해요 (`/community/companions`, `/new`, `/[id]`)
+- **마이그레이션 0006 `companion_posts`**:
+  - `companion_status` enum (모집중/마감/완료), `companion_time_slot` enum.
+  - title/brand_name/region/visit_date/visit_time_slot/participants(1~10)/contact_method(200자)/message(2000자).
+  - **RLS INSERT에 `visit_date >= current_date` 강제** (과거 날짜 차단).
+  - status+visit_date / region+visit_date 복합 인덱스.
+- **목록**: 카드 그리드, 지역 select 필터, 모집중만 보기 토글, 방문일 임박순 정렬. 안전 안내 amber 박스.
+- **작성**: 날짜 input min=today, 인원 1~10 clamp, 연락 방법 오픈채팅 권장 안내.
+- **상세**: dl 레이아웃 정보 표시, 연락 방법은 URL이면 자동 링크화. 본인 글이면 status select(모집중/마감/완료) + 수정/삭제.
+
+### 라우팅 / 정적 페이지 처리
+- `useSearchParams` 사용 페이지 3종 (`profile/setup`, `tips/new`, `companions/new`)는 `Suspense` 래퍼 + 내부 컴포넌트 분리로 prerender 호환.
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `IP_HASH_SALT=...` `npm run build`: **37개 페이지** 정상 생성 (이전 30 + 커뮤니티 7 + profile/setup).
+- lint: 새 파일 0 errors / 0 warnings.
+- 신규 파일 17개, 마이그레이션 SQL 4개 (0003~0006).
+
+### 배포 전 체크리스트
+1. Supabase SQL Editor에서 마이그레이션 0003 → 0004 → 0005 → 0006 순서대로 실행.
+2. `pg_trgm` extension 설치 확인 (0003에서 자동 시도).
+3. 비로그인 사용자도 SELECT 가능하도록 RLS 정책 확인.
+
+### 후속 작업 (Phase D / F — 미실시)
+- 좋아요 카운터의 race condition 검증 (현재 trigger로 동기화)
+- 신고/차단 시스템
+- 마이페이지 (내 글 모음)
+- Postgres FTS (현재는 ilike 부분일치만)
+- 운영자 공지 핀
+
+---
+
 ## 2026-05-02 — Phase 8: 보안·타입 강화 + 데드 코드 정리
 
 **커밋**: `232f732` (브랜치 `claude/analyze-source-code-rncaC`)
