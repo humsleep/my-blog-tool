@@ -4,13 +4,14 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
+import { safeNextPath } from '../lib/security/safe-redirect';
 
 function LoginContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const next = searchParams.get('next') || '/';
+  const next = safeNextPath(searchParams.get('next'));
   const hasError = searchParams.get('error');
   const configured = isSupabaseConfigured();
 

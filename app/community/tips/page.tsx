@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { TIPS_CATEGORIES, categoryBadgeClass } from '@/app/lib/community/tips';
+import { escapeLikePattern } from '@/app/lib/security/safe-redirect';
 import EmptyState from '@/app/components/community/EmptyState';
 import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
@@ -60,7 +61,7 @@ export default function TipsListPage() {
       q = q.order('created_at', { ascending: false });
     }
     if (category) q = q.eq('category', category);
-    if (debouncedQuery) q = q.ilike('title', `%${debouncedQuery}%`);
+    if (debouncedQuery) q = q.ilike('title', `%${escapeLikePattern(debouncedQuery)}%`);
 
     const { data, error: fetchError, count } = await q;
     if (fetchError) {

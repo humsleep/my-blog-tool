@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
+import { escapeLikePattern } from '@/app/lib/security/safe-redirect';
 import CategoryChips from '@/app/components/community/CategoryChips';
 import EmptyState from '@/app/components/community/EmptyState';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
@@ -78,7 +79,7 @@ export default function SwapPage() {
       .order('created_at', { ascending: false })
       .range(from, to);
     if (category) q = q.eq('category', category);
-    if (debouncedQuery) q = q.ilike('nickname', `%${debouncedQuery}%`);
+    if (debouncedQuery) q = q.ilike('nickname', `%${escapeLikePattern(debouncedQuery)}%`);
     const { data, error: fetchError, count } = await q;
     if (fetchError) {
       console.error('swap fetch failed:', fetchError);

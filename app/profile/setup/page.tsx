@@ -11,6 +11,7 @@ import {
   type Profile,
 } from '@/app/lib/community/profile';
 import { CATEGORIES } from '@/app/lib/community/categories';
+import { safeNextPath } from '@/app/lib/security/safe-redirect';
 
 export default function ProfileSetupPageWrapper() {
   return (
@@ -23,7 +24,7 @@ export default function ProfileSetupPageWrapper() {
 function ProfileSetupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get('next') || '/community';
+  const next = safeNextPath(searchParams.get('next'), '/community');
 
   const [loading, setLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);

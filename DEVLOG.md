@@ -5,6 +5,74 @@
 
 ---
 
+## 2026-05-02 — Phase 13: 보안 감사 + 단위 검증 + 통합 테스트
+
+**범위**: 사용자 요청 — 전체 소스 보안 검사, 잠재 오류 단위 테스트, 통합 검증.
+
+### 13-A. 보안 감사 (12개 카테고리 점검)
+
+| # | 카테고리 | 결과 |
+|---|---|---|
+| 1 | 민감 정보 노출 (.env, service_role, console.log) | ✅ 안전. `.env*` gitignore, service_role은 서버 라우트 전용 (`api/ai-draft/route.ts`), console.error에 키 노출 없음 |
+| 2 | XSS (`dangerouslySetInnerHTML`) | ❗ **수정** — `competitor-analysis/page.tsx`가 네이버 API의 `post.title`을 직접 주입. ✅ 다른 4곳은 안전 (정적 상수/`markdownToHtml`로 escape됨) |
+| 3 | SSRF | ✅ `images/proxy`에 도메인 화이트리스트 (Pexels/Unsplash/Google). 다른 fetch는 코드에 박힌 URL만 |
+| 4 | Open Redirect (`?next=` 파라미터) | ❗ **수정** — `auth/callback`, `login`, `profile/setup`에서 검증 없이 redirect. `next=//evil.com` 등 외부 도메인으로 우회 가능했음 |
+| 5 | RLS 정책 (8개 테이블 24개 정책) | ✅ 모두 활성화 + 본인만 INSERT/UPDATE/DELETE 강제. anon_draft_usage는 service_role 전용 |
+| 6 | IDOR (다른 사용자 데이터 접근) | ✅ 클라이언트의 `.eq('user_id', ...)` + RLS의 `auth.uid() = user_id` 이중 방어 |
+| 7 | SQL Injection / LIKE 와일드카드 | ⚠️ **수정** — Supabase가 SQL injection은 막지만 `%`, `_` 와일드카드는 escape 안 함 (의도치 않은 매칭/DoS 가능) |
+| 8 | Rate Limiting / DoS | ⚠️ AI는 한도 있음. 댓글·좋아요·일반 글 작성 분당 한도 없음 (후순위 — 보고서만) |
+| 9 | 의존성 취약점 (`npm audit`) | ❗ **수정** — Anthropic SDK 0.91 → 0.92 (file permissions, 우리 영향 없음). ⚠️ react-quill의 lodash/quill (maintained 안 됨, 별도 phase 필요) |
+| 10 | CORS / Security Headers | ✅ Vercel 자동 처리, `images/proxy` 화이트리스트 |
+| 11 | 인증 우회 / 세션 | ✅ Supabase 토큰 + middleware 세션 갱신. `useUser` 훅으로 보호 |
+| 12 | Path Traversal | ✅ `lab/[slug]`에서 `path.join`만 사용 (사용자 입력 없음, 정적 파일만) |
+
+### 13-B. 수정 4개
+
+1. **XSS 방어 — `sanitizeSearchHighlight()`**
+   - `app/lib/format/article-formats.ts`에 신규 함수 추가
+   - `escapeHtml()` 후 `<b>`, `</b>`만 화이트리스트 복원
+   - `competitor-analysis/page.tsx:236`의 `post.title` dangerouslySetInnerHTML 직전에 적용
+
+2. **Open Redirect 방어 — `safeNextPath()`**
+   - `app/lib/security/safe-redirect.ts` 신규
+   - 차단: 빈 값, "/" 미시작, "//evil", "/\\evil", "/javascript:" 등
+   - 적용: `auth/callback/route.ts`, `login/page.tsx`, `profile/setup/page.tsx`
+
+3. **LIKE 와일드카드 escape — `escapeLikePattern()`**
+   - `safe-redirect.ts`에 함께 추가 (`%`, `_`, `\` → `\$&`)
+   - 적용: `swap/page.tsx`, `tips/page.tsx`의 ilike 검색
+
+4. **Anthropic SDK 0.91 → 0.92**
+   - `package.json` 업데이트
+   - 우리 코드는 `messages.create()`만 사용 → 호환성 영향 없음
+
+### 13-C. 단위 검증 (45/45 통과)
+
+임시 검증 스크립트(`/tmp/verify.mjs`)로 helper 로직 단위 검증 후 삭제:
+
+| 함수 | 통과 |
+|---|---|
+| `safeNextPath` | 11/11 (정상 path / protocol-relative 차단 / javascript scheme 차단 / fallback) |
+| `escapeLikePattern` | 5/5 (`%` `_` `\` 조합) |
+| `escapeHtml` / `sanitizeSearchHighlight` | 8/8 (`<b>` 보존, `<script>`·`<img onerror>` escape) |
+| `validateNickname` / `validateBlogUrl` | 13/13 (길이/문자/스킴) |
+| `formatRelativeKr` | 6/6 (방금 전 / N분 / N시간 / N일 / 절대 날짜) |
+| `REGIONS` / `REGION_CITIES` | 3/3 (19개 시·도, 서울 25, 경기 31) |
+
+### 13-D. 통합 검증
+
+- `npx tsc --noEmit`: 클린 (0 errors)
+- `IP_HASH_SALT=...` `npm run build`: 38 페이지 정상 (Turbopack 컴파일 성공)
+- `npm audit`: 7 → 4 vulnerabilities (남은 4개는 react-quill 의존, 별도 phase)
+
+### 잔존 권장사항 (별도 phase)
+
+- **react-quill 마이그레이션** — `react-quill-new` 또는 다른 React 19 호환 에디터로 교체 (현재 react-quill은 maintained 안 됨, lodash/quill 취약점 동반)
+- **댓글/좋아요/일반 글 작성 Rate Limiting** — 분당 N건 제한 (Vercel KV 또는 Supabase RPC + window function)
+- **신고/차단 기능** — 악의적 사용자 대응
+
+---
+
 ## 2026-05-02 — Phase 12: 작성 후 목록 이동 + 체험단 지역 세분화 + 문서 갱신
 
 ### 12-A. 글 등록 후 목록 자동 이동

@@ -15,6 +15,17 @@ export function escapeHtml(s: string): string {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * 네이버 OpenAPI 검색 결과의 강조 표시(`<b>키워드</b>`)만 허용하고
+ * 나머지 HTML은 모두 escape하는 sanitizer.
+ * dangerouslySetInnerHTML 직전에 반드시 통과시킬 것.
+ */
+export function sanitizeSearchHighlight(html: string): string {
+  return escapeHtml(html ?? '')
+    .replace(/&lt;b&gt;/g, '<b>')
+    .replace(/&lt;\/b&gt;/g, '</b>');
+}
+
 function inlineMd(s: string): string {
   // 이미 escapeHtml 처리된 문자열에 대해 인라인 마크다운만 변환
   return s

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import NewsPanel from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
+import { sanitizeSearchHighlight } from '../lib/format/article-formats';
 
 interface BlogPost {
   title: string;
@@ -233,7 +234,7 @@ function CompetitorAnalysisContent() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-orange-500 dark:hover:text-orange-400 hover:underline"
-                            dangerouslySetInnerHTML={{ __html: post.title }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeSearchHighlight(post.title) }}
                           />
                         </h3>
                         <p className="text-slate-500 dark:text-slate-400 text-xs mb-2 line-clamp-2">
