@@ -17,6 +17,7 @@ interface MenuCard {
   span?: string;
 }
 
+// 일부 메뉴는 사이트 활성화 후 오픈 예정 — 카드에서 숨김 (페이지 자체는 유지).
 const MENUS: MenuCard[] = [
   {
     href: '/community/swap',
@@ -26,16 +27,6 @@ const MENUS: MenuCard[] = [
     badge: '매칭',
     gradient: 'from-orange-50 via-orange-50 to-amber-50 dark:from-orange-950/40 dark:via-orange-950/30 dark:to-amber-950/30',
     iconBg: 'bg-orange-100 dark:bg-orange-950/60',
-    span: 'md:col-span-2',
-  },
-  {
-    href: '/community/tips',
-    emoji: '💡',
-    title: '정보 공유',
-    description: '운영 노하우·질문·트러블슈팅을 자유롭게 나눠요.',
-    badge: '게시판',
-    gradient: 'from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/30',
-    iconBg: 'bg-emerald-100 dark:bg-emerald-950/60',
   },
   {
     href: '/community/companions',
@@ -66,7 +57,7 @@ export default function CommunityHubPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {MENUS.map((menu) => (
             <Link
               key={menu.href}

@@ -1,5 +1,12 @@
 [
   {
+    "slug": "post_11",
+    "title": "Boheme BlogLab 시작 가이드 — 8단계로 완성하는 첫 포스팅",
+    "filename": "post_11.html",
+    "description": "키워드 잡기부터 이미지 편집까지, 30분 안에 1편을 완성하는 워크플로우 전체를 따라가는 첫 사용자 가이드.",
+    "date": "2026-05-02"
+  },
+  {
     "slug": "post_1",
     "title": "블로그와 일기장의 차이, 수익을 결정하는 글쓰기",
     "filename": "post_1.html"

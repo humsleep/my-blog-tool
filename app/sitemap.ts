@@ -32,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/lab`,                     changeFrequency: 'weekly',  priority: 0.8,  lastModified: now },
     { url: `${BASE_URL}/community`,               changeFrequency: 'daily',   priority: 0.9,  lastModified: now },
     { url: `${BASE_URL}/community/swap`,          changeFrequency: 'hourly',  priority: 0.8,  lastModified: now },
-    { url: `${BASE_URL}/community/tips`,          changeFrequency: 'hourly',  priority: 0.8,  lastModified: now },
+    // /community/tips 는 사이트 활성화 후 오픈 예정 — sitemap 노출 보류
     { url: `${BASE_URL}/community/companions`,    changeFrequency: 'hourly',  priority: 0.8,  lastModified: now },
     { url: `${BASE_URL}/about`,                   changeFrequency: 'yearly',  priority: 0.4,  lastModified: now },
     { url: `${BASE_URL}/contact`,                 changeFrequency: 'yearly',  priority: 0.4,  lastModified: now },

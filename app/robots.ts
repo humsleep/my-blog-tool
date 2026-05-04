@@ -14,9 +14,10 @@ export default function robots(): MetadataRoute.Robots {
           '/auth/',
           '/login',
           '/profile/setup',
-          '/community/tips/new',
+          // 정보 공유 메뉴 — 사이트 활성화 후 오픈 예정. 그 전까지 색인 차단.
+          '/community/tips',
+          '/community/tips/*',
           '/community/companions/new',
-          '/community/tips/*?id=',
           '/community/companions/*?id=',
         ],
       },

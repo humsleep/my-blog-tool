@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <div className="bg-white dark:bg-slate-800/80 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sm:p-10">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">개인정보처리방침</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-10">
-            <strong>최종 수정일:</strong> 2026년 4월 23일 &middot; <strong>시행일:</strong> 2026년 4월 23일
+            <strong>최종 수정일:</strong> 2026년 5월 2일 &middot; <strong>시행일:</strong> 2026년 5월 2일
           </p>
 
           <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 space-y-10">
@@ -44,19 +44,33 @@ export default function PrivacyPage() {
                 <li>수집 방법: 서비스 내 &ldquo;AI 초안 생성&rdquo; 기능 이용 시 자동 기록</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">다. 문의사항 접수 시</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">다. 커뮤니티 이용 시 (서이추, 정보 공유, 체험단 동행)</h3>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>필수: 닉네임(2~16자), 활동 분야(분류용)</li>
+                <li>선택: 블로그 URL, 자기소개(200자 이내)</li>
+                <li>이용자가 직접 작성한 게시글&middot;댓글&middot;좋아요 기록</li>
+                <li>체험단 동행 작성 시: 방문 지역(시&middot;도/시&middot;군&middot;구), 방문일, 연락 방법(자유 텍스트, 오픈채팅 URL 권장)</li>
+                <li>신고 접수 시: 신고 사유 코드, 상세 사유(선택)</li>
+                <li>수집 방법: 회원이 직접 입력</li>
+              </ul>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                ⚠️ 게시글 본문&middot;닉네임&middot;블로그 URL은 비로그인 이용자에게도 공개되어 검색엔진에 노출될 수 있습니다.
+                전화번호&middot;주민등록번호&middot;계좌번호 등 민감 정보 입력은 자제해주세요.
+              </p>
+
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">라. 문의사항 접수 시</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>이메일 주소, 문의 내용</li>
                 <li>수집 방법: 이메일을 통한 자발적 제공</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">라. 자동 수집 항목</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">마. 자동 수집 항목</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>IP 주소, 쿠키, 접속 일시, 서비스 이용 기록, User-Agent 등 기기 정보</li>
                 <li>수집 방법: 서비스 이용 과정에서 자동 생성&middot;수집</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">마. 비로그인 이용자의 일일 한도 적용을 위한 IP 해시</h3>
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-5 mb-2">바. 비로그인 이용자의 일일 한도 적용을 위한 IP 해시</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>비로그인 상태에서 AI 글쓰기 기능을 이용하는 경우, 일일 무료 한도(1회) 적용을 위해 접속 IP를 SHA-256 알고리즘으로 단방향 해시한 값과 이용 일자를 저장합니다.</li>
                 <li>원본 IP 주소는 별도로 저장되지 않으며, 해시 값으로부터 원본 IP를 복원할 수 없습니다.</li>
@@ -70,8 +84,9 @@ export default function PrivacyPage() {
               <p className="mb-3">수집된 개인정보는 다음의 목적을 위해서만 처리되며, 이용 목적이 변경될 경우 사전 동의를 구합니다.</p>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li><strong>회원 식별 및 인증:</strong> Google 계정을 통한 로그인 처리 및 본인 확인</li>
-                <li><strong>서비스 제공:</strong> AI 초안 생성 기능 제공, 일일 무료 사용 횟수 관리</li>
-                <li><strong>부정 이용 방지:</strong> 사용량 한도 초과 및 비정상적 접근 차단</li>
+                <li><strong>서비스 제공:</strong> AI 초안 생성, 커뮤니티 글쓰기&middot;댓글&middot;좋아요&middot;신고 기능 제공</li>
+                <li><strong>커뮤니티 운영:</strong> 닉네임 기반 작성자 표기, 분야별 매칭, 신고 누적 시 자동 숨김 처리, 악성 사용자 차단</li>
+                <li><strong>부정 이용 방지:</strong> AI&middot;커뮤니티 사용량 한도(Rate Limit) 초과 및 비정상적 접근 차단</li>
                 <li><strong>문의사항 응대:</strong> 이용자 문의에 대한 회신</li>
                 <li><strong>서비스 개선:</strong> 접속 로그 및 이용 통계 분석</li>
                 <li><strong>법령상 의무 이행:</strong> 관계 법령에 따른 보존 및 조사 협조</li>
@@ -81,10 +96,14 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">4. 개인정보의 보유 및 이용 기간</h2>
               <ul className="list-disc pl-6 space-y-1.5">
-                <li><strong>회원 정보:</strong> 회원 탈퇴 시까지. 회원 탈퇴 요청을 받은 즉시 관련 데이터를 파기합니다.</li>
+                <li><strong>회원 정보(이메일, 닉네임, 블로그 URL, 분야, 자기소개):</strong> 회원 탈퇴 시까지. 회원 탈퇴 요청을 받은 즉시 관련 데이터를 파기합니다.</li>
                 <li><strong>AI 초안 생성 사용 기록(일일 카운트):</strong> 수집일로부터 90일간 보유 후 파기</li>
                 <li><strong>이용자가 입력한 프롬프트 내용:</strong> 별도 저장하지 않으며, AI 초안 생성 응답 직후 폐기(처리위탁사 내부 로그 제외)</li>
+                <li><strong>커뮤니티 게시글&middot;댓글&middot;좋아요:</strong> 회원 탈퇴 시 함께 삭제. 단, 다른 이용자의 댓글&middot;좋아요와 연결된 본인 게시글은 작성자 표기를 익명화하고 본문은 보존(요청 시 즉시 삭제 가능).</li>
+                <li><strong>신고 기록:</strong> 운영 검토 완료 후 1년간 보관 후 파기 (재신고&middot;분쟁 대응 목적)</li>
+                <li><strong>차단 사용자 기록:</strong> 차단 해제 시까지 보관, 해제 후 즉시 파기</li>
                 <li><strong>접속 로그, IP 주소 등:</strong> 통신비밀보호법에 따라 3개월간 보관 후 파기</li>
+                <li><strong>비로그인 IP 해시:</strong> 30일간 보관 후 자동 삭제</li>
                 <li><strong>문의 내역:</strong> 문의 응대 완료 후 1년간 보관 후 파기</li>
               </ul>
             </section>
@@ -139,6 +158,26 @@ export default function PrivacyPage() {
                       <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">키워드&middot;블로그&middot;뉴스 검색 API 호출 (개인정보 미전송)</td>
                       <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
                     </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Pexels (Pexels GmbH)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">무료 이미지 검색 API 호출 (검색어만 전송, 개인정보 미전송)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Unsplash, Inc.</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">무료 이미지 검색 API 호출 (검색어만 전송, 개인정보 미전송)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">LanguageTooler GmbH</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">한국어 맞춤법&middot;문법 검사 API 호출 (검사 대상 텍스트 전송)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">Wikimedia Foundation</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">위키피디아 페이지 조회수 API 호출 (검색어만 전송, 개인정보 미전송)</td>
+                      <td className="border border-slate-200 dark:border-slate-600 px-3 py-2">API 응답 완료 시까지</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -154,6 +193,10 @@ export default function PrivacyPage() {
                 <li><strong>Supabase, Inc.:</strong> 미국 등 (서비스 선택 리전에 따라 보관 위치 결정)</li>
                 <li><strong>Anthropic, PBC:</strong> 미국 (Claude API 처리)</li>
                 <li><strong>Vercel, Inc.:</strong> 글로벌 (Edge Network)</li>
+                <li><strong>Pexels GmbH:</strong> 독일/미국 (이미지 검색)</li>
+                <li><strong>Unsplash, Inc.:</strong> 캐나다/미국 (이미지 검색)</li>
+                <li><strong>LanguageTooler GmbH:</strong> 독일 (맞춤법 검사)</li>
+                <li><strong>Wikimedia Foundation:</strong> 미국 (페이지 조회수 API)</li>
               </ul>
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
                 이전 항목: 이메일, 이름, 프로필 이미지, 프롬프트 내용, IP 주소 등 &middot;
