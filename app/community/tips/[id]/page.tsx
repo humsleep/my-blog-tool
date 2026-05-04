@@ -10,6 +10,7 @@ import { markdownToHtml } from '@/app/lib/format/article-formats';
 import { formatRelativeKr, formatAbsoluteKr } from '@/app/lib/format/relative-time';
 import { useToast } from '@/app/components/ui/Toast';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
+import ReportButton from '@/app/components/community/ReportButton';
 
 interface TipsPost {
   id: number;
@@ -66,8 +67,8 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
     (async () => {
       const supabase = createClient();
       const [{ data: postData, error: postErr }, { data: commentsData }, { data: auth }] = await Promise.all([
-        supabase.from('tips_posts').select('*').eq('id', postId).maybeSingle(),
-        supabase.from('tips_comments').select('*').eq('post_id', postId).order('created_at', { ascending: true }),
+        supabase.from('tips_posts').select('*').eq('id', postId).eq('is_hidden', false).maybeSingle(),
+        supabase.from('tips_comments').select('*').eq('post_id', postId).eq('is_hidden', false).order('created_at', { ascending: true }),
         supabase.auth.getUser(),
       ]);
 
@@ -157,7 +158,13 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
         .select('*')
         .single();
       if (insErr) {
-        toast('댓글 등록 실패: ' + insErr.message, 'error');
+        let msg: string;
+        if (insErr.code === '42501' || insErr.message?.includes('row-level security')) {
+          msg = '댓글 작성 한도를 초과했습니다 (분당 5건). 잠시 후 다시 시도해주세요.';
+        } else {
+          msg = insErr.message || '댓글 등록에 실패했습니다.';
+        }
+        toast(msg, 'error');
         return;
       }
       toast('댓글이 등록되었습니다.', 'success');
@@ -286,23 +293,27 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
             >
               {liked ? '♥' : '♡'} 추천 {post.like_count}
             </button>
-            {isMine && (
-              <div className="flex gap-1">
-                <Link
-                  href={`/community/tips/new?id=${post.id}`}
-                  className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
-                >
-                  수정
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setConfirmDelete(true)}
-                  className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"
-                >
-                  삭제
-                </button>
-              </div>
-            )}
+            <div className="flex gap-1 items-center">
+              {isMine ? (
+                <>
+                  <Link
+                    href={`/community/tips/new?id=${post.id}`}
+                    className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                  >
+                    수정
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"
+                  >
+                    삭제
+                  </button>
+                </>
+              ) : (
+                <ReportButton targetType="tips_post" targetId={post.id} />
+              )}
+            </div>
           </div>
         </article>
 
@@ -324,7 +335,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                     <span className="text-slate-400">·</span>
                     <span className="text-slate-500 dark:text-slate-400">{formatRelativeKr(c.created_at)}</span>
                   </div>
-                  {profile?.user_id === c.user_id && (
+                  {profile?.user_id === c.user_id ? (
                     <button
                       type="button"
                       onClick={() => setDeletingCommentId(c.id)}
@@ -332,6 +343,8 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                     >
                       삭제
                     </button>
+                  ) : (
+                    <ReportButton targetType="tips_comment" targetId={c.id} variant="icon" />
                   )}
                 </div>
                 <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words">{c.body}</p>

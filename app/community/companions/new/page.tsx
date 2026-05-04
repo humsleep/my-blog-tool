@@ -152,8 +152,14 @@ function CompanionNewPage() {
           .single();
         if (insErr) {
           console.error('companion insert failed:', insErr);
-          setError(insErr.message);
-          alert('작성 실패: ' + insErr.message);
+          let msg: string;
+          if (insErr.code === '42501' || insErr.message?.includes('row-level security')) {
+            msg = '하루 모집글 작성 한도(3건)를 초과했거나 방문 날짜가 과거입니다.';
+          } else {
+            msg = insErr.message || '작성에 실패했습니다.';
+          }
+          setError(msg);
+          alert('작성 실패: ' + msg);
           return;
         }
         if (!data) {

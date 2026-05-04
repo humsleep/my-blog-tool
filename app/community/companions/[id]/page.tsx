@@ -9,6 +9,7 @@ import { COMPANION_STATUS, formatFullRegion, type CompanionStatus } from '@/app/
 import { formatAbsoluteKr } from '@/app/lib/format/relative-time';
 import { useToast } from '@/app/components/ui/Toast';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
+import ReportButton from '@/app/components/community/ReportButton';
 
 interface CompanionPost {
   id: number;
@@ -51,7 +52,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
     (async () => {
       const supabase = createClient();
       const [{ data, error: fetchErr }, { data: auth }] = await Promise.all([
-        supabase.from('companion_posts').select('*').eq('id', postId).maybeSingle(),
+        supabase.from('companion_posts').select('*').eq('id', postId).eq('is_hidden', false).maybeSingle(),
         supabase.auth.getUser(),
       ]);
       if (cancelled) return;
@@ -225,36 +226,42 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
             )}
           </div>
 
-          {isMine && (
-            <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 dark:text-slate-400">상태:</span>
-                <select
-                  value={post.status}
-                  onChange={(e) => onChangeStatus(e.target.value as CompanionStatus)}
-                  disabled={updatingStatus}
-                  className="px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                >
-                  {COMPANION_STATUS.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {isMine ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 dark:text-slate-400">상태:</span>
+                  <select
+                    value={post.status}
+                    onChange={(e) => onChangeStatus(e.target.value as CompanionStatus)}
+                    disabled={updatingStatus}
+                    className="px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                  >
+                    {COMPANION_STATUS.map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-1">
+                  <Link
+                    href={`/community/companions/new?id=${post.id}`}
+                    className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                  >
+                    수정
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"
+                  >
+                    삭제
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="ml-auto">
+                <ReportButton targetType="companion_post" targetId={post.id} />
               </div>
-              <div className="flex gap-1">
-                <Link
-                  href={`/community/companions/new?id=${post.id}`}
-                  className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
-                >
-                  수정
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setConfirmDelete(true)}
-                  className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </article>
 
         <div className="mt-5 p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg text-xs text-amber-800 dark:text-amber-400 space-y-1">

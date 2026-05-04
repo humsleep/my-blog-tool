@@ -54,6 +54,7 @@ export default function TipsListPage() {
       .from('tips_posts')
       .select('id,user_id,nickname,category,title,view_count,like_count,comment_count,created_at',
               { count: 'exact' })
+      .eq('is_hidden', false)
       .range(from, to);
     if (sort === 'popular') {
       q = q.order('like_count', { ascending: false }).order('created_at', { ascending: false });

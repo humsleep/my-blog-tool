@@ -5,6 +5,96 @@
 
 ---
 
+## 2026-05-02 — Phase 14: react-quill 제거 + Rate Limiting + 신고/차단 시스템
+
+**범위**: Phase 13에서 권장한 잔존 보안 항목 3개 일괄 처리.
+
+### 14-A. react-quill 제거 (Phase 13 잔존 #1)
+
+**발견**: react-quill은 package.json에 의존성으로만 남아있고 코드에서 import 안 됨. `app/editor/QuillEditor.tsx`는 `quill@2.0.3`(latest)을 직접 사용.
+
+- `npm uninstall react-quill` — lodash transitive(@4.17.23 high CVE)도 함께 제거됨.
+- npm audit: 7 → 3 vulnerabilities (4개 해소).
+- 남은 3개는 quill@2.0.3(latest)의 HTML export advisory — 우리는 본인 글만 본인 마크다운으로 변환하므로 자해 위험만 존재.
+- **별도 phase 후보**: 향후 sanitize-html이나 DOMPurify로 quill HTML 출력 정화.
+
+### 14-B. Rate Limiting (마이그레이션 0008)
+
+RLS INSERT 정책에 시간 윈도우 sub-select 추가 (서이추 1일 1글과 동일 패턴):
+
+| 테이블 | 한도 |
+|---|---|
+| `swap_posts` | 1일 1글 (기존 유지) |
+| `tips_posts` | 24h 5건/사용자 |
+| `tips_comments` | 분당 5건 + 24h 100건/사용자 |
+| `companion_posts` | 24h 3건 + visit_date 미래 |
+
+- 인덱스 추가: `(user_id, created_at desc)` 3개 — count 쿼리 빠르게.
+- 클라이언트: `42501` (RLS 차단) 코드 받으면 친절한 메시지 (`'하루 글 작성 한도(5건)를 초과했습니다.'`).
+- 댓글은 toast로, 글 작성은 alert + setError 동시.
+
+### 14-C. 신고 / 차단 / 자동 숨김 (마이그레이션 0009)
+
+**테이블 신규**:
+- `reports` — `report_target` enum (`swap_post`/`tips_post`/`tips_comment`/`companion_post`), 6개 사유(`spam`/`abuse`/`adult`/`privacy`/`illegal`/`etc`), 상세 사유 500자.
+  - `unique (reporter_id, target_type, target_id)`: 한 사람이 같은 글 1회만 신고.
+  - 신고 분당 5건 한도 (악용 방지).
+  - 본인 신고만 SELECT.
+- `blocked_users` — RLS 정책 없음 → service_role만 INSERT/DELETE. 운영자가 Supabase Dashboard에서 직접 관리.
+
+**기존 테이블 변경**:
+- `swap_posts` / `tips_posts` / `tips_comments` / `companion_posts`에 `is_hidden boolean default false` 추가.
+- 부분 인덱스 `where is_hidden = false` 4개 — 정상 글만 빠르게 조회.
+
+**자동 숨김 트리거**:
+- `auto_hide_on_reports()` SECURITY DEFINER — `reports` INSERT 시 동일 대상 누적 카운트가 5 이상이면 대상 테이블의 `is_hidden = true`로 갱신.
+
+**차단 사용자 작성 차단**:
+- swap/tips/comment/companion INSERT 정책에 `not exists (select 1 from blocked_users where user_id = auth.uid())` 추가.
+
+### 14-D. 신고 UI
+
+- `app/components/community/ReportModal.tsx` 신규 — 6개 사유 라디오 + 상세 textarea(500자) + 한도 초과 시 친절 메시지.
+- `app/components/community/ReportButton.tsx` 신규 — 본인 글이면 hidden, 비로그인은 로그인 페이지 redirect, 아이콘/텍스트 variant.
+- `app/lib/community/reports.ts` 신규 — `ReportTarget`, `ReportReasonCode`, `REPORT_REASONS`.
+
+**적용**:
+- swap 행: 본인 글이면 [수정][삭제], 아니면 🚩 신고 (데스크톱·모바일 둘 다).
+- tips/[id] 본문: isMine ? [수정][삭제] : 🚩 신고.
+- tips/[id] 댓글: 본인 댓글이면 [삭제], 아니면 🚩 아이콘.
+- companions/[id]: isMine ? [상태변경 + 수정 + 삭제] : 🚩 신고.
+
+### 14-E. 숨김 글 자동 필터
+
+모든 목록·상세 SELECT 쿼리에 `.eq('is_hidden', false)` 추가:
+- swap 목록 / tips 목록 + 상세 + 댓글 / companions 목록 + 상세
+- 본인 글이라도 자동 숨김된 경우 표시 안 됨 (운영자만 Supabase Dashboard에서 확인).
+
+### 검증
+
+- `npx tsc --noEmit`: 클린.
+- `IP_HASH_SALT=...` `npm run build`: 38 페이지.
+- `npm audit`: 7 → 3 (모두 quill@latest, 별도 phase).
+
+### 배포 체크리스트
+
+⚠️ Supabase SQL Editor에서 순서대로 실행:
+1. `0008_rate_limits.sql` — 기존 RLS 정책 교체 + 인덱스
+2. `0009_reports_and_moderation.sql` — 신규 테이블 + is_hidden 컬럼 + 트리거 + INSERT 정책 재정의
+
+**중요**: 0009는 0008의 정책을 다시 `drop policy if exists ... create policy`로 재정의하므로 순서 지킬 것.
+
+### 운영자 가이드
+
+- 신고 5건 누적 → 자동 숨김 (DB 트리거)
+- 운영자는 Supabase Dashboard에서:
+  - `reports` 테이블 직접 조회 (target_id로 원본 글 추적)
+  - `swap_posts/tips_posts/...`에서 `is_hidden = true` 조회 → 검토 후 복원/유지 결정
+  - 악성 사용자 차단: `insert into blocked_users (user_id, reason) values ('<uuid>', '사유')`
+  - 차단 해제: `delete from blocked_users where user_id = '<uuid>'`
+
+---
+
 ## 2026-05-02 — Phase 13: 보안 감사 + 단위 검증 + 통합 테스트
 
 **범위**: 사용자 요청 — 전체 소스 보안 검사, 잠재 오류 단위 테스트, 통합 검증.

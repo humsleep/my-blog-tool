@@ -57,6 +57,7 @@ export default function CompanionsPage() {
     let q = supabase
       .from('companion_posts')
       .select('*', { count: 'exact' })
+      .eq('is_hidden', false)
       .order('visit_date', { ascending: true })
       .order('created_at', { ascending: false })
       .range(from, to);

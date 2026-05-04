@@ -118,8 +118,14 @@ function TipsNewPage() {
           .single();
         if (insErr) {
           console.error('tips insert failed:', insErr);
-          setError(insErr.message);
-          alert('작성 실패: ' + insErr.message);
+          let msg: string;
+          if (insErr.code === '42501' || insErr.message?.includes('row-level security')) {
+            msg = '하루 글 작성 한도(5건)를 초과했습니다. 24시간 후 다시 시도해주세요.';
+          } else {
+            msg = insErr.message || '작성에 실패했습니다.';
+          }
+          setError(msg);
+          alert('작성 실패: ' + msg);
           return;
         }
         if (!data) {

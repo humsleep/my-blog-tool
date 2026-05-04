@@ -10,6 +10,7 @@ import EmptyState from '@/app/components/community/EmptyState';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
 import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import ReportButton from '@/app/components/community/ReportButton';
 import { useToast } from '@/app/components/ui/Toast';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 import SwapModal, { type SwapDraft } from './SwapModal';
@@ -76,6 +77,7 @@ export default function SwapPage() {
     let q = supabase
       .from('swap_posts')
       .select('*', { count: 'exact' })
+      .eq('is_hidden', false)
       .order('created_at', { ascending: false })
       .range(from, to);
     if (category) q = q.eq('category', category);
@@ -332,14 +334,14 @@ function SwapRow({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
         </a>
-        <div className="flex justify-end gap-1">
+        <div className="flex justify-end gap-1 items-center">
           {isMine ? (
             <>
               <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 px-1.5">수정</button>
               <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 px-1.5">삭제</button>
             </>
           ) : (
-            <span className="text-[11px] text-slate-300 dark:text-slate-600">—</span>
+            <ReportButton targetType="swap_post" targetId={post.id} variant="icon" />
           )}
         </div>
       </div>
@@ -352,12 +354,16 @@ function SwapRow({
             </span>
             <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
           </div>
-          {isMine && (
-            <div className="flex flex-shrink-0 gap-1">
-              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 px-1">수정</button>
-              <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 px-1">삭제</button>
-            </div>
-          )}
+          <div className="flex flex-shrink-0 gap-1 items-center">
+            {isMine ? (
+              <>
+                <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 px-1">수정</button>
+                <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 px-1">삭제</button>
+              </>
+            ) : (
+              <ReportButton targetType="swap_post" targetId={post.id} variant="icon" />
+            )}
+          </div>
         </div>
         <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-2">{post.message}</p>
         <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
