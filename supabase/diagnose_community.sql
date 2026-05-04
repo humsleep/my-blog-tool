@@ -86,12 +86,12 @@ select case when exists (
 -- ────────────────────────────────────────────────────────────
 -- [6] Rate Limit 정책 (마이그레이션 0008/0009 INSERT 정책)
 -- ────────────────────────────────────────────────────────────
-select tablename, polname as 정책명, cmd as 명령
+select tablename, policyname as 정책명, cmd as 명령
 from pg_policies
 where schemaname = 'public'
   and tablename in ('swap_posts','tips_posts','tips_comments','companion_posts')
   and cmd = 'INSERT'
-order by tablename, polname;
+order by tablename, policyname;
 -- 기대: 각 테이블에 1개씩 INSERT 정책 (이름에 'rate limit' 또는 'once per day' 포함)
 
 -- ────────────────────────────────────────────────────────────
