@@ -8,8 +8,8 @@ import { escapeLikePattern } from '@/app/lib/security/safe-redirect';
 import CategoryChips from '@/app/components/community/CategoryChips';
 import EmptyState from '@/app/components/community/EmptyState';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
-import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import InfiniteScrollSentinel from '@/app/components/community/InfiniteScrollSentinel';
 import ReportButton from '@/app/components/community/ReportButton';
 import { useToast } from '@/app/components/ui/Toast';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
@@ -33,6 +33,7 @@ export default function SwapPage() {
   const [posts, setPosts] = useState<SwapPost[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -49,13 +50,14 @@ export default function SwapPage() {
   const [deleteTarget, setDeleteTarget] = useState<SwapPost | null>(null);
 
   const isDebouncing = query.trim() !== debouncedQuery;
+  const hasMore = posts.length < total;
 
   useEffect(() => {
-    const t = setTimeout(() => { setDebouncedQuery(query.trim()); setPage(1); }, 300);
+    const t = setTimeout(() => { setDebouncedQuery(query.trim()); }, 300);
     return () => clearTimeout(t);
   }, [query]);
 
-  useEffect(() => { setPage(1); }, [category]);
+  useEffect(() => { setPage(1); setPosts([]); }, [category, debouncedQuery]);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) { setAuthLoading(false); return; }
@@ -70,9 +72,9 @@ export default function SwapPage() {
     })();
   }, []);
 
-  const fetchPosts = async (silent: boolean) => {
+  const fetchPage = async (targetPage: number, append: boolean) => {
     const supabase = createClient();
-    const from = (page - 1) * PAGE_SIZE;
+    const from = (targetPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     let q = supabase
       .from('swap_posts')
@@ -85,12 +87,13 @@ export default function SwapPage() {
     const { data, error: fetchError, count } = await q;
     if (fetchError) {
       console.error('swap fetch failed:', fetchError);
-      if (!silent) { setError(fetchError.message); setPosts([]); setTotal(0); }
+      if (!append) { setError(fetchError.message); setPosts([]); setTotal(0); }
       return;
     }
-    setPosts((data as SwapPost[]) ?? []);
+    const rows = (data as SwapPost[]) ?? [];
+    setPosts((prev) => append ? [...prev, ...rows] : rows);
     setTotal(count ?? 0);
-    if (!silent) setError(null);
+    if (!append) setError(null);
   };
 
   useEffect(() => {
@@ -103,17 +106,29 @@ export default function SwapPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      await fetchPosts(false);
+      await fetchPage(1, false);
       if (!cancelled) setLoading(false);
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, debouncedQuery, page]);
+  }, [category, debouncedQuery]);
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    const next = page + 1;
+    setLoadingMore(true);
+    try {
+      await fetchPage(next, true);
+      setPage(next);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
     const onFocus = () => {
       if (document.visibilityState !== 'visible') return;
-      void fetchPosts(true);
+      void fetchPage(1, false);
     };
     document.addEventListener('visibilitychange', onFocus);
     window.addEventListener('focus', onFocus);
@@ -122,9 +137,9 @@ export default function SwapPage() {
       window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, debouncedQuery, page]);
+  }, [category, debouncedQuery]);
 
-  const reload = () => { void fetchPosts(true); };
+  const reload = () => { void fetchPage(1, false); };
 
   const onClickWrite = () => {
     if (!authed) {
@@ -161,11 +176,10 @@ export default function SwapPage() {
       return;
     }
     toast('글이 삭제되었습니다.', 'success');
-    await fetchPosts(true);
+    await fetchPage(1, false);
   };
 
   const myUserId = profile?.user_id;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
@@ -270,7 +284,12 @@ export default function SwapPage() {
                 ))}
               </ul>
             </div>
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <InfiniteScrollSentinel hasMore={hasMore} loading={loadingMore} onLoadMore={loadMore} />
+            {!hasMore && posts.length > 0 && (
+              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+                마지막 글까지 모두 봤어요 (총 {total}건)
+              </p>
+            )}
           </>
         )}
 

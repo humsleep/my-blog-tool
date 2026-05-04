@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { REGIONS, getCities, formatFullRegion, type CompanionStatus } from '@/app/lib/community/regions';
 import EmptyState from '@/app/components/community/EmptyState';
-import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import InfiniteScrollSentinel from '@/app/components/community/InfiniteScrollSentinel';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 
 interface CompanionPost {
@@ -31,6 +31,7 @@ export default function CompanionsPage() {
   const [posts, setPosts] = useState<CompanionPost[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [region, setRegion] = useState<string | null>(null);
@@ -38,7 +39,9 @@ export default function CompanionsPage() {
   const [openOnly, setOpenOnly] = useState(true);
   const [page, setPage] = useState(1);
 
-  useEffect(() => { setPage(1); }, [region, regionCity, openOnly]);
+  const hasMore = posts.length < total;
+
+  useEffect(() => { setPage(1); setPosts([]); }, [region, regionCity, openOnly]);
 
   // 시·도가 바뀌거나 해제되면 시·군 필터 초기화
   useEffect(() => {
@@ -50,9 +53,9 @@ export default function CompanionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [region]);
 
-  const fetchPosts = async (silent: boolean) => {
+  const fetchPage = async (targetPage: number, append: boolean) => {
     const supabase = createClient();
-    const from = (page - 1) * PAGE_SIZE;
+    const from = (targetPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     let q = supabase
       .from('companion_posts')
@@ -67,12 +70,13 @@ export default function CompanionsPage() {
     const { data, error: fetchErr, count } = await q;
     if (fetchErr) {
       console.error('companion fetch failed:', fetchErr);
-      if (!silent) { setError(fetchErr.message); setPosts([]); setTotal(0); }
+      if (!append) { setError(fetchErr.message); setPosts([]); setTotal(0); }
       return;
     }
-    setPosts((data as CompanionPost[]) ?? []);
+    const rows = (data as CompanionPost[]) ?? [];
+    setPosts((prev) => append ? [...prev, ...rows] : rows);
     setTotal(count ?? 0);
-    if (!silent) setError(null);
+    if (!append) setError(null);
   };
 
   useEffect(() => {
@@ -85,18 +89,18 @@ export default function CompanionsPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      await fetchPosts(false);
+      await fetchPage(1, false);
       if (cancelled) return;
       setLoading(false);
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, regionCity, openOnly, page]);
+  }, [region, regionCity, openOnly]);
 
   useEffect(() => {
     const onFocus = () => {
       if (document.visibilityState !== 'visible') return;
-      void fetchPosts(true);
+      void fetchPage(1, false);
     };
     document.addEventListener('visibilitychange', onFocus);
     window.addEventListener('focus', onFocus);
@@ -105,9 +109,19 @@ export default function CompanionsPage() {
       window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, regionCity, openOnly, page]);
+  }, [region, regionCity, openOnly]);
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    const next = page + 1;
+    setLoadingMore(true);
+    try {
+      await fetchPage(next, true);
+      setPage(next);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
@@ -213,7 +227,12 @@ export default function CompanionsPage() {
                 {posts.map((post) => <CompanionRow key={post.id} post={post} />)}
               </ul>
             </div>
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <InfiniteScrollSentinel hasMore={hasMore} loading={loadingMore} onLoadMore={loadMore} />
+            {!hasMore && posts.length > 0 && (
+              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+                마지막 글까지 모두 봤어요 (총 {total}건)
+              </p>
+            )}
           </>
         )}
 

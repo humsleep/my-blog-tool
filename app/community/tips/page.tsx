@@ -6,8 +6,8 @@ import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { TIPS_CATEGORIES, categoryBadgeClass } from '@/app/lib/community/tips';
 import { escapeLikePattern } from '@/app/lib/security/safe-redirect';
 import EmptyState from '@/app/components/community/EmptyState';
-import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import InfiniteScrollSentinel from '@/app/components/community/InfiniteScrollSentinel';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 
 interface TipsPost {
@@ -29,6 +29,7 @@ export default function TipsListPage() {
   const [posts, setPosts] = useState<TipsPost[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [category, setCategory] = useState<string | null>(null);
@@ -38,17 +39,19 @@ export default function TipsListPage() {
   const [page, setPage] = useState(1);
 
   const isDebouncing = query.trim() !== debouncedQuery;
+  const hasMore = posts.length < total;
 
   useEffect(() => {
-    const t = setTimeout(() => { setDebouncedQuery(query.trim()); setPage(1); }, 300);
+    const t = setTimeout(() => { setDebouncedQuery(query.trim()); }, 300);
     return () => clearTimeout(t);
   }, [query]);
 
-  useEffect(() => { setPage(1); }, [category, sort]);
+  // 필터 변경 시 처음부터 다시
+  useEffect(() => { setPage(1); setPosts([]); }, [category, sort, debouncedQuery]);
 
-  const fetchPosts = async (silent: boolean) => {
+  const fetchPage = async (targetPage: number, append: boolean) => {
     const supabase = createClient();
-    const from = (page - 1) * PAGE_SIZE;
+    const from = (targetPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     let q = supabase
       .from('tips_posts')
@@ -67,14 +70,16 @@ export default function TipsListPage() {
     const { data, error: fetchError, count } = await q;
     if (fetchError) {
       console.error('tips fetch failed:', fetchError);
-      if (!silent) { setError(fetchError.message); setPosts([]); setTotal(0); }
+      if (!append) { setError(fetchError.message); setPosts([]); setTotal(0); }
       return;
     }
-    setPosts((data as TipsPost[]) ?? []);
+    const newRows = (data as TipsPost[]) ?? [];
+    setPosts((prev) => append ? [...prev, ...newRows] : newRows);
     setTotal(count ?? 0);
-    if (!silent) setError(null);
+    if (!append) setError(null);
   };
 
+  // 1페이지 로드 (필터 변경 시)
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       setLoading(false);
@@ -85,18 +90,31 @@ export default function TipsListPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      await fetchPosts(false);
+      await fetchPage(1, false);
       if (cancelled) return;
       setLoading(false);
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, sort, debouncedQuery, page]);
+  }, [category, sort, debouncedQuery]);
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    const next = page + 1;
+    setLoadingMore(true);
+    try {
+      await fetchPage(next, true);
+      setPage(next);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
     const onFocus = () => {
       if (document.visibilityState !== 'visible') return;
-      void fetchPosts(true);
+      // 1페이지만 silent 갱신 (현재 누적 결과는 유지)
+      void fetchPage(1, false);
     };
     document.addEventListener('visibilitychange', onFocus);
     window.addEventListener('focus', onFocus);
@@ -105,9 +123,7 @@ export default function TipsListPage() {
       window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, sort, debouncedQuery, page]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  }, [category, sort, debouncedQuery]);
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
@@ -210,7 +226,16 @@ export default function TipsListPage() {
                 {posts.map((p) => <TipsRow key={p.id} post={p} />)}
               </ul>
             </div>
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <InfiniteScrollSentinel
+              hasMore={hasMore}
+              loading={loadingMore}
+              onLoadMore={loadMore}
+            />
+            {!hasMore && posts.length > 0 && (
+              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+                마지막 글까지 모두 봤어요 (총 {total}건)
+              </p>
+            )}
           </>
         )}
       </div>

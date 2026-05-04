@@ -5,6 +5,56 @@
 
 ---
 
+## 2026-05-02 — Phase 15: Quill HTML sanitize + 무한 스크롤 + sitemap/robots
+
+**범위**: 정식 오픈 전 잔존 3개 항목 처리.
+
+### 15-A. Quill HTML sanitizer
+
+**조사 결과**: quill 출력은 우리 사이트 어디에서도 다른 사용자에게 dangerouslySetInnerHTML로 노출되지 않음. 본인 quill 인스턴스에만 다시 들어가고 마크다운으로 변환되어 클립보드 복사. 실질 위협은 자해 수준.
+
+그래도 미래 대비 + 클립보드 변환 흐름 안전성을 위해 화이트리스트 sanitizer 추가:
+- `app/lib/format/sanitize-html.ts` 신규: DOMParser 기반, ALLOWED_TAGS + 태그별 ALLOWED_ATTRS.
+- 차단: `<script>`, `<iframe>`, `<form>`, `on*` 핸들러, `style` 속성, `javascript:` / `data:` 스킴.
+- 외부 링크(`a` 태그)는 자동 `target="_blank" rel="noopener noreferrer nofollow"` 강제.
+- `app/editor/page.tsx`: `setContent` wrapper로 모든 quill HTML 갱신을 sanitize 통과시킴.
+
+### 15-B. 무한 스크롤 (페이지네이션 → IntersectionObserver)
+
+**전환 이유**: 모바일 UX 향상 + 한국 게시판 사용자에 친숙. 다만 SEO·딥링크는 sitemap이 보완.
+
+- `app/components/community/InfiniteScrollSentinel.tsx` 신규: IntersectionObserver + 200px 미리 로드 + "더 보기" fallback 버튼 + 스피너.
+- 3개 목록 페이지(`/community/swap`, `/tips`, `/companions`) 모두 적용:
+  - `Pagination` 제거, `fetchPage(targetPage, append)` 패턴으로 리팩토링.
+  - 필터 변경 시 `setPage(1) + setPosts([])` 리셋.
+  - sentinel이 보이면 `loadMore()` → `page+1` + append.
+  - visibility focus 시엔 1페이지만 silent 갱신 (누적 결과 유지).
+  - 마지막 도달 시 "마지막 글까지 모두 봤어요 (총 N건)" 표시.
+
+### 15-C. SEO — sitemap.xml + robots.txt
+
+- `app/sitemap.ts` 신규 (Next.js Metadata API):
+  - 정적 라우트 19개 (홈/도구 8단계/커뮤니티 허브+3종/lab/about/privacy/terms/login).
+  - 동적: `public/posts/posts.json`에서 lab 게시글 10개 자동 추가.
+  - 페이지별 `changeFrequency`/`priority` 차등화 (커뮤니티 hourly priority 0.8, 도구 monthly priority 0.8~0.9, 약관 yearly priority 0.3).
+- `app/robots.ts` 신규:
+  - `/api/`, `/auth/`, `/login`, `/profile/setup`, `/community/*/new`, `?id=` 수정 모드 disallow.
+  - sitemap URL 명시: `https://bohemebloglab.com/sitemap.xml`.
+- 빌드 결과 `/sitemap.xml`, `/robots.txt` 자동 생성됨.
+
+### 검증
+
+- `npx tsc --noEmit`: 클린.
+- `npm run build`: 40 페이지 (이전 38 + `/sitemap.xml` + `/robots.txt`).
+
+### 정식 오픈 후 작업
+
+- Google Search Console에서 `https://bohemebloglab.com/sitemap.xml` 제출.
+- 네이버 웹마스터 도구에 동일 sitemap 등록.
+- 커뮤니티 동적 게시글(`/community/tips/[id]` 등)은 robots.txt 허용으로 자연 색인됨 (Search Console에서 페이지 발견 후 자동).
+
+---
+
 ## 2026-05-02 — Phase 14: react-quill 제거 + Rate Limiting + 신고/차단 시스템
 
 **범위**: Phase 13에서 권장한 잔존 보안 항목 3개 일괄 처리.

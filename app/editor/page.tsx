@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import FlowNav from '../components/FlowNav';
 import SpellCheckPanel from '../components/SpellCheckPanel';
 import { markdownToHtml } from '../lib/format/article-formats';
+import { sanitizeQuillHtml } from '../lib/format/sanitize-html';
 import type { QuillEditorHandle } from './QuillEditor';
 
 // Quill을 직접 사용 (React 19 호환)
@@ -101,11 +102,14 @@ const SEO_GUIDE_CONTENT = `
 `;
 
 export default function EditorPage() {
-  const [content, setContent] = useState('');
+  const [content, setContentRaw] = useState('');
   const [replacements, setReplacements] = useState<Record<string, string>>({});
   const [isSeoGuideOpen, setIsSeoGuideOpen] = useState(false);
   const [draftNotice, setDraftNotice] = useState<string | null>(null);
   const quillEditorRef = useRef<QuillEditorHandle | null>(null);
+
+  // 모든 content 갱신은 sanitize를 거친다 (XSS 방어)
+  const setContent = (html: string) => setContentRaw(sanitizeQuillHtml(html));
 
   // AI 초안이 sessionStorage에 있으면 자동으로 불러오기 (Quill 초기화 대기)
   useEffect(() => {
