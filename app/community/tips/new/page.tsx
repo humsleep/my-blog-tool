@@ -101,6 +101,7 @@ function TipsNewPage() {
           alert('수정 실패: ' + updErr.message);
           return;
         }
+        // 수정은 상세로 이동 (본인이 방금 수정한 내용 확인 자연스러움)
         router.refresh();
         router.push(`/community/tips/${editId}`);
       } else {
@@ -127,8 +128,9 @@ function TipsNewPage() {
           alert(msg);
           return;
         }
+        // 새 글 작성 — 목록으로 이동 (방금 등록한 글이 상단에 노출됨)
         router.refresh();
-        router.push(`/community/tips/${data.id}`);
+        router.push('/community/tips');
       }
     } finally {
       setSubmitting(false);

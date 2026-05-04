@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
-import { REGIONS, TIME_SLOTS, type TimeSlot } from '@/app/lib/community/regions';
+import { REGIONS, getCities, TIME_SLOTS, type TimeSlot } from '@/app/lib/community/regions';
 
 export default function CompanionNewPageWrapper() {
   return (
@@ -28,11 +28,23 @@ function CompanionNewPage() {
   const [title, setTitle] = useState('');
   const [brandName, setBrandName] = useState('');
   const [region, setRegion] = useState<string>('서울');
+  const [regionCity, setRegionCity] = useState<string>('');
   const [visitDate, setVisitDate] = useState('');
   const [timeSlot, setTimeSlot] = useState<TimeSlot | ''>('');
   const [participants, setParticipants] = useState(1);
   const [contactMethod, setContactMethod] = useState('');
   const [message, setMessage] = useState('');
+
+  // 시·도가 바뀌면 시·군 초기화 (해당 시·도에 없는 값일 수 있음)
+  useEffect(() => {
+    const cities = getCities(region);
+    if (cities.length === 0) {
+      setRegionCity('');
+    } else if (regionCity && !cities.includes(regionCity)) {
+      setRegionCity('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [region]);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +81,7 @@ function CompanionNewPage() {
           setTitle(data.title);
           setBrandName(data.brand_name ?? '');
           setRegion(data.region);
+          setRegionCity(data.region_city ?? '');
           setVisitDate(data.visit_date);
           setTimeSlot((data.visit_time_slot ?? '') as TimeSlot | '');
           setParticipants(data.participants);
@@ -109,6 +122,7 @@ function CompanionNewPage() {
         title: t,
         brand_name: brandName.trim() || null,
         region,
+        region_city: regionCity.trim() || null,
         visit_date: visitDate,
         visit_time_slot: timeSlot || null,
         participants,
@@ -148,8 +162,9 @@ function CompanionNewPage() {
           alert(msg);
           return;
         }
+        // 새 모집글 — 목록으로 이동 (방금 등록한 글이 임박순으로 노출)
         router.refresh();
-        router.push(`/community/companions/${data.id}`);
+        router.push('/community/companions');
       }
     } finally {
       setSubmitting(false);
@@ -202,23 +217,35 @@ function CompanionNewPage() {
             <input type="text" value={brandName} onChange={(e) => setBrandName(e.target.value)} maxLength={80} className={fieldCls} />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="지역" required>
+          <Field label="지역" required help="시·도 선택 후 시·군·구를 추가로 선택하세요">
+            <div className="grid grid-cols-2 gap-2">
               <select value={region} onChange={(e) => setRegion(e.target.value)} className={fieldCls} required>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
-            </Field>
-            <Field label="모집 인원" required>
-              <input
-                type="number"
-                value={participants}
-                onChange={(e) => setParticipants(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
-                min={1} max={10}
+              <select
+                value={regionCity}
+                onChange={(e) => setRegionCity(e.target.value)}
                 className={fieldCls}
-                required
-              />
-            </Field>
-          </div>
+                disabled={getCities(region).length === 0}
+              >
+                <option value="">{getCities(region).length === 0 ? '세부 지역 없음' : '세부 지역 (선택)'}</option>
+                {getCities(region).map((city) => (
+                  <option key={city} value={city}>{city}</option>
+                ))}
+              </select>
+            </div>
+          </Field>
+
+          <Field label="모집 인원" required>
+            <input
+              type="number"
+              value={participants}
+              onChange={(e) => setParticipants(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+              min={1} max={10}
+              className={fieldCls}
+              required
+            />
+          </Field>
 
           <div className="grid grid-cols-2 gap-3">
             <Field label="방문 날짜" required>

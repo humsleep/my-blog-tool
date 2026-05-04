@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { fetchMyProfile, fetchProfileByUserId, type Profile } from '@/app/lib/community/profile';
-import { COMPANION_STATUS, type CompanionStatus } from '@/app/lib/community/regions';
+import { COMPANION_STATUS, formatFullRegion, type CompanionStatus } from '@/app/lib/community/regions';
 import { formatAbsoluteKr } from '@/app/lib/format/relative-time';
 import { useToast } from '@/app/components/ui/Toast';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
@@ -17,6 +17,7 @@ interface CompanionPost {
   title: string;
   brand_name: string | null;
   region: string;
+  region_city: string | null;
   visit_date: string;
   visit_time_slot: string | null;
   participants: number;
@@ -192,7 +193,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
               </>
             )}
             <dt className="text-slate-500 dark:text-slate-400">지역</dt>
-            <dd className="text-slate-700 dark:text-slate-200">{post.region}</dd>
+            <dd className="text-slate-700 dark:text-slate-200">{formatFullRegion(post.region, post.region_city)}</dd>
             <dt className="text-slate-500 dark:text-slate-400">방문 날짜</dt>
             <dd className="text-slate-700 dark:text-slate-200">
               {post.visit_date} ({dow}){post.visit_time_slot ? ` · ${post.visit_time_slot}` : ''}

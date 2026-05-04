@@ -5,6 +5,51 @@
 
 ---
 
+## 2026-05-02 — Phase 12: 작성 후 목록 이동 + 체험단 지역 세분화 + 문서 갱신
+
+### 12-A. 글 등록 후 목록 자동 이동
+**증상**: 정보공유/체험단 작성 후 상세 페이지로 이동 → 사용자가 본인 글이 목록에서 안 보인다고 느낌.
+- `/community/tips/new`: INSERT 성공 시 `router.push('/community/tips')`로 변경 (기존: 상세 페이지). 수정(update)은 그대로 상세로 이동.
+- `/community/companions/new`: 동일 패턴 적용.
+- 목록 페이지의 useEffect는 마운트 시 자동 fetch이므로, 작성 즉시 본인 글이 최상단 노출됨.
+- 서이추는 모달 작성이므로 같은 페이지에서 reload — 변경 불필요.
+
+### 12-B. 체험단 지역 세분화 (시·도 → 시·군·구)
+**요청**: "경기도면 너무 넓어요. 시까지 구별이 필요해요."
+
+마이그레이션:
+- `0007_companion_region_city.sql` — `companion_posts.region_city text` 컬럼 추가, `(region, region_city, visit_date)` 복합 인덱스. 기존 `region` 시·도 단일 컬럼은 유지 (호환성).
+
+데이터:
+- `app/lib/community/regions.ts` — `REGION_CITIES: Record<string, string[]>` 신규. 17개 시·도별 시·군·구 (서울 25, 경기 31, 부산 16, ... 총 약 250개).
+- 헬퍼 추가: `getCities(region)`, `formatFullRegion(region, regionCity)` ("경기 수원시" 형식).
+
+UI:
+- `companions/new`: 지역 필드를 시·도 select + 시·군·구 select 2단계로. 시·도 변경 시 시·군·구 자동 초기화. 세종/온라인/기타는 시·군 select 비활성화.
+- `companions/page.tsx`: 시·도 선택 시에만 시·군·구 select 추가 노출. 필터 쿼리에 `region_city` 적용.
+- 카드 행 + 모바일 + 상세 페이지: `formatFullRegion()`으로 "경기 수원시" 통합 표시.
+
+### 12-C. 문서 갱신
+- **`CLAUDE.md`**: Phase 8~11 누적 변경 반영.
+  - 커뮤니티 정책 섹션 신규 (1일 1글, 닉네임 24h, 작성 후 목록 이동)
+  - 디렉토리 구조에 `community/`, `profile/setup`, `manifest.ts`, 마이그레이션 0003~0007 추가
+  - 디자인 시스템 항목에 Toast/Pagination/BoardSkeleton/EmptyState 등 신규 컴포넌트 추가
+  - 컬러 = 주황 명시 (indigo/violet 사용 금지)
+  - 디버깅 섹션에 RLS·마이그레이션·1일 1글 에러 코드(`42501`/`42P01`) 추가
+- **`README.md`**: 처음부터 다시 작성 (Next.js 기본 README 제거).
+  - 8단계 워크플로우 + 커뮤니티 3종 + 모바일 PWA 정리
+  - 환경변수 / 마이그레이션 순서 / 빌드 검증 가이드
+  - 보안 정책 명시 (IP 해시, RLS, 이미지 프록시 화이트리스트)
+
+### 검증
+- `npx tsc --noEmit`: 클린.
+- `IP_HASH_SALT=...` `npm run build`: 38 페이지 정상.
+
+### 배포 체크리스트
+- ⚠️ Supabase에 `0007_companion_region_city.sql` 실행 필요. 실행 전엔 신규 체험단 작성 시 `region_city` 컬럼 부재로 INSERT 실패 가능.
+
+---
+
 ## 2026-05-02 — Phase 11: UI 우선순위 높음+중간 일괄 개선
 
 **범위**: 사용자 요청 — 우선순위 높음 4개 + 중간 6개 항목 일괄 개선.

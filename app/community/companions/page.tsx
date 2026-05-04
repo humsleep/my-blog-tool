@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
-import { REGIONS, type CompanionStatus } from '@/app/lib/community/regions';
+import { REGIONS, getCities, formatFullRegion, type CompanionStatus } from '@/app/lib/community/regions';
 import EmptyState from '@/app/components/community/EmptyState';
 import Pagination from '@/app/components/community/Pagination';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
@@ -16,6 +16,7 @@ interface CompanionPost {
   title: string;
   brand_name: string | null;
   region: string;
+  region_city: string | null;
   visit_date: string;
   visit_time_slot: string | null;
   participants: number;
@@ -33,10 +34,21 @@ export default function CompanionsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [region, setRegion] = useState<string | null>(null);
+  const [regionCity, setRegionCity] = useState<string | null>(null);
   const [openOnly, setOpenOnly] = useState(true);
   const [page, setPage] = useState(1);
 
-  useEffect(() => { setPage(1); }, [region, openOnly]);
+  useEffect(() => { setPage(1); }, [region, regionCity, openOnly]);
+
+  // 시·도가 바뀌거나 해제되면 시·군 필터 초기화
+  useEffect(() => {
+    if (!region) { setRegionCity(null); return; }
+    const cities = getCities(region);
+    if (regionCity && (cities.length === 0 || !cities.includes(regionCity))) {
+      setRegionCity(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [region]);
 
   const fetchPosts = async (silent: boolean) => {
     const supabase = createClient();
@@ -49,6 +61,7 @@ export default function CompanionsPage() {
       .order('created_at', { ascending: false })
       .range(from, to);
     if (region) q = q.eq('region', region);
+    if (regionCity) q = q.eq('region_city', regionCity);
     if (openOnly) q = q.eq('status', '모집중');
     const { data, error: fetchErr, count } = await q;
     if (fetchErr) {
@@ -77,7 +90,7 @@ export default function CompanionsPage() {
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, openOnly, page]);
+  }, [region, regionCity, openOnly, page]);
 
   useEffect(() => {
     const onFocus = () => {
@@ -91,7 +104,7 @@ export default function CompanionsPage() {
       window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [region, openOnly, page]);
+  }, [region, regionCity, openOnly, page]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -132,6 +145,18 @@ export default function CompanionsPage() {
                 <option value="">전체</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
+              {region && getCities(region).length > 0 && (
+                <select
+                  value={regionCity ?? ''}
+                  onChange={(e) => setRegionCity(e.target.value || null)}
+                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="">시·군·구 전체</option>
+                  {getCities(region).map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              )}
               <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-slate-200 dark:border-slate-700">
                 <input
                   type="checkbox"
@@ -175,7 +200,7 @@ export default function CompanionsPage() {
           <>
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {total}건</p>
             <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="hidden md:grid grid-cols-[72px_1fr_80px_140px_120px_100px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 <span>상태</span>
                 <span>제목</span>
                 <span>지역</span>
@@ -219,7 +244,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
     <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
       <Link href={`/community/companions/${post.id}`} className="block">
         {/* 데스크톱 — 그리드 행 */}
-        <div className="hidden md:grid grid-cols-[72px_1fr_80px_140px_120px_100px] gap-3 items-center px-5 py-3">
+        <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 items-center px-5 py-3">
           <span className={`justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded-full ${statusCls}`}>
             {post.status}
           </span>
@@ -229,7 +254,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
               <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">📍 {post.brand_name}</p>
             )}
           </div>
-          <span className="text-xs text-slate-600 dark:text-slate-300">{post.region}</span>
+          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{formatFullRegion(post.region, post.region_city)}</span>
           <span className="text-xs text-slate-600 dark:text-slate-300">
             {dateStr} ({dow})
           </span>
@@ -248,7 +273,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
             </h3>
           </div>
           <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 flex-wrap">
-            <span>📍 {post.region}</span>
+            <span>📍 {formatFullRegion(post.region, post.region_city)}</span>
             <span>·</span>
             <span>📅 {dateStr}</span>
             <span>·</span>
