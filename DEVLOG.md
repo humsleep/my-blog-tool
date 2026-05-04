@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-05-02 — Phase 16.1: diagnose SQL hotfix
+
+`supabase/diagnose_community.sql` 섹션 [6] (Rate Limit INSERT 정책 점검)에서 `pg_policies.polname` 참조 → 실제 컬럼명 `policyname`로 수정.
+
+**증상**: Supabase SQL Editor 실행 시 `ERROR: 42703: column "polname" does not exist` 발생.
+**원인**: 다른 PostgreSQL 시스템 catalog(`pg_policy`)는 `polname`이 맞지만, view인 `pg_policies`는 `policyname`을 사용.
+**수정**: 2줄 (select / order by) → `policyname`로 통일.
+
+---
+
 ## 2026-05-02 — Phase 16: 정식 오픈 준비 (tips 임시 숨김 + 약관 갱신 + 진단 SQL + 시작 가이드)
 
 **범위**: 정식 오픈 직전 4가지 마무리 작업.
