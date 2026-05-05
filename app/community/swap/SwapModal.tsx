@@ -136,7 +136,14 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
             {profile.nickname}
           </div>
           <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-            프로필 닉네임이 자동으로 사용됩니다.
+            프로필 닉네임이 자동으로 사용됩니다.{' '}
+            <a
+              href="/profile/setup"
+              className="text-orange-600 dark:text-orange-400 hover:underline font-medium"
+            >
+              프로필에서 변경 →
+            </a>{' '}
+            (24시간 1회)
           </p>
         </div>
 

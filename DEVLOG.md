@@ -5,6 +5,20 @@
 
 ---
 
+## 2026-05-02 — Phase 16.2: Navbar STEP 배지 제거 + 닉네임 변경 안내
+
+**증상 보고**: 키워드분석을 누르면 Navbar에 "STEP 2/8"이 떠서 어색함. 모든 도구 페이지에 일률적으로 STEP이 표시되어 부담스러움. 그리고 서이추 모달에서 닉네임이 read-only로 보여 변경 방법을 모름.
+
+### 수정
+- `Navbar.tsx`: 로고 옆 `STEP N/8` 배지 제거 + 미사용 `findCurrentStep()` 함수 + `currentStep` 변수까지 dead code 정리. 워크플로우 안내는 페이지 하단의 `FlowNav` 컴포넌트가 자연스럽게 이끌도록.
+- `SwapModal.tsx`: 닉네임 read-only 안내 문구에 "[프로필에서 변경 →] (24시간 1회)" 링크 추가. 사용자가 변경 경로를 즉시 발견 가능.
+
+### 검증
+- `tsc --noEmit`: 클린.
+- `npm run build`: 40 페이지.
+
+---
+
 ## 2026-05-02 — Phase 16.1: diagnose SQL hotfix
 
 `supabase/diagnose_community.sql` 섹션 [6] (Rate Limit INSERT 정책 점검)에서 `pg_policies.polname` 참조 → 실제 컬럼명 `policyname`로 수정.

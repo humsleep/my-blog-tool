@@ -64,15 +64,6 @@ const WORKFLOW: ToolGroup[] = [
   },
 ];
 
-/** 현재 경로가 워크플로우 어느 단계에 해당하는지 — Navbar에 STEP 배지 표시용 */
-function findCurrentStep(pathname: string): { step: number; label: string } | null {
-  for (const group of WORKFLOW) {
-    const hit = group.items.find((it) => it.href === pathname);
-    if (hit) return { step: hit.step, label: hit.label };
-  }
-  return null;
-}
-
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
@@ -145,8 +136,6 @@ export default function Navbar() {
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined;
   const initial = displayName?.charAt(0).toUpperCase() || '?';
 
-  const currentStep = findCurrentStep(pathname);
-
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-700/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,11 +153,6 @@ export default function Navbar() {
                 Boheme <span className="text-orange-500 dark:text-orange-400">BlogLab</span>
               </span>
             </Link>
-            {currentStep && (
-              <span className="hidden lg:inline-flex items-center px-2 py-0.5 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300 text-[11px] font-semibold border border-orange-200 dark:border-orange-700">
-                STEP {currentStep.step}/8
-              </span>
-            )}
           </div>
 
           {/* Desktop Menu */}
