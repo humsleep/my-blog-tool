@@ -70,7 +70,7 @@ export default function CommunityHubPage() {
                   <div className={`w-12 h-12 ${menu.iconBg} rounded-2xl flex items-center justify-center text-2xl shadow-sm`}>
                     {menu.emoji}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-white/70 dark:bg-slate-800/70 px-2 py-1 rounded-full">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-white/70 dark:bg-slate-800/70 px-2 py-1 rounded-full">
                     {menu.badge}
                   </span>
                 </div>

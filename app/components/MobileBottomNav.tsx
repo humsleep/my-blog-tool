@@ -93,7 +93,7 @@ export default function MobileBottomNav() {
                 />
               )}
               {item.icon(active)}
-              <span className={`text-[10px] ${active ? 'font-bold' : 'font-medium'}`}>
+              <span className={`text-[11px] ${active ? 'font-bold' : 'font-medium'}`}>
                 {item.label}
               </span>
             </Link>

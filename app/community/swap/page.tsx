@@ -368,7 +368,7 @@ function SwapRow({
       <div className="md:hidden px-4 py-3">
         <div className="flex items-start justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
+            <span className="flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
               {post.category}
             </span>
             <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>

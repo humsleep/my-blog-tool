@@ -201,7 +201,7 @@ export default function ImageSearchPage() {
                       loading="lazy"
                     />
                   </div>
-                  <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold bg-black/70 text-white rounded uppercase">
+                  <div className="absolute top-2 left-2 px-2 py-0.5 text-[11px] font-semibold bg-black/70 text-white rounded uppercase">
                     {item.source}
                   </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100">

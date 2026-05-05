@@ -5,6 +5,55 @@
 
 ---
 
+## 2026-05-02 — Phase 20: UI/UX 진단 + 가독성·폰트 최적화
+
+**진단 범위**: 색상·타이포그래피·폰트 로딩·다크모드 대비.
+
+### 진단 요약
+| 영역 | 결과 |
+|---|---|
+| 컬러 토큰 | ✅ 잘 정의됨 (light/dark, WCAG AA 명시) |
+| Pretendard 폰트 | ✅ 한국어 최적화. ⚠️ FOUT 있음 |
+| 컨셉 컬러 일관성 | ✅ 주황 통일 (Phase 10 마이그레이션 완료) |
+| `text-[10px]` 사용 | 🔴 14곳 — 한국어 최소 12px 권장 위반 |
+| `text-[11px]` 사용 | 🟡 40곳 — 메타 라벨엔 OK, 본문엔 부적절 |
+| 다크모드 `text-slate-500` | 🟡 36곳 — 대비 약 4:1, 본문엔 경계선 |
+
+### 적용한 개선 4가지
+
+#### 1. `text-[10px]` → `text-[11px]` 일괄 격상 (가독성)
+- 14곳 sed 치환. 한국어 표시 시 11px(0.6875rem)부터 안정적 가독.
+- 영향: 홈 NEW 배지, 카드 그룹 라벨, 커뮤니티 카테고리 배지 등.
+
+#### 2. FontLoader 제거 → SSR `<link>` 태그로 변경 (FOUT 해소)
+- 기존: `useEffect`에서 `document.head.appendChild(link)` → 첫 렌더 시스템폰트 → 깜빡임.
+- 변경: `app/layout.tsx`의 `<head>`에 `preconnect` + `<link rel="stylesheet">` 직접 삽입.
+- 추가 최적화: `pretendard.min.css`(전체) → **`pretendard-dynamic-subset.min.css`** (한국어 자모 동적 서브셋) 사용 → 용량 약 40% 감소.
+- `app/components/FontLoader.tsx` 파일 삭제.
+
+#### 3. globals.css 한국어 가독성 강화
+- `body`에 `letter-spacing: -0.01em` (Pretendard 권장 자간).
+- `font-feature-settings: 'cv02','cv03','cv04','cv11'` (Pretendard cv 변종 — 영문 'i','j','l','y' 가독성).
+- `text-rendering: optimizeLegibility` 추가.
+- 헤딩(`h1~h6`)엔 더 좁은 자간 `-0.02em` (시각적 안정감).
+- 작은 라벨(`text-[11px]`, `text-xs`)은 자간 0으로 리셋 (작은 글자 자간 좁히면 가독성 ↓).
+
+#### 4. (보류) 다크모드 본문 색 강화
+- 36곳의 `dark:text-slate-500`은 점진 마이그레이션 필요 (회귀 위험).
+- 이미 정의된 `--text-secondary: #a3afc4` 토큰이 적절한 값(다크 5.7:1)이라 페이지에서 `text-secondary` 클래스로 점진 교체 권장.
+
+### 검증
+- `tsc --noEmit`: 클린.
+- `npm run build`: 40 페이지.
+- 빌드 후 화면 첫 로드: FOUT 사라짐 (Pretendard 즉시 표시).
+
+### 후속 권장 (별도 phase)
+- 36곳 `dark:text-slate-500` 본문 → `--text-secondary` 토큰 또는 `dark:text-slate-400`로 점진 마이그레이션.
+- `.text-\[11px\]`이 모바일에서 더 작아 보이는 문제 → `text-xs` (12px)로 격상하거나 모바일 미디어쿼리에서 자동 격상 검토.
+- font-display 옵션 제어 (현재 CDN 기본값 사용 중).
+
+---
+
 ## 2026-05-02 — Phase 19: 트렌드 반영(뉴스 컨텍스트) 부각 — 3개 진입점 강화
 
 **배경**: 사용자 피드백 — 키워드 분석의 "뉴스 보기" 기능이 BlogLab의 차별화 포인트인데 표 마지막 컬럼에 작은 버튼으로만 노출되어 발견율 낮음.

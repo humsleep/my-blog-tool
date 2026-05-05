@@ -272,7 +272,7 @@ function TipsRow({ post }: { post: TipsPost }) {
         </div>
         {/* 모바일 — 컴팩트 */}
         <div className="md:hidden px-4 py-3 flex items-start gap-2.5">
-          <span className={`flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
+          <span className={`flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
             {post.category}
           </span>
           <div className="flex-1 min-w-0">

@@ -123,7 +123,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
               className="p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg"
             >
               <div className="flex items-start justify-between gap-2 mb-1.5">
-                <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 bg-amber-200/60 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
+                <span className="inline-block text-[11px] font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 bg-amber-200/60 dark:bg-amber-900/40 px-1.5 py-0.5 rounded">
                   {match.category}
                 </span>
                 <button

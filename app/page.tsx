@@ -233,14 +233,14 @@ export default function Home() {
                 className="group card p-5 hover:border-orange-300 dark:hover:border-orange-500 transition-all relative"
               >
                 {feature.badge && (
-                  <span className="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full bg-orange-500 text-white text-[10px] font-bold tracking-wider">
+                  <span className="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-full bg-orange-500 text-white text-[11px] font-bold tracking-wider">
                     {feature.badge}
                   </span>
                 )}
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 bg-orange-50 dark:bg-orange-950/50 text-orange-500 dark:text-orange-400">
                   {feature.icon}
                 </div>
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
                   {feature.group}
                 </div>
                 <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors">
@@ -326,7 +326,7 @@ export default function Home() {
                   } p-6`}
                 >
                   {s.badge && (
-                    <span className="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
+                    <span className="absolute top-3 right-3 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
                       {s.badge}
                     </span>
                   )}

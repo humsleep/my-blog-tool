@@ -108,19 +108,28 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   line-height: 1.6;
+  letter-spacing: -0.01em;                               /* 한국어 가독성 — Pretendard 권장 */
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Pretendard cv 변종 (영문 가독성) */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* 헤딩 기본 행간 — 페이지마다 leading-* 반복 제거 */
+/* 헤딩 기본 행간 + 자간 — 페이지마다 leading-* 반복 제거 */
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.3;
+  letter-spacing: -0.02em; /* 헤딩은 더 좁게 (시각적 안정감) */
 }
 
 /* 한국어 본문 가독성 — leading-relaxed 반복 제거 */
 p, li {
   line-height: 1.65;
+}
+
+/* 작은 라벨/배지(11px)에는 자간을 좀 더 풀어서 가독성 보강 */
+.text-\[11px\], .text-xs {
+  letter-spacing: 0;
 }
 
 /* ── Utility classes using CSS tokens ── */

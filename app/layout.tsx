@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import FontLoader from "./components/FontLoader";
 import AdSense from "./components/AdSense";
 import ThemeProvider from "./components/ThemeProvider";
 import MobileBottomNav from "./components/MobileBottomNav";
@@ -76,10 +75,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
+      <head>
+        {/* Pretendard 폰트 — preconnect + 동기 로드로 FOUT 방지 */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>
-            <FontLoader />
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

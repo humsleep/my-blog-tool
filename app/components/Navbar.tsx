@@ -213,7 +213,7 @@ export default function Navbar() {
                     {WORKFLOW.map((group) => (
                       <div key={group.groupLabel} className="p-3">
                         <div className="px-2 mb-2 flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
+                          <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                             STEP {group.range}
                           </span>
                           <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
@@ -480,7 +480,7 @@ export default function Navbar() {
             {WORKFLOW.map((group) => (
               <div key={group.groupLabel} className="space-y-1">
                 <div className="px-4 flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                     STEP {group.range}
                   </span>
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">

@@ -285,7 +285,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
         {/* 모바일 — 컴팩트 */}
         <div className="md:hidden px-4 py-3">
           <div className="flex items-start gap-2 mb-1.5">
-            <span className={`flex-shrink-0 px-1.5 py-0.5 text-[10px] font-semibold rounded-full ${statusCls}`}>
+            <span className={`flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded-full ${statusCls}`}>
               {post.status}
             </span>
             <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-1">

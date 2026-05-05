@@ -249,7 +249,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{post.nickname}</span>
                   {author?.category && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    <span className="text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                       {author.category}
                     </span>
                   )}
