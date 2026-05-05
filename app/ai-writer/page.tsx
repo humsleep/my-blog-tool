@@ -223,8 +223,6 @@ export default function AiWriterPage() {
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <PageHeader
-            step={5}
-            totalSteps={8}
             title="AI 글쓰기"
             subtitle="네이버 블로그 홈판 노출에 최적화된 6단계 통합 워크플로우 — 제목 후보 20개·본문·해시태그·이미지 프롬프트까지 한 번에."
           />
