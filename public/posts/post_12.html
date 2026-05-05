@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네이버 C-Rank vs D.I.A. 알고리즘 — 2026년 상위 노출 작동 원리</title>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        .boheme-content { line-height: 1.6; font-family: 'Noto Sans KR', sans-serif; color: #333; max-width: 720px; margin: 0 auto; font-size: 16px; word-break: keep-all; }
+        .boheme-content h2 { border-left: 5px solid #2c3e50; padding-left: 15px; margin: 50px 0 20px; color: #2c3e50; font-size: 1.5em; font-weight: 700; }
+        .boheme-content h3 { color: #2c3e50; margin: 35px 0 15px; font-size: 1.25em; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .boheme-content b { color: #e64d3d; font-weight: 700; }
+        .boheme-content i { color: #2980b9; font-style: normal; font-weight: 700; }
+        .boheme-box { background-color: #f9f9f9; border-radius: 10px; padding: 25px; border: 1px solid #ececec; margin: 35px 0; }
+        .footer-notice { color: #aaa; font-size: 0.85em; margin-top: 60px; text-align: center; border-top: 1px solid #f1f1f1; padding-top: 20px; }
+    </style>
+
+    <div class="boheme-content">
+        <div class="boheme-box">
+            <b>핵심 타겟:</b> "왜 내 글은 같은 키워드로 노출이 안 될까"라는 질문을 반복하는 1년 차 이상 블로거.<br>
+            <b>주요 내용:</b> 네이버 검색 노출의 두 축인 C-Rank와 D.I.A.가 실제로 어떤 신호를 보고 글을 평가하는지, 작가가 통제 가능한 변수와 그렇지 않은 변수를 구분하여 정리.
+        </div>
+
+        <h2>같은 키워드, 같은 글자 수인데 누구는 1페이지에 뜬다</h2>
+        키워드 분석 도구에서 발견한 황금 키워드를 잡고 정성껏 글을 써도 노출이 안 되는 경험은 누구나 있습니다.<br><br>
+        문제는 글의 품질이 아니라 <b>네이버가 무엇을 보는지</b>를 모르는 데서 출발합니다.<br><br>
+        2026년 현재 네이버 통합검색 상위 노출은 두 알고리즘이 동시에 작동합니다.<br><br>
+        하나는 작가에게 점수를 매기는 <b>C-Rank</b>, 다른 하나는 글 자체에 점수를 매기는 <i>D.I.A.</i>입니다.<br><br>
+        이 두 축의 작동 방식을 이해하는 순간 매번 헛된 노력을 반복하지 않아도 됩니다.<br><br>
+
+        <hr style="border: 0; height: 1px; background: #eee; margin: 40px 0;">
+
+        <h2>C-Rank — 작가의 전문성을 누적 평가</h2>
+        C-Rank는 한 마디로 <b>"이 사람이 이 주제에 진짜 전문가인가"</b>를 누적해서 보는 시스템입니다.<br><br>
+        한 블로그가 동일 카테고리에서 꾸준히 글을 발행하면 그 카테고리의 전문성 점수가 올라가고, 다른 카테고리로 자주 옮겨다니면 점수가 분산됩니다.<br><br>
+        예를 들어 요리 블로그를 운영하면서 갑자기 부동산 글, 다이어트 보조제 글, 가전 리뷰 글을 섞어 쓰면 어느 카테고리에서도 권위가 쌓이지 않습니다.<br><br>
+        C-Rank는 <b>주제 일관성</b>, 발행 빈도, 작성한 글에 대한 사용자 반응(체류시간·스크랩·좋아요)을 종합해 점수를 매깁니다.<br><br>
+        그래서 신생 블로그가 황금 키워드를 잡아도 노출되지 않는 이유는 키워드가 약해서가 아니라 <i>해당 주제에 대한 전문성 점수가 부족</i>해서인 경우가 많습니다.<br><br>
+
+        <hr style="border: 0; height: 1px; background: #eee; margin: 40px 0;">
+
+        <h2>D.I.A. — 글 한 편의 정보 충실도를 평가</h2>
+        D.I.A.(Deep Intent Analysis)는 작가 점수와 별개로 <b>이 글 한 편이 검색자의 의도에 얼마나 부합하는가</b>를 봅니다.<br><br>
+        검색자가 "수원 맛집 추천"을 검색했을 때 진짜 원하는 정보는 메뉴, 가격, 위치, 분위기, 주차 가능 여부 같은 구체적 데이터입니다.<br><br>
+        D.I.A.는 글이 이런 핵심 정보를 포함하는지, 작가의 직접 경험이 묻어나는지, 본문이 광고형인지 정보형인지를 판별합니다.<br><br>
+        그래서 동일 키워드라도 <i>구체적 수치·고유명사·체험담</i>이 풍부한 글이 짧고 일반적인 글보다 우위에 섭니다.<br><br>
+        D.I.A.가 평가하는 핵심 지표는 검색자가 글을 클릭한 뒤 다시 검색창으로 돌아가지 않고 그 글에서 만족했는지를 보는 <b>체류시간과 후행 검색</b>입니다.<br><br>
+
+        <hr style="border: 0; height: 1px; background: #eee; margin: 40px 0;">
+
+        <h2>두 알고리즘이 합쳐질 때 일어나는 일</h2>
+        네이버는 검색 결과를 만들 때 C-Rank로 후보군을 추리고 그 안에서 D.I.A.가 글을 정렬합니다.<br><br>
+        작가 점수가 낮으면 애초에 후보에 들어가지 못하고, 작가 점수가 충분해도 글이 부실하면 뒤로 밀립니다.<br><br>
+        이 메커니즘에서 가장 흔히 오해되는 부분은 <b>"키워드만 잘 잡으면 된다"</b>는 통념입니다.<br><br>
+        실제로는 키워드가 평균이어도 카테고리 전문성과 글의 정보 밀도가 높으면 1페이지에 안착합니다.<br><br>
+        반대로 황금 키워드를 잡아도 두 점수가 모두 낮으면 5페이지 너머에서 매장됩니다.<br><br>
+
+        <hr style="border: 0; height: 1px; background: #eee; margin: 40px 0;">
+
+        <h2>통제 가능한 변수에 집중하는 운영 전략</h2>
+        알고리즘은 블랙박스이고 변경 시점도 비공개지만 작가가 통제할 수 있는 변수는 분명합니다.<br><br>
+        첫째, 카테고리를 1~2개로 좁혀 발행을 누적하면 <b>C-Rank 누적 점수</b>가 빠르게 오릅니다.<br><br>
+        둘째, 한 편을 쓸 때 메인 키워드와 연관된 보조 키워드를 함께 본문에 녹여 넣으면 D.I.A. 평가가 좋아집니다.<br><br>
+        셋째, 본문에 <i>가격·시간·장소·인물 같은 구체 데이터</i>를 명시하면 검색자의 만족도가 올라가 체류시간이 늘어납니다.<br><br>
+        넷째, 발행한 글을 일주일 안에 댓글·이웃과 공유하여 초기 반응을 만들면 알고리즘 피드백 루프에 빠르게 진입합니다.<br><br>
+        결국 알고리즘 이해는 운영의 우선순위를 정하는 도구이지 마법의 공식이 아닙니다. 통제 가능한 변수에 자원을 집중하는 것만이 누적되는 자산을 만듭니다.<br><br>
+    </div>
+</body>
+</html>

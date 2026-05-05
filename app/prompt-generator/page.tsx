@@ -123,6 +123,46 @@ const EXPERIENCE_LEVELS = [
   { value: 'heavy', label: '경험 중심', help: '실사용·방문 후기 비중 50% 이상 (네이버 노출 ↑)' },
 ];
 
+/** 글의 목적 — 결말·CTA·문체가 달라짐 */
+const PURPOSES = [
+  { value: 'info',      label: '정보 가이드',     help: '독자가 모르는 정보·노하우 전달' },
+  { value: 'review',    label: '후기·리뷰',       help: '직접 사용·방문한 경험 공유' },
+  { value: 'recommend', label: '추천·비교',       help: '제품·서비스·장소 추천 + 비교' },
+  { value: 'promo',     label: '모객·홍보',       help: '이벤트·모임 모집, 매장 홍보' },
+  { value: 'daily',     label: '일상 공유',       help: '에세이·일상 기록 위주' },
+];
+
+/** 본문 구조 — 소제목 개수와 분량 가이드 */
+const STRUCTURES = [
+  { value: 'flexible',  label: '자유',           help: 'AI 판단에 맡김' },
+  { value: 'compact',   label: '짧게 3섹션',     help: '소제목 3개 · 빠른 정보 전달' },
+  { value: 'standard',  label: '표준 5섹션',     help: '소제목 5개 · 네이버 표준' },
+  { value: 'deep',      label: '심층 7섹션',     help: '소제목 7개 · 가이드/리뷰형' },
+];
+
+/** 시기·시즌 — 네이버는 시기성 콘텐츠를 우대 */
+const SEASONALITY_OPTIONS = [
+  '무관',
+  '봄 (3~5월)',
+  '여름 (6~8월)',
+  '가을 (9~11월)',
+  '겨울 (12~2월)',
+  '연말연시',
+  '명절·연휴',
+  '학기·새학기',
+  '휴가철',
+];
+
+/** CTA 종류 — 결말 메시지의 방향 */
+const CTA_TYPES = [
+  '댓글 유도 (질문 던지기)',
+  '공감·하트 유도',
+  '이웃추가 유도',
+  '관련 글 유도 (시리즈)',
+  '외부 링크 유도 (예약·구매)',
+  '없음',
+];
+
 function PromptGeneratorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -138,6 +178,13 @@ function PromptGeneratorContent() {
   const [length, setLength] = useState('flexible');
   const [sponsorship, setSponsorship] = useState<'none' | 'sponsored' | 'affiliate'>('none');
   const [experience, setExperience] = useState<'none' | 'light' | 'heavy'>('light');
+  const [purpose, setPurpose] = useState<'info' | 'review' | 'recommend' | 'promo' | 'daily' | ''>('');
+  const [location, setLocation] = useState('');
+  const [keyFacts, setKeyFacts] = useState('');
+  const [differentiator, setDifferentiator] = useState('');
+  const [structure, setStructure] = useState<'flexible' | 'compact' | 'standard' | 'deep'>('flexible');
+  const [seasonality, setSeasonality] = useState('무관');
+  const [ctaType, setCtaType] = useState('');
   const [additionalOptions, setAdditionalOptions] = useState<string[]>([]);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -195,6 +242,17 @@ function PromptGeneratorContent() {
         if (preset.experience === 'none' || preset.experience === 'light' || preset.experience === 'heavy') {
           setExperience(preset.experience);
         }
+        if (preset.purpose === 'info' || preset.purpose === 'review' || preset.purpose === 'recommend' || preset.purpose === 'promo' || preset.purpose === 'daily') {
+          setPurpose(preset.purpose);
+        }
+        if (typeof preset.location === 'string')        setLocation(preset.location);
+        if (typeof preset.keyFacts === 'string')        setKeyFacts(preset.keyFacts);
+        if (typeof preset.differentiator === 'string')  setDifferentiator(preset.differentiator);
+        if (preset.structure === 'flexible' || preset.structure === 'compact' || preset.structure === 'standard' || preset.structure === 'deep') {
+          setStructure(preset.structure);
+        }
+        if (typeof preset.seasonality === 'string')     setSeasonality(preset.seasonality);
+        if (typeof preset.ctaType === 'string')         setCtaType(preset.ctaType);
         if (Array.isArray(preset.additionalOptions)) {
           setAdditionalOptions(preset.additionalOptions.filter((x): x is string => typeof x === 'string'));
         }
@@ -215,6 +273,7 @@ function PromptGeneratorContent() {
       const preset = {
         mode, selectedCategory, titleStyle, contentStyle, targetAudience,
         tone, emojiUsage, length, sponsorship, experience, additionalOptions,
+        purpose, location, keyFacts, differentiator, structure, seasonality, ctaType,
       };
       await supabase
         .from('profiles')
@@ -222,7 +281,7 @@ function PromptGeneratorContent() {
         .eq('user_id', presetUserId);
     }, 1000);
     return () => clearTimeout(t);
-  }, [presetLoaded, presetUserId, mode, selectedCategory, titleStyle, contentStyle, targetAudience, tone, emojiUsage, length, sponsorship, experience, additionalOptions]);
+  }, [presetLoaded, presetUserId, mode, selectedCategory, titleStyle, contentStyle, targetAudience, tone, emojiUsage, length, sponsorship, experience, additionalOptions, purpose, location, keyFacts, differentiator, structure, seasonality, ctaType]);
 
   // sessionStorage의 뉴스 컨텍스트 수신 (키워드 분석 → 뉴스 모달 → 프롬프트 만들기 흐름)
   useEffect(() => {
@@ -407,6 +466,71 @@ function PromptGeneratorContent() {
       prompt += `**개인 경험 비중**: 없음 (객관적 정보 위주, 뉴스/공식 자료 정리 형식).\n\n`;
     }
 
+    // 글의 목적 — 결말·CTA·문체 톤이 달라짐
+    if (purpose) {
+      const purposeMap: Record<string, string> = {
+        info:      '정보 가이드 — 독자가 모르는 정보·노하우를 단계별로 명확하게 전달. 결론에서는 핵심 3줄 요약으로 정리.',
+        review:    '후기·리뷰 — 직접 사용/방문한 경험 중심. 장점·단점을 솔직하게 제시하고, 누구에게 추천하는지 결론에 명시.',
+        recommend: '추천·비교 — 여러 옵션의 장단점을 비교하고 "이런 상황에는 A, 저런 상황에는 B"식의 실용 가이드를 결론에 포함.',
+        promo:     '모객·홍보 — 이벤트·매장·서비스 정보를 정확히 전달. 일정·장소·연락처 등 핵심 정보를 박스로 강조하고 결론에 참여·예약 유도.',
+        daily:     '일상 공유 — 에세이·일기 톤으로 자연스럽게. 정보 전달보다는 작가의 시각·감정·관찰을 중심으로 풀어냄.',
+      };
+      prompt += `**글의 목적**: ${purposeMap[purpose]}\n\n`;
+    }
+
+    // 지역 정보 — 네이버 하이퍼로컬 SEO
+    if (location.trim()) {
+      prompt += `**지역 정보**: ${location.trim()}\n`;
+      prompt += `  - 본문에 "${location.trim()}"을(를) 자연스럽게 2~3회 언급하고, 인접 지역명·지하철역·랜드마크도 1~2개 함께 풀어내 지역 검색 노출을 강화하세요.\n`;
+      prompt += `  - 해시태그에 #${location.trim().replace(/\s+/g, '')} 및 인접 지역 태그를 반드시 포함하세요.\n\n`;
+    }
+
+    // 본문에 꼭 포함할 핵심 정보 (가격/시간/장소/수치 등)
+    if (keyFacts.trim()) {
+      prompt += `**본문에 반드시 포함할 핵심 정보**:\n`;
+      keyFacts.trim().split(/\n+/).forEach((line) => {
+        const t = line.trim().replace(/^[-*•]\s*/, '');
+        if (t) prompt += `  - ${t}\n`;
+      });
+      prompt += `  → 위 정보는 절대 누락하지 말고 본문에 정확히 명시하세요. 수치·일정·장소는 임의 변경 금지.\n\n`;
+    }
+
+    // 차별화 포인트 — E-E-A-T
+    if (differentiator.trim()) {
+      prompt += `**이 글만의 차별화 포인트**: ${differentiator.trim()}\n`;
+      prompt += `  - 위 관점·경험을 본문 도입부와 결론에서 한 번씩 명확히 드러내, 다른 일반적인 정보 글과 구별되는 색깔을 만들어주세요.\n\n`;
+    }
+
+    // 본문 구조 — 소제목 개수 가이드 (3단계에서 활용)
+    const structureLabels: Record<string, string> = {
+      flexible:  '자유 (AI 판단)',
+      compact:   '짧게 — 소제목 3개 (300~500자/섹션, 빠른 정보 전달)',
+      standard:  '표준 — 소제목 5개 (350~450자/섹션, 네이버 표준)',
+      deep:      '심층 — 소제목 7개 (250~350자/섹션, 가이드/리뷰형)',
+    };
+    if (structure !== 'flexible') {
+      prompt += `**본문 구조**: ${structureLabels[structure]}\n\n`;
+    }
+
+    // 시기·시즌 — 네이버는 시기성 콘텐츠 우대
+    if (seasonality && seasonality !== '무관') {
+      prompt += `**시기·시즌 키워드**: ${seasonality}\n`;
+      prompt += `  - "${seasonality}" 시기에 특화된 정보·팁·체크리스트를 1개 섹션 이상 자연스럽게 포함하고, 해시태그에 시즌 키워드를 포함하세요.\n\n`;
+    }
+
+    // CTA 종류 — 결말 메시지 방향
+    if (ctaType && ctaType !== '없음') {
+      const ctaMap: Record<string, string> = {
+        '댓글 유도 (질문 던지기)':       '결론 직전 독자의 경험을 묻는 구체적인 질문 1개를 던지고, 마지막 문장에서 "댓글로 들려주세요"식으로 자연스럽게 유도',
+        '공감·하트 유도':                '마지막 문장에 "도움 되셨다면 공감 한번 부탁드려요" 등 자연스러운 공감 유도 1줄',
+        '이웃추가 유도':                  '마지막 문장에 "비슷한 글 더 보고 싶으시면 이웃추가 환영해요" 등 이웃 유도 1줄',
+        '관련 글 유도 (시리즈)':          '결론에서 "다음 글에서는 ~를 다뤄볼 예정이에요" 식의 시리즈 예고 1문장',
+        '외부 링크 유도 (예약·구매)':     '결론에 "예약/구매 링크는 본문 중간에 남겨두었어요" 또는 "[링크 삽입]" placeholder 명시',
+      };
+      const ctaInst = ctaMap[ctaType];
+      if (ctaInst) prompt += `**결말 CTA**: ${ctaInst}.\n\n`;
+    }
+
     // 네이버 블로그 글쓰기 5단계 지침 (Boheme BlogLab v2)
     prompt += `**네이버 블로그 글쓰기 지침** (반드시 5단계 순서로 처리):\n\n`;
 
@@ -420,15 +544,21 @@ function PromptGeneratorContent() {
     prompt += `- 제목 끝에 이모지 1개만 사용하세요.\n`;
     prompt += `- 한 줄로 출력하세요.\n\n`;
 
+    // 본문 구조에 따라 소제목 개수 동적 변경
+    const sectionCount = structure === 'compact' ? 3 : structure === 'deep' ? 7 : 5;
     prompt += `[3단계: 본문 — 2,000자 이내]\n`;
     prompt += `- **도입부**: 핵심을 바로 말하지 말고 "작년 7월이었나...", "얼마 전 친구가 그러더라고요..." 같은 자연스러운 기억·에피소드로 시작하세요. 메인 키워드를 첫 문장에 자연스럽게 녹여 넣고, 글쓴이의 경험·감정 신호를 반드시 포함하세요.\n`;
-    prompt += `- **본문 전개**: ▣ 기호 소제목 최대 5개로 구성. 소제목은 명사형으로 간결하게, 비슷한 주제는 묶으세요.\n`;
+    prompt += `- **본문 전개**: ▣ 기호 소제목 ${sectionCount}개로 구성. 소제목은 명사형으로 간결하게, 비슷한 주제는 묶으세요.\n`;
     prompt += `- **표**: 직관적인 수치 비교가 필요할 때만 최대 3~4개 행까지. 나머지는 산문으로 풀어내세요.\n`;
     prompt += `- **문단**: 한 문단은 2~3줄로 짧게 끊으세요.\n`;
     prompt += `- **문체**: 친근한 해요체 + 구어체 ("솔직히", "진짜로", "~더라고요"). 짧은 문장·긴 문장을 번갈아, 수사 의문문·감탄·여담도 자연스럽게 섞으세요.\n`;
     prompt += `- **메인 키워드 반복**: "${keyword}"는 본문 전체에서 5~6회만 반복 (과도하면 노출 ↓).\n`;
     prompt += `- **분량**: 본문 전체 2,000자 이내.\n`;
-    prompt += `- **마무리**: 이모지 1개와 함께 자연스럽게 닫으세요.\n\n`;
+    prompt += `- **마무리**: 이모지 1개와 함께 자연스럽게 닫으세요.\n`;
+    if (newsContext && newsContext.items.length > 0) {
+      prompt += `- **🔴 참고 뉴스 반영 (필수)**: 본문 ${sectionCount}개 섹션 중 최소 1개 섹션은 위에 첨부된 "참고 최근 뉴스"의 흐름·수치·사건·인물 중 1~2개를 직접 언급하면서 풀어내세요. 예: "최근 ○○에서 발표된 바에 따르면...", "지난달 화제가 됐던 ◇◇ 이슈 기억하시나요?". 단, 뉴스 문장을 그대로 베끼지 말고 작가의 톤으로 재구성해야 하며, 시기·수치는 정확히 유지하세요.\n`;
+    }
+    prompt += `\n`;
 
     prompt += `[4단계: 해시태그]\n`;
     prompt += `- 본문 끝에 해시태그 30개를 한 줄로 제시하세요.\n`;
@@ -439,6 +569,12 @@ function PromptGeneratorContent() {
     prompt += `- **절대적·과장 표현**: 무조건, 최고, 1순위, 절대, 100%, 보장, 완벽\n`;
     prompt += `- **YMYL 위험 문구**: 죽다, 큰일 난다, 손목 나간다, 낫는다, 치료된다, "효과가 있다"(의학·금융 영역)\n`;
     prompt += `- **광고성 단어**: 최저가, 특가, 할인쿠폰, 수익보장, 무료체험\n`;
+    if (keyFacts.trim()) {
+      prompt += `- **핵심 정보 누락 점검**: 위 "본문에 반드시 포함할 핵심 정보"가 빠짐없이 본문에 정확히 표기되었는지 확인하세요.\n`;
+    }
+    if (newsContext && newsContext.items.length > 0) {
+      prompt += `- **🔴 뉴스 반영 점검 (필수)**: 본문 안에 위 참고 뉴스의 흐름·수치·인물·일정 중 1~2개가 작가의 문장으로 자연스럽게 녹아들었는지 확인하세요. 단순한 "최근 뉴스에 따르면..." 한 줄로 끝내지 말고, 해당 정보가 한 섹션의 논지와 연결되어야 합니다. 누락 시 반드시 보강 후 출력.\n`;
+    }
     prompt += `검토 완료 후 [제목 → 본문 → 해시태그] 순서로 최종본만 출력하세요.\n\n`;
     
     // 추가 구성 옵션
@@ -498,7 +634,7 @@ function PromptGeneratorContent() {
 
     prompt += `위 조건에 맞는 완성도 높은 네이버 블로그 글을 작성해주세요.`;
 
-    // 뉴스 컨텍스트가 있으면 프롬프트 상단에 prefix로 주입
+    // 뉴스 컨텍스트가 있으면 프롬프트 상단에 prefix로 주입 — 본문에 반드시 녹아들도록 강한 지침
     if (newsContext && newsContext.items.length > 0) {
       const stripHtml = (s: string) =>
         s.replace(/<[^>]*>/g, '').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ');
@@ -506,12 +642,18 @@ function PromptGeneratorContent() {
         const d = new Date(raw);
         return Number.isNaN(d.getTime()) ? raw : d.toLocaleDateString('ko-KR');
       };
-      let prefix = `**참고할 최근 관련 뉴스 (${newsContext.items.length}건)**:\n`;
+      let prefix = `## 🔴 참고할 최근 관련 뉴스 (${newsContext.items.length}건) — 본문 반영 필수\n\n`;
       newsContext.items.forEach((it, idx) => {
-        prefix += `${idx + 1}. ${stripHtml(it.title)} (${formatDate(it.pubDate)})\n`;
-        if (it.description) prefix += `   - ${stripHtml(it.description)}\n`;
+        prefix += `**뉴스 ${idx + 1}**. ${stripHtml(it.title)} _(${formatDate(it.pubDate)})_\n`;
+        if (it.description) prefix += `   요약: ${stripHtml(it.description)}\n`;
+        prefix += `\n`;
       });
-      prefix += `\n위 뉴스에서 드러나는 최근 흐름·이슈·키워드를 자연스럽게 본문에 반영하되, 뉴스를 그대로 인용하지 말고 독자에게 유용한 정보로 재구성해주세요.\n\n`;
+      prefix += `### 위 뉴스를 본문에 반영하는 규칙 (반드시 준수)\n`;
+      prefix += `1. **최소 1개 섹션은 위 뉴스의 흐름·수치·사건·인물을 직접 다뤄야 합니다.** 단순한 "최근 ~라고 합니다" 한 줄로 끝내면 안 되고, 해당 섹션 전체가 그 뉴스의 맥락과 자연스럽게 이어져야 합니다.\n`;
+      prefix += `2. 뉴스 문장을 그대로 베끼지 말고, 작가의 해요체로 풀어쓰세요. 예: "지난주 발표된 ${newsContext.items[0] ? stripHtml(newsContext.items[0].title).slice(0, 20) : '소식'}... 이슈, 다들 보셨죠?"\n`;
+      prefix += `3. 뉴스에 등장하는 **고유명사·날짜·수치**는 정확히 유지하세요 (임의 변형·삭제 금지). 출처가 명확한 정보임을 살려 글의 신뢰도를 높입니다.\n`;
+      prefix += `4. 뉴스 흐름이 본문에 자연스럽게 녹아들면 "왜 지금 이 글을 읽어야 하는가"의 시의성이 살아나 네이버 노출에 유리합니다.\n\n`;
+      prefix += `---\n\n`;
       prompt = prefix + prompt;
     }
 
@@ -540,6 +682,13 @@ function PromptGeneratorContent() {
     setLength('flexible');
     setSponsorship('none');
     setExperience('light');
+    setPurpose('');
+    setLocation('');
+    setKeyFacts('');
+    setDifferentiator('');
+    setStructure('flexible');
+    setSeasonality('무관');
+    setCtaType('');
     setAdditionalOptions([]);
     setGeneratedPrompt('');
   };
@@ -822,6 +971,35 @@ function PromptGeneratorContent() {
                   </div>
                 </div>
 
+                {/* 글의 목적 — 양쪽 모드 모두 노출 (결말·CTA가 달라짐) */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                    글의 목적 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {PURPOSES.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setPurpose(purpose === opt.value ? '' : opt.value as typeof purpose)}
+                        className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
+                          purpose === opt.value
+                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                            : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                        }`}
+                      >
+                        <div className={`text-xs font-semibold ${purpose === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                          {opt.label}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                    💡 글의 목적에 따라 결말·CTA·전체 톤이 달라집니다.
+                  </p>
+                </div>
+
                 {/* Target Audience Selection — 고급 모드만 */}
                 {mode === 'advanced' && (
                   <div>
@@ -993,6 +1171,145 @@ function PromptGeneratorContent() {
                       <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                         💡 네이버는 직접 경험·체험이 담긴 글의 노출을 우대합니다 (E-E-A-T 가이드).
                       </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 맞춤 정보 — 네이버 SEO 정밀화: 지역/핵심정보/차별화/구조/시기/CTA */}
+                {mode === 'advanced' && (
+                  <div className="border border-amber-200 dark:border-amber-900/50 rounded-lg p-4 bg-amber-50/40 dark:bg-amber-950/20 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider">맞춤 정보</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">입력할수록 글이 구체적이고 차별화됩니다</span>
+                    </div>
+
+                    {/* 지역 정보 */}
+                    <div>
+                      <label htmlFor="location" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        지역 정보 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <input
+                        id="location"
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="예: 수원시 영통구 / 서울 강남역 / 부산 해운대"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                      />
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        지역 키워드를 본문·해시태그에 자연스럽게 분산 → 네이버 하이퍼로컬 노출 ↑
+                      </p>
+                    </div>
+
+                    {/* 본문에 꼭 포함할 핵심 정보 */}
+                    <div>
+                      <label htmlFor="keyfacts" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        본문에 꼭 포함할 핵심 정보 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <textarea
+                        id="keyfacts"
+                        value={keyFacts}
+                        onChange={(e) => setKeyFacts(e.target.value)}
+                        rows={4}
+                        placeholder={'예시 (한 줄에 하나씩):\n- 영업시간: 11:00~22:00 (월요일 휴무)\n- 가격대: 2인 6만원\n- 주차 가능 (3시간 무료)\n- 예약: 네이버 예약 또는 전화'}
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
+                      />
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        가격·시간·장소·연락처 등 정확히 적어야 할 수치를 한 줄에 하나씩 — AI가 누락 없이 본문에 반영
+                      </p>
+                    </div>
+
+                    {/* 차별화 포인트 */}
+                    <div>
+                      <label htmlFor="diff" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        이 글만의 차별화 포인트 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <textarea
+                        id="diff"
+                        value={differentiator}
+                        onChange={(e) => setDifferentiator(e.target.value)}
+                        rows={2}
+                        placeholder="예: 5년차 워킹맘 시각으로 본 / 직접 3개월 써본 비교 / 현지에서 10년 산 사람의 추천"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
+                      />
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        다른 일반 글과 구별되는 작가의 관점·이력·경험 → E-E-A-T 강화
+                      </p>
+                    </div>
+
+                    {/* 본문 구조 */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        본문 구조 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {STRUCTURES.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setStructure(opt.value as typeof structure)}
+                            className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
+                              structure === opt.value
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className={`text-xs font-semibold ${structure === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                              {opt.label}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 시기·시즌 */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        시기·시즌 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {SEASONALITY_OPTIONS.map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => setSeasonality(s)}
+                            className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
+                              seasonality === s
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                        시즌 키워드는 그 시기에 검색량이 폭증 → 노출 기회 ↑
+                      </p>
+                    </div>
+
+                    {/* 결말 CTA */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        결말 CTA <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {CTA_TYPES.map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setCtaType(ctaType === c ? '' : c)}
+                            className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
+                              ctaType === c
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                            }`}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
