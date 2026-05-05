@@ -360,6 +360,13 @@ export default function Navbar() {
                         <div className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{displayName}</div>
                         <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</div>
                       </div>
+                      <Link
+                        href="/profile/setup"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700"
+                      >
+                        프로필 수정
+                      </Link>
                       <button
                         onClick={() => signOut()}
                         className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
@@ -442,12 +449,22 @@ export default function Navbar() {
                       <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => signOut()}
-                    className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex-shrink-0"
-                  >
-                    로그아웃
-                  </button>
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    <Link
+                      href="/profile/setup"
+                      onClick={() => setIsMobileOpen(false)}
+                      className="text-xs text-orange-600 dark:text-orange-400 font-medium hover:underline"
+                    >
+                      프로필
+                    </Link>
+                    <span className="text-slate-300 dark:text-slate-600">·</span>
+                    <button
+                      onClick={() => signOut()}
+                      className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <Link

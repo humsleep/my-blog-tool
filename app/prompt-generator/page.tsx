@@ -100,12 +100,33 @@ const ADDITIONAL_OPTIONS = [
   '이미지 삽입 위치 및 캡션 가이드',
   '핵심 3줄 요약 박스 포함',
   '연관 해시태그 30개 추천',
+  'FAQ 섹션 추가',
+  '비교표 포함 (테이블 형식)',
+  '체크리스트 형식 포함',
+  '출처·참고자료 명시',
+  'CTA 강화 (댓글·공감 유도)',
+];
+
+/** 광고·협찬 표시 — 네이버는 미표시 광고성 글에 페널티 적용 */
+const SPONSORSHIP_OPTIONS = [
+  { value: 'none',     label: '일반 글',         help: '광고·협찬 없는 일반 콘텐츠' },
+  { value: 'sponsored', label: '협찬·체험단',     help: '글 상단에 협찬 사실을 명시 (네이버 가이드 준수)' },
+  { value: 'affiliate', label: '제휴 마케팅',     help: '제휴 링크 포함 시 광고 표시 의무' },
+];
+
+/** 개인 경험 강조도 — E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) */
+const EXPERIENCE_LEVELS = [
+  { value: 'none',  label: '없음',     help: '객관적 정보만 (뉴스/공식 발표 정리 등)' },
+  { value: 'light', label: '약간',     help: '"제 경험상" 정도의 가벼운 언급' },
+  { value: 'heavy', label: '경험 중심', help: '실사용·방문 후기 비중 50% 이상 (네이버 노출 ↑)' },
 ];
 
 function PromptGeneratorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [mode, setMode] = useState<'beginner' | 'advanced'>('beginner');
   const [keyword, setKeyword] = useState('');
+  const [relatedKeywords, setRelatedKeywords] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [titleStyle, setTitleStyle] = useState('');
   const [contentStyle, setContentStyle] = useState('');
@@ -113,6 +134,8 @@ function PromptGeneratorContent() {
   const [tone, setTone] = useState('');
   const [emojiUsage, setEmojiUsage] = useState('적당히');
   const [length, setLength] = useState('flexible');
+  const [sponsorship, setSponsorship] = useState<'none' | 'sponsored' | 'affiliate'>('none');
+  const [experience, setExperience] = useState<'none' | 'light' | 'heavy'>('light');
   const [additionalOptions, setAdditionalOptions] = useState<string[]>([]);
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -206,6 +229,12 @@ function PromptGeneratorContent() {
     // 기본 정보
     prompt += `**주제/키워드**: ${keyword}\n\n`;
     prompt += `**분야**: ${mainCategory} > ${subCategory}\n\n`;
+
+    // 연관 키워드 (LSI) — SEO 핵심
+    const lsi = relatedKeywords.split(',').map(s => s.trim()).filter(Boolean);
+    if (lsi.length > 0) {
+      prompt += `**연관 키워드(자연스럽게 본문에 분산 배치)**: ${lsi.join(', ')}\n\n`;
+    }
     
     // 제목 스타일
     if (titleStyle) {
@@ -297,14 +326,31 @@ function PromptGeneratorContent() {
       const lengthLabel = LENGTHS.find(l => l.value === length)?.label || length;
       prompt += `**글 길이**: ${lengthLabel}\n\n`;
     }
-    
-    // 기본 요구사항
-    prompt += `**기본 요구사항**:\n`;
-    prompt += `- SEO를 고려한 자연스러운 키워드 배치 (메인 키워드를 본문에 적절히 배치)\n`;
-    prompt += `- 독자에게 유용하고 실용적인 정보 제공\n`;
-    prompt += `- 읽기 쉽고 이해하기 쉬운 구조\n`;
-    prompt += `- 도입부, 본문, 결론의 명확한 구성\n`;
-    prompt += `- 네이버 블로그 상위 노출을 위한 최적화된 구조\n`;
+
+    // 광고·협찬 표시 (네이버 가이드 준수)
+    if (sponsorship === 'sponsored') {
+      prompt += `**광고·협찬 표시**: 협찬·체험단 글입니다. 글 도입부에 "이 글은 협찬을 받아 작성되었습니다" 등 협찬 사실을 명확히 표시하고, 광고성 단어(최저가, 특가, 강력추천 등)는 자제해주세요.\n\n`;
+    } else if (sponsorship === 'affiliate') {
+      prompt += `**광고·협찬 표시**: 제휴 마케팅 링크가 포함됩니다. "본 글은 제휴 링크를 포함합니다" 안내 문구를 자연스럽게 포함해주세요.\n\n`;
+    }
+
+    // 개인 경험 강조도 (E-E-A-T)
+    if (experience === 'heavy') {
+      prompt += `**개인 경험 비중**: 50% 이상. 실사용·방문 후기, 시행착오, 구체적인 시간·장소·금액 등을 본문에 적극 포함해주세요. "[나의 경험 삽입]" placeholder로 작성자가 채울 부분을 표시해주세요.\n\n`;
+    } else if (experience === 'light') {
+      prompt += `**개인 경험 비중**: 가벼운 언급. "제 경험상", "직접 써보니" 정도의 표현을 2~3회 자연스럽게 포함하고, "[나의 경험 삽입]" placeholder를 1~2개 위치에 표시해주세요.\n\n`;
+    } else {
+      prompt += `**개인 경험 비중**: 없음 (객관적 정보 위주, 뉴스/공식 자료 정리 형식).\n\n`;
+    }
+
+    // 기본 요구사항 (네이버 SEO 가이드 반영)
+    prompt += `**네이버 블로그 SEO 기본 요구사항**:\n`;
+    prompt += `- 메인 키워드를 도입부 2~3문장 안에 자연스럽게 포함\n`;
+    prompt += `- 메인 키워드 본문 내 4~6회 분산 배치 (과도한 반복 금지)\n`;
+    prompt += `- 소제목(H2/H3) 3~5개로 구조화\n`;
+    prompt += `- 도입부·본문·결론의 명확한 흐름\n`;
+    prompt += `- 광고성·금칙어 표현 회피 (최저가/특가/할인쿠폰/수익보장/100% 보장 등)\n`;
+    prompt += `- 마지막 단락에 독자의 댓글·공감을 유도하는 자연스러운 문장 1줄\n`;
     
     // 추가 구성 옵션
     if (additionalOptions.length > 0) {
@@ -322,7 +368,22 @@ function PromptGeneratorContent() {
         prompt += `- 글 상단 또는 하단에 핵심 내용을 3줄로 요약한 박스 포함\n`;
       }
       if (additionalOptions.includes('연관 해시태그 30개 추천')) {
-        prompt += `- 글과 관련된 해시태그 30개를 추천해주세요\n`;
+        prompt += `- 글과 관련된 해시태그 30개를 추천해주세요 (네이버 #태그 형식)\n`;
+      }
+      if (additionalOptions.includes('FAQ 섹션 추가')) {
+        prompt += `- 본문 끝에 자주 묻는 질문 3~5개와 답변(Q&A 형식)을 포함해주세요\n`;
+      }
+      if (additionalOptions.includes('비교표 포함 (테이블 형식)')) {
+        prompt += `- 핵심 정보를 비교할 수 있는 마크다운 테이블 1개 포함 (3~5행)\n`;
+      }
+      if (additionalOptions.includes('체크리스트 형식 포함')) {
+        prompt += `- 독자가 바로 확인할 수 있는 체크리스트(- [ ] 형식) 1개 포함\n`;
+      }
+      if (additionalOptions.includes('출처·참고자료 명시')) {
+        prompt += `- 정보의 출처·참고자료를 본문 끝에 별도 섹션으로 정리 (신뢰도 향상)\n`;
+      }
+      if (additionalOptions.includes('CTA 강화 (댓글·공감 유도)')) {
+        prompt += `- 결론 직전에 독자의 의견을 묻는 질문 1개, 결론에 공감·댓글 유도 문장 추가\n`;
       }
       prompt += `\n`;
     }
@@ -380,6 +441,7 @@ function PromptGeneratorContent() {
 
   const resetForm = () => {
     setKeyword('');
+    setRelatedKeywords('');
     setSelectedCategory('');
     setTitleStyle('');
     setContentStyle('');
@@ -387,6 +449,8 @@ function PromptGeneratorContent() {
     setTone('');
     setEmojiUsage('적당히');
     setLength('flexible');
+    setSponsorship('none');
+    setExperience('light');
     setAdditionalOptions([]);
     setGeneratedPrompt('');
   };
@@ -394,12 +458,45 @@ function PromptGeneratorContent() {
   return (
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
-            키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
-          </p>
+        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
+              키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
+            </p>
+          </div>
+          {/* 초보자 / 고급 모드 토글 */}
+          <div className="inline-flex bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setMode('beginner')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                mode === 'beginner'
+                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              초보자 모드
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('advanced')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                mode === 'advanced'
+                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              고급 모드
+            </button>
+          </div>
         </div>
+
+        {mode === 'beginner' && (
+          <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg text-xs text-orange-800 dark:text-orange-300">
+            💡 <strong>초보자 모드</strong>: 꼭 필요한 항목(키워드 / 분야 / 어투 / 글 스타일)만 보여드립니다. 익숙해지면 우상단 <strong>고급 모드</strong>로 전환하여 SEO 옵션을 더 세밀하게 조정할 수 있어요.
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Input Section */}
@@ -457,9 +554,29 @@ function PromptGeneratorContent() {
                     className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   />
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-                    블로그 글의 주제가 될 키워드를 입력하세요
+                    블로그 글의 주제가 될 키워드를 입력하세요. 검색량이 큰 키워드일수록 노출 효과가 큽니다.
                   </p>
                 </div>
+
+                {/* 연관 키워드 (LSI) — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div>
+                    <label htmlFor="related" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      연관 키워드 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    </label>
+                    <input
+                      id="related"
+                      type="text"
+                      value={relatedKeywords}
+                      onChange={(e) => setRelatedKeywords(e.target.value)}
+                      placeholder="예: 수원역 맛집, 수원 데이트, 수원 카페"
+                      className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    />
+                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                      쉼표(,)로 구분 · 메인 키워드와 의미가 비슷한 보조 키워드를 본문에 자연스럽게 분산 배치 → 네이버 SEO ↑
+                    </p>
+                  </div>
+                )}
 
                 {/* Category Selection — Accordion */}
                 <div>
@@ -531,30 +648,32 @@ function PromptGeneratorContent() {
                   </div>
                 </div>
 
-                {/* Title Style Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    제목 스타일
-                  </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
-                    <div className="flex flex-wrap gap-2">
-                      {TITLE_STYLES.map((style) => (
-                        <button
-                          key={style}
-                          type="button"
-                          onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
-                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
-                            titleStyle === style
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
-                          }`}
-                        >
-                          {style}
-                        </button>
-                      ))}
+                {/* Title Style Selection — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      제목 스타일 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    </label>
+                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                      <div className="flex flex-wrap gap-2">
+                        {TITLE_STYLES.map((style) => (
+                          <button
+                            key={style}
+                            type="button"
+                            onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
+                            className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
+                              titleStyle === style
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                            }`}
+                          >
+                            {style}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Content Style Selection */}
                 <div>
@@ -581,30 +700,32 @@ function PromptGeneratorContent() {
                   </div>
                 </div>
 
-                {/* Target Audience Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    타겟 독자
-                  </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
-                    <div className="flex flex-wrap gap-2">
-                      {TARGET_AUDIENCES.map((audience) => (
-                        <button
-                          key={audience}
-                          type="button"
-                          onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
-                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
-                            targetAudience === audience
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
-                          }`}
-                        >
-                          {audience}
-                        </button>
-                      ))}
+                {/* Target Audience Selection — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      타겟 독자 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    </label>
+                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                      <div className="flex flex-wrap gap-2">
+                        {TARGET_AUDIENCES.map((audience) => (
+                          <button
+                            key={audience}
+                            type="button"
+                            onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
+                            className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
+                              targetAudience === audience
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                            }`}
+                          >
+                            {audience}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Tone Selection */}
                 <div>
@@ -631,35 +752,37 @@ function PromptGeneratorContent() {
                   </div>
                 </div>
 
-                {/* Emoji Usage Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    이모지 활용도
-                  </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
-                    <div className="flex flex-wrap gap-2">
-                      {EMOJI_USAGE.map((usage) => (
-                        <button
-                          key={usage}
-                          type="button"
-                          onClick={() => setEmojiUsage(usage)}
-                          className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
-                            emojiUsage === usage
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
-                          }`}
-                        >
-                          {usage}
-                        </button>
-                      ))}
+                {/* Emoji Usage Selection — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                      이모지 활용도 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    </label>
+                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                      <div className="flex flex-wrap gap-2">
+                        {EMOJI_USAGE.map((usage) => (
+                          <button
+                            key={usage}
+                            type="button"
+                            onClick={() => setEmojiUsage(usage)}
+                            className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
+                              emojiUsage === usage
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                            }`}
+                          >
+                            {usage}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Length Selection */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    글 길이
+                    글 길이 <span className="text-slate-400 font-normal text-xs">(선택)</span>
                   </label>
                   <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -679,41 +802,114 @@ function PromptGeneratorContent() {
                       ))}
                     </div>
                   </div>
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                    네이버 노출은 1500~2500자가 가장 안정적입니다.
+                  </p>
                 </div>
 
-                {/* Additional Options */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                      추가 구성 옵션
-                    </label>
-                    <button
-                      type="button"
-                      onClick={toggleAllAdditionalOptions}
-                      className="text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 font-medium px-2 py-1 rounded border border-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
-                    >
-                      {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
-                    </button>
-                  </div>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
-                    <div className="space-y-1.5">
-                      {ADDITIONAL_OPTIONS.map((option) => (
-                        <label
-                          key={option}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600/40 p-2 rounded-lg transition-colors"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={additionalOptions.includes(option)}
-                            onChange={() => toggleAdditionalOption(option)}
-                            className="w-4 h-4 text-orange-500 border-slate-300 dark:border-slate-500 rounded focus:ring-orange-500 accent-orange-500"
-                          />
-                          <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
-                        </label>
-                      ))}
+                {/* SEO 강화: 광고·협찬 표시 + 개인 경험 강조도 — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div className="border border-orange-200 dark:border-orange-900/50 rounded-lg p-4 bg-orange-50/40 dark:bg-orange-950/20 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">SEO 강화</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">최신 네이버 가이드 반영</span>
+                    </div>
+
+                    {/* 광고·협찬 표시 */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        광고·협찬 표시 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {SPONSORSHIP_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setSponsorship(opt.value as typeof sponsorship)}
+                            className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
+                              sponsorship === opt.value
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className={`text-xs font-semibold ${sponsorship === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                              {opt.label}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        ⚠️ 협찬·제휴 글에 표시를 누락하면 네이버 검색 노출 페널티 대상이 될 수 있습니다.
+                      </p>
+                    </div>
+
+                    {/* 개인 경험 강조도 */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        개인 경험 강조도 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {EXPERIENCE_LEVELS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setExperience(opt.value as typeof experience)}
+                            className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
+                              experience === opt.value
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                            }`}
+                          >
+                            <div className={`text-xs font-semibold ${experience === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                              {opt.label}
+                            </div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        💡 네이버는 직접 경험·체험이 담긴 글의 노출을 우대합니다 (E-E-A-T 가이드).
+                      </p>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Additional Options — 고급 모드만 */}
+                {mode === 'advanced' && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                        추가 구성 옵션 <span className="text-slate-400 font-normal text-xs">(선택 · 다중 선택 가능)</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={toggleAllAdditionalOptions}
+                        className="text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 font-medium px-2 py-1 rounded border border-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+                      >
+                        {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
+                      </button>
+                    </div>
+                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        {ADDITIONAL_OPTIONS.map((option) => (
+                          <label
+                            key={option}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600/40 p-2 rounded-lg transition-colors"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={additionalOptions.includes(option)}
+                              onChange={() => toggleAdditionalOption(option)}
+                              className="w-4 h-4 text-orange-500 border-slate-300 dark:border-slate-500 rounded focus:ring-orange-500 accent-orange-500"
+                            />
+                            <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
