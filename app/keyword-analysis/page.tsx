@@ -468,12 +468,12 @@ function KeywordAnalysisContent() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-0.5">
-                      <span className="text-orange-600 dark:text-orange-400">[NEW]</span> 트렌드 반영 글쓰기 — 글 퀄리티 ↑
+                      관련 뉴스를 함께 넣어 글 퀄리티 ↑
                     </p>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                      각 키워드 행의 <strong className="text-orange-600 dark:text-orange-400">📰 트렌드 반영</strong> 버튼을 누르면
-                      네이버 최신 뉴스를 골라 AI 프롬프트에 자동으로 전달합니다.
-                      키워드만으로 쓴 평범한 글과 트렌드를 반영한 글의 차이를 직접 확인해보세요.
+                      각 키워드 행의 <strong className="text-orange-600 dark:text-orange-400">📰 뉴스 보기</strong> 버튼을 누르면
+                      그 키워드의 네이버 최신 뉴스를 골라 AI 프롬프트로 같이 전달합니다.
+                      키워드만 가지고 쓴 평범한 글과 최신 뉴스가 녹아든 글의 차이를 비교해 보세요.
                     </p>
                   </div>
                 </div>
@@ -512,7 +512,7 @@ function KeywordAnalysisContent() {
                   <table className="min-w-full">
                     <thead className="bg-slate-50 dark:bg-slate-900/50">
                       <tr>
-                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '트렌드', '액션'].map((h, i) => (
+                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '관련 뉴스', '액션'].map((h, i) => (
                           <th
                             key={i}
                             className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
@@ -569,20 +569,13 @@ function KeywordAnalysisContent() {
                               )}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <div className="relative inline-block">
-                                {rowIndex === 0 && (
-                                  <span className="absolute -top-2 -right-2 z-10 px-1.5 py-0.5 text-[9px] font-black bg-rose-500 text-white rounded-full shadow-sm tracking-wider animate-pulse">
-                                    NEW
-                                  </span>
-                                )}
-                                <button
-                                  onClick={() => setNewsKeyword(item.keyword)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
-                                  title="이 키워드의 최신 뉴스를 AI 프롬프트에 자동 반영합니다"
-                                >
-                                  📰 트렌드 반영
-                                </button>
-                              </div>
+                              <button
+                                onClick={() => setNewsKeyword(item.keyword)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
+                                title="이 키워드의 최신 뉴스를 AI 프롬프트에 함께 전달합니다"
+                              >
+                                📰 뉴스 보기
+                              </button>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-center">
                               <button

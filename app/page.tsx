@@ -284,8 +284,8 @@ export default function Home() {
               {
                 num: '1.5',
                 badge: 'Boheme 차별화',
-                title: '📰 트렌드를 더합니다 (선택)',
-                desc: '키워드 분석 결과에서 [📰 트렌드 반영] 버튼을 누르면 네이버 최신 뉴스를 자동으로 AI 프롬프트에 전달합니다. 트렌드를 반영한 글이 노출에 유리해요.',
+                title: '📰 관련 뉴스를 함께 넣습니다 (선택)',
+                desc: '키워드 분석 결과 표에서 [📰 뉴스 보기] 버튼을 누르면 그 키워드의 네이버 최신 뉴스를 골라 AI 프롬프트로 같이 전달합니다. 최신 뉴스 흐름이 녹아든 글이 노출에 유리해요.',
                 color: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20',
                 href: '/keyword-analysis',
                 cta: '뉴스 함께 가져오기',

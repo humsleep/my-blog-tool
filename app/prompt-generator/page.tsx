@@ -755,12 +755,12 @@ function PromptGeneratorContent() {
                   <div className="flex-shrink-0 text-2xl">📰</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
-                      더 풍부한 글을 원하시나요? <span className="text-orange-600 dark:text-orange-400">트렌드 반영</span>을 시도해보세요
+                      더 풍부한 글을 원하시나요? <span className="text-orange-600 dark:text-orange-400">관련 뉴스</span>를 함께 넣어보세요
                     </p>
                     <p className="text-xs text-slate-600 dark:text-slate-300 mb-2 leading-relaxed">
                       <Link href="/keyword-analysis" className="font-medium text-orange-600 dark:text-orange-400 hover:underline">키워드 분석</Link>
-                      에서 키워드 옆 <strong>📰 트렌드 반영</strong> 버튼을 누르면, 네이버 최신 뉴스를 골라 이 페이지로 가져올 수 있어요.
-                      AI가 트렌드를 자연스럽게 본문에 녹여 차별화된 글을 만들어줍니다.
+                      에서 키워드 옆 <strong>📰 뉴스 보기</strong> 버튼을 누르면, 네이버 최신 뉴스를 골라 이 페이지로 가져올 수 있어요.
+                      AI가 그 뉴스의 흐름을 자연스럽게 본문에 녹여 차별화된 글을 만들어줍니다.
                     </p>
                     <Link
                       href={keyword ? `/keyword-analysis?keyword=${encodeURIComponent(keyword)}` : '/keyword-analysis'}
@@ -784,14 +784,14 @@ function PromptGeneratorContent() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
                       <span className="text-sm font-semibold text-orange-600 dark:text-orange-300">
-                        참고 뉴스 컨텍스트 ({newsContext.items.length}건)
+                        가져온 관련 뉴스 ({newsContext.items.length}건)
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setNewsContext(null)}
                       className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 flex-shrink-0"
-                      title="뉴스 컨텍스트 제거"
+                      title="뉴스 제거"
                     >
                       제거
                     </button>
