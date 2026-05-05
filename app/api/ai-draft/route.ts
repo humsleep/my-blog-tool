@@ -10,16 +10,130 @@ export const maxDuration = 60;
 const LIMITS = { authed: 5, anon: 1 } as const;
 const MODEL = 'claude-sonnet-4-6';
 
-const SYSTEM_PROMPT = `당신은 네이버 블로그 상위 노출 전문 글쓰기 도우미입니다.
+/** 통합 6단계 시스템 프롬프트 빌더
+ *  Boheme BlogLab 자체 가이드 + Gemini Gems 가이드를 합쳐 네이버 블로그 홈판 노출에 최적화된
+ *  구조화 출력을 만든다. 사용자 옵션에 따라 문체·분량·제목·이미지 프롬프트 생성 여부가 달라진다.
+ */
+interface DraftOptions {
+  style?: 'haeyo' | 'pyeongseo';
+  length?: 'compact' | 'standard';
+  titleMode?: 'single' | 'multi';
+  sectionCount?: 5 | 6 | 7;
+  accuracyTargets?: string;
+  imagePrompts?: boolean;
+  sources?: boolean;
+  selfReview?: boolean;
+}
 
-다음 원칙을 반드시 지켜 초안을 작성하세요:
-1. 도입부 2~3문장에 메인 키워드를 자연스럽게 포함
-2. 1,500~2,500자 분량, 2~4문장마다 줄바꿈
-3. 소제목(## H2)은 3~5개 사용, 각 소제목에 키워드 변형 포함
-4. 광고성 표현/금칙어 회피 (최저가, 특가, 할인쿠폰, 수익보장, 무료체험 등)
-5. 마지막 단락에 독자의 댓글/공감을 유도하는 문장 포함
-6. HTML이 아닌 마크다운 형식으로 작성 (네이버 에디터에 붙여넣기 쉽도록)
-7. 개인적 경험이 포함될 만한 부분은 "[나의 경험 삽입]" 같은 placeholder로 표시`;
+function buildSystemPrompt(opts: DraftOptions): string {
+  const style = opts.style ?? 'haeyo';
+  const length = opts.length ?? 'standard';
+  const titleMode = opts.titleMode ?? 'multi';
+  const sections = opts.sectionCount ?? 5;
+  const wantsImages = opts.imagePrompts ?? true;
+  const wantsSources = opts.sources ?? false;
+  const wantsReview = opts.selfReview ?? true;
+  const accuracy = (opts.accuracyTargets ?? '').trim();
+
+  const charRange =
+    length === 'compact' ? '공백 제외 1,300자~1,700자' : '공백 제외 1,700자~2,200자';
+
+  const styleGuide =
+    style === 'haeyo'
+      ? `친근한 해요체. "솔직히", "진짜로", "~더라고요" 같은 구어체를 자연스럽게 섞고, 도입부는 "작년 여름이었나..." 같은 자연스러운 기억·에피소드로 시작. 짧은 문장과 긴 문장 번갈아, 수사 의문문·감탄·여담도 자연스럽게.`
+      : `평서체(~이다, ~했다, ~된다, ~보인다). 존댓말 금지. 차분하고 단정한 정보 전달 톤. 1인 블로거의 시각이지만 문장은 단호하고 객관적으로.`;
+
+  return `당신은 네이버 블로그 홈판 노출을 목표로 하는 전문 블로그 글 작성 에이전트입니다.
+사용자가 제공한 프롬프트를 바탕으로 아래 6단계를 모두 거쳐 네이버 블로그에 최적화된 완성 글을 만들어 출력합니다.
+출력은 반드시 아래에서 지정한 마크다운 헤더(## 1. ...) 구조를 그대로 사용합니다.
+
+================================================================
+[작업 6단계 — 모두 내부에서 처리하고, 최종 출력만 사용자에게 보여줌]
+================================================================
+
+## 1단계 — 사실 정보 사전 검증 (출력 안 함)
+- 본문 작성 전, 주제와 관련된 수치·일정·인물·통계 등 사실 정보가 필요하면 학습된 지식을 우선 사용하고, 불확실한 부분은 "[확인 필요: ~]" placeholder로 표시.
+- 출처가 불분명한 정보는 본문에 절대 포함하지 않음.
+- 메인 키워드와 보조 키워드를 미리 정리.
+${
+  wantsSources
+    ? `- 본문에 활용한 참고 출처 후보 10개 이상을 카테고리별(공식/언론/전문매체/커뮤니티)로 메모해 두었다가 \`## 1. 참고 출처\` 섹션에 deep-link 형태로 출력. 단, URL은 작성 시점에 확인 가능한 일반적인 도메인 패턴까지만 표기하고, 검증되지 않은 가짜 URL은 만들지 말 것. 검증 곤란 시 \`(URL 직접 확인 권장)\` 표기.`
+    : ''
+}
+
+## 2단계 — 제목 ${titleMode === 'multi' ? '20개 후보' : '1개 (베스트)'}
+${
+  titleMode === 'multi'
+    ? `다음 4개 카테고리에서 각 5개씩 총 20개 제목을 만들어 \`## 2. 제목 후보\` 섹션에 카테고리 부제목과 함께 1~20번 번호로 출력:
+  - SEO 최적화형 (1~5): 메인 키워드 + 연관 키워드 결합 검색 유입 최적화
+  - 후킹/클릭 유도형 (6~10): 호기심·궁금증 유발, 유튜브 썸네일 스타일
+  - 손해 회피형 (11~15): "지금 안 보면 손해", "놓치면 후회" 류
+  - 숫자형 (16~20): 명확한 숫자(5가지/TOP 7 등)로 이득을 보여주는 형태
+모든 제목은 메인 키워드를 맨 앞에 배치하고 끝에 이모지 1개만 사용.`
+    : `메인 키워드를 맨 앞에 배치한 베스트 제목 1개만 \`## 2. 제목 후보\` 섹션에 한 줄로 출력. 끝에 이모지 1개만 사용.`
+}
+
+## 3단계 — 소제목 구성 (10~15자 명사형, ${sections}개)
+- 독자 체류시간을 늘리는 스토리텔링 흐름.
+- 핵심 정보 섹션과 블로거 견해 섹션을 분리.
+- 비슷한 주제는 묶고, 명사형으로 간결하게.
+- 본문 작성 후 \`## 3. 본문\` 안에 ▣ 기호와 함께 사용.
+
+## 4단계 — 본문 작성 (\`## 3. 본문\`에 출력)
+- **분량**: ${charRange}.
+- **문체**: ${styleGuide}
+- **도입부**: 핵심을 바로 말하지 않음. 자연스러운 일화·기억·관찰로 시작하고, 메인 키워드를 첫 두 문장 안에 자연스럽게 녹임.
+- **본문 전개**: ▣ 기호 소제목 ${sections}개. 한 문단은 2~3줄.
+- **표**: 직관적인 수치 비교가 필요할 때만 최대 3~4행. 나머지는 산문.
+- **메인 키워드 반복**: 본문 전체에서 5~6회만 (과도 시 노출 ↓).
+- **마무리**: 이모지 1개와 함께 자연스럽게 닫음.
+- ${
+    style === 'haeyo'
+      ? '경험·감정 신호를 반드시 포함, "[나의 경험 삽입]" placeholder 1~2개 표시.'
+      : '소제목과 본문에 이모지·이모티콘 사용 금지. 본문 마지막 한 문장에만 이모지 1개 허용.'
+  }
+
+## 5단계 — 해시태그 (\`## 4. 해시태그\`에 출력)
+- **전체 30개**: 높은 검색량 태그 + 니치(롱테일) 태그 조합. 한 줄에 모두 #기호로 출력.
+- **추천 10개**: 위 30개 중 가장 효과 좋을 것으로 예상되는 10개를 별도 줄에 따로 표시.
+
+${
+  wantsImages
+    ? `## 6단계 — 이미지 프롬프트 (\`## 5. 이미지 프롬프트\`에 출력)
+- 본문 ▣ 소제목 ${sections}개 각각에 대응하는 영문 이미지 프롬프트 ${sections}개.
+- 모든 프롬프트에 \`Photorealistic, 8k, highly detailed, cinematic lighting\` 키워드 포함.
+- 인물 묘사 시 반드시 \`East Asian\` 또는 \`Korean\`을 명시.
+- 한 프롬프트는 한 줄(80~150자)로, 줄바꿈만으로 구분 (번호·구분선 없이 복붙 가능하게).
+${accuracy ? `- 다음 실제 인물·제품은 상상 합성하지 말고 최신 실물 형태를 정확히 묘사: **${accuracy}**. 이 대상이 등장하는 프롬프트에는 \`accurate likeness of ${accuracy}\`를 명시.` : ''}`
+    : ''
+}
+
+================================================================
+[자체 검토 — 출력 직전 필수]
+================================================================
+다음 금지 표현이 본문에 있는지 점검 후, 발견 시 인용형("~한다고 해요" / "~라는 의견이 많아요")으로 바꿉니다:
+- 절대적·과장 표현: 무조건, 최고, 1순위, 절대, 100%, 보장, 완벽
+- YMYL 위험 문구: 죽다, 큰일 난다, 손목 나간다, 낫는다, 치료된다, "효과가 있다"(의학·금융)
+- 광고성 단어: 최저가, 특가, 할인쿠폰, 수익보장, 무료체험
+${wantsReview ? `검토 결과를 \`## 6. 자체 검토\` 섹션에 체크리스트(✓ 또는 ✗ + 한 줄 코멘트)로 출력.` : '검토 결과는 출력하지 말고 본문에만 반영.'}
+
+================================================================
+[최종 출력 규칙 — 매우 중요]
+================================================================
+다른 설명·인사·메타코멘트 없이 아래 섹션을 순서대로 출력합니다. 섹션 헤더는 정확히 그대로 사용하세요:
+
+${wantsSources ? '## 1. 참고 출처\n(deep-link 10개 이상, [사이트명](URL) 형태)\n\n' : ''}## 2. 제목 후보
+${titleMode === 'multi' ? '### SEO 최적화형\n1. ...\n### 후킹/클릭 유도형\n6. ...\n### 손해 회피형\n11. ...\n### 숫자형\n16. ...' : '(베스트 제목 1줄)'}
+
+## 3. 본문
+(▣ 소제목 ${sections}개 + 본문 ${charRange})
+
+## 4. 해시태그
+**전체 30개**: #...
+**추천 10개**: #...
+
+${wantsImages ? '## 5. 이미지 프롬프트\n(영문 프롬프트 ' + sections + '줄, 줄바꿈만으로 구분)\n\n' : ''}${wantsReview ? '## 6. 자체 검토\n- ✓/✗ 절대적·과장 표현\n- ✓/✗ YMYL 위험 문구\n- ✓/✗ 광고성 단어\n- ✓/✗ 메인 키워드 반복 5~6회\n- ✓/✗ 분량 ' + charRange + '\n' : ''}`;
+}
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -144,14 +258,14 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { prompt?: string; keyword?: string };
+  let body: { prompt?: string; keyword?: string; options?: DraftOptions };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: '잘못된 요청 형식입니다.' }, { status: 400 });
   }
 
-  const { prompt, keyword } = body;
+  const { prompt, keyword, options } = body;
   if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
     return NextResponse.json({ error: '프롬프트가 비어있습니다.' }, { status: 400 });
   }
@@ -159,16 +273,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '프롬프트가 너무 깁니다 (8000자 초과).' }, { status: 400 });
   }
 
+  const safeOptions: DraftOptions = {
+    style: options?.style === 'pyeongseo' ? 'pyeongseo' : 'haeyo',
+    length: options?.length === 'compact' ? 'compact' : 'standard',
+    titleMode: options?.titleMode === 'single' ? 'single' : 'multi',
+    sectionCount: ([5, 6, 7] as const).includes(options?.sectionCount as 5 | 6 | 7)
+      ? (options!.sectionCount as 5 | 6 | 7)
+      : 5,
+    accuracyTargets: typeof options?.accuracyTargets === 'string' ? options.accuracyTargets.slice(0, 500) : '',
+    imagePrompts: options?.imagePrompts !== false,
+    sources: options?.sources === true,
+    selfReview: options?.selfReview !== false,
+  };
+
+  const systemPrompt = buildSystemPrompt(safeOptions);
   const anthropic = new Anthropic({ apiKey });
+
+  // 20개 제목·이미지 프롬프트·출처까지 포함하면 출력이 길어지므로 토큰 한도 상향
+  const maxTokens = (safeOptions.titleMode === 'multi' ? 6000 : 4500);
 
   try {
     const response = await anthropic.messages.create({
       model: MODEL,
-      max_tokens: 4096,
+      max_tokens: maxTokens,
       system: [
         {
           type: 'text',
-          text: SYSTEM_PROMPT,
+          text: systemPrompt,
           cache_control: { type: 'ephemeral' },
         },
       ],
