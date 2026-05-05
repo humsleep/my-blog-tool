@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import NewsPanel, { type NewsItem } from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
+import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
+import { useToast } from '../components/ui/Toast';
 
 interface KeywordData {
   keyword: string;
@@ -36,6 +38,73 @@ function KeywordAnalysisContent() {
   const [actionKeyword, setActionKeyword] = useState<string | null>(null);
 
   const [shouldAutoAnalyze, setShouldAutoAnalyze] = useState(false);
+
+  // 키워드 즐겨찾기 (로그인 사용자만)
+  const [savedKeywords, setSavedKeywords] = useState<string[]>([]);
+  const [savedKeywordsUserId, setSavedKeywordsUserId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  // 로그인 사용자 즐겨찾기 키워드 로드
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    let cancelled = false;
+    (async () => {
+      const supabase = createClient();
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) return;
+      if (!cancelled) setSavedKeywordsUserId(auth.user.id);
+      const { data } = await supabase
+        .from('profiles')
+        .select('saved_keywords')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      if (data?.saved_keywords && !cancelled) {
+        setSavedKeywords(data.saved_keywords as string[]);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const addSavedKeyword = async (kw: string) => {
+    if (!savedKeywordsUserId) {
+      toast('로그인 후 사용할 수 있는 기능입니다.', 'info');
+      return;
+    }
+    const trimmed = kw.trim();
+    if (!trimmed) return;
+    if (savedKeywords.includes(trimmed)) {
+      toast('이미 저장된 키워드입니다.', 'info');
+      return;
+    }
+    if (savedKeywords.length >= 10) {
+      toast('즐겨찾기는 최대 10개까지 저장할 수 있어요. 기존 항목을 먼저 삭제해주세요.', 'error');
+      return;
+    }
+    const next = [trimmed, ...savedKeywords];
+    setSavedKeywords(next);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('profiles')
+      .update({ saved_keywords: next })
+      .eq('user_id', savedKeywordsUserId);
+    if (error) {
+      setSavedKeywords(savedKeywords);
+      toast('저장 실패: ' + error.message, 'error');
+    } else {
+      toast('즐겨찾기에 추가되었습니다.', 'success');
+    }
+  };
+
+  const removeSavedKeyword = async (kw: string) => {
+    if (!savedKeywordsUserId) return;
+    const next = savedKeywords.filter((k) => k !== kw);
+    setSavedKeywords(next);
+    const supabase = createClient();
+    await supabase
+      .from('profiles')
+      .update({ saved_keywords: next })
+      .eq('user_id', savedKeywordsUserId);
+  };
 
   useEffect(() => {
     const keyword = searchParams.get('keyword');
@@ -289,6 +358,58 @@ function KeywordAnalysisContent() {
                 <p className="text-xs text-slate-400 dark:text-slate-500">
                   여러 키워드를 쉼표로 구분하여 입력하세요. 결과는 최대 100개까지 표시됩니다.
                 </p>
+
+                {/* 즐겨찾기 키워드 (로그인 사용자) */}
+                {savedKeywordsUserId && (
+                  <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        ⭐ 즐겨찾기 <span className="font-normal text-slate-400">({savedKeywords.length}/10)</span>
+                      </span>
+                      {inputKeywords.trim() && (
+                        <button
+                          type="button"
+                          onClick={() => addSavedKeyword(inputKeywords.split(',')[0].trim())}
+                          className="text-xs text-orange-600 dark:text-orange-400 hover:underline font-medium"
+                        >
+                          + 현재 키워드 저장
+                        </button>
+                      )}
+                    </div>
+                    {savedKeywords.length === 0 ? (
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                        자주 검색하는 키워드를 저장해두면 클릭 한 번으로 다시 분석할 수 있어요.
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-1.5">
+                        {savedKeywords.map((kw) => (
+                          <div
+                            key={kw}
+                            className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 group"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => { setInputKeywords(kw); setShouldAutoAnalyze(true); }}
+                              className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline"
+                              title="이 키워드로 분석"
+                            >
+                              {kw}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeSavedKeyword(kw)}
+                              className="w-4 h-4 rounded-full hover:bg-orange-200 dark:hover:bg-orange-900 text-orange-500 dark:text-orange-400 text-xs leading-none"
+                              title="삭제"
+                              aria-label={`${kw} 삭제`}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {isLoading && currentProgress && (

@@ -255,21 +255,184 @@ export default function Home() {
         </section>
 
       </div>
-      {/* 홈 가이드 섹션 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-                {/* 자세한 사용법은 연구실로 안내 */}
-        <div className="mt-10 text-center">
-          <a
-            href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            더 자세한 사용법은 연구실에서 확인하세요
-          </a>
+
+      {/* ── How it works (실제 사용법 3분 가이드) ── */}
+      <section className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-10">
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 text-xs font-semibold uppercase tracking-wider mb-3">
+              How it works
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              30분이면 첫 글 1편이 완성됩니다
+            </h2>
+            <p className="mt-2 text-sm sm:text-base text-slate-500 dark:text-slate-400">
+              복잡한 키워드 분석도, AI 글쓰기도 처음이라면 아래 4단계만 따라해보세요.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {[
+              {
+                num: '1',
+                title: '키워드를 정합니다',
+                desc: '인기검색어와 키워드분석으로 "검색량 500+ / 경쟁률 0.3-" 황금 키워드를 찾으세요.',
+                color: 'from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/20',
+                href: '/keyword-analysis',
+                cta: '키워드 분석하기',
+              },
+              {
+                num: '2',
+                title: '프롬프트를 만듭니다',
+                desc: '분야·어투·글 스타일을 선택하면 AI에게 줄 최적의 지시문이 자동으로 만들어져요. 무료·무제한.',
+                color: 'from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20',
+                href: '/prompt-generator',
+                cta: '프롬프트 생성',
+              },
+              {
+                num: '3',
+                title: 'AI가 초안을 씁니다',
+                desc: 'Claude Sonnet 4.6이 1분 안에 1500~2000자 초안을 만들어줍니다. 비로그인 1회/일, 로그인 5회/일.',
+                color: 'from-rose-50 to-orange-50 dark:from-rose-950/30 dark:to-orange-950/20',
+                href: '/ai-writer',
+                cta: 'AI 글쓰기',
+              },
+              {
+                num: '4',
+                title: '발행 전 마무리',
+                desc: '에디터에서 금칙어·맞춤법 점검, 이미지 검색·편집까지. 마크다운 그대로 복사해 네이버/티스토리에 붙여넣기.',
+                color: 'from-violet-50 to-fuchsia-50 dark:from-violet-950/30 dark:to-fuchsia-950/20',
+                href: '/editor',
+                cta: '에디터 열기',
+              },
+            ].map((s) => (
+              <div
+                key={s.num}
+                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${s.color} border border-white/60 dark:border-slate-700/60 p-6`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-2xl font-black text-orange-500 dark:text-orange-400">
+                    {s.num}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">{s.title}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">{s.desc}</p>
+                    <Link
+                      href={s.href}
+                      className="inline-flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                    >
+                      {s.cta}
+                      <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── Why Boheme (핵심 가치) ── */}
+      <section className="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              왜 Boheme BlogLab인가요?
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {[
+              { emoji: '⚡', title: '한 곳에서 모두', desc: '키워드부터 발행까지 8단계 워크플로우. 여러 도구를 옮겨다닐 필요 없어요.' },
+              { emoji: '🇰🇷', title: '네이버 API 기반', desc: '실제 네이버 검색량·경쟁률·상위노출 데이터로 분석. 한국 블로그에 최적화.' },
+              { emoji: '🆓', title: '무료부터 시작', desc: '회원가입 없이 키워드 분석·프롬프트 생성 무제한. AI 글쓰기도 비로그인 1회 무료.' },
+            ].map((v) => (
+              <div key={v.title} className="bg-white dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 text-center">
+                <div className="text-4xl mb-3">{v.emoji}</div>
+                <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-1.5">{v.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{v.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2 text-center">
+            자주 묻는 질문
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 text-center">
+            여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
+          </p>
+          <div className="space-y-3">
+            {[
+              {
+                q: '회원가입을 꼭 해야 하나요?',
+                a: '아니요. 키워드 분석·인기검색어·프롬프트 생성·이미지 검색은 회원가입 없이 무제한 사용 가능합니다. 회원가입은 AI 글쓰기 일일 5회(비로그인 1회), 커뮤니티 글 작성, 옵션 자동 저장 기능을 위해 필요합니다.',
+              },
+              {
+                q: 'AI 글쓰기는 정말 무료인가요?',
+                a: '네. 비로그인 일일 1회, 로그인 일일 5회까지 완전 무료입니다. 향후 한도 추가 충전이나 유료 멤버십이 도입될 수 있지만, 기존 무료 한도는 유지됩니다.',
+              },
+              {
+                q: '네이버 블로그에 바로 사용할 수 있나요?',
+                a: 'AI 글쓰기 결과를 마크다운/HTML 형태로 복사한 뒤 네이버 블로그 에디터에 붙여넣으면 됩니다. 에디터 페이지에서 금칙어·맞춤법까지 점검한 후 발행하시면 좋습니다.',
+              },
+              {
+                q: '키워드 데이터는 어디서 오나요?',
+                a: '네이버 검색광고 API의 실제 월간 검색량과 네이버 블로그 OpenAPI의 발행 문서 수를 기반으로 합니다. 일·주·월 단위로 비례 환산하여 표시됩니다.',
+              },
+              {
+                q: '내가 입력한 키워드나 글이 다른 사람에게 공개되나요?',
+                a: '아니요. 키워드 분석·AI 글쓰기 결과는 본인 화면에만 표시되며 저장되지 않습니다. 커뮤니티에 직접 작성한 글만 공개됩니다.',
+              },
+              {
+                q: '협찬·체험단 글도 작성할 수 있나요?',
+                a: '네. 프롬프트 생성 고급 모드에서 "광고·협찬 표시"를 선택하면 네이버 가이드에 맞는 협찬 명시 문구가 도입부에 자동 포함됩니다. 이렇게 작성하면 미표시 광고 페널티를 피할 수 있습니다.',
+              },
+            ].map((item) => (
+              <details key={item.q} className="group bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl">
+                <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4">
+                  <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">{item.q}</span>
+                  <svg className="w-5 h-5 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <p className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="bg-gradient-to-br from-orange-500 to-amber-600 dark:from-orange-600 dark:to-amber-700">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
+            지금 바로 첫 글을 시작해보세요
+          </h2>
+          <p className="text-orange-100 mb-7 text-sm sm:text-base">
+            회원가입 없이도 키워드 분석부터 시작할 수 있어요.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/keyword-analysis"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-orange-50 text-orange-600 text-sm font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+            >
+              키워드 분석으로 시작
+            </Link>
+            <Link
+              href="/lab/post_11"
+              className="inline-flex items-center justify-center px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white text-sm font-bold rounded-full border border-white/30 transition-all"
+            >
+              📖 사용 가이드 보기
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

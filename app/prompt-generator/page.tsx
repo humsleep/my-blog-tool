@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import FlowNav from '../components/FlowNav';
+import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -144,6 +145,8 @@ function PromptGeneratorContent() {
     keyword: string;
     items: Array<{ title: string; description: string; pubDate: string; link: string }>;
   } | null>(null);
+  const [presetLoaded, setPresetLoaded] = useState(false);
+  const [presetUserId, setPresetUserId] = useState<string | null>(null);
 
   const sendToAiWriter = () => {
     if (!generatedPrompt) return;
@@ -159,6 +162,66 @@ function PromptGeneratorContent() {
       setKeyword(decodeURIComponent(keywordParam));
     }
   }, [searchParams]);
+
+  // 로그인 사용자: 마지막 프리셋 자동 복원
+  useEffect(() => {
+    if (!isSupabaseConfigured()) { setPresetLoaded(true); return; }
+    let cancelled = false;
+    (async () => {
+      const supabase = createClient();
+      const { data: auth } = await supabase.auth.getUser();
+      if (!auth.user) { if (!cancelled) setPresetLoaded(true); return; }
+      if (!cancelled) setPresetUserId(auth.user.id);
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('prompt_preset')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      const preset = data?.prompt_preset as Record<string, unknown> | null;
+      if (preset && !cancelled) {
+        // 키워드는 URL 파라미터 우선이라 복원 안 함
+        if (typeof preset.selectedCategory === 'string') setSelectedCategory(preset.selectedCategory);
+        if (typeof preset.titleStyle === 'string')       setTitleStyle(preset.titleStyle);
+        if (typeof preset.contentStyle === 'string')     setContentStyle(preset.contentStyle);
+        if (typeof preset.targetAudience === 'string')   setTargetAudience(preset.targetAudience);
+        if (typeof preset.tone === 'string')             setTone(preset.tone);
+        if (typeof preset.emojiUsage === 'string')       setEmojiUsage(preset.emojiUsage);
+        if (typeof preset.length === 'string')           setLength(preset.length);
+        if (preset.sponsorship === 'none' || preset.sponsorship === 'sponsored' || preset.sponsorship === 'affiliate') {
+          setSponsorship(preset.sponsorship);
+        }
+        if (preset.experience === 'none' || preset.experience === 'light' || preset.experience === 'heavy') {
+          setExperience(preset.experience);
+        }
+        if (Array.isArray(preset.additionalOptions)) {
+          setAdditionalOptions(preset.additionalOptions.filter((x): x is string => typeof x === 'string'));
+        }
+        if (preset.mode === 'beginner' || preset.mode === 'advanced') {
+          setMode(preset.mode);
+        }
+      }
+      if (!cancelled) setPresetLoaded(true);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // 로그인 사용자: 옵션 변경 시 프리셋 자동 저장 (디바운스 1초)
+  useEffect(() => {
+    if (!presetLoaded || !presetUserId) return;
+    const t = setTimeout(async () => {
+      const supabase = createClient();
+      const preset = {
+        mode, selectedCategory, titleStyle, contentStyle, targetAudience,
+        tone, emojiUsage, length, sponsorship, experience, additionalOptions,
+      };
+      await supabase
+        .from('profiles')
+        .update({ prompt_preset: preset })
+        .eq('user_id', presetUserId);
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [presetLoaded, presetUserId, mode, selectedCategory, titleStyle, contentStyle, targetAudience, tone, emojiUsage, length, sponsorship, experience, additionalOptions]);
 
   // sessionStorage의 뉴스 컨텍스트 수신 (키워드 분석 → 뉴스 모달 → 프롬프트 만들기 흐름)
   useEffect(() => {
@@ -343,14 +406,39 @@ function PromptGeneratorContent() {
       prompt += `**개인 경험 비중**: 없음 (객관적 정보 위주, 뉴스/공식 자료 정리 형식).\n\n`;
     }
 
-    // 기본 요구사항 (네이버 SEO 가이드 반영)
-    prompt += `**네이버 블로그 SEO 기본 요구사항**:\n`;
-    prompt += `- 메인 키워드를 도입부 2~3문장 안에 자연스럽게 포함\n`;
-    prompt += `- 메인 키워드 본문 내 4~6회 분산 배치 (과도한 반복 금지)\n`;
-    prompt += `- 소제목(H2/H3) 3~5개로 구조화\n`;
-    prompt += `- 도입부·본문·결론의 명확한 흐름\n`;
-    prompt += `- 광고성·금칙어 표현 회피 (최저가/특가/할인쿠폰/수익보장/100% 보장 등)\n`;
-    prompt += `- 마지막 단락에 독자의 댓글·공감을 유도하는 자연스러운 문장 1줄\n`;
+    // 네이버 블로그 글쓰기 5단계 지침 (Boheme BlogLab v2)
+    prompt += `**네이버 블로그 글쓰기 지침** (반드시 5단계 순서로 처리):\n\n`;
+
+    prompt += `[1단계: 사전 검증]\n`;
+    prompt += `- 본문 작성 전, 주제와 관련된 수치·일정·인물·통계 등 사실 정보가 필요하면 web_search로 1차 출처를 확인하세요.\n`;
+    prompt += `- 출처가 불분명한 정보는 절대 포함하지 마세요.\n`;
+    prompt += `- 메인 키워드와 보조 키워드를 미리 정리한 후 본문 작성을 시작하세요.\n\n`;
+
+    prompt += `[2단계: 제목]\n`;
+    prompt += `- 메인 키워드 "${keyword}"를 제목 맨 앞에 배치하세요.\n`;
+    prompt += `- 제목 끝에 이모지 1개만 사용하세요.\n`;
+    prompt += `- 한 줄로 출력하세요.\n\n`;
+
+    prompt += `[3단계: 본문 — 2,000자 이내]\n`;
+    prompt += `- **도입부**: 핵심을 바로 말하지 말고 "작년 7월이었나...", "얼마 전 친구가 그러더라고요..." 같은 자연스러운 기억·에피소드로 시작하세요. 메인 키워드를 첫 문장에 자연스럽게 녹여 넣고, 글쓴이의 경험·감정 신호를 반드시 포함하세요.\n`;
+    prompt += `- **본문 전개**: ▣ 기호 소제목 최대 5개로 구성. 소제목은 명사형으로 간결하게, 비슷한 주제는 묶으세요.\n`;
+    prompt += `- **표**: 직관적인 수치 비교가 필요할 때만 최대 3~4개 행까지. 나머지는 산문으로 풀어내세요.\n`;
+    prompt += `- **문단**: 한 문단은 2~3줄로 짧게 끊으세요.\n`;
+    prompt += `- **문체**: 친근한 해요체 + 구어체 ("솔직히", "진짜로", "~더라고요"). 짧은 문장·긴 문장을 번갈아, 수사 의문문·감탄·여담도 자연스럽게 섞으세요.\n`;
+    prompt += `- **메인 키워드 반복**: "${keyword}"는 본문 전체에서 5~6회만 반복 (과도하면 노출 ↓).\n`;
+    prompt += `- **분량**: 본문 전체 2,000자 이내.\n`;
+    prompt += `- **마무리**: 이모지 1개와 함께 자연스럽게 닫으세요.\n\n`;
+
+    prompt += `[4단계: 해시태그]\n`;
+    prompt += `- 본문 끝에 해시태그 30개를 한 줄로 제시하세요.\n`;
+    prompt += `- 높은 검색량 태그 + 니치(롱테일) 태그 조합 (예: #${keyword.replace(/\s+/g, '')} #${keyword.replace(/\s+/g, '')}추천 등).\n\n`;
+
+    prompt += `[5단계: 자체 검토 — 출력 전 필수]\n`;
+    prompt += `다음 금지 표현이 본문에 들어갔는지 점검하고, 발견 시 인용형("~한다고 해요" / "~라는 의견이 많아요")으로 바꿔주세요:\n`;
+    prompt += `- **절대적·과장 표현**: 무조건, 최고, 1순위, 절대, 100%, 보장, 완벽\n`;
+    prompt += `- **YMYL 위험 문구**: 죽다, 큰일 난다, 손목 나간다, 낫는다, 치료된다, "효과가 있다"(의학·금융 영역)\n`;
+    prompt += `- **광고성 단어**: 최저가, 특가, 할인쿠폰, 수익보장, 무료체험\n`;
+    prompt += `검토 완료 후 [제목 → 본문 → 해시태그] 순서로 최종본만 출력하세요.\n\n`;
     
     // 추가 구성 옵션
     if (additionalOptions.length > 0) {
@@ -495,6 +583,13 @@ function PromptGeneratorContent() {
         {mode === 'beginner' && (
           <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg text-xs text-orange-800 dark:text-orange-300">
             💡 <strong>초보자 모드</strong>: 꼭 필요한 항목(키워드 / 분야 / 어투 / 글 스타일)만 보여드립니다. 익숙해지면 우상단 <strong>고급 모드</strong>로 전환하여 SEO 옵션을 더 세밀하게 조정할 수 있어요.
+          </div>
+        )}
+
+        {presetUserId && presetLoaded && (
+          <div className="mb-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-full text-[11px] text-emerald-700 dark:text-emerald-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            로그인 사용자 — 선택한 옵션이 자동 저장되어 다음 방문에 복원됩니다
           </div>
         )}
 
