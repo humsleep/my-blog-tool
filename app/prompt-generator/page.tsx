@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import FlowNav from '../components/FlowNav';
@@ -598,6 +599,32 @@ function PromptGeneratorContent() {
           <div className="lg:col-span-3">
             <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
               <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4 sm:mb-6">프롬프트 설정</h2>
+
+              {/* 뉴스 컨텍스트 미진입 안내 — 더 풍부한 글을 위한 동선 */}
+              {!newsContext && (
+                <div className="mb-5 sm:mb-6 rounded-lg border border-dashed border-orange-300 dark:border-orange-700/60 bg-orange-50/40 dark:bg-orange-950/20 p-4 flex items-start gap-3">
+                  <div className="flex-shrink-0 text-2xl">📰</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                      더 풍부한 글을 원하시나요? <span className="text-orange-600 dark:text-orange-400">트렌드 반영</span>을 시도해보세요
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 mb-2 leading-relaxed">
+                      <Link href="/keyword-analysis" className="font-medium text-orange-600 dark:text-orange-400 hover:underline">키워드 분석</Link>
+                      에서 키워드 옆 <strong>📰 트렌드 반영</strong> 버튼을 누르면, 네이버 최신 뉴스를 골라 이 페이지로 가져올 수 있어요.
+                      AI가 트렌드를 자연스럽게 본문에 녹여 차별화된 글을 만들어줍니다.
+                    </p>
+                    <Link
+                      href={keyword ? `/keyword-analysis?keyword=${encodeURIComponent(keyword)}` : '/keyword-analysis'}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                    >
+                      키워드 분석으로 가기
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              )}
 
               {/* 뉴스 컨텍스트 — 키워드 분석 → 뉴스 모달에서 가져온 경우 */}
               {newsContext && newsContext.items.length > 0 && (

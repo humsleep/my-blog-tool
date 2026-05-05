@@ -282,6 +282,15 @@ export default function Home() {
                 cta: '키워드 분석하기',
               },
               {
+                num: '1.5',
+                badge: 'Boheme 차별화',
+                title: '📰 트렌드를 더합니다 (선택)',
+                desc: '키워드 분석 결과에서 [📰 트렌드 반영] 버튼을 누르면 네이버 최신 뉴스를 자동으로 AI 프롬프트에 전달합니다. 트렌드를 반영한 글이 노출에 유리해요.',
+                color: 'from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/20',
+                href: '/keyword-analysis',
+                cta: '뉴스 함께 가져오기',
+              },
+              {
                 num: '2',
                 title: '프롬프트를 만듭니다',
                 desc: '분야·어투·글 스타일을 선택하면 AI에게 줄 최적의 지시문이 자동으로 만들어져요. 무료·무제한.',
@@ -305,31 +314,47 @@ export default function Home() {
                 href: '/editor',
                 cta: '에디터 열기',
               },
-            ].map((s) => (
-              <div
-                key={s.num}
-                className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${s.color} border border-white/60 dark:border-slate-700/60 p-6`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-2xl font-black text-orange-500 dark:text-orange-400">
-                    {s.num}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">{s.title}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">{s.desc}</p>
-                    <Link
-                      href={s.href}
-                      className="inline-flex items-center text-sm font-semibold text-orange-600 dark:text-orange-400 hover:underline"
-                    >
-                      {s.cta}
-                      <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
+            ].map((s) => {
+              const isOptional = s.num === '1.5';
+              return (
+                <div
+                  key={s.num}
+                  className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${s.color} ${
+                    isOptional
+                      ? 'border-2 border-dashed border-rose-300 dark:border-rose-700/60'
+                      : 'border border-white/60 dark:border-slate-700/60'
+                  } p-6`}
+                >
+                  {s.badge && (
+                    <span className="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white rounded-full shadow-sm">
+                      {s.badge}
+                    </span>
+                  )}
+                  <div className="flex items-start gap-4">
+                    <div className={`flex-shrink-0 ${isOptional ? 'w-14 h-12' : 'w-12 h-12'} rounded-2xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center font-black ${
+                      isOptional ? 'text-base text-rose-500 dark:text-rose-400' : 'text-2xl text-orange-500 dark:text-orange-400'
+                    }`}>
+                      {s.num}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">{s.title}</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-3">{s.desc}</p>
+                      <Link
+                        href={s.href}
+                        className={`inline-flex items-center text-sm font-semibold hover:underline ${
+                          isOptional ? 'text-rose-600 dark:text-rose-400' : 'text-orange-600 dark:text-orange-400'
+                        }`}
+                      >
+                        {s.cta}
+                        <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

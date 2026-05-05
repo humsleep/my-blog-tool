@@ -42,6 +42,8 @@ function KeywordAnalysisContent() {
   // 키워드 즐겨찾기 (로그인 사용자만)
   const [savedKeywords, setSavedKeywords] = useState<string[]>([]);
   const [savedKeywordsUserId, setSavedKeywordsUserId] = useState<string | null>(null);
+  // "뉴스 보기" 기능 안내 — sessionStorage로 1회만 표시
+  const [newsHintDismissed, setNewsHintDismissed] = useState(true);
   const { toast } = useToast();
 
   // 로그인 사용자 즐겨찾기 키워드 로드
@@ -104,6 +106,18 @@ function KeywordAnalysisContent() {
       .from('profiles')
       .update({ saved_keywords: next })
       .eq('user_id', savedKeywordsUserId);
+  };
+
+  // "뉴스 보기" 안내 배너 — 한 번 닫으면 세션 동안 안 보임
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const dismissed = sessionStorage.getItem('newsHintDismissed') === '1';
+    setNewsHintDismissed(dismissed);
+  }, []);
+
+  const dismissNewsHint = () => {
+    setNewsHintDismissed(true);
+    if (typeof window !== 'undefined') sessionStorage.setItem('newsHintDismissed', '1');
   };
 
   useEffect(() => {
@@ -436,6 +450,36 @@ function KeywordAnalysisContent() {
               )}
             </div>
 
+            {/* News-feature highlight banner — dismissible, shown above first results */}
+            {sortedKeywords.length > 0 && !newsHintDismissed && (
+              <div className="mb-4 rounded-xl border border-orange-200 dark:border-orange-700/60 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/30 p-4 sm:p-5 relative">
+                <button
+                  type="button"
+                  onClick={dismissNewsHint}
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center justify-center text-lg leading-none"
+                  aria-label="안내 닫기"
+                  title="안내 닫기"
+                >
+                  ×
+                </button>
+                <div className="flex items-start gap-3 pr-6">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-2xl">
+                    📰
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-0.5">
+                      <span className="text-orange-600 dark:text-orange-400">[NEW]</span> 트렌드 반영 글쓰기 — 글 퀄리티 ↑
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                      각 키워드 행의 <strong className="text-orange-600 dark:text-orange-400">📰 트렌드 반영</strong> 버튼을 누르면
+                      네이버 최신 뉴스를 골라 AI 프롬프트에 자동으로 전달합니다.
+                      키워드만으로 쓴 평범한 글과 트렌드를 반영한 글의 차이를 직접 확인해보세요.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Results Table */}
             {sortedKeywords.length > 0 && (
               <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
@@ -468,7 +512,7 @@ function KeywordAnalysisContent() {
                   <table className="min-w-full">
                     <thead className="bg-slate-50 dark:bg-slate-900/50">
                       <tr>
-                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '뉴스', '액션'].map((h, i) => (
+                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '트렌드', '액션'].map((h, i) => (
                           <th
                             key={i}
                             className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
@@ -479,7 +523,7 @@ function KeywordAnalysisContent() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                      {sortedKeywords.map((item) => {
+                      {sortedKeywords.map((item, rowIndex) => {
                         const comp = competitionConfig(item.competitionRatio);
                         return (
                           <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
@@ -525,16 +569,20 @@ function KeywordAnalysisContent() {
                               )}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <button
-                                onClick={() => setNewsKeyword(item.keyword)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
-                                title="관련 뉴스 보기 + 프롬프트로 가져가기"
-                              >
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                </svg>
-                                뉴스 보기
-                              </button>
+                              <div className="relative inline-block">
+                                {rowIndex === 0 && (
+                                  <span className="absolute -top-2 -right-2 z-10 px-1.5 py-0.5 text-[9px] font-black bg-rose-500 text-white rounded-full shadow-sm tracking-wider animate-pulse">
+                                    NEW
+                                  </span>
+                                )}
+                                <button
+                                  onClick={() => setNewsKeyword(item.keyword)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
+                                  title="이 키워드의 최신 뉴스를 AI 프롬프트에 자동 반영합니다"
+                                >
+                                  📰 트렌드 반영
+                                </button>
+                              </div>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-center">
                               <button
