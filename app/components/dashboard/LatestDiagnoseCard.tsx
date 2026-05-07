@@ -1,0 +1,132 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { clientFetchJson } from '@/app/lib/clientFetch';
+import { formatRelativeKr } from '@/app/lib/format/relative-time';
+import { BAND_LABEL, type DiagnoseLatestResponse } from '@/app/lib/dashboard/types';
+
+/**
+ * 데일리 대시보드 — 마지막 진단 점수 카드.
+ * 진단 이력이 없으면 "내 블로그 진단해보기" 빈 상태 카드.
+ * 진단 이력 2건 이상이면 점수 변동 (delta) 함께 표시.
+ */
+export default function LatestDiagnoseCard() {
+  const [data, setData] = useState<DiagnoseLatestResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    clientFetchJson<DiagnoseLatestResponse>('/api/blog-diagnose')
+      .then((r) => {
+        if (!cancelled) setData(r);
+      })
+      .catch(() => {
+        if (!cancelled) setData({ latest: null, previous: null, delta: null });
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+        <div className="h-4 w-24 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
+        <div className="h-12 w-32 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
+        <div className="h-3 w-48 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse" />
+      </section>
+    );
+  }
+
+  if (!data?.latest) {
+    return (
+      <section className="rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
+            Diagnose
+          </span>
+          <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
+        </div>
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5">
+          내 블로그는 카테고리 안에서 어디쯤일까요?
+        </h3>
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+          카테고리 핵심 키워드 30개로 활동성 · 노출 · 품질을 한 번에 진단합니다. 1분 안에 점수가 나와요.
+        </p>
+        <Link href="/blog-diagnose" className="btn-base btn-primary btn-sm">
+          내 블로그 진단하기
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      </section>
+    );
+  }
+
+  const { latest, delta } = data;
+  const deltaColor =
+    delta === null
+      ? 'text-slate-500 dark:text-slate-400'
+      : delta > 0
+        ? 'text-emerald-600 dark:text-emerald-400'
+        : delta < 0
+          ? 'text-rose-600 dark:text-rose-400'
+          : 'text-slate-500 dark:text-slate-400';
+  const deltaPrefix = delta === null ? '' : delta > 0 ? '+' : '';
+  const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
+
+  return (
+    <section className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-slate-500">
+            마지막 진단
+          </span>
+          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+            {latest.blog_title ?? latest.blog_id}
+            <span className="mx-1.5 text-slate-300">·</span>
+            {latest.category_label ?? latest.category}
+            <span className="mx-1.5 text-slate-300">·</span>
+            {formatRelativeKr(latest.created_at)}
+          </div>
+        </div>
+        <Link href="/blog-diagnose" className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline whitespace-nowrap">
+          다시 진단 →
+        </Link>
+      </div>
+
+      <div className="flex items-baseline gap-3 mb-2">
+        <span className="text-5xl font-semibold tabular text-slate-900 dark:text-slate-100">
+          {latest.total_score}
+        </span>
+        <span className="text-sm text-slate-500 dark:text-slate-400">/ 100</span>
+        <span className={`text-xs font-semibold ${deltaColor}`}>{deltaLabel}</span>
+      </div>
+
+      <div className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+        <span className="font-medium text-slate-900 dark:text-slate-100">{BAND_LABEL[latest.band]}</span>
+        <span className="mx-1.5 text-slate-300">·</span>
+        키워드 {latest.hit_count ?? 0}개 1페이지 노출 (TOP10 {latest.top_ten_count ?? 0})
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        <MiniMetric label="활동성" value={latest.activity_score} />
+        <MiniMetric label="노출" value={latest.visibility_score} />
+        <MiniMetric label="품질" value={latest.quality_score} />
+      </div>
+    </section>
+  );
+}
+
+function MiniMetric({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-md bg-slate-50 dark:bg-zinc-800/50 px-3 py-2 text-center">
+      <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</div>
+      <div className="text-lg font-semibold tabular text-slate-900 dark:text-slate-100">{value}</div>
+    </div>
+  );
+}

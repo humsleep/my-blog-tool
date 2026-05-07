@@ -5,6 +5,57 @@
 
 ---
 
+## 2026-05-07 — Phase 28: 데일리 대시보드 홈 + 진단 결과 영구 저장
+
+**배경**: Phase 27(SaaS Analytics 톤)은 깔끔하지만 정적 랜딩이라 한 번 둘러보고 글 쓰면 끝나는 구조였음. 사용자가 "마케팅 전 대대적인 개편 — 누구나 쉽게 쓰고 오래 체류할 수 있게" 요청. 5축 전략(데일리 대시보드 / 스튜디오 워크스페이스 / 진단 추적 / 도구↔커뮤니티 / 모바일) 중 ROI가 가장 높은 ① 데일리 대시보드를 첫 phase로 선택. 진단 결과가 누적되어야 변동(delta)을 보여줄 수 있어 ③ 일부(저장 + 최근 1건 조회)도 함께 포함.
+
+### 결정
+- 홈 = 정적 랜딩 → **들어오자마자 가치 있는 작업대**.
+- 비로그인 / 로그인 분기 (useUser).
+- 진단 결과는 로그인 사용자에 한해 DB 저장 (RLS로 본인만 SELECT/INSERT, 24h 20건 cap).
+- 트렌딩 키워드는 `profile.category`로 자동 카테고리 매핑 (커뮤니티 분야 → 네이버 트렌딩 분야).
+
+### 1. 데이터 — 마이그레이션 0011 (`supabase/migrations/0011_diagnose_results.sql`)
+- 컬럼: `id / user_id / blog_id / blog_title / category / category_label / total_score / activity_score / visibility_score / quality_score / band / posts_last_30d / hit_count / top_ten_count / insights jsonb / created_at`
+- 인덱스 2개: `(user_id, created_at desc)` 최근 결과 조회 / `(user_id, blog_id, created_at desc)` 같은 블로그 추적
+- RLS:
+  - SELECT/DELETE: 본인 row만
+  - INSERT: 본인 + 24h 20건 sub-select rate-limit
+- band CHECK: top5/top15/top35/mid/growing
+
+### 2. API (`app/api/blog-diagnose/route.ts`)
+- POST 엔드포인트 끝에 **로그인 사용자 자동 저장** 블록 추가. 저장 실패는 swallow → 진단 응답 자체는 항상 정상 반환.
+- 새 GET 엔드포인트: 본인 최근 진단 2건 fetch → `{ latest, previous, delta }` 반환. 비로그인·미저장이면 `{ latest: null }`.
+- 환경변수 미설정 가드(`isSupabaseConfigured()`로 wrap).
+
+### 3. 클라이언트 헬퍼 (`app/lib/dashboard/types.ts`)
+- `TrendingItem`, `DiagnoseLatest`, `DiagnoseLatestResponse`, `BAND_LABEL` 타입 일괄 export.
+- `COMMUNITY_TO_TRENDING_CATEGORY` — `food-travel → 여행`, `info-howto → IT/기술` 등 8개 분야 매핑 (profile.category가 트렌딩 API 카테고리와 다른 enum이라 변환 필요).
+
+### 4. 대시보드 위젯 3종 (`app/components/dashboard/`)
+- **`TrendingTicker.tsx`** — 가로 스크롤 칩. `/api/trending-keywords?category=...&period=daily&limit=12` fetch. 클릭 시 `/keyword-analysis?keyword=...`로 직행. 로딩 스켈레톤 + 에러 핸들링 + 빈 상태.
+- **`LatestDiagnoseCard.tsx`** — 점수 + delta(↑↓) + band 배지 + 활동성/노출/품질 미니 미터 3분할. 진단 이력 없으면 "내 블로그는 어디쯤일까요?" 빈 상태 카드(orange ring + emphasis).
+- **`SavedKeywordsCard.tsx`** — `profiles.saved_keywords` 칩 그리드. 클릭 시 키워드 분석. 비어 있으면 "키워드 분석으로 가기" CTA.
+
+### 5. 홈 (`app/page.tsx`) — 전면 재작성
+- 분기: `userLoading → HeroSkeleton`, `user → LoggedInHero`, 그 외 `AnonHero`.
+- **AnonHero**: 기존 Phase 27 hero(검색창 + 진단 CTA + 3분 미니) 그대로.
+- **LoggedInHero**:
+  - "{닉네임}님, 오늘도 데이터로 시작해볼까요?" 인사 + M월 D일 라벨
+  - 그리드: `LatestDiagnoseCard` (lg:col-span-2) + `SavedKeywordsCard` (lg:col-span-1)
+  - 분야 미등록 안내 1줄
+- 공통: `TrendingTicker` (로그인 시 내 분야, 비로그인 시 전체) + 도구 4종 + 워크플로우 + FAQ + 클로징 CTA.
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린, TypeScript 통과.
+- 마이그레이션 0011은 운영 DB에 별도 적용 필요 (Supabase SQL Editor).
+
+### 후속
+- **다음 phase 후보**: 진단 점수 추적 그래프(③ 나머지) / Streak·일일 미션(④) / 스튜디오 워크스페이스(②). 모바일 데일리 위젯(⑤)은 PWA 위젯 API 검토 필요.
+- 운영 DB 마이그레이션 0011 적용 전까지는 진단 저장이 무시(swallow)되므로 GET은 `{ latest: null }` 반환 → 대시보드는 빈 상태 카드 자동 노출.
+
+---
+
 ## 2026-05-07 — Phase 27: Modern SaaS Analytics 재설계 (매거진 톤 폐기)
 
 **배경**: Phase 23(매거진 에디토리얼)이 분석 사이트의 기능과 안 맞는다는 사용자 피드백. 매거진 톤은 "한 번 읽고 가는" 콘텐츠 사이트용이고, 본 프로젝트는 "매번 데이터를 보고 행동하는" 분석·작업 도구라 데이터가 주인공이 되어야 한다는 진단. 사용자가 4개 옵션 중 ① Modern SaaS Analytics (Linear/Vercel/Stripe 계열)를 선택해 전면 교체.

@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { extractBlogId, fetchRss, searchBlogByQuery, type BlogSearchItem } from '@/app/lib/diagnose/naver-blog';
 import { findCategorySeed } from '@/app/lib/diagnose/category-seeds';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits, summarizeRss } from '@/app/lib/diagnose/scoring';
+import { createClient } from '@/app/lib/supabase/server';
+
+function isSupabaseConfigured() {
+  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+}
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;        // Vercel hobby 한도
@@ -108,6 +113,35 @@ export async function POST(request: Request) {
 
   const result = compose(activity, visibility, quality, warnings);
 
+  // 6) 로그인 사용자 → DB 저장 (Phase 28: 데일리 대시보드 + 추적용)
+  //    저장 실패는 무시. 진단 결과 응답 자체는 항상 정상 반환.
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('diagnose_results').insert({
+          user_id: user.id,
+          blog_id: blogId,
+          blog_title: rss?.title ?? null,
+          category: seed.value,
+          category_label: seed.label,
+          total_score: result.total,
+          activity_score: result.activity.score,
+          visibility_score: result.visibility.score,
+          quality_score: result.quality.score,
+          band: result.band,
+          posts_last_30d: Number.isFinite(result.activity.postsLast30d) ? result.activity.postsLast30d : null,
+          hit_count: result.visibility.hitCount,
+          top_ten_count: result.visibility.topTenCount,
+          insights: result.insights,
+        });
+      }
+    } catch (err) {
+      console.error('[blog-diagnose] DB 저장 실패 (무시):', err);
+    }
+  }
+
   return NextResponse.json({
     blogId,
     blogTitle: rss?.title ?? null,
@@ -119,4 +153,43 @@ export async function POST(request: Request) {
     rssItemCount: items.length,
     diagnosedAt: new Date().toISOString(),
   });
+}
+
+/**
+ * GET — 로그인 사용자의 최근 진단 결과 1건 (대시보드 카드용).
+ * 비로그인 / 미저장 상태이면 `{ latest: null }` 반환.
+ */
+export async function GET() {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({ latest: null });
+  }
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ latest: null });
+
+    const { data, error } = await supabase
+      .from('diagnose_results')
+      .select('id, blog_id, blog_title, category, category_label, total_score, activity_score, visibility_score, quality_score, band, hit_count, top_ten_count, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(2);
+
+    if (error) {
+      console.error('[blog-diagnose GET] error:', error);
+      return NextResponse.json({ latest: null });
+    }
+
+    const list = data ?? [];
+    const latest = list[0] ?? null;
+    const previous = list[1] ?? null;
+    return NextResponse.json({
+      latest,
+      previous,
+      delta: latest && previous ? latest.total_score - previous.total_score : null,
+    });
+  } catch (err) {
+    console.error('[blog-diagnose GET] exception:', err);
+    return NextResponse.json({ latest: null });
+  }
 }

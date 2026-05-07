@@ -1,22 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/app/lib/supabase/useUser';
+import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
+import TrendingTicker from '@/app/components/dashboard/TrendingTicker';
+import LatestDiagnoseCard from '@/app/components/dashboard/LatestDiagnoseCard';
+import SavedKeywordsCard from '@/app/components/dashboard/SavedKeywordsCard';
+import { COMMUNITY_TO_TRENDING_CATEGORY } from '@/app/lib/dashboard/types';
 
 /**
- * 홈 (Phase 27 — Modern SaaS Analytics).
- * 매거진 표지 톤(Vol.01 마스트헤드 / italic 디스플레이 헤드라인 / 풀쿼트 / § 마크)
- * 모두 제거. 분석 사이트의 표준 프레임:
- *   1) Hero — 짧고 명확한 타이틀 + 검색 + 두 개 1차 CTA
- *   2) 기능 그리드 (대표 도구 4)
- *   3) 워크플로우 (8단계)
- *   4) FAQ
- *   5) Closing CTA
+ * 홈 — 데일리 대시보드 (Phase 28).
+ *
+ * 비로그인: Hero (검색 + 진단 CTA) + 전체 인기 키워드 + 도구 그리드 + 워크플로우 + FAQ + 클로징
+ * 로그인:   인사 + 마지막 진단 카드 + 즐겨찾기 카드 + 내 분야 인기 키워드 + 도구/워크플로우/FAQ/클로징
  */
 export default function Home() {
   const router = useRouter();
   const [searchKeyword, setSearchKeyword] = useState('');
+  const { user, loading: userLoading } = useUser();
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+    fetchMyProfile().then(setProfile);
+  }, [user]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +37,15 @@ export default function Home() {
     }
   };
 
-  /** 핵심 도구 4개 — KPI 카드처럼 정보 밀도 있게 */
+  const myCategoryLabel = profile?.category
+    ? COMMUNITY_TO_TRENDING_CATEGORY[profile.category]
+    : null;
+
+  // 닉네임은 프로필이 있으면 사용, 없으면 이메일 앞부분, 그것도 없으면 "블로거"
+  const greetingName =
+    profile?.nickname ?? (user?.email ? user.email.split('@')[0] : '블로거');
+
+  /** 핵심 도구 4개 — KPI 카드 */
   const features = [
     {
       label: 'Diagnose',
@@ -72,62 +92,35 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
-      {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
-          <div className="max-w-3xl">
-            <span className="pill pill-accent mb-5">
-              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 dark:bg-orange-400" />
-              네이버 API 기반 실시간 분석
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4 leading-[1.15]">
-              내 블로그의 위치를 알고,<br />
-              <span className="text-orange-500 dark:text-orange-400">데이터로</span> 글을 씁니다.
-            </h1>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-2xl">
-              블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.
-            </p>
+      {/* ── Hero — 분기 ──────────────────────────────────────────── */}
+      {userLoading ? (
+        <HeroSkeleton />
+      ) : user ? (
+        <LoggedInHero
+          greetingName={greetingName}
+          myCategoryLabel={myCategoryLabel}
+        />
+      ) : (
+        <AnonHero
+          searchKeyword={searchKeyword}
+          setSearchKeyword={setSearchKeyword}
+          onSubmit={handleSearch}
+        />
+      )}
 
-            {/* Search */}
-            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 max-w-2xl">
-              <div className="relative flex-1">
-                <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  placeholder="분석할 키워드 입력 (예: 수원 맛집)"
-                  className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm"
-                />
-              </div>
-              <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap">
-                키워드 분석
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </button>
-            </form>
-
-            {/* Two primary CTAs (under search) */}
-            <div className="flex flex-col sm:flex-row gap-3 mt-6">
-              <Link href="/blog-diagnose" className="btn-base btn-secondary btn-md">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                내 블로그 진단하기
-              </Link>
-              <Link href="/start" className="btn-base btn-ghost btn-md">
-                3분 만에 첫 글 만들기 →
-              </Link>
-            </div>
-          </div>
+      {/* ── 인기 키워드 티커 (모두 표시, 카테고리만 분기) ────────── */}
+      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <TrendingTicker
+            category={myCategoryLabel ?? '전체'}
+            label={myCategoryLabel ? '내 분야 트렌드' : '오늘의 트렌드'}
+            limit={12}
+          />
         </div>
       </section>
 
       {/* ── Feature grid (4 KPI-style cards) ─────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
+      <section className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8">
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">핵심 도구 4종</h2>
@@ -171,7 +164,7 @@ export default function Home() {
       </section>
 
       {/* ── 8-step workflow ──────────────────────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8 max-w-2xl">
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">8단계 워크플로우</h2>
@@ -200,7 +193,7 @@ export default function Home() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
+      <section className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8">
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">자주 묻는 질문</h2>
@@ -212,7 +205,7 @@ export default function Home() {
             {[
               {
                 q: '회원가입을 꼭 해야 하나요?',
-                a: '아니요. 키워드 분석·인기검색어·프롬프트 생성·이미지 검색은 회원가입 없이 무제한 사용 가능합니다. 회원가입은 AI 글쓰기 일일 5회(비로그인 1회), 커뮤니티 글 작성, 즐겨찾기 키워드 자동 저장을 위해 필요합니다.',
+                a: '아니요. 키워드 분석·인기검색어·프롬프트 생성·이미지 검색은 회원가입 없이 무제한 사용 가능합니다. 회원가입은 AI 글쓰기 일일 5회(비로그인 1회), 커뮤니티 글 작성, 즐겨찾기 키워드 자동 저장, 진단 점수 추적을 위해 필요합니다.',
               },
               {
                 q: '블로그 진단은 어떤 데이터로 점수를 매기나요?',
@@ -232,7 +225,7 @@ export default function Home() {
               },
               {
                 q: '내가 입력한 키워드나 글이 다른 사람에게 공개되나요?',
-                a: '아니요. 키워드 분석·AI 글쓰기 결과는 본인 화면에만 표시되며 저장되지 않습니다. 커뮤니티에 직접 작성한 글만 공개됩니다.',
+                a: '아니요. 키워드 분석·AI 글쓰기 결과는 본인 화면에만 표시되며 저장되지 않습니다. 진단 결과는 본인 계정으로만 저장됩니다. 커뮤니티에 직접 작성한 글만 공개됩니다.',
               },
             ].map((item) => (
               <details key={item.q} className="group">
@@ -272,5 +265,130 @@ export default function Home() {
         </div>
       </section>
     </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ * Hero variants
+ * ──────────────────────────────────────────────────────────────── */
+
+function HeroSkeleton() {
+  return (
+    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <div className="max-w-3xl space-y-4">
+          <div className="h-6 w-40 rounded-full bg-slate-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-10 w-3/4 rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-4 w-2/3 rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-12 w-full max-w-xl rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AnonHero({
+  searchKeyword,
+  setSearchKeyword,
+  onSubmit,
+}: {
+  searchKeyword: string;
+  setSearchKeyword: (v: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+}) {
+  return (
+    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+        <div className="max-w-3xl">
+          <span className="pill pill-accent mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 dark:bg-orange-400" />
+            네이버 API 기반 실시간 분석
+          </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4 leading-[1.15]">
+            내 블로그의 위치를 알고,<br />
+            <span className="text-orange-500 dark:text-orange-400">데이터로</span> 글을 씁니다.
+          </h1>
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-2xl">
+            블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.
+          </p>
+
+          {/* Search */}
+          <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 max-w-2xl">
+            <div className="relative flex-1">
+              <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                placeholder="분석할 키워드 입력 (예: 수원 맛집)"
+                className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm"
+              />
+            </div>
+            <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap">
+              키워드 분석
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </form>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+            <Link href="/blog-diagnose" className="btn-base btn-secondary btn-md">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              내 블로그 진단하기
+            </Link>
+            <Link href="/start" className="btn-base btn-ghost btn-md">
+              3분 만에 첫 글 만들기 →
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LoggedInHero({
+  greetingName,
+  myCategoryLabel,
+}: {
+  greetingName: string;
+  myCategoryLabel: string | null;
+}) {
+  const today = new Date();
+  const dateLabel = `${today.getMonth() + 1}월 ${today.getDate()}일`;
+
+  return (
+    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        {/* Greeting line */}
+        <div className="mb-6 sm:mb-8">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-slate-500">
+            {dateLabel} · 오늘의 작업대
+          </span>
+          <h1 className="mt-1.5 text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+            {greetingName}님, 오늘도 데이터로 시작해볼까요?
+          </h1>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            {myCategoryLabel
+              ? `${myCategoryLabel} 분야 인기 키워드와 마지막 진단 점수를 한눈에 확인하세요.`
+              : '프로필에서 분야를 등록하면 내 분야 맞춤 키워드를 보여드려요.'}
+          </p>
+        </div>
+
+        {/* Dashboard grid: 진단 카드 (2/3) + 즐겨찾기 (1/3) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <LatestDiagnoseCard />
+          </div>
+          <div>
+            <SavedKeywordsCard />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
