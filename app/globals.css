@@ -3,99 +3,149 @@
 /* Class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Light / Dark 컬러 토큰 ── */
+/* ─────────────────────────────────────────────────────────────────────
+ * Boheme BlogLab — Editorial Magazine Theme (Phase 23)
+ *
+ *   Tone:        한국 매거진 에디토리얼
+ *   Headline:    Noto Serif KR (Google Fonts) → 한글 세리프 / 영문은 Plex Serif
+ *   Body:        Pretendard
+ *   Color:       종이 베이지 + 잉크 검정 + 주황 액센트
+ *   Card style:  외곽선 1px만 (no shadow, no radial gradient)
+ *   Background:  미세 노이즈가 깔린 따뜻한 종이
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 :root {
-  /* Background layers */
-  --bg-base:        #f8fafc;
+  /* ── Editorial token primitives ── */
+  --paper:          #faf7f2;   /* magazine paper (warm beige) */
+  --paper-deep:     #f3ede3;   /* slightly deeper for elevated/divider */
+  --paper-edge:     #e7e0d2;   /* thin rule */
+  --ink:            #111111;   /* deep ink for headlines */
+  --ink-muted:      #4a443f;   /* body text */
+  --ink-faint:      #8a8378;   /* labels / meta */
+  --rule:           #1a1815;   /* strong border (used sparingly) */
+  --rule-soft:      #d9d4ca;   /* subtle dividers */
+
+  /* Brand accent — kept (orange) but tuned to read on warm paper */
+  --accent:         #f97316;
+  --accent-hover:   #c2410c;
+  --accent-tint:    #ffe9d2;
+  --accent-text:    #9a3412;
+
+  /* ── Backwards-compat tokens (existing utilities still resolve) ── */
+  --bg-base:        var(--paper);
   --bg-surface:     #ffffff;
-  --bg-elevated:    #f1f5f9;
-  --bg-overlay:     rgba(255,255,255,0.8);
+  --bg-elevated:    var(--paper-deep);
+  --bg-overlay:     rgba(250, 247, 242, 0.85);
 
-  /* Text */
-  --text-primary:   #0f172a;
-  --text-secondary: #475569;
-  --text-muted:     #94a3b8;
+  --text-primary:   var(--ink);
+  --text-secondary: var(--ink-muted);
+  --text-muted:     var(--ink-faint);
 
-  /* Border */
-  --border:         #e2e8f0;
-  --border-subtle:  #f1f5f9;
+  --border:         var(--paper-edge);
+  --border-subtle:  var(--paper-deep);
 
-  /* Accent — Brand Orange */
-  --accent:         #f97316;  /* orange-500 */
-  --accent-hover:   #ea580c;  /* orange-600 */
-  --accent-subtle:  #fff7ed;  /* orange-50 */
-  --accent-text:    #c2410c;  /* orange-700 */
+  /* Status — adjusted for warm paper (less neon) */
+  --success:        #2f8a5b;
+  --success-bg:     #ebf6ef;
+  --success-text:   #1f6b44;
+  --success-border: #b6dbc4;
 
-  /* Status — base + subtle bg / text / border for token-based status UI */
-  --success:        #10b981;
-  --success-bg:     #ecfdf5;
-  --success-text:   #047857;
-  --success-border: #a7f3d0;
+  --warning:        #b45309;
+  --warning-bg:     #fdf3e6;
+  --warning-text:   #92400e;
+  --warning-border: #fbd38d;
 
-  --warning:        #f59e0b;
-  --warning-bg:     #fffbeb;
-  --warning-text:   #b45309;
-  --warning-border: #fcd34d;
+  --danger:         #b91c1c;
+  --danger-bg:      #fbecec;
+  --danger-text:    #991b1b;
+  --danger-border:  #f5b5b5;
 
-  --danger:         #ef4444;
-  --danger-bg:      #fef2f2;
-  --danger-text:    #b91c1c;
-  --danger-border:  #fca5a5;
-
-  /* Shadow */
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
-  --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
-  --shadow-lg: 0 12px 20px -4px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.08);
+  /* Editorial elevation — almost no shadow, just a hairline */
+  --shadow-sm: 0 0 0 1px rgb(17 17 17 / 0.04);
+  --shadow-md: 0 1px 0 rgb(17 17 17 / 0.06), 0 0 0 1px rgb(17 17 17 / 0.04);
+  --shadow-lg: 0 6px 18px -8px rgb(17 17 17 / 0.18), 0 0 0 1px rgb(17 17 17 / 0.05);
 }
 
 .dark {
-  --bg-base:        #0f172a;
-  --bg-surface:     #1e293b;
-  --bg-elevated:    #273548;
-  --bg-overlay:     rgba(15,23,42,0.85);
+  /* In dark mode, "paper" inverts to ink and "ink" becomes warm cream */
+  --paper:          #14110d;
+  --paper-deep:     #1c1813;
+  --paper-edge:     #2a241d;
+  --ink:            #f4ece0;
+  --ink-muted:      #b9b0a1;
+  --ink-faint:      #8a8276;
+  --rule:           #f4ece0;
+  --rule-soft:      #2e2820;
 
-  /* WCAG AA: text-secondary 대비 4.5:1+ 보장 (#a3afc4 vs #1e293b ≈ 4.7:1) */
-  --text-primary:   #f1f5f9;
-  --text-secondary: #a3afc4;
-  --text-muted:     #7e8aa0;
+  --accent:         #fdba74;
+  --accent-hover:   #fed7aa;
+  --accent-tint:    rgba(253, 186, 116, 0.16);
+  --accent-text:    #fed7aa;
 
-  --border:         #334155;
-  --border-subtle:  #1e293b;
+  --bg-base:        var(--paper);
+  --bg-surface:     var(--paper-deep);
+  --bg-elevated:    #221c15;
+  --bg-overlay:     rgba(20, 17, 13, 0.88);
 
-  /* dark에서는 한 단계 톤다운 (가독성 향상) */
-  --accent:         #fdba74;  /* orange-300 */
-  --accent-hover:   #fb923c;  /* orange-400 */
-  --accent-subtle:  #431407;  /* orange-950 */
-  --accent-text:    #fed7aa;  /* orange-200 */
+  --text-primary:   var(--ink);
+  --text-secondary: var(--ink-muted);
+  --text-muted:     var(--ink-faint);
 
-  --success:        #34d399;
-  --success-bg:     rgb(16 185 129 / 0.15);
-  --success-text:   #6ee7b7;
-  --success-border: rgb(16 185 129 / 0.4);
+  --border:         var(--paper-edge);
+  --border-subtle:  #1f1a14;
 
-  --warning:        #fbbf24;
-  --warning-bg:     rgb(245 158 11 / 0.15);
+  --success:        #6ee7b7;
+  --success-bg:     rgb(110 231 183 / 0.12);
+  --success-text:   #a7f3d0;
+  --success-border: rgb(110 231 183 / 0.35);
+
+  --warning:        #fcd34d;
+  --warning-bg:     rgb(252 211 77 / 0.12);
   --warning-text:   #fcd34d;
-  --warning-border: rgb(245 158 11 / 0.4);
+  --warning-border: rgb(252 211 77 / 0.35);
 
-  --danger:         #f87171;
-  --danger-bg:      rgb(239 68 68 / 0.15);
+  --danger:         #fca5a5;
+  --danger-bg:      rgb(252 165 165 / 0.10);
   --danger-text:    #fca5a5;
-  --danger-border:  rgb(239 68 68 / 0.4);
+  --danger-border:  rgb(252 165 165 / 0.35);
 
-  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 0 0 1px rgb(244 236 224 / 0.06);
+  --shadow-md: 0 1px 0 rgb(0 0 0 / 0.4), 0 0 0 1px rgb(244 236 224 / 0.06);
+  --shadow-lg: 0 8px 22px -10px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(244 236 224 / 0.07);
 }
 
-/* ── Theme variables → Tailwind ── */
+/* ── Tailwind v4 theme — slate scale shifted to editorial warm tones ──
+ * 기존 페이지가 사용 중인 bg-slate-50 / bg-slate-100 / bg-slate-800 / bg-slate-900 / bg-slate-950
+ * 등은 일괄 손대지 않고, Tailwind 색 토큰 자체를 따뜻한 톤으로 재정의해
+ * 전 페이지에 매거진 종이 분위기를 주입합니다.
+ */
 @theme inline {
   --color-background: var(--bg-base);
   --color-foreground: var(--text-primary);
+
+  /* Body font (keep Pretendard) */
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto,
     'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     sans-serif;
+
+  /* Display font — magazine serif for headlines */
+  --font-display: 'IBM Plex Serif', 'Noto Serif KR', 'Apple SD Gothic Neo',
+    'Pretendard', Georgia, ui-serif, serif;
+
+  /* Editorial slate — backgrounds shift to warm paper, mid/darks shift to warm ink */
+  --color-slate-50:  #faf7f2;
+  --color-slate-100: #f3ede3;
+  --color-slate-200: #e7e0d2;
+  --color-slate-300: #c8bfae;
+  --color-slate-400: #9c9387;
+  --color-slate-500: #6e665f;
+  --color-slate-600: #4a443f;
+  --color-slate-700: #2e2a26;
+  --color-slate-800: #1c1813;
+  --color-slate-900: #14110d;
+  --color-slate-950: #0a0806;
 }
 
 /* ── Base body ── */
@@ -104,65 +154,178 @@ html {
 }
 
 body {
-  background: var(--bg-base);
-  color: var(--text-primary);
+  background-color: var(--paper);
+  /* Subtle paper grain — barely visible, just adds warmth */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  color: var(--ink);
   font-family: var(--font-sans);
-  line-height: 1.6;
-  letter-spacing: -0.01em;                               /* 한국어 가독성 — Pretendard 권장 */
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11'; /* Pretendard cv 변종 (영문 가독성) */
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* 헤딩 기본 행간 + 자간 — 페이지마다 leading-* 반복 제거 */
-h1, h2, h3, h4, h5, h6 {
+.dark body {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.95  0 0 0 0.04 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+}
+
+/* Headlines — display serif, tight kerning */
+h1, h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+h3, h4, h5, h6 {
+  letter-spacing: -0.015em;
   line-height: 1.3;
-  letter-spacing: -0.02em; /* 헤딩은 더 좁게 (시각적 안정감) */
+  color: var(--ink);
+}
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: var(--ink);
 }
 
-/* 한국어 본문 가독성 — leading-relaxed 반복 제거 */
+/* Body paragraph */
 p, li {
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
-/* 작은 라벨/배지(11px)에는 자간을 좀 더 풀어서 가독성 보강 */
+/* Small labels — slightly looser tracking for legibility, all-caps look opt-in via .ed-eyebrow */
 .text-\[11px\], .text-xs {
   letter-spacing: 0;
 }
 
-/* ── Utility classes using CSS tokens ── */
+/* ── Editorial utility classes ── */
+
+/* Eyebrow / kicker — tiny uppercase label above headlines */
+.ed-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;     /* 11px */
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dark .ed-eyebrow { color: var(--accent); }
+.ed-eyebrow::before {
+  content: "";
+  width: 1.25rem;
+  height: 1px;
+  background-color: currentColor;
+}
+
+/* Big editorial display heading */
+.ed-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+/* Magazine drop cap — first letter of an article body */
+.ed-dropcap::first-letter {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 4.25em;
+  float: left;
+  line-height: 0.85;
+  margin: 0.1em 0.12em 0 0;
+  color: var(--accent-text);
+}
+.dark .ed-dropcap::first-letter { color: var(--accent); }
+
+/* Hairline divider with optional centered ornament */
+.ed-rule {
+  height: 1px;
+  background-color: var(--rule-soft);
+  border: 0;
+}
+.ed-rule-strong {
+  height: 1px;
+  background-color: var(--rule);
+  border: 0;
+}
+.ed-ornament {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--ink-faint);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.875rem;
+}
+.ed-ornament::before, .ed-ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: var(--rule-soft);
+}
+
+/* Byline — author meta line in editorial style */
+.ed-byline {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Body utility tokens (existing util classes) */
 .bg-base       { background-color: var(--bg-base); }
 .bg-surface    { background-color: var(--bg-surface); }
 .bg-elevated   { background-color: var(--bg-elevated); }
+.bg-paper      { background-color: var(--paper); }
+.bg-paper-deep { background-color: var(--paper-deep); }
 
-.text-primary  { color: var(--text-primary); }
+.text-primary   { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
 .text-muted-token { color: var(--text-muted); }
+.text-ink       { color: var(--ink); }
+.text-ink-muted { color: var(--ink-muted); }
+.text-ink-faint { color: var(--ink-faint); }
 
 .border-token  { border-color: var(--border); }
+.border-rule   { border-color: var(--rule); }
+.border-rule-soft { border-color: var(--rule-soft); }
 
-/* ── Card utility ── */
+.font-display { font-family: var(--font-display); }
+
+/* ── Card utility — outline-only editorial style ── */
 .card {
   background-color: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: 0.625rem;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  border: 1px solid var(--rule-soft);
+  border-radius: 0.25rem;
+  box-shadow: none;
+  transition: border-color 0.2s ease, transform 0.15s ease;
 }
 .card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--accent);
+  border-color: var(--rule);
+}
+.dark .card {
+  background-color: var(--bg-surface);
+  border-color: var(--paper-edge);
+}
+.dark .card:hover {
+  border-color: var(--ink-muted);
 }
 
-/* ── Input utility ── */
+/* ── Input utility — flat, hairline-bottom ── */
 .input-base {
   background-color: var(--bg-surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 0.625rem 1rem;
+  color: var(--ink);
+  border: 1px solid var(--rule-soft);
+  border-radius: 0.25rem;
+  padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
   min-height: 44px;
   width: 100%;
@@ -170,24 +333,31 @@ p, li {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .input-base::placeholder {
-  color: var(--text-muted);
+  color: var(--ink-faint);
 }
 .input-base:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.25);
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+.dark .input-base {
+  background-color: var(--paper-deep);
+  border-color: var(--paper-edge);
+  color: var(--ink);
 }
 .dark .input-base:focus {
-  box-shadow: 0 0 0 3px rgb(251 146 60 / 0.35);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
 }
 
-/* ── Buttons (variant: primary | secondary | ghost | danger) ── */
+/* ── Buttons — editorial: sharp corners, weight via type, accent for primary ── */
 .btn-base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   font-weight: 600;
+  letter-spacing: -0.005em;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
     transform 0.1s ease, box-shadow 0.15s ease;
@@ -199,78 +369,97 @@ p, li {
   cursor: not-allowed;
 }
 .btn-base:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }
 .btn-base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.35);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
-/* sizes */
 .btn-sm { padding: 0.375rem 0.875rem; font-size: 0.8125rem; min-height: 32px; }
-.btn-md { padding: 0.625rem 1.25rem; font-size: 0.875rem; min-height: 40px; }
-.btn-lg { padding: 0.875rem 1.5rem; font-size: 1rem; min-height: 48px; }
+.btn-md { padding: 0.625rem 1.125rem; font-size: 0.875rem; min-height: 40px; }
+.btn-lg { padding: 0.875rem 1.375rem; font-size: 1rem; min-height: 48px; }
 
-/* primary */
 .btn-primary {
-  background-color: var(--accent);
-  color: #ffffff;
-  box-shadow: var(--shadow-sm);
+  background-color: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
 }
 .btn-primary:hover:not(:disabled) {
   background-color: var(--accent-hover);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  border-color: var(--accent-hover);
+  color: #fff;
+}
+.dark .btn-primary {
+  background-color: var(--accent);
+  color: var(--paper);
+  border-color: var(--accent);
+}
+.dark .btn-primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
-/* secondary (bordered surface) */
 .btn-secondary {
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
 }
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--bg-elevated);
-  border-color: var(--accent);
-  color: var(--accent-text);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  background-color: var(--ink);
+  color: var(--paper);
+}
+.dark .btn-secondary {
+  color: var(--ink);
+  border-color: var(--ink-muted);
+}
+.dark .btn-secondary:hover:not(:disabled) {
+  background-color: var(--ink);
+  color: var(--paper);
 }
 
-/* ghost (transparent) */
 .btn-ghost {
   background-color: transparent;
-  color: var(--text-secondary);
+  color: var(--ink-muted);
+  border: 1px solid transparent;
 }
 .btn-ghost:hover:not(:disabled) {
+  background-color: var(--paper-deep);
+  color: var(--ink);
+}
+.dark .btn-ghost:hover:not(:disabled) {
   background-color: var(--bg-elevated);
-  color: var(--text-primary);
 }
 
-/* danger */
 .btn-danger {
   background-color: var(--danger);
   color: #ffffff;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--danger);
 }
 .btn-danger:hover:not(:disabled) {
-  filter: brightness(1.05);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  filter: brightness(0.95);
 }
 
-/* ── Scrollbar (dark mode) ── */
-.dark ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Scrollbar (subtle on editorial paper) ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.dark ::-webkit-scrollbar-track {
-  background: var(--bg-base);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--rule-soft);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
+  background: var(--paper-edge);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
 }
 
 /* ── Quill editor dark mode ── */
@@ -283,23 +472,19 @@ p, li {
   border-color: var(--border) !important;
   color: var(--text-primary) !important;
 }
-.dark .ql-editor {
-  color: var(--text-primary) !important;
-}
-.dark .ql-stroke {
-  stroke: var(--text-secondary) !important;
-}
-.dark .ql-fill {
-  fill: var(--text-secondary) !important;
-}
-.dark .ql-picker-label {
-  color: var(--text-secondary) !important;
-}
+.dark .ql-editor { color: var(--text-primary) !important; }
+.dark .ql-stroke { stroke: var(--text-secondary) !important; }
+.dark .ql-fill   { fill: var(--text-secondary) !important; }
+.dark .ql-picker-label { color: var(--text-secondary) !important; }
 
 /* ── Selection ── */
 ::selection {
-  background-color: rgb(249 115 22 / 0.3);
-  color: var(--text-primary);
+  background-color: var(--ink);
+  color: var(--paper);
+}
+.dark ::selection {
+  background-color: var(--accent);
+  color: var(--paper);
 }
 
 /* ── Scrollbar 숨김 (가로 스크롤 영역) ── */
@@ -319,14 +504,14 @@ p, li {
   .safe-right  { padding-right:  max(0.5rem, env(safe-area-inset-right)); }
 }
 
-/* ── 모바일 하단 탭 바 공간 확보 (모바일에서만) ── */
+/* ── 모바일 하단 탭 바 공간 확보 ── */
 @media (max-width: 767px) {
   body {
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
   }
 }
 
-/* ── PWA: 모바일에서 앱처럼 보이게 (당김새로고침 비활성, 텍스트 선택 일부 제어) ── */
+/* ── PWA: 모바일 앱 느낌 ── */
 @media (display-mode: standalone), (max-width: 767px) {
   html {
     overscroll-behavior-y: contain;
