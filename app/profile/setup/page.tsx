@@ -40,6 +40,10 @@ function ProfileSetupPage() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
+  // 즐겨찾기 키워드 (Phase 26: Navbar 드롭다운에서 이리로 이동)
+  const [savedKeywords, setSavedKeywords] = useState<string[]>([]);
+  const [savedUserId, setSavedUserId] = useState<string | null>(null);
+
   useEffect(() => {
     if (!isSupabaseConfigured()) {
       setLoading(false);
@@ -55,6 +59,7 @@ function ProfileSetupPage() {
         return;
       }
       setAuthed(true);
+      setSavedUserId(auth.user.id);
       const profile = await fetchMyProfile();
       if (profile) {
         setExisting(profile);
@@ -63,10 +68,32 @@ function ProfileSetupPage() {
         setCategory(profile.category ?? '');
         setBio(profile.bio ?? '');
       }
+      // 즐겨찾기 키워드 로드 — profile 테이블의 saved_keywords 컬럼
+      const { data: kwData } = await supabase
+        .from('profiles')
+        .select('saved_keywords')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      if (kwData?.saved_keywords && Array.isArray(kwData.saved_keywords)) {
+        setSavedKeywords(kwData.saved_keywords as string[]);
+      }
       setAuthChecked(true);
       setLoading(false);
     })();
   }, []);
+
+  const removeSavedKeyword = async (kw: string) => {
+    if (!savedUserId) return;
+    const next = savedKeywords.filter((k) => k !== kw);
+    const prev = savedKeywords;
+    setSavedKeywords(next);
+    const supabase = createClient();
+    const { error: e } = await supabase
+      .from('profiles')
+      .update({ saved_keywords: next })
+      .eq('user_id', savedUserId);
+    if (e) setSavedKeywords(prev);
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -238,6 +265,55 @@ function ProfileSetupPage() {
             </button>
           </div>
         </form>
+
+        {/* ── 즐겨찾기 키워드 (키워드분석 페이지에서 저장한 항목 노출) ── */}
+        <section className="mt-6 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">즐겨찾기 키워드</h2>
+            <span className="text-xs text-slate-500 dark:text-slate-400">{savedKeywords.length} / 10</span>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+            <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline font-medium">키워드 분석</Link>
+            {' '}페이지에서 자주 검색하는 키워드를 저장해두면 여기서 한눈에 확인하고 다시 분석할 수 있습니다.
+          </p>
+
+          {savedKeywords.length === 0 ? (
+            <div className="text-center py-6 text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+              아직 저장된 키워드가 없습니다.
+              <div className="mt-2">
+                <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline text-xs font-medium">
+                  키워드 분석으로 가기 →
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {savedKeywords.map((kw) => (
+                <div
+                  key={kw}
+                  className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 group"
+                >
+                  <Link
+                    href={`/keyword-analysis?keyword=${encodeURIComponent(kw)}`}
+                    className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline"
+                    title="이 키워드로 분석하기"
+                  >
+                    {kw}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => removeSavedKeyword(kw)}
+                    className="w-4 h-4 rounded-full hover:bg-orange-200 dark:hover:bg-orange-900 text-orange-500 dark:text-orange-400 text-xs leading-none"
+                    title="삭제"
+                    aria-label={`${kw} 삭제`}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
