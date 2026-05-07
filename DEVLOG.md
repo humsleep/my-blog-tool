@@ -54,6 +54,11 @@
 - **다음 phase 후보**: 진단 점수 추적 그래프(③ 나머지) / Streak·일일 미션(④) / 스튜디오 워크스페이스(②). 모바일 데일리 위젯(⑤)은 PWA 위젯 API 검토 필요.
 - 운영 DB 마이그레이션 0011 적용 전까지는 진단 저장이 무시(swallow)되므로 GET은 `{ latest: null }` 반환 → 대시보드는 빈 상태 카드 자동 노출.
 
+### 2026-05-07 (후속) — README/CLAUDE 동기화 + main 머지
+- README: Daily Dashboard / Blog Diagnose 기능 섹션 추가, 마이그레이션 목록 0008~0011 보강, DB 카운트 8 → 10, 대시보드 위젯 명시.
+- CLAUDE.md: 홈 대시보드 워크플로우 1줄, `app/components/dashboard/` · `app/lib/dashboard/` 디렉토리 등재, 마이그레이션 표 0008~0011, 데스크톱 navbar에 "블로그 진단" 첫 항목, 대시보드 위젯 재사용 힌트, 0011 미적용 시 디버깅 가이드 추가.
+- `claude/redesign-ui-strategy-XU6AV` → main fast-forward 머지 + push 완료. Vercel 자동 배포.
+
 ---
 
 ## 2026-05-07 — Phase 27: Modern SaaS Analytics 재설계 (매거진 톤 폐기)
