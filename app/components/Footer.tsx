@@ -2,30 +2,36 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700/80 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-paper-deep border-t border-rule mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Editorial colophon — masthead style */}
+        <div className="mb-10">
+          <div className="ed-eyebrow mb-3">Colophon</div>
+          <div className="flex items-baseline flex-wrap gap-3">
+            <span className="font-display italic text-3xl font-semibold text-ink leading-none">
+              Boheme
+            </span>
+            <span className="text-sm font-semibold tracking-[0.22em] uppercase text-orange-600 dark:text-orange-400">
+              BlogLab
+            </span>
+            <span className="text-ink-faint text-sm font-display italic">
+              — 한국 블로거를 위한 글쓰기 도구
+            </span>
+          </div>
+        </div>
 
-          {/* Brand */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pt-8 border-t border-rule-soft">
+          {/* About */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </div>
-              <span className="font-bold text-slate-900 dark:text-slate-100">
-                Boheme <span className="text-orange-500 dark:text-orange-400">BlogLab</span>
-              </span>
-            </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              전문적인 블로그 포스팅을 위한<br />필수 도구 모음입니다.
+            <h3 className="ed-byline mb-3">About</h3>
+            <p className="text-sm text-ink-muted leading-[1.7]">
+              네이버·티스토리 블로거가 키워드 리서치부터 이미지 편집까지<br />한 도구에서 끝낼 수 있도록 만들어졌습니다.
             </p>
           </div>
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 uppercase tracking-wider">서비스</h3>
+            <h3 className="ed-byline mb-3">Sections</h3>
             <ul className="space-y-2">
               {[
                 { href: '/keyword-analysis', label: '키워드 분석' },
@@ -38,7 +44,7 @@ export default function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+                    className="text-sm text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -49,17 +55,17 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3 uppercase tracking-wider">문의</h3>
-            <ul className="space-y-2">
+            <h3 className="ed-byline mb-3">Contact</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/contact" className="text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors">
+                <Link href="/contact" className="text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink transition-colors">
                   문의하기
                 </Link>
               </li>
               <li>
                 <a
                   href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
-                  className="text-sm text-orange-500 dark:text-orange-400 hover:underline font-medium"
+                  className="text-orange-600 dark:text-orange-400 hover:underline font-medium"
                 >
                   boheme88@naver.com
                 </a>
@@ -69,9 +75,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/80">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-slate-400 dark:text-slate-500">
-            <p>&copy; 2026 Boheme BlogLab. All rights reserved.</p>
+        <div className="mt-10 pt-6 border-t border-rule-soft">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-ink-faint">
+            <p className="font-display italic">© 2026 Boheme BlogLab. All rights reserved.</p>
             <div className="flex gap-5">
               {[
                 { href: '/about', label: '서비스 소개' },
@@ -82,7 +88,7 @@ export default function Footer() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+                  className="hover:text-ink dark:hover:text-ink transition-colors"
                 >
                   {item.label}
                 </Link>

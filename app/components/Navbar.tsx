@@ -137,40 +137,44 @@ export default function Navbar() {
   const initial = displayName?.charAt(0).toUpperCase() || '?';
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-paper/85 dark:bg-paper/85 backdrop-blur-md border-b border-rule dark:border-rule">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14">
 
-          {/* Logo + 현재 단계 배지 */}
+          {/* Wordmark — magazine-style serif Boheme + sans BlogLab */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm group-hover:shadow-orange-200 dark:group-hover:shadow-orange-800 transition-shadow">
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </div>
-              <span className="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                Boheme <span className="text-orange-500 dark:text-orange-400">BlogLab</span>
+            <Link href="/" className="flex items-baseline gap-1.5 group">
+              <span className="font-display italic font-semibold text-[1.35rem] leading-none text-ink dark:text-ink tracking-tight">
+                Boheme
+              </span>
+              <span className="text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-orange-600 dark:text-orange-400 mb-0.5">
+                BlogLab
               </span>
             </Link>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {/* 핵심 도구 평면 */}
+            {/* 핵심 도구 평면 — editorial: underline-on-active */}
             {CORE_TOOLS.map((t) => {
               const isActive = pathname === t.href;
               return (
                 <Link
                   key={t.href}
                   href={t.href}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                  className={`px-3 py-2 text-sm font-medium relative transition-colors ${
                     isActive
-                      ? 'bg-orange-500 text-white shadow-sm'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'text-ink dark:text-ink'
+                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
                   }`}
                 >
                   {t.label}
+                  <span
+                    aria-hidden
+                    className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
+                      isActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
+                    }`}
+                  />
                 </Link>
               );
             })}
@@ -266,12 +270,12 @@ export default function Navbar() {
                 onClick={() => setCommunityOpen((v) => !v)}
                 aria-expanded={communityOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
+                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium relative transition-colors ${
                   isCommunityActive
-                    ? 'bg-orange-500 text-white shadow-sm'
+                    ? 'text-ink dark:text-ink'
                     : communityOpen
-                      ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'text-ink dark:text-ink'
+                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
                 }`}
               >
                 커뮤니티
@@ -283,6 +287,12 @@ export default function Navbar() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
+                <span
+                  aria-hidden
+                  className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
+                    isCommunityActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
+                  }`}
+                />
               </button>
 
               {communityOpen && (
@@ -315,16 +325,27 @@ export default function Navbar() {
             </div>
 
             {/* 연구실 */}
-            <Link
-              href="/lab"
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
-                pathname === '/lab' || pathname.startsWith('/lab/')
-                  ? 'bg-orange-500 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
-            >
-              연구실
-            </Link>
+            {(() => {
+              const isActive = pathname === '/lab' || pathname.startsWith('/lab/');
+              return (
+                <Link
+                  href="/lab"
+                  className={`px-3 py-2 text-sm font-medium relative transition-colors ${
+                    isActive
+                      ? 'text-ink dark:text-ink'
+                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
+                  }`}
+                >
+                  연구실
+                  <span
+                    aria-hidden
+                    className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
+                      isActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
+                    }`}
+                  />
+                </Link>
+              );
+            })()}
           </div>
 
           {/* Right side: Auth + Dark toggle + Mobile hamburger */}
