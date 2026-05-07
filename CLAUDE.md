@@ -15,6 +15,11 @@
 
 ### 사용자 워크플로우
 
+**홈 — 데일리 대시보드 (Phase 28)**
+- 비로그인: 검색 + 진단 CTA + 전체 인기 키워드 가로 스크롤
+- 로그인: 인사 + 마지막 진단 점수 카드(±delta) + 즐겨찾기 키워드 칩 + 내 분야 인기 키워드
+- 진단 결과는 `diagnose_results` 테이블에 누적 저장되어 변동 추적
+
 **도구 흐름 (8단계)**
 ```
 1.인기검색어 → 2.키워드분석 → 3.상위노출 분석
@@ -22,6 +27,11 @@
 → 5.AI 글쓰기(비로그인 1회/일, 로그인 5회/일)
 → 6.금칙어·맞춤법 → 7.이미지 검색 → 8.이미지 편집
 ```
+
+**블로그 진단 (별도 진입점)**
+- 카테고리 핵심 키워드 30개로 1페이지 진입율 측정
+- 활동성 25% / 노출 50% / 품질 25% → 0~100점 + band(top5/top15/top35/mid/growing)
+- 로그인 시 자동 저장 → 대시보드 점수 카드에 변동 표시
 
 **커뮤니티 (3개 메뉴)**
 - 서이추 해요 — 같은 분야 블로거 매칭 (1일 1글 RLS 강제)
@@ -38,7 +48,7 @@
 | 스타일 | Tailwind CSS v4 (토큰 기반 — `globals.css` `--accent`(orange), `.btn-*`, `.card`, `.input-base`) |
 | 에디터 | Quill 2.x (`app/editor/QuillEditor.tsx`, dynamic import) |
 | 인증 | Supabase Auth (Google OAuth만) |
-| DB | Supabase Postgres + RLS — 8개 테이블 (사용량 2 + 커뮤니티 6) |
+| DB | Supabase Postgres + RLS — 10개 테이블 (사용량 2 + 커뮤니티 6 + 신고 1 + 진단 1) |
 | AI | Anthropic `claude-sonnet-4-6`, max_tokens 4096, prompt caching ON |
 | 외부 API | 네이버 검색광고/오픈API, Pexels, Unsplash, Wikipedia, LanguageTool |
 | 호스팅 | Vercel + Vercel Analytics |
@@ -64,6 +74,7 @@ app/
 │   ├── ui/ — Button, Card, PageHeader, CopyButton, Toast(Provider)
 │   ├── community/ — CategoryChips, NicknameBadge, EmptyState, ConfirmModal,
 │                    Pagination(키보드 ←/→), BoardSkeleton
+│   ├── dashboard/ — TrendingTicker, LatestDiagnoseCard, SavedKeywordsCard (Phase 28)
 │   ├── Navbar.tsx (메가패널 + 커뮤니티 드롭다운)
 │   ├── MobileBottomNav.tsx (md:hidden, 4탭 + 활성 인디케이터)
 │   ├── FlowNav, GuideSection, ThemeProvider, FontLoader, NewsPanel, SpellCheckPanel
@@ -71,30 +82,39 @@ app/
 ├── lib/
 │   ├── supabase/ — client, server, admin(service_role), middleware, useUser
 │   ├── community/ — categories.ts, regions.ts(REGION_CITIES), profile.ts, tips.ts
+│   ├── dashboard/ — types.ts (TrendingItem, DiagnoseLatest, BAND_LABEL, COMMUNITY_TO_TRENDING_CATEGORY)
+│   ├── diagnose/ — category-seeds.ts, naver-blog.ts, scoring.ts
 │   ├── format/ — article-formats.ts, relative-time.ts (formatRelativeKr/Absolute)
 │   └── security/ip-hash.ts — SHA-256(salt+IP), salt 강제
 ├── api/ai-draft/route.ts — POST(생성+한도) / GET(현재 사용량)
+├── api/blog-diagnose/route.ts — POST(진단+자동 저장) / GET(최근 2건+delta)
 ├── trending/ keyword-analysis/ competitor-analysis/ — 1~3단계
 ├── prompt-generator/ ai-writer/ editor/ — 4~6단계
 ├── image-search/ image-tools/ lab/ — 7~8단계 + 연구실
+├── blog-diagnose/ — 진단 페이지
 ├── community/
 │   ├── page.tsx (허브)
 │   ├── swap/ (서이추 + SwapModal)
 │   ├── tips/ (목록/new/[id])
 │   └── companions/ (목록/new/[id])
-├── profile/setup/page.tsx (닉네임 등록·수정)
+├── profile/setup/page.tsx (닉네임 등록·수정 + 즐겨찾기 키워드 관리)
+├── page.tsx — 데일리 대시보드 홈 (useUser 분기, AnonHero/LoggedInHero)
 ├── manifest.ts (PWA)
 └── layout.tsx (ThemeProvider > ToastProvider)
 
 middleware.ts — Supabase 세션 갱신
 supabase/migrations/
-  0001 ai_draft_usage     — 로그인 AI 한도
-  0002 anon_draft_usage   — 비로그인 AI 한도 (IP 해시)
-  0003 profiles           — 닉네임/blog_url/category, 24h cooldown 트리거
-  0004 swap_posts         — RLS INSERT에 1일 1글 sub-select
-  0005 tips               — posts/comments/likes + count trigger + 조회수 RPC
-  0006 companions         — region + visit_date 검증 RLS
+  0001 ai_draft_usage        — 로그인 AI 한도
+  0002 anon_draft_usage      — 비로그인 AI 한도 (IP 해시)
+  0003 profiles              — 닉네임/blog_url/category, 24h cooldown 트리거
+  0004 swap_posts            — RLS INSERT에 1일 1글 sub-select
+  0005 tips                  — posts/comments/likes + count trigger + 조회수 RPC
+  0006 companions            — region + visit_date 검증 RLS
   0007 companion_region_city — 시·군·구 컬럼 추가
+  0008 rate_limits           — 커뮤니티 작성 RLS sub-select rate-limit
+  0009 reports_and_moderation — 신고 5건 누적 → 자동 숨김
+  0010 user_presets          — profiles.prompt_preset(jsonb) + saved_keywords(text[])
+  0011 diagnose_results      — 진단 결과 누적 저장 (RLS, 24h 20건 cap)
 supabase/diagnose_community.sql — 정책·테이블 점검 헬퍼
 ```
 
@@ -118,7 +138,7 @@ supabase/diagnose_community.sql — 정책·테이블 점검 헬퍼
 ### 메뉴 구조 (확정)
 ```
 [Desktop Navbar]
-키워드분석  AI 글쓰기  에디터  모든 도구 ▼  커뮤니티 ▼  연구실
+블로그 진단  키워드분석  AI 글쓰기  에디터  모든 도구 ▼  커뮤니티 ▼  연구실
 
 키워드 리서치 ▼  글쓰기 ▼          이미지 ▼          커뮤니티 ▼
 ├ 인기검색어   ├ 프롬프트 생성   ├ 이미지 검색      ├ 서이추 해요
@@ -190,6 +210,7 @@ supabase/diagnose_community.sql — 정책·테이블 점검 헬퍼
 - 커뮤니티 작성 시 `code: 42501` → RLS 차단 (1일 1글 한도 또는 본인 아님)
 - 커뮤니티 작성 시 `code: 42P01` → 테이블 없음 (마이그레이션 미실행)
 - 로그인 후 redirect_uri_mismatch → Google Cloud OAuth Client redirect URI 확인
+- 대시보드 진단 카드가 빈 상태로만 보임 → `0011_diagnose_results.sql` 미실행 (저장이 swallow되어 GET이 `latest:null` 반환). Supabase SQL Editor에서 실행하면 즉시 정상화.
 
 ---
 
@@ -199,7 +220,8 @@ supabase/diagnose_community.sql — 정책·테이블 점검 헬퍼
 2. 본 CLAUDE.md는 이미 자동 로드된 상태
 3. 새 기능 개발 요청 시:
    - **기존 컴포넌트 재사용**: Button, PageHeader, Card, CopyButton, FlowNav, GuideSection, Toast(useToast), Pagination, BoardSkeleton, EmptyState, CategoryChips, ConfirmModal
-   - **유틸 재사용**: `formatRelativeKr / formatAbsoluteKr` (`lib/format/relative-time.ts`), `markdownToHtml` (`lib/format/article-formats.ts`), `fetchMyProfile / fetchProfileByUserId` (`lib/community/profile.ts`)
+   - **대시보드 위젯 재사용**: `TrendingTicker`, `LatestDiagnoseCard`, `SavedKeywordsCard` (`app/components/dashboard/`)
+   - **유틸 재사용**: `formatRelativeKr / formatAbsoluteKr` (`lib/format/relative-time.ts`), `markdownToHtml` (`lib/format/article-formats.ts`), `fetchMyProfile / fetchProfileByUserId` (`lib/community/profile.ts`), `clientFetchJson` (`lib/clientFetch.ts`)
    - **`useUser()` 훅**으로 사용자 정보
    - **목록 페이지 패턴**: sticky top-14 필터 + BoardSkeleton + Pagination + visibility refetch
    - **상세 페이지 패턴**: `max-w-3xl` + 작성자 메타 (아바타 + 분야 칩 + 블로그 링크)

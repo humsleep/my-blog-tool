@@ -8,6 +8,19 @@
 
 ## ✨ 주요 기능
 
+### 🏠 데일리 대시보드 홈
+
+들어오자마자 **오늘의 작업이 보이는 화면**.
+
+- **로그인 사용자**: "{닉네임}님, 오늘도 데이터로 시작해볼까요?" 인사 + 마지막 진단 점수 카드(직전 진단 대비 ±delta) + 즐겨찾기 키워드 칩 + 내 분야 인기 키워드 가로 스크롤
+- **비로그인 사용자**: 검색창 + 진단 CTA + 전체 인기 키워드 가로 스크롤
+- 진단 점수는 누적 저장(`diagnose_results` 테이블)되어 다시 진단할 때마다 변동을 보여줍니다 (Phase 28).
+
+### 🩺 블로그 진단
+
+네이버 블로그 RSS + 카테고리 핵심 키워드 30개로 1페이지 진입율을 측정해 **활동성 25% / 노출 50% / 품질 25%** 가중평균으로 0~100점 산출. band: top5 / top15 / top35 / mid / growing.
+로그인 시 진단 이력이 자동 저장되어 대시보드에서 점수 변화를 추적할 수 있습니다.
+
 ### 🛠️ 도구 (8단계 워크플로우)
 
 | 단계 | 메뉴 | 설명 |
@@ -88,13 +101,17 @@ Supabase 대시보드 → SQL Editor 에서 순서대로 실행:
 
 ```
 supabase/migrations/
-├── 0001_ai_draft_usage.sql        # 로그인 AI 한도
-├── 0002_anon_draft_usage.sql      # 비로그인 AI 한도 (IP 해시)
-├── 0003_profiles.sql              # 닉네임/블로그URL/분야 + 24h cooldown
-├── 0004_swap_posts.sql            # 서이추 + 1일 1글 RLS
-├── 0005_tips.sql                  # 정보 공유 + 댓글 + 좋아요
-├── 0006_companions.sql            # 체험단 동행
-└── 0007_companion_region_city.sql # 시·군·구 컬럼
+├── 0001_ai_draft_usage.sql           # 로그인 AI 한도
+├── 0002_anon_draft_usage.sql         # 비로그인 AI 한도 (IP 해시)
+├── 0003_profiles.sql                 # 닉네임/블로그URL/분야 + 24h cooldown
+├── 0004_swap_posts.sql               # 서이추 + 1일 1글 RLS
+├── 0005_tips.sql                     # 정보 공유 + 댓글 + 좋아요
+├── 0006_companions.sql               # 체험단 동행
+├── 0007_companion_region_city.sql    # 시·군·구 컬럼
+├── 0008_rate_limits.sql              # 커뮤니티 작성 rate-limit 강화
+├── 0009_reports_and_moderation.sql   # 신고·자동 숨김
+├── 0010_user_presets.sql             # prompt_preset + saved_keywords
+└── 0011_diagnose_results.sql         # 블로그 진단 결과 누적 저장 (Phase 28)
 ```
 
 문제 발생 시 `supabase/diagnose_community.sql`로 정책·테이블 점검.
@@ -124,7 +141,7 @@ npx tsc --noEmit
 | 스타일 | Tailwind CSS v4 (CSS 토큰 기반) |
 | 에디터 | Quill 2.x |
 | 인증 | Supabase Auth (Google OAuth) |
-| DB | Supabase Postgres + RLS (8개 테이블) |
+| DB | Supabase Postgres + RLS (사용량 2 + 커뮤니티 6 + 리포트 1 + 진단 1 = 10개 테이블) |
 | AI | Anthropic Claude Sonnet 4.6 |
 | 호스팅 | Vercel + Vercel Analytics |
 | PWA | manifest.ts + 하단 탭바 + safe-area |
@@ -141,6 +158,7 @@ npx tsc --noEmit
 
 - **컨셉컬러**: 주황 `#f97316` (light) / `#fdba74` (dark)
 - **공통 컴포넌트**: `Button`, `Card`, `PageHeader`, `Toast`, `Pagination`, `BoardSkeleton`, `EmptyState`, `CategoryChips`, `ConfirmModal`, `MobileBottomNav`
+- **대시보드 위젯**: `TrendingTicker`, `LatestDiagnoseCard`, `SavedKeywordsCard` (`app/components/dashboard/`)
 - **공통 유틸**: `formatRelativeKr`, `markdownToHtml`, `fetchMyProfile`
 
 ---
