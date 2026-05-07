@@ -136,30 +136,50 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── First-visit Quick Start banner ──────────────────────── */}
+      {/* ── Two entry banners — 처음 방문자 / 운영 중인 블로거 ───── */}
       <section className="border-b border-rule bg-paper-deep">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-rule-soft border border-rule-soft">
+            {/* 처음 오셨나요 — Quick Start */}
+            <div className="bg-paper p-8 sm:p-10">
               <div className="ed-eyebrow mb-3">처음 오셨나요</div>
-              <h2 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-[1.1] tracking-tight text-ink mb-3">
-                3분이면 첫 글 1편이 완성됩니다.
+              <h2 className="font-display text-[1.5rem] sm:text-[2rem] leading-[1.15] tracking-tight text-ink mb-3">
+                3분이면 첫 글<br />1편이 완성됩니다.
               </h2>
-              <p className="text-base text-ink-muted leading-[1.7] max-w-[58ch]">
-                키워드 한 단어, 분야와 어투만 골라주시면 AI가 본문을 작성합니다. 8단계 정밀 모드는 그 다음에 익혀도 늦지 않아요.
+              <p className="text-sm text-ink-muted leading-[1.7] mb-5 max-w-[42ch]">
+                키워드 한 단어, 분야와 어투만 골라주시면 AI가 본문을 작성합니다.
               </p>
-            </div>
-            <div className="lg:col-span-5 flex flex-col gap-3 lg:items-end">
               <Link
                 href="/start"
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-ink text-paper text-base font-semibold tracking-wide hover:bg-orange-600 transition-colors w-full lg:w-auto"
+                className="inline-flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-ink hover:text-orange-600 dark:hover:text-orange-400 border-b-2 border-ink hover:border-orange-600 dark:hover:border-orange-400 pb-1 transition-colors"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                지금 시작하기
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
-                지금 시작하기 — 3분 미니 모드
               </Link>
-              <span className="text-xs text-ink-faint">회원가입 없이 무료 1회 · 로그인 시 5회/일</span>
+              <span className="block mt-3 text-[11px] text-ink-faint">회원가입 없이 무료 1회 · 로그인 시 5회/일</span>
+            </div>
+
+            {/* 이미 운영 중이세요 — Blog Diagnose */}
+            <div className="bg-paper p-8 sm:p-10">
+              <div className="ed-eyebrow mb-3">이미 운영 중이세요</div>
+              <h2 className="font-display text-[1.5rem] sm:text-[2rem] leading-[1.15] tracking-tight text-ink mb-3">
+                내 블로그는 카테고리<br />상위 몇 %일까요?
+              </h2>
+              <p className="text-sm text-ink-muted leading-[1.7] mb-5 max-w-[42ch]">
+                활동성·노출·품질 3개 축으로 점수를 매기고 약점을 찾아드립니다. 한 달에 한 번이면 충분해요.
+              </p>
+              <Link
+                href="/blog-diagnose"
+                className="inline-flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-ink hover:text-orange-600 dark:hover:text-orange-400 border-b-2 border-ink hover:border-orange-600 dark:hover:border-orange-400 pb-1 transition-colors"
+              >
+                내 블로그 진단하기
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+              <span className="block mt-3 text-[11px] text-ink-faint">RSS·키워드 30개 분석 · 30~50초</span>
             </div>
           </div>
         </div>
