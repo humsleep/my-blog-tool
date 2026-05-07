@@ -40,79 +40,109 @@ async function getPosts(): Promise<Post[]> {
 export default async function LabPage() {
   const posts = await getPosts();
 
+  // 첫 번째 글은 "표지 기사"로 크게, 나머지는 매거진 그리드로
+  const [coverPost, ...restPosts] = posts;
+
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">포스팅 연구실</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400">
-            블로그 포스팅 관련 연구와 실험 결과를 공유합니다.
-          </p>
+    <div className="min-h-screen">
+      {/* Masthead */}
+      <div className="border-b border-rule">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+          <span>포스팅 연구실 — Lab Notes</span>
+          <span>실험 · 데이터 · 인사이트</span>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        {/* Section title */}
+        <header className="mb-12">
+          <div className="ed-eyebrow mb-4">Issue notes</div>
+          <h1 className="font-display text-[2.5rem] sm:text-[4rem] lg:text-[5rem] leading-[0.95] tracking-tight text-ink mb-4">
+            포스팅 연구실
+          </h1>
+          <p className="font-display italic text-lg sm:text-xl text-ink-muted max-w-[58ch]">
+            가설을 세우고, 같은 조건에서 변수를 바꿔 발행해 보고, 결과를 측정해 정리합니다. 블로그 운영의 &lsquo;카더라&rsquo;를 데이터로 검증하는 노트.
+          </p>
+        </header>
+
+        <hr className="ed-rule mb-12" />
 
         {posts.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-8 text-center shadow-sm">
-            <p className="text-slate-500 dark:text-slate-400">아직 작성된 포스트가 없습니다.</p>
-            <p className="text-sm text-slate-400 dark:text-slate-500 mt-2">
-              public/posts/posts.json 파일에 포스트를 추가하세요.
-            </p>
+          <div className="border border-rule-soft p-12 text-center">
+            <p className="text-ink-muted">아직 작성된 포스트가 없습니다.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => {
-              const imagePath = `/posts/images/${post.slug}.png`;
-              
-              return (
+          <>
+            {/* Cover article — large feature treatment */}
+            {coverPost && (
+              <Link
+                href={`/lab/${coverPost.slug}`}
+                className="group block mb-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border-b border-rule pb-16"
+              >
+                <div className="lg:col-span-7 relative w-full aspect-[3/2] bg-paper-deep border border-rule-soft overflow-hidden">
+                  <PostImage src={`/posts/images/${coverPost.slug}.png`} alt={coverPost.title} />
+                </div>
+                <div className="lg:col-span-5">
+                  <div className="ed-eyebrow mb-4">Cover Story</div>
+                  <h2 className="font-display text-[1.875rem] sm:text-[2.5rem] lg:text-[3rem] leading-[1.05] tracking-tight text-ink mb-4 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    {coverPost.title}
+                  </h2>
+                  {coverPost.description && (
+                    <p className="text-base text-ink-muted leading-[1.75] mb-5">
+                      {coverPost.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between border-t border-rule-soft pt-4">
+                    {coverPost.date && (
+                      <time dateTime={coverPost.date} className="ed-byline">
+                        {new Date(coverPost.date).toLocaleDateString('ko-KR', {
+                          year: 'numeric', month: 'long', day: 'numeric',
+                        })}
+                      </time>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-orange-600 dark:group-hover:text-orange-400 border-b border-ink group-hover:border-orange-600 dark:group-hover:border-orange-400 pb-0.5 transition-colors">
+                      읽기
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            )}
+
+            {/* Index */}
+            <div className="ed-eyebrow mb-6">In This Issue — 그 외 기사</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
+              {restPosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/lab/${post.slug}`}
-                  className="group block bg-white dark:bg-slate-800/80 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                  className="group block border-t border-rule pt-5"
                 >
-                  {/* 이미지 영역 */}
-                  <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-700 overflow-hidden">
-                    <PostImage src={imagePath} alt={post.title} />
+                  {/* image as a thin top accent */}
+                  <div className="relative w-full aspect-[16/9] bg-paper-deep border border-rule-soft overflow-hidden mb-5">
+                    <PostImage src={`/posts/images/${post.slug}.png`} alt={post.title} />
                   </div>
-                  
-                  {/* 콘텐츠 영역 */}
-                  <div className="p-5">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 line-clamp-2 group-hover:text-orange-500 dark:group-hover:text-orange-400 transition-colors">
-                      {post.title}
-                    </h2>
-                    {post.description && (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-3 line-clamp-2">
-                        {post.description}
-                      </p>
-                    )}
-                    {post.date && (
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mb-3">
-                        {new Date(post.date).toLocaleDateString('ko-KR', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </p>
-                    )}
-                    <div className="flex items-center text-orange-500 dark:text-orange-400 text-sm font-medium mt-4">
-                      <span>자세히 보기</span>
-                      <svg
-                        className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
+                  <h2 className="font-display text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    {post.title}
+                  </h2>
+                  {post.description && (
+                    <p className="text-sm text-ink-muted leading-[1.7] mb-4 line-clamp-3">
+                      {post.description}
+                    </p>
+                  )}
+                  {post.date && (
+                    <time dateTime={post.date} className="ed-byline">
+                      {new Date(post.date).toLocaleDateString('ko-KR', {
+                        year: 'numeric', month: 'long', day: 'numeric',
+                      })}
+                    </time>
+                  )}
                 </Link>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* 가이드 콘텐츠 */}

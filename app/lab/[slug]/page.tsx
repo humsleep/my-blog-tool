@@ -67,68 +67,76 @@ export default async function PostPage({
   }
 
   const htmlContent = await getPostContent(post.filename);
-
-  // HTML에서 body 내용만 추출
   const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*)<\/body>/i);
   const content = bodyMatch ? bodyMatch[1] : htmlContent;
 
-  // 목록으로 돌아가기 버튼 컴포넌트
-  const BackButton = () => (
-    <Link
-      href="/lab"
-      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
-    >
-      <svg
-        className="w-5 h-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-      <span>목록으로 돌아가기</span>
-    </Link>
-  );
-
   return (
-    <div className="bg-gray-50 min-h-screen py-4 sm:py-6 md:py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            {post.title}
-          </h1>
-          {post.date && (
-            <div className="flex items-center text-sm text-gray-500">
-              <time dateTime={post.date}>
-                {new Date(post.date).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-            </div>
-          )}
-        </div>
-
-        {/* Post Content */}
-        <article className="bg-white rounded-lg shadow-md border border-gray-100 p-6 sm:p-8">
-          <div
-            className="prose prose-sm sm:prose-base max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-li:text-gray-700 prose-strong:text-gray-900 prose-code:text-blue-600 prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        </article>
-
-        {/* 하단 Back Button */}
-        <div className="mt-8 flex justify-center">
-          <BackButton />
+    <div className="min-h-screen">
+      {/* Magazine masthead */}
+      <div className="border-b border-rule">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
+          <Link href="/lab" className="hover:text-ink transition-colors">
+            ← 포스팅 연구실
+          </Link>
+          <span>Lab Notes — 본문</span>
         </div>
       </div>
+
+      <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+        {/* Headline */}
+        <header className="mb-10">
+          <div className="ed-eyebrow mb-5">Article</div>
+          <h1 className="font-display text-[2rem] sm:text-[3rem] lg:text-[3.75rem] leading-[1.05] tracking-tight text-ink mb-6">
+            {post.title}
+          </h1>
+          {post.description && (
+            <p className="font-display italic text-lg sm:text-xl text-ink-muted leading-[1.6] mb-6">
+              {post.description}
+            </p>
+          )}
+          <div className="flex items-center justify-between border-y border-rule py-3">
+            {post.date ? (
+              <time dateTime={post.date} className="ed-byline">
+                {new Date(post.date).toLocaleDateString('ko-KR', {
+                  year: 'numeric', month: 'long', day: 'numeric',
+                })}
+              </time>
+            ) : (
+              <span className="ed-byline">Boheme BlogLab Editorial</span>
+            )}
+            <span className="ed-byline">— Lab Notes —</span>
+          </div>
+        </header>
+
+        {/* Body — original HTML kept as-is, but enclosed in editorial prose styling */}
+        <div
+          className="ed-article-body prose prose-lg max-w-none
+            prose-headings:font-display prose-headings:text-ink prose-headings:font-semibold
+            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:tracking-tight
+            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+            prose-p:text-ink-muted prose-p:leading-[1.85]
+            prose-strong:text-orange-700 dark:prose-strong:text-orange-400 prose-strong:font-semibold
+            prose-em:text-ink prose-em:not-italic prose-em:font-medium
+            prose-a:text-orange-600 dark:prose-a:text-orange-400 prose-a:no-underline hover:prose-a:underline
+            prose-ul:text-ink-muted prose-li:my-1
+            prose-hr:border-rule-soft"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+
+        {/* Closing rule + back link */}
+        <div className="mt-20 pt-8 border-t border-rule">
+          <div className="ed-ornament mb-8">— END —</div>
+          <Link
+            href="/lab"
+            className="inline-flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-ink hover:text-orange-600 dark:hover:text-orange-400 border-b border-ink hover:border-orange-600 dark:hover:border-orange-400 pb-0.5 transition-colors"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            전체 기사 목록
+          </Link>
+        </div>
+      </article>
     </div>
   );
 }
-
