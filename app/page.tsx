@@ -136,6 +136,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── First-visit Quick Start banner ──────────────────────── */}
+      <section className="border-b border-rule bg-paper-deep">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7">
+              <div className="ed-eyebrow mb-3">처음 오셨나요</div>
+              <h2 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-[1.1] tracking-tight text-ink mb-3">
+                3분이면 첫 글 1편이 완성됩니다.
+              </h2>
+              <p className="text-base text-ink-muted leading-[1.7] max-w-[58ch]">
+                키워드 한 단어, 분야와 어투만 골라주시면 AI가 본문을 작성합니다. 8단계 정밀 모드는 그 다음에 익혀도 늦지 않아요.
+              </p>
+            </div>
+            <div className="lg:col-span-5 flex flex-col gap-3 lg:items-end">
+              <Link
+                href="/start"
+                className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-ink text-paper text-base font-semibold tracking-wide hover:bg-orange-600 transition-colors w-full lg:w-auto"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                지금 시작하기 — 3분 미니 모드
+              </Link>
+              <span className="text-xs text-ink-faint">회원가입 없이 무료 1회 · 로그인 시 5회/일</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── 4-step Lede article ──────────────────────────────────── */}
       <section className="border-b border-rule">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
