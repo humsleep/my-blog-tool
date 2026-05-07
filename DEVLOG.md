@@ -5,6 +5,59 @@
 
 ---
 
+## 2026-05-07 — Phase 27: Modern SaaS Analytics 재설계 (매거진 톤 폐기)
+
+**배경**: Phase 23(매거진 에디토리얼)이 분석 사이트의 기능과 안 맞는다는 사용자 피드백. 매거진 톤은 "한 번 읽고 가는" 콘텐츠 사이트용이고, 본 프로젝트는 "매번 데이터를 보고 행동하는" 분석·작업 도구라 데이터가 주인공이 되어야 한다는 진단. 사용자가 4개 옵션 중 ① Modern SaaS Analytics (Linear/Vercel/Stripe 계열)를 선택해 전면 교체.
+
+### 핵심 결정
+- **타입**: Pretendard 단일 (디스플레이 세리프 IBM Plex Serif + Noto Serif KR 제거)
+- **컬러**: 흰 종이 → 순백/zinc-950 dark, 잉크 → zinc-950, 주황 액센트 유지, 차트용 status 4종 추가
+- **카드**: 8px radius + 1px hairline + shadow-xs (rgba(0,0,0,0.04))
+- **장식**: 마스트헤드·이탤릭·풀쿼트·§ 마크·종이 노이즈·드롭 캡 모두 폐기
+
+### 변경 요약
+**`app/globals.css` 전면 재작성**
+- 토큰 재정의: `--bg-base` zinc-50 / `--bg-surface` 흰색 / `--text-primary` zinc-950 / `--border` zinc-200
+- 다크 모드: `--bg-base` zinc-950 / `--bg-surface` zinc-900 / 텍스트 zinc-50 → zinc-400 (WCAG AA 준수)
+- 새 유틸리티: `.kpi-card`/`.kpi-label`/`.kpi-value`/`.kpi-delta(positive/negative/neutral)`, `.panel`/`.panel-header`/`.panel-body`, `.pill-{success,warning,danger,info,accent,neutral}`, `.tabular`
+- Phase 23 잔재 호환 별칭: `.ed-eyebrow` / `.ed-display` / `.ed-byline` / `.ed-rule` / `.ed-ornament` / `.ed-dropcap` 모두 SaaS 톤으로 자동 매핑 (italic·ornament 라인 제거, plain uppercase 라벨로 변경)
+- `.text-ink*` / `.bg-paper*` / `.border-rule*` 별칭 유지로 미수정 페이지도 자연스럽게 SaaS 톤
+- @theme의 slate→베이지 매핑 모두 제거 → Tailwind 기본 cool slate 복귀
+- body의 종이 grain SVG 배경 제거
+
+**`app/layout.tsx`**
+- IBM Plex Serif + Noto Serif KR 로드 제거. Pretendard 단일.
+
+**공통 컴포넌트**
+- `PageHeader`: hairline rule·italic·세리프 모두 제거 → pill 라벨 + sans-serif H1 + 회색 subtitle
+- `Navbar`: italic serif 워드마크 → 8px 라운드 오렌지 박스 + Pretendard "Boheme​BlogLab"; active 상태를 underline → orange-50 soft 배경(`bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300`); 드롭다운 패널은 모서리 둥근 흰색 카드 + shadow-lg
+- `Footer`: 매거진 Colophon 제거, 표준 3-col SaaS 푸터 (소개/도구/문의)
+- `MobileBottomNav`: 상단 2px 룰 인디케이터 제거, 액센트는 텍스트 색만
+
+**`app/page.tsx` 전면 재작성**
+- 매거진 마스트헤드·italic 헤드라인·풀쿼트·§ 마크 모두 제거
+- 새 구조:
+  1. Hero — 짧은 타이틀 + 검색 input(쇼우 + 액센트 보더) + 2차 CTA(블로그 진단 / 3분 미니)
+  2. 핵심 도구 4개 KPI 스타일 카드 (Diagnose 강조, ring 효과)
+  3. 8단계 워크플로우 4-col 그리드 (큰 번호 + 짧은 라벨)
+  4. FAQ — 둥근 카드 안 details 리스트
+  5. 클로징 CTA — 흰 배경 + 두 버튼
+
+**도구·콘텐츠 페이지 일괄 정리**
+- `/blog-diagnose`, `/start`, `/lab`, `/lab/[slug]`, `/community` 마스트헤드 + italic 잔재 sed 일괄 제거
+- 거대 디스플레이 헤드라인 다운: `text-[5rem]`→`text-3xl sm:text-4xl`, `text-[7rem]`(총점)→`text-6xl`, `text-[2.5rem]`→`text-2xl sm:text-3xl`
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+- 회귀 위험: 페이지마다 `text-ink-*`/`bg-paper*`/`border-rule*` 사용분이 호환 별칭으로 자동 매핑되어 깨짐 없음
+
+### 후속 권장
+- `.ed-*` 호환 별칭은 매거진 → SaaS 이행기 호환용. 다음 phase에서 페이지별로 `text-slate-900`/`text-slate-600` 같은 표준 Tailwind 클래스로 점진 이주 권장
+- 진단 결과 페이지(`/blog-diagnose`)의 점수 표시를 KPI 카드(`.kpi-card`/`.kpi-value`)로 정밀 정돈하면 차이 더 큼
+- 차트 라이브러리(예: Tremor) 도입 검토 — 진단 결과의 3축 점수를 막대/링 차트로 표현하면 SaaS 분석 도구 톤이 완성됨
+
+---
+
 ## 2026-05-07 — Phase 26.1: 메뉴 재정리 (내 블로그 폐기 + 블로그 진단 우선)
 
 **배경**: Phase 25 직후 사용자 피드백 — "내 블로그" 드롭다운은 진단 기능을 한 단계 더 숨기는 효과만 있었고, 즐겨찾기 키워드는 본질적으로 프로필 영역. 두 항목을 분리해 더 직관적으로 정리.
