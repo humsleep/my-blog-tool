@@ -97,25 +97,17 @@ export default function BlogDiagnosePage() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Masthead */}
-      <div className="border-b border-rule">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
-          <Link href="/" className="hover:text-ink transition-colors">← 홈</Link>
-          <span>내 블로그 진단 — Diagnostic</span>
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* ─── INPUT ──────────────────────────────────────────────── */}
         {step === 'input' && (
           <div>
             <div className="ed-eyebrow mb-6">My Blog</div>
-            <h1 className="font-display text-[2rem] sm:text-[3rem] leading-[1.05] tracking-tight text-ink mb-4">
+            <h1 className="text-[2rem] sm:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4">
               내 블로그는<br />
-              <span className="italic text-ink-muted">카테고리 상위 몇 %일까?</span>
+              <span className="text-slate-500 dark:text-slate-400">카테고리 상위 몇 %일까?</span>
             </h1>
-            <p className="font-display italic text-base sm:text-lg text-ink-muted mb-10 leading-[1.7]">
+            <p className="text-base sm:text-lg text-ink-muted mb-10 leading-[1.7]">
               네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드립니다.
             </p>
 
@@ -130,7 +122,7 @@ export default function BlogDiagnosePage() {
                   onChange={(e) => setBlogInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && blogInput.trim() && category) submit(); }}
                   placeholder="https://blog.naver.com/myblog  또는  myblog"
-                  className="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-rule text-ink text-xl sm:text-2xl font-display placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
+                  className="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-rule text-ink text-xl sm:text-2xl placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
                 />
                 <p className="mt-2 text-xs text-ink-faint">
                   RSS가 공개된 네이버 블로그만 진단 가능합니다.
@@ -152,7 +144,7 @@ export default function BlogDiagnosePage() {
                           : 'bg-paper hover:bg-paper-deep'
                       }`}
                     >
-                      <div className={`font-display text-sm font-semibold ${category === c.value ? 'text-paper' : 'text-ink'}`}>
+                      <div className={`text-sm font-semibold ${category === c.value ? 'text-paper' : 'text-ink'}`}>
                         {c.label}
                       </div>
                     </button>
@@ -196,10 +188,10 @@ export default function BlogDiagnosePage() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
             </div>
-            <h1 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-tight text-ink mb-4">
+            <h1 className="text-[1.75rem] sm:text-2xl sm:text-3xl leading-tight text-ink mb-4">
               블로그를 분석하고 있어요
             </h1>
-            <p className="font-display italic text-lg text-ink-muted mb-8">{PROGRESS_BEATS[progressBeat]}…</p>
+            <p className="text-lg text-ink-muted mb-8">{PROGRESS_BEATS[progressBeat]}…</p>
 
             <div className="max-w-md mx-auto space-y-2 text-left">
               {PROGRESS_BEATS.map((beat, i) => (
@@ -224,7 +216,7 @@ export default function BlogDiagnosePage() {
             {/* Header */}
             <div className="ed-eyebrow mb-4">진단 결과</div>
             <div className="flex items-baseline justify-between flex-wrap gap-4 mb-6">
-              <h1 className="font-display text-[1.75rem] sm:text-[2.5rem] tracking-tight text-ink">
+              <h1 className="text-[1.75rem] sm:text-2xl sm:text-3xl tracking-tight text-ink">
                 {result.blogTitle || result.blogId}
               </h1>
               <a href={result.blogLink} target="_blank" rel="noopener noreferrer" className="text-xs text-ink-faint hover:text-ink underline-offset-2 hover:underline">
@@ -235,12 +227,12 @@ export default function BlogDiagnosePage() {
             {/* Total + band */}
             <div className="border-y border-rule py-10 mb-12 text-center">
               <div className="ed-byline mb-3">총점</div>
-              <div className="font-display text-[5rem] sm:text-[7rem] leading-none text-ink mb-2">{result.score.total}</div>
+              <div className="text-3xl sm:text-4xl sm:text-6xl leading-none text-ink mb-2">{result.score.total}</div>
               <div className="text-ink-faint mb-4">/ 100</div>
-              <div className={`font-display text-xl sm:text-2xl ${BAND_LABELS[result.score.band].tone}`}>
+              <div className={`text-xl sm:text-2xl ${BAND_LABELS[result.score.band].tone}`}>
                 {BAND_LABELS[result.score.band].label}
               </div>
-              <p className="mt-2 text-sm text-ink-muted italic">{BAND_LABELS[result.score.band].desc}</p>
+              <p className="mt-2 text-sm text-ink-muted">{BAND_LABELS[result.score.band].desc}</p>
               <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                 {result.categoryLabel} · {result.keywordCount}개 키워드 분석
               </p>
@@ -289,7 +281,7 @@ export default function BlogDiagnosePage() {
                 <ol className="space-y-4 border-y border-rule py-6">
                   {result.score.insights.map((ins, i) => (
                     <li key={i} className="flex gap-4">
-                      <span className="font-display italic text-orange-600 dark:text-orange-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
+                      <span className="text-orange-600 dark:text-orange-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
                       <span className="text-base text-ink-muted leading-[1.7]">{ins}</span>
                     </li>
                   ))}
@@ -305,7 +297,7 @@ export default function BlogDiagnosePage() {
                   {result.score.visibility.hits.map((h) => (
                     <div key={h.keyword} className="flex justify-between items-baseline py-1.5 border-b border-rule-soft last:border-b-0">
                       <span className="text-sm text-ink-muted truncate pr-3">{h.keyword}</span>
-                      <span className={`text-sm font-display tabular-nums flex-shrink-0 ${
+                      <span className={`text-sm tabular-nums flex-shrink-0 ${
                         h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
                       }`}>
                         {h.rank === null ? '—' : `${h.rank}위`}
@@ -355,7 +347,7 @@ export default function BlogDiagnosePage() {
             <div className="ed-eyebrow justify-center inline-flex mb-4" style={{ color: 'var(--danger)' }}>
               오류 발생
             </div>
-            <h1 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-tight text-ink mb-3">
+            <h1 className="text-[1.75rem] sm:text-2xl sm:text-3xl leading-tight text-ink mb-3">
               진단을 완료하지 못했어요
             </h1>
             <p className="text-ink-muted mb-8 max-w-md mx-auto">{error}</p>
@@ -382,10 +374,10 @@ function ScoreCard({
   return (
     <div className="bg-paper p-6">
       <div className="flex items-baseline justify-between mb-3">
-        <span className="font-display text-base font-semibold text-ink">{label}</span>
+        <span className="text-base font-semibold text-ink">{label}</span>
         <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">{weight}</span>
       </div>
-      <div className="font-display text-4xl text-ink leading-none mb-4 tabular-nums">{score}<span className="text-base text-ink-faint ml-1">/100</span></div>
+      <div className="text-4xl text-ink leading-none mb-4 tabular-nums">{score}<span className="text-base text-ink-faint ml-1">/100</span></div>
       <dl className="space-y-1.5 text-xs border-t border-rule-soft pt-3">
         {rows.map((r) => (
           <div key={r.k} className="flex justify-between">

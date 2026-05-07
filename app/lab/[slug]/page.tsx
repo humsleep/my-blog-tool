@@ -86,11 +86,11 @@ export default async function PostPage({
         {/* Headline */}
         <header className="mb-10">
           <div className="ed-eyebrow mb-5">Article</div>
-          <h1 className="font-display text-[2rem] sm:text-[3rem] lg:text-[3.75rem] leading-[1.05] tracking-tight text-ink mb-6">
+          <h1 className="text-[2rem] sm:text-2xl sm:text-3xl lg:text-3xl leading-[1.05] tracking-tight text-ink mb-6">
             {post.title}
           </h1>
           {post.description && (
-            <p className="font-display italic text-lg sm:text-xl text-ink-muted leading-[1.6] mb-6">
+            <p className="text-lg sm:text-xl text-ink-muted leading-[1.6] mb-6">
               {post.description}
             </p>
           )}
@@ -111,7 +111,7 @@ export default async function PostPage({
         {/* Body — original HTML kept as-is, but enclosed in editorial prose styling */}
         <div
           className="ed-article-body prose prose-lg max-w-none
-            prose-headings:font-display prose-headings:text-ink prose-headings:font-semibold
+            prose-headings:prose-headings:text-ink prose-headings:font-semibold
             prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:tracking-tight
             prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
             prose-p:text-ink-muted prose-p:leading-[1.85]

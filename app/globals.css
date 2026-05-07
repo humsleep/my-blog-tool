@@ -4,148 +4,136 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────────────
- * Boheme BlogLab — Editorial Magazine Theme (Phase 23)
+ * Boheme BlogLab — Modern SaaS Analytics Theme (Phase 27)
  *
- *   Tone:        한국 매거진 에디토리얼
- *   Headline:    Noto Serif KR (Google Fonts) → 한글 세리프 / 영문은 Plex Serif
- *   Body:        Pretendard
- *   Color:       종이 베이지 + 잉크 검정 + 주황 액센트
- *   Card style:  외곽선 1px만 (no shadow, no radial gradient)
- *   Background:  미세 노이즈가 깔린 따뜻한 종이
+ *   Tone:        Linear / Vercel / Stripe 계열 — 데이터 위주, 장식 최소화
+ *   Typography:  Pretendard 단일 (디스플레이 세리프 제거)
+ *                  h1 SemiBold 24~36px / h2 SemiBold 22~28px / body 14~15px
+ *   Color:       white/zinc + 주황 포인트 액센트 + 차트용 status (녹/주황/빨강)
+ *   Card:        8px radius + 1px hairline + 미세 그림자 (rgba(0,0,0,0.04))
+ *   Background:  순백/다크 zinc — 종이 노이즈·그라디언트 모두 제거
  * ─────────────────────────────────────────────────────────────────────
  */
 
 :root {
-  /* ── Editorial token primitives ── */
-  --paper:          #faf7f2;   /* magazine paper (warm beige) */
-  --paper-deep:     #f3ede3;   /* slightly deeper for elevated/divider */
-  --paper-edge:     #e7e0d2;   /* thin rule */
-  --ink:            #111111;   /* deep ink for headlines */
-  --ink-muted:      #4a443f;   /* body text */
-  --ink-faint:      #8a8378;   /* labels / meta */
-  --rule:           #1a1815;   /* strong border (used sparingly) */
-  --rule-soft:      #d9d4ca;   /* subtle dividers */
+  /* ── Surface ── */
+  --bg-base:        #fafafa;   /* 페이지 배경 (zinc-50 계열) */
+  --bg-surface:     #ffffff;   /* 카드·패널 */
+  --bg-elevated:    #f4f4f5;   /* 호버·하이라이트 */
+  --bg-overlay:     rgba(255,255,255,0.92);
 
-  /* Brand accent — kept (orange) but tuned to read on warm paper */
+  /* ── Text ── */
+  --text-primary:   #09090b;   /* zinc-950 */
+  --text-secondary: #52525b;   /* zinc-600 — WCAG AA on white */
+  --text-muted:     #71717a;   /* zinc-500 */
+  --text-faint:     #a1a1aa;   /* zinc-400 */
+
+  /* ── Border ── */
+  --border:         #e4e4e7;   /* zinc-200 */
+  --border-subtle:  #f4f4f5;   /* zinc-100 */
+  --border-strong:  #d4d4d8;   /* zinc-300 */
+
+  /* ── Accent (kept orange) ── */
   --accent:         #f97316;
-  --accent-hover:   #c2410c;
-  --accent-tint:    #ffe9d2;
-  --accent-text:    #9a3412;
+  --accent-hover:   #ea580c;
+  --accent-soft:    #fff7ed;
+  --accent-text:    #c2410c;
 
-  /* ── Backwards-compat tokens (existing utilities still resolve) ── */
-  --bg-base:        var(--paper);
-  --bg-surface:     #ffffff;
-  --bg-elevated:    var(--paper-deep);
-  --bg-overlay:     rgba(250, 247, 242, 0.85);
+  /* ── Status (chart-friendly) ── */
+  --success:        #16a34a;
+  --success-bg:     #f0fdf4;
+  --success-text:   #15803d;
+  --success-border: #bbf7d0;
 
-  --text-primary:   var(--ink);
-  --text-secondary: var(--ink-muted);
-  --text-muted:     var(--ink-faint);
+  --warning:        #f59e0b;
+  --warning-bg:     #fffbeb;
+  --warning-text:   #b45309;
+  --warning-border: #fde68a;
 
-  --border:         var(--paper-edge);
-  --border-subtle:  var(--paper-deep);
+  --danger:         #dc2626;
+  --danger-bg:      #fef2f2;
+  --danger-text:    #b91c1c;
+  --danger-border:  #fecaca;
 
-  /* Status — adjusted for warm paper (less neon) */
-  --success:        #2f8a5b;
-  --success-bg:     #ebf6ef;
-  --success-text:   #1f6b44;
-  --success-border: #b6dbc4;
+  --info:           #2563eb;
+  --info-bg:        #eff6ff;
+  --info-text:      #1d4ed8;
+  --info-border:    #bfdbfe;
 
-  --warning:        #b45309;
-  --warning-bg:     #fdf3e6;
-  --warning-text:   #92400e;
-  --warning-border: #fbd38d;
+  /* ── Shadow (very subtle, SaaS-style) ── */
+  --shadow-xs: 0 1px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
 
-  --danger:         #b91c1c;
-  --danger-bg:      #fbecec;
-  --danger-text:    #991b1b;
-  --danger-border:  #f5b5b5;
-
-  /* Editorial elevation — almost no shadow, just a hairline */
-  --shadow-sm: 0 0 0 1px rgb(17 17 17 / 0.04);
-  --shadow-md: 0 1px 0 rgb(17 17 17 / 0.06), 0 0 0 1px rgb(17 17 17 / 0.04);
-  --shadow-lg: 0 6px 18px -8px rgb(17 17 17 / 0.18), 0 0 0 1px rgb(17 17 17 / 0.05);
+  /* ── Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 .dark {
-  /* In dark mode, "paper" inverts to ink and "ink" becomes warm cream */
-  --paper:          #14110d;
-  --paper-deep:     #1c1813;
-  --paper-edge:     #2a241d;
-  --ink:            #f4ece0;
-  --ink-muted:      #b9b0a1;
-  --ink-faint:      #8a8276;
-  --rule:           #f4ece0;
-  --rule-soft:      #2e2820;
+  --bg-base:        #0b0b0d;
+  --bg-surface:     #131316;
+  --bg-elevated:    #1c1c20;
+  --bg-overlay:     rgba(11,11,13,0.92);
 
-  --accent:         #fdba74;
-  --accent-hover:   #fed7aa;
-  --accent-tint:    rgba(253, 186, 116, 0.16);
-  --accent-text:    #fed7aa;
+  --text-primary:   #fafafa;
+  --text-secondary: #a1a1aa;   /* zinc-400, ~7.4:1 on bg-surface */
+  --text-muted:     #71717a;
+  --text-faint:     #52525b;
 
-  --bg-base:        var(--paper);
-  --bg-surface:     var(--paper-deep);
-  --bg-elevated:    #221c15;
-  --bg-overlay:     rgba(20, 17, 13, 0.88);
+  --border:         #27272a;   /* zinc-800 */
+  --border-subtle:  #1c1c20;
+  --border-strong:  #3f3f46;
 
-  --text-primary:   var(--ink);
-  --text-secondary: var(--ink-muted);
-  --text-muted:     var(--ink-faint);
+  --accent:         #fb923c;   /* orange-400 — readable on dark */
+  --accent-hover:   #fdba74;
+  --accent-soft:    rgba(249,115,22,0.12);
+  --accent-text:    #fdba74;
 
-  --border:         var(--paper-edge);
-  --border-subtle:  #1f1a14;
+  --success:        #4ade80;
+  --success-bg:     rgba(34,197,94,0.12);
+  --success-text:   #86efac;
+  --success-border: rgba(34,197,94,0.32);
 
-  --success:        #6ee7b7;
-  --success-bg:     rgb(110 231 183 / 0.12);
-  --success-text:   #a7f3d0;
-  --success-border: rgb(110 231 183 / 0.35);
-
-  --warning:        #fcd34d;
-  --warning-bg:     rgb(252 211 77 / 0.12);
+  --warning:        #fbbf24;
+  --warning-bg:     rgba(245,158,11,0.12);
   --warning-text:   #fcd34d;
-  --warning-border: rgb(252 211 77 / 0.35);
+  --warning-border: rgba(245,158,11,0.32);
 
-  --danger:         #fca5a5;
-  --danger-bg:      rgb(252 165 165 / 0.10);
+  --danger:         #f87171;
+  --danger-bg:      rgba(239,68,68,0.12);
   --danger-text:    #fca5a5;
-  --danger-border:  rgb(252 165 165 / 0.35);
+  --danger-border:  rgba(239,68,68,0.32);
 
-  --shadow-sm: 0 0 0 1px rgb(244 236 224 / 0.06);
-  --shadow-md: 0 1px 0 rgb(0 0 0 / 0.4), 0 0 0 1px rgb(244 236 224 / 0.06);
-  --shadow-lg: 0 8px 22px -10px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(244 236 224 / 0.07);
+  --info:           #60a5fa;
+  --info-bg:        rgba(59,130,246,0.12);
+  --info-text:      #93c5fd;
+  --info-border:    rgba(59,130,246,0.32);
+
+  --shadow-xs: 0 0 0 1px rgb(255 255 255 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6), 0 4px 8px -2px rgb(0 0 0 / 0.4);
 }
 
-/* ── Tailwind v4 theme — slate scale shifted to editorial warm tones ──
- * 기존 페이지가 사용 중인 bg-slate-50 / bg-slate-100 / bg-slate-800 / bg-slate-900 / bg-slate-950
- * 등은 일괄 손대지 않고, Tailwind 색 토큰 자체를 따뜻한 톤으로 재정의해
- * 전 페이지에 매거진 종이 분위기를 주입합니다.
+/* ── Tailwind v4 — neutral zinc 팔레트 사용 ──
+ * Phase 23의 슬레이트→베이지 매핑을 모두 되돌림. 이제 slate-* 클래스는
+ * Tailwind 기본 cool gray 그대로 사용 (분석 사이트에 자연스러움).
  */
 @theme inline {
   --color-background: var(--bg-base);
   --color-foreground: var(--text-primary);
 
-  /* Body font (keep Pretendard) */
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto,
     'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     sans-serif;
 
-  /* Display font — magazine serif for headlines */
-  --font-display: 'IBM Plex Serif', 'Noto Serif KR', 'Apple SD Gothic Neo',
-    'Pretendard', Georgia, ui-serif, serif;
-
-  /* Editorial slate — backgrounds shift to warm paper, mid/darks shift to warm ink */
-  --color-slate-50:  #faf7f2;
-  --color-slate-100: #f3ede3;
-  --color-slate-200: #e7e0d2;
-  --color-slate-300: #c8bfae;
-  --color-slate-400: #9c9387;
-  --color-slate-500: #6e665f;
-  --color-slate-600: #4a443f;
-  --color-slate-700: #2e2a26;
-  --color-slate-800: #1c1813;
-  --color-slate-900: #14110d;
-  --color-slate-950: #0a0806;
+  /* font-mono — 표·숫자용 */
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'IBM Plex Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
 }
 
 /* ── Base body ── */
@@ -154,213 +142,239 @@ html {
 }
 
 body {
-  background-color: var(--paper);
-  /* Subtle paper grain — barely visible, just adds warmth */
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
-  background-size: 220px 220px;
-  color: var(--ink);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   font-family: var(--font-sans);
-  line-height: 1.65;
+  font-size: 15px;
+  line-height: 1.6;
   letter-spacing: -0.01em;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';   /* 표 숫자(tabular nums) 기본 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.dark body {
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 0.95  0 0 0 0.04 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+/* Headings — sans-serif, tight tracking, no italic */
+h1 {
+  font-size: 1.875rem;       /* 30px */
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text-primary);
 }
-
-/* Headlines — display serif, tight kerning */
-h1, h2 {
-  font-family: var(--font-display);
+h2 {
+  font-size: 1.5rem;         /* 24px */
+  font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: var(--ink);
+  line-height: 1.25;
+  color: var(--text-primary);
 }
-h3, h4, h5, h6 {
+h3 {
+  font-size: 1.125rem;       /* 18px */
+  font-weight: 600;
   letter-spacing: -0.015em;
-  line-height: 1.3;
-  color: var(--ink);
+  line-height: 1.35;
+  color: var(--text-primary);
 }
-.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-  color: var(--ink);
+h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
 }
 
-/* Body paragraph */
 p, li {
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
-/* Small labels — slightly looser tracking for legibility, all-caps look opt-in via .ed-eyebrow */
-.text-\[11px\], .text-xs {
-  letter-spacing: 0;
-}
-
-/* ── Editorial utility classes ── */
-
-/* Eyebrow / kicker — tiny uppercase label above headlines */
+/* ── Editorial 유틸리티 잔존 — 모던 SaaS로 재정의 (Phase 23 잔재 호환용) ──
+ * 옛 .ed-* 클래스를 사용하는 페이지가 자연스럽게 SaaS 톤으로 보이도록 매핑.
+ * 새 페이지는 .kpi-*, .panel-* 유틸리티를 사용해야 함.
+ */
 .ed-eyebrow {
-  font-family: var(--font-sans);
-  font-size: 0.6875rem;     /* 11px */
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-size: 0.75rem;        /* 12px */
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent-text);
+  color: var(--text-muted);
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
-.dark .ed-eyebrow { color: var(--accent); }
-.ed-eyebrow::before {
-  content: "";
-  width: 1.25rem;
-  height: 1px;
-  background-color: currentColor;
-}
+.ed-eyebrow::before { content: none; }    /* 룰 마크 제거 */
 
-/* Big editorial display heading */
 .ed-display {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
-  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text-primary);
 }
 
-/* Magazine drop cap — first letter of an article body */
-.ed-dropcap::first-letter {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 4.25em;
-  float: left;
-  line-height: 0.85;
-  margin: 0.1em 0.12em 0 0;
-  color: var(--accent-text);
+.ed-byline {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
-.dark .ed-dropcap::first-letter { color: var(--accent); }
 
-/* Hairline divider with optional centered ornament */
 .ed-rule {
   height: 1px;
-  background-color: var(--rule-soft);
+  background-color: var(--border);
   border: 0;
 }
 .ed-rule-strong {
   height: 1px;
-  background-color: var(--rule);
+  background-color: var(--border-strong);
   border: 0;
 }
+
 .ed-ornament {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 1rem;
-  color: var(--ink-faint);
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.875rem;
+  gap: 0.75rem;
 }
 .ed-ornament::before, .ed-ornament::after {
   content: "";
   flex: 1;
   height: 1px;
-  background-color: var(--rule-soft);
+  background-color: var(--border);
 }
 
-/* Byline — author meta line in editorial style */
-.ed-byline {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
+.ed-dropcap::first-letter { all: unset; }    /* drop cap 비활성 */
 
-/* Body utility tokens (existing util classes) */
+/* ── Modern utility classes ── */
 .bg-base       { background-color: var(--bg-base); }
 .bg-surface    { background-color: var(--bg-surface); }
 .bg-elevated   { background-color: var(--bg-elevated); }
-.bg-paper      { background-color: var(--paper); }
-.bg-paper-deep { background-color: var(--paper-deep); }
 
 .text-primary   { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
 .text-muted-token { color: var(--text-muted); }
-.text-ink       { color: var(--ink); }
-.text-ink-muted { color: var(--ink-muted); }
-.text-ink-faint { color: var(--ink-faint); }
 
 .border-token  { border-color: var(--border); }
-.border-rule   { border-color: var(--rule); }
-.border-rule-soft { border-color: var(--rule-soft); }
+.border-strong { border-color: var(--border-strong); }
+.border-subtle { border-color: var(--border-subtle); }
 
-.font-display { font-family: var(--font-display); }
+/* font-display 잔재 — 그냥 Pretendard 처리 */
+.font-display { font-family: var(--font-sans); font-weight: 600; }
 
-/* ── Card utility — outline-only editorial style ── */
+/* ── Phase 23 → Phase 27 호환 별칭 ── */
+.bg-paper      { background-color: var(--bg-surface); }
+.bg-paper-deep { background-color: var(--bg-elevated); }
+.text-ink       { color: var(--text-primary); }
+.text-ink-muted { color: var(--text-secondary); }
+.text-ink-faint { color: var(--text-muted); }
+.border-rule       { border-color: var(--border); }
+.border-rule-soft  { border-color: var(--border-subtle); }
+
+/* ── Card — SaaS 분석 사이트 카드 ── */
 .card {
   background-color: var(--bg-surface);
-  border: 1px solid var(--rule-soft);
-  border-radius: 0.25rem;
-  box-shadow: none;
-  transition: border-color 0.2s ease, transform 0.15s ease;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 .card:hover {
-  border-color: var(--rule);
-}
-.dark .card {
-  background-color: var(--bg-surface);
-  border-color: var(--paper-edge);
-}
-.dark .card:hover {
-  border-color: var(--ink-muted);
+  box-shadow: var(--shadow-md);
 }
 
-/* ── Input utility — flat, hairline-bottom ── */
+/* KPI 카드 — 큰 숫자 + 작은 라벨 + 증감 */
+.kpi-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-xs);
+}
+.kpi-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-top: 0.25rem;
+}
+.kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+.kpi-delta.positive { color: var(--success); }
+.kpi-delta.negative { color: var(--danger); }
+.kpi-delta.neutral  { color: var(--text-muted); }
+
+/* Section panel — 카드의 더 큰 형제 */
+.panel {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.panel-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.panel-body {
+  padding: 1.25rem;
+}
+
+/* ── Input ── */
 .input-base {
   background-color: var(--bg-surface);
-  color: var(--ink);
-  border: 1px solid var(--rule-soft);
-  border-radius: 0.25rem;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   padding: 0.625rem 0.875rem;
   font-size: 0.875rem;
-  min-height: 44px;
+  min-height: 40px;
   width: 100%;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .input-base::placeholder {
-  color: var(--ink-faint);
+  color: var(--text-faint);
 }
 .input-base:focus {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
-}
-.dark .input-base {
-  background-color: var(--paper-deep);
-  border-color: var(--paper-edge);
-  color: var(--ink);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.15);
 }
 .dark .input-base:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent);
+  box-shadow: 0 0 0 3px rgb(251 146 60 / 0.20);
 }
 
-/* ── Buttons — editorial: sharp corners, weight via type, accent for primary ── */
+/* ── Buttons ── */
 .btn-base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.25rem;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-weight: 500;
   letter-spacing: -0.005em;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
-    transform 0.1s ease, box-shadow 0.15s ease;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.15s ease, transform 0.06s ease;
   white-space: nowrap;
   user-select: none;
 }
@@ -373,130 +387,101 @@ p, li {
 }
 .btn-base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.35);
 }
 
-.btn-sm { padding: 0.375rem 0.875rem; font-size: 0.8125rem; min-height: 32px; }
-.btn-md { padding: 0.625rem 1.125rem; font-size: 0.875rem; min-height: 40px; }
-.btn-lg { padding: 0.875rem 1.375rem; font-size: 1rem; min-height: 48px; }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }
+.btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem; min-height: 38px; }
+.btn-lg { padding: 0.75rem 1.25rem; font-size: 0.9375rem; min-height: 44px; }
 
+/* primary — 주황 액센트 */
 .btn-primary {
-  background-color: var(--ink);
-  color: var(--paper);
-  border: 1px solid var(--ink);
+  background-color: var(--accent);
+  color: #ffffff;
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-xs);
 }
 .btn-primary:hover:not(:disabled) {
   background-color: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: #fff;
-}
-.dark .btn-primary {
-  background-color: var(--accent);
-  color: var(--paper);
-  border-color: var(--accent);
-}
-.dark .btn-primary:hover:not(:disabled) {
-  background-color: var(--accent-hover);
-  border-color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
 }
 
+/* secondary — 흰 카드 + 테두리 */
 .btn-secondary {
-  background-color: transparent;
-  color: var(--ink);
-  border: 1px solid var(--rule);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
 }
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--ink);
-  color: var(--paper);
-}
-.dark .btn-secondary {
-  color: var(--ink);
-  border-color: var(--ink-muted);
-}
-.dark .btn-secondary:hover:not(:disabled) {
-  background-color: var(--ink);
-  color: var(--paper);
+  background-color: var(--bg-elevated);
+  border-color: var(--border-strong);
 }
 
+/* ghost — 투명 */
 .btn-ghost {
   background-color: transparent;
-  color: var(--ink-muted);
+  color: var(--text-secondary);
   border: 1px solid transparent;
 }
 .btn-ghost:hover:not(:disabled) {
-  background-color: var(--paper-deep);
-  color: var(--ink);
-}
-.dark .btn-ghost:hover:not(:disabled) {
   background-color: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
+/* danger */
 .btn-danger {
   background-color: var(--danger);
   color: #ffffff;
   border: 1px solid var(--danger);
 }
-.btn-danger:hover:not(:disabled) {
-  filter: brightness(0.95);
-}
+.btn-danger:hover:not(:disabled) { filter: brightness(0.95); }
 
-/* ── Scrollbar (subtle on editorial paper) ── */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ── Status pill ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--rule-soft);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-faint);
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: var(--paper-edge);
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-faint);
-}
+.pill-success { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
+.pill-warning { background: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
+.pill-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-color: var(--danger-border); }
+.pill-info    { background: var(--info-bg);    color: var(--info-text);    border-color: var(--info-border); }
+.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(249,115,22,0.20); }
+.pill-neutral { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border); }
+
+/* tabular-nums helper for tables */
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
 
 /* ── Quill editor dark mode ── */
-.dark .ql-toolbar {
-  background-color: var(--bg-elevated) !important;
-  border-color: var(--border) !important;
-}
-.dark .ql-container {
-  background-color: var(--bg-surface) !important;
-  border-color: var(--border) !important;
-  color: var(--text-primary) !important;
-}
+.dark .ql-toolbar { background-color: var(--bg-elevated) !important; border-color: var(--border) !important; }
+.dark .ql-container { background-color: var(--bg-surface) !important; border-color: var(--border) !important; color: var(--text-primary) !important; }
 .dark .ql-editor { color: var(--text-primary) !important; }
 .dark .ql-stroke { stroke: var(--text-secondary) !important; }
 .dark .ql-fill   { fill: var(--text-secondary) !important; }
 .dark .ql-picker-label { color: var(--text-secondary) !important; }
 
 /* ── Selection ── */
-::selection {
-  background-color: var(--ink);
-  color: var(--paper);
-}
-.dark ::selection {
-  background-color: var(--accent);
-  color: var(--paper);
-}
+::selection { background-color: rgb(249 115 22 / 0.25); color: var(--text-primary); }
+.dark ::selection { background-color: rgb(251 146 60 / 0.30); }
 
 /* ── Scrollbar 숨김 (가로 스크롤 영역) ── */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* ── Mobile safe-area (PWA / 노치 대응) ── */
+/* ── Mobile safe-area (PWA / 노치) ── */
 @supports (padding: max(0px)) {
   .safe-top    { padding-top:    max(0.5rem, env(safe-area-inset-top)); }
   .safe-bottom { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
@@ -506,14 +491,10 @@ p, li {
 
 /* ── 모바일 하단 탭 바 공간 확보 ── */
 @media (max-width: 767px) {
-  body {
-    padding-bottom: calc(64px + env(safe-area-inset-bottom));
-  }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 }
 
 /* ── PWA: 모바일 앱 느낌 ── */
 @media (display-mode: standalone), (max-width: 767px) {
-  html {
-    overscroll-behavior-y: contain;
-  }
+  html { overscroll-behavior-y: contain; }
 }

@@ -57,10 +57,10 @@ export default async function LabPage() {
         {/* Section title */}
         <header className="mb-12">
           <div className="ed-eyebrow mb-4">Issue notes</div>
-          <h1 className="font-display text-[2.5rem] sm:text-[4rem] lg:text-[5rem] leading-[0.95] tracking-tight text-ink mb-4">
+          <h1 className="text-2xl sm:text-3xl sm:text-3xl lg:text-3xl sm:text-4xl leading-[0.95] tracking-tight text-ink mb-4">
             포스팅 연구실
           </h1>
-          <p className="font-display italic text-lg sm:text-xl text-ink-muted max-w-[58ch]">
+          <p className="text-lg sm:text-xl text-ink-muted max-w-[58ch]">
             가설을 세우고, 같은 조건에서 변수를 바꿔 발행해 보고, 결과를 측정해 정리합니다. 블로그 운영의 &lsquo;카더라&rsquo;를 데이터로 검증하는 노트.
           </p>
         </header>
@@ -84,7 +84,7 @@ export default async function LabPage() {
                 </div>
                 <div className="lg:col-span-5">
                   <div className="ed-eyebrow mb-4">Cover Story</div>
-                  <h2 className="font-display text-[1.875rem] sm:text-[2.5rem] lg:text-[3rem] leading-[1.05] tracking-tight text-ink mb-4 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  <h2 className="text-[1.875rem] sm:text-2xl sm:text-3xl lg:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {coverPost.title}
                   </h2>
                   {coverPost.description && (
@@ -124,7 +124,7 @@ export default async function LabPage() {
                   <div className="relative w-full aspect-[16/9] bg-paper-deep border border-rule-soft overflow-hidden mb-5">
                     <PostImage src={`/posts/images/${post.slug}.png`} alt={post.title} />
                   </div>
-                  <h2 className="font-display text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  <h2 className="text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {post.title}
                   </h2>
                   {post.description && (

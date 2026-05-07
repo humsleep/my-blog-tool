@@ -178,10 +178,10 @@ export default function StartPage() {
         {/* ─── Step 1: 키워드 ─────────────────────────────────────── */}
         {step === 'keyword' && (
           <div>
-            <h1 className="font-display text-[2rem] sm:text-[3rem] leading-[1.05] tracking-tight text-ink mb-4">
+            <h1 className="text-[2rem] sm:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4">
               오늘은 어떤 주제로<br />글을 써볼까요?
             </h1>
-            <p className="font-display italic text-base sm:text-lg text-ink-muted mb-10 leading-[1.6]">
+            <p className="text-base sm:text-lg text-ink-muted mb-10 leading-[1.6]">
               한 단어라도 괜찮아요. 떠오르는 게 없다면 아래 추천 중에서 골라도 좋습니다.
             </p>
 
@@ -193,7 +193,7 @@ export default function StartPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && keyword.trim()) setStep('choose'); }}
                 placeholder="예: 수원 맛집 추천"
-                className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-rule text-ink text-2xl sm:text-3xl font-display placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
+                className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-rule text-ink text-2xl sm:text-3xl placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
               />
             </div>
 
@@ -233,11 +233,11 @@ export default function StartPage() {
         {/* ─── Step 2: 분야 + 어투 ────────────────────────────────── */}
         {step === 'choose' && (
           <div>
-            <h1 className="font-display text-[2rem] sm:text-[3rem] leading-[1.05] tracking-tight text-ink mb-4">
-              <span className="italic text-ink-muted">&ldquo;{keyword}&rdquo;</span><br />
+            <h1 className="text-[2rem] sm:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4">
+              <span className="text-slate-500 dark:text-slate-400">&ldquo;{keyword}&rdquo;</span><br />
               어떤 분야의 글인가요?
             </h1>
-            <p className="font-display italic text-base sm:text-lg text-ink-muted mb-8 leading-[1.6]">
+            <p className="text-base sm:text-lg text-ink-muted mb-8 leading-[1.6]">
               두 가지만 골라주세요. 30초면 끝나요.
             </p>
 
@@ -255,7 +255,7 @@ export default function StartPage() {
                         : 'bg-paper hover:bg-paper-deep'
                     }`}
                   >
-                    <div className={`font-display text-base font-semibold mb-1 ${category === c.value ? 'text-paper' : 'text-ink'}`}>
+                    <div className={`text-base font-semibold mb-1 ${category === c.value ? 'text-paper' : 'text-ink'}`}>
                       {c.label}
                     </div>
                     <div className={`text-xs ${category === c.value ? 'text-paper/70' : 'text-ink-faint'}`}>
@@ -280,7 +280,7 @@ export default function StartPage() {
                         : 'border-rule-soft hover:border-ink-muted bg-paper'
                     }`}
                   >
-                    <div className="font-display text-base font-semibold text-ink mb-1">{t.label}</div>
+                    <div className="text-base font-semibold text-ink mb-1">{t.label}</div>
                     <div className="text-xs text-ink-muted">{t.desc}</div>
                   </button>
                 ))}
@@ -324,10 +324,10 @@ export default function StartPage() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
             </div>
-            <h1 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-tight text-ink mb-4">
+            <h1 className="text-[1.75rem] sm:text-2xl sm:text-3xl leading-tight text-ink mb-4">
               AI가 글을 쓰고 있어요
             </h1>
-            <p className="font-display italic text-lg text-ink-muted mb-8">{PROGRESS_BEATS[progressBeat]}…</p>
+            <p className="text-lg text-ink-muted mb-8">{PROGRESS_BEATS[progressBeat]}…</p>
 
             <div className="max-w-md mx-auto space-y-2">
               {PROGRESS_BEATS.map((beat, i) => (
@@ -356,10 +356,10 @@ export default function StartPage() {
           <div>
             <div className="text-center mb-10">
               <div className="ed-eyebrow justify-center inline-flex mb-4">완성</div>
-              <h1 className="font-display text-[2rem] sm:text-[3rem] leading-tight text-ink mb-3">
+              <h1 className="text-[2rem] sm:text-2xl sm:text-3xl leading-tight text-ink mb-3">
                 3분 만에 1편 완성
               </h1>
-              <p className="font-display italic text-base text-ink-muted">
+              <p className="text-base text-ink-muted">
                 — 발행 전 에디터에서 한 번 다듬으면 더 좋아져요.
               </p>
             </div>
@@ -402,7 +402,7 @@ export default function StartPage() {
             <div className="ed-eyebrow justify-center inline-flex mb-4" style={{ color: 'var(--danger)' }}>
               오류 발생
             </div>
-            <h1 className="font-display text-[1.75rem] sm:text-[2.5rem] leading-tight text-ink mb-3">
+            <h1 className="text-[1.75rem] sm:text-2xl sm:text-3xl leading-tight text-ink mb-3">
               잠시 글쓰기에 실패했어요
             </h1>
             <p className="text-ink-muted mb-8 max-w-md mx-auto">{errorMsg}</p>

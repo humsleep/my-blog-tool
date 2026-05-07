@@ -138,44 +138,38 @@ export default function Navbar() {
   const initial = displayName?.charAt(0).toUpperCase() || '?';
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-paper/85 dark:bg-paper/85 backdrop-blur-md border-b border-rule dark:border-rule">
+    <nav className="sticky top-0 z-50 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14">
 
-          {/* Wordmark — magazine-style serif Boheme + sans BlogLab */}
+          {/* Wordmark — Pretendard sans-serif (Phase 27) */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/" className="flex items-baseline gap-1.5 group">
-              <span className="font-display italic font-semibold text-[1.35rem] leading-none text-ink dark:text-ink tracking-tight">
-                Boheme
-              </span>
-              <span className="text-[0.65rem] font-semibold tracking-[0.22em] uppercase text-orange-600 dark:text-orange-400 mb-0.5">
-                BlogLab
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-7 h-7 rounded-md bg-orange-500 flex items-center justify-center">
+                <span className="text-white font-bold text-sm leading-none">B</span>
+              </div>
+              <span className="text-[0.95rem] font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                Boheme<span className="text-orange-500 dark:text-orange-400 ml-1">BlogLab</span>
               </span>
             </Link>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {/* 핵심 도구 평면 — editorial: underline-on-active */}
+            {/* 핵심 도구 평면 — SaaS: pill 호버 + 액티브 시 액센트 배경 */}
             {CORE_TOOLS.map((t) => {
               const isActive = pathname === t.href;
               return (
                 <Link
                   key={t.href}
                   href={t.href}
-                  className={`px-3 py-2 text-sm font-medium relative transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'text-ink dark:text-ink'
-                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
+                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
                   {t.label}
-                  <span
-                    aria-hidden
-                    className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
-                      isActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
-                    }`}
-                  />
                 </Link>
               );
             })}
@@ -271,12 +265,12 @@ export default function Navbar() {
                 onClick={() => setCommunityOpen((v) => !v)}
                 aria-expanded={communityOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-2 text-sm font-medium relative transition-colors ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   isCommunityActive
-                    ? 'text-ink dark:text-ink'
+                    ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                     : communityOpen
-                      ? 'text-ink dark:text-ink'
-                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
+                      ? 'bg-slate-100 text-slate-900 dark:bg-zinc-800 dark:text-slate-100'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
                 }`}
               >
                 커뮤니티
@@ -288,17 +282,11 @@ export default function Navbar() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
-                <span
-                  aria-hidden
-                  className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
-                    isCommunityActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
-                  }`}
-                />
               </button>
 
               {communityOpen && (
                 <div
-                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden p-2"
+                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-slate-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
                 >
                   {COMMUNITY_MENU.map((it) => {
@@ -331,19 +319,13 @@ export default function Navbar() {
               return (
                 <Link
                   href="/lab"
-                  className={`px-3 py-2 text-sm font-medium relative transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'text-ink dark:text-ink'
-                      : 'text-ink-muted hover:text-ink dark:text-ink-muted dark:hover:text-ink'
+                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
                   연구실
-                  <span
-                    aria-hidden
-                    className={`absolute left-3 right-3 -bottom-px h-[2px] transition-colors ${
-                      isActive ? 'bg-orange-500 dark:bg-orange-400' : 'bg-transparent'
-                    }`}
-                  />
                 </Link>
               );
             })()}

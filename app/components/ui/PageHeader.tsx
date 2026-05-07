@@ -10,34 +10,32 @@ interface PageHeaderProps {
 }
 
 /**
- * Editorial Magazine 스타일 페이지 헤더.
- *  - 상단 hairline rule + eyebrow 라벨
- *  - 디스플레이 세리프(IBM Plex Serif + Noto Serif KR) 헤드라인
- *  - subtitle은 본문 폰트, 좁은 max-width로 매거진 인트로 느낌
+ * Modern SaaS Analytics 페이지 헤더 (Phase 27).
+ *  - 작은 라벨(badge/step) → 큰 sans-serif 타이틀 → 회색 subtitle
+ *  - hairline rule·italic·세리프 모두 제거
+ *  - 우측 actions slot 유지
  */
 export default function PageHeader({ title, subtitle, step, totalSteps, badge, actions }: PageHeaderProps) {
-  const hasEyebrow = (step && totalSteps) || badge;
+  const hasMeta = (step && totalSteps) || badge;
   return (
-    <header className="mb-10 pt-2">
-      {/* 상단 가는 룰 */}
-      <hr className="ed-rule mb-5" />
-
-      <div className="flex items-end justify-between gap-6 flex-wrap">
+    <header className="mb-6 sm:mb-8">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
-          {hasEyebrow ? (
-            <div className="ed-eyebrow mb-3">
-              {step && totalSteps ? <span>STEP {step} · {totalSteps}</span> : null}
-              {step && totalSteps && badge ? <span aria-hidden>—</span> : null}
-              {badge ? <span>{badge}</span> : null}
+          {hasMeta ? (
+            <div className="flex items-center gap-2 mb-2">
+              {step && totalSteps ? (
+                <span className="pill pill-accent">STEP {step} / {totalSteps}</span>
+              ) : null}
+              {badge ? <span className="pill pill-neutral">{badge}</span> : null}
             </div>
           ) : null}
 
-          <h1 className="ed-display text-[2rem] sm:text-[2.75rem] lg:text-[3.25rem] tracking-tighter">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight">
             {title}
           </h1>
 
           {subtitle ? (
-            <p className="mt-3 text-[15px] sm:text-base text-ink-muted leading-[1.7] max-w-[58ch]">
+            <p className="mt-2 text-sm sm:text-[15px] text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
               {subtitle}
             </p>
           ) : null}

@@ -76,19 +76,12 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        {/* Pretendard (본문) — preconnect + 동기 로드로 FOUT 방지 */}
+        {/* Pretendard 단일 폰트 — preconnect + 동기 로드로 FOUT 방지 */}
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"
           crossOrigin="anonymous"
-        />
-        {/* 매거진 에디토리얼 헤드라인용 세리프 — IBM Plex Serif (영문) + Noto Serif KR (한글) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+KR:wght@500;700;900&display=swap"
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
