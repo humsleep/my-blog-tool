@@ -5,6 +5,67 @@
 
 ---
 
+## 2026-05-07 — Phase 25: 블로그 진단 MVP (카테고리 상위 % + 약점 분석)
+
+**배경**: 사용자 요청 — 특정 네이버 블로그가 메인 카테고리 안에서 상위 몇 %인지 진단하고 약점을 알려주는 도구. Phase 24의 retention 감사에서 식별된 "재방문 동기 강화" 후속 작업과 결이 같음. 한 달에 한 번 자기 위치를 점검하는 용도로 회귀 자연스러움.
+
+### 요구사항 명확화 (AskUserQuestion 합의)
+- **MVP 범위**: ② 표준 — 4축 중 3축 (Activity / Visibility / Quality, 댓글·공감 D축 제외)
+- **메뉴 위치**: ① "내 블로그" 새 메뉴 신설 (Navbar 평면 노출)
+- 동기 단일 호출, 진단 이력 미저장, 카테고리 시드 30개 (다음 phase에서 100개·캐시 확장 예정)
+
+### 1. 점수 라이브러리 (`app/lib/diagnose/`)
+- **`category-seeds.ts`** — 8개 카테고리 × 30개 키워드 시드 사전.
+  - food-travel / lifestyle / info-howto / review / culture / health-fitness / parenting / fashion-beauty
+  - 키워드 분포: 헤드(검색량 1만+) 5개 + 미드(1천~1만) 15개 + 롱테일 10개로 균형
+- **`naver-blog.ts`** — 외부 데이터 헬퍼.
+  - `extractBlogId()` — URL/PostList.naver?blogId=foo/bare ID 모두 인식
+  - `fetchRss()` — `https://rss.blog.naver.com/{id}.xml` 정규식 미니 파서로 제목·링크·발행일·카테고리·본문 일부·이미지 개수 추출. CDATA 처리.
+  - `searchBlogByQuery()` — 기존 NAVER OpenAPI 활용
+  - `findRankInResults()` — 검색 결과 중 특정 blogId의 1-based 순위
+  - `fetchWithRetry` 활용 (500ms backoff, 10s timeout, 2 retry)
+- **`scoring.ts`** — 점수 산출 엔진.
+  - `scoreActivity()` — 30일 발행수(40%) + 마지막 발행 활성도(40%) + 발행 간격 CV(20%)
+  - `scoreVisibility()` — 진입율(50%) + 상위 10위 비율(30%) + 평균 순위 보너스(20%)
+  - `scoreQuality()` — 글자수(40%) + 이미지(20%) + 카테고리 일관성(40%)
+  - `compose()` — 가중평균(A 25% / B 50% / C 25%) → 총점 0~100 + band(top5/top15/top35/mid/growing) + 한국어 인사이트 자동 생성 6개
+
+### 2. API (`app/api/blog-diagnose/route.ts`)
+- POST: `{ blogInput, category }` → 정규화 → RSS fetch → 30개 키워드 검색(동시성 5, 120ms gap) → 점수 산출 → 응답
+- Vercel `maxDuration=60`, 실측 ~30~50초. 운영 단계에서 여유 있는 편.
+- 일부 검색 실패 시 graceful degradation (실패 개수 warnings에 명시)
+- RSS 못 받으면 활동성·품질 0점 + 노출 점수만 사용하도록 안내
+
+### 3. UI (`app/blog-diagnose/page.tsx`)
+단일 페이지 4-state machine (input → running → result → error). 매거진 톤 일관:
+- **input**: hairline-bottom 큰 입력 + 8셀 카테고리 그리드 + 측정 한계 안내
+- **running**: 회전 progress beat 5개 + 체크리스트 시각 (`/start`와 동일 패턴)
+- **result**: 거대 디스플레이 총점(7rem) + band 라벨 + 3축 점수 카드 (1px 분리 그리드) + 인사이트 ordered list + 전체 키워드 진입 표 (한 화면에 30개) + 측정 한계 + 다음 액션 2개 (약한 키워드로 글쓰기 / 다른 블로그 진단)
+- **error**: 다시 시도 / 홈 복귀
+
+### 4. 네비게이션
+- **Navbar**: "내 블로그 ▼" 신설 (Community와 연구실 사이). 드롭다운에 블로그 진단 + 즐겨찾기 키워드.
+- **Mobile menu**: 같은 그룹 평면 노출.
+- **홈 배너**: 기존 "처음 오셨나요" 단독 배너를 1px hairline 2-cell 그리드로 변경. 우측에 "이미 운영 중이세요 — 내 블로그는 카테고리 상위 몇 %일까요?" 신규 셀, /blog-diagnose 진입점.
+
+### 측정 한계 (UI에 명시)
+- 네이버는 일일 방문자·블로그 지수 비공개 → 공개 데이터로 합리적 추정만 가능
+- RSS 본문은 잘려 있어 글자수가 보수적 (실제는 더 길 수 있음)
+- "상위 N%"는 진짜 백분위가 아닌 점수→밴드 매핑 (Phase 26에서 카테고리 베이스라인 분포 캐시 도입 예정)
+- 진단 이력 미저장 (이번 phase 범위 외)
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린 (`/blog-diagnose` static, `/api/blog-diagnose` dynamic)
+- 회귀 위험: 기존 라우트·API 무영향, Navbar 추가만 발생
+
+### 다음 단계 후보
+- **Phase 26**: 카테고리 베이스라인 분포 캐시 (`category_baselines` 테이블) → 진짜 percentile 산출. 진단 이력(`diagnoses` 테이블) 추가 → "한 달 전 대비 +12점" 비교.
+- **Phase 27**: 시드 키워드 30 → 100개 확장 + 키워드별 검색량 가중치 (검색량 큰 키워드 진입은 가산점).
+- **Phase 28**: 진단 결과를 커뮤니티 정보공유에 한 번에 공유하는 동선 (proof of work + 자연스러운 유입).
+- **Phase 29**: D축 참여도 — 댓글·공감 스크래핑. 단 DOM 변경 위험 있어 별도 토글로.
+
+---
+
 ## 2026-05-07 — Phase 24: 3분 Quick Start 미니 플로우 (첫 방문 온보딩)
 
 **배경**: Phase 23(매거진 리디자인) 후속 사용성 감사에서 가장 높은 우선순위로 식별된 마찰점. 첫 방문자가 8단계 워크플로우를 한꺼번에 마주하면 "어디서 시작해야 할지" 모름. 평행 트랙으로 미니 시작 경로 도입 (8단계는 정밀 모드로 그대로 유지).
