@@ -5,6 +5,91 @@
 
 ---
 
+## 2026-05-07 — Phase 23: Editorial Magazine 리디자인 (전 사이트)
+
+**배경**: 사용자 요청 — anthropic/frontend-design 스킬 설치 후 사이트 전체 UI 개선. SKILL.md의 Design Thinking 4단계(Purpose/Tone/Constraints/Differentiation)를 본 프로젝트에 적용해 합의:
+- **Purpose**: 한국 블로거 워크플로우 + 커뮤니티 도구 (효율성 우선)
+- **Tone**: 한국 매거진 에디토리얼 — Plex Serif/Noto Serif KR 헤드라인 + Pretendard 본문 + 따뜻한 베이지 종이 + 잉크 검정 + 주황 액센트
+- **Constraints**: Next.js 16 / Tailwind v4 / 한국어 / PWA / 기존 RLS·로직·라우팅 보존
+- **Differentiation**: 매거진의 정성스러운 톤 → generic SaaS 프레임 깨기
+
+### Step 0: 스킬 설치
+- `.claude/skills/frontend-design/SKILL.md`+`LICENSE.txt` (anthropics/skills@main 4.4KB) 벤더 등록
+- 본 프로젝트의 미래 세션이 자동 참조하도록 commit
+
+### Step 1: 디자인 토큰 + 매거진 폰트
+**`app/globals.css` 전면 재작성**
+- 따뜻한 종이 토큰: `--paper #faf7f2` / `--paper-deep #f3ede3` / `--ink #111` / `--ink-muted #4a443f` / `--rule` / `--rule-soft`
+- Tailwind v4 `@theme inline`에서 `--color-slate-*` 11계 값을 따뜻한 톤으로 재정의 → 페이지마다 흩어진 `bg-slate-50` / `bg-slate-900` / `text-slate-700` 등이 자동으로 매거진 종이/잉크로 매핑됨 (페이지별 수정 0회)
+- Body에 미세 SVG 노이즈 텍스처(220×220 dataURI) — 라이트/다크 변형
+- 새 에디토리얼 유틸리티: `.ed-eyebrow` / `.ed-display` / `.ed-dropcap` / `.ed-rule` / `.ed-ornament` / `.ed-byline`
+- 카드: 외곽선 1px hairline, 그림자 제거, radius 4px
+- 입력: hairline-bottom 스타일, focus 시 잉크 보더
+- 버튼 primary: ink-on-paper → 호버 시 orange-on-white (브루탈 + 정확)
+- Selection: ink 배경 + paper 글자
+
+**`app/layout.tsx`**
+- Google Fonts에서 `IBM Plex Serif` (영문) + `Noto Serif KR` (한글) 헤드라인용 동시 로드
+- Pretendard는 본문용 그대로 유지
+
+### Step 2: Chrome (Header/Nav/Footer/Mobile)
+- **PageHeader**: 상단 hairline + eyebrow 라벨 + 디스플레이 헤드라인 (2~3.25rem) + 본문 폰트 subtitle (max-w 58ch)
+- **Navbar**: 그라디언트 로고 → 매거진 워드마크 (italic serif "Boheme" + small-caps "BlogLab"). active 상태: 솔리드 박스 → 2px 액센트 룰 (텍스트 톤만 ink)
+- **Footer**: Colophon 마스트헤드 + ed-byline 섹션 라벨 + hairline 디바이더 (그림자 제거)
+- **MobileBottomNav**: bg-paper + ink 톤 + 상단 2px 액센트 룰
+
+### Step 3: 홈 매거진 표지
+**`app/page.tsx` 전면 재작성** (463줄 → 232줄, gradient/blur 모두 제거)
+- 마스트헤드 (Vol. 01 / 오늘 날짜 / 태그라인)
+- Hero: 12-col 비대칭 그리드 — 좌측 5.5rem 디스플레이 헤드라인 / 우측 hairline-bottom 검색 + side note
+- "Feature" 5단계 워크플로우 — 3/9 split + 매거진 2-column 그리드, italic 로마 숫자 (I. II. III.) 키커
+- 풀쿼트 섹션 (인용부호 + Trending 배너)
+- "여덟 개의 작업대" — 1px hairline 그리드로 8개 도구 인덱스
+- 3-column 에디토리얼 ("§ 1/2/3" 마크 + 디스플레이 헤드)
+- FAQ — 박스 제거, hairline 디바이더 + 디스플레이 질문체
+- 닫는 CTA: ink 배경 + paper 텍스트 + italic 헤드라인 ("오늘 한 편을 시작하면 / 한 달 뒤에 서른 편이 쌓입니다")
+
+### Step 4: 연구실(Lab) 매거진화
+- **인덱스**: 마스트헤드 + 디스플레이 헤드라인 + 첫 글을 7/5 split의 "Cover Story"로 승격, 나머지는 3-col 인덱스 그리드 (top hairline + 16:9 + display headline + byline)
+- **글 본문**: 새 에디토리얼 헤더 (eyebrow → display H1 → italic standfirst → byline rule), Tailwind prose 매핑 (display serif H2/H3, ink-muted 본문, orange strong, hairline hr), 하단 `— END —` ed-ornament + 목록 복귀 링크
+- **PostImage 폴백**: blue→orange gradient → "№" 매거진 글리프 on paper-deep
+
+### Step 5: 커뮤니티 허브
+- 그라디언트 blob 카드 → 1px hairline 그리드 2-cell (paper hover)
+- 큰 디스플레이 숫자(01/02) + 매칭/Companion 키커
+- "커뮤니티 규칙" 3-column 에디토리얼 (§ 1/2/3 마크 — 홈 페이지와 톤 맞춤)
+
+### Step 6: 도구 페이지
+사용성 보호 우선 — 구조·레이아웃·폼 위치 무변경. 토큰 자동 매핑으로 다음이 자동 적용됨:
+- `bg-slate-*` / `text-slate-*` → 따뜻한 종이/잉크
+- `<h1>` / `<h2>` → 디스플레이 세리프 (globals.css 기본값)
+- `.card` / `.btn-*` / `.input-base` → 에디토리얼 hairline 스타일
+
+`image-tools`만 hardcoded blue-600/700/900 8곳을 sed로 orange-500/600/700 + ink 토큰으로 일괄 교체.
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 41 페이지 클린 (Step별 확인 5회)
+- `tsc --noEmit` 클린
+
+### 커밋 시퀀스 (main에 7커밋 push)
+```
+635574b chore: install anthropic frontend-design skill
+6864c3e Phase 23 Step 1: editorial design tokens + magazine display fonts
+d9e6f5c Phase 23 Step 2: editorial chrome
+6fce2b7 Phase 23 Step 3: home page — Korean magazine cover
+f99ce51 Phase 23 Step 4: lab as a magazine
+8fa586e Phase 23 Step 5: community hub editorial
+d6b80f8 Phase 23 Step 6: tool pages — drop hardcoded blue
+```
+
+### 후속 권장
+- 모바일 헤드라인 폰트 사이즈 점검 (디스플레이 5.5rem이 작은 화면에 압도적일 수 있음)
+- 도구 페이지의 inline `<h1 className="text-2xl font-bold ...">`를 PageHeader 컴포넌트로 점진 마이그레이션 — 헤더 룰·아이브로우 통일감
+- prose 스타일이 적용되지 않는 외부 HTML 포스트(`public/posts/*.html`)는 인라인 `<style>` 그대로 유지됨 — 매거진 톤과 약간 거리감, 차후 재작성 검토
+- 추가 디테일: 디스플레이 글자에 `font-feature-settings: "lnum"` 적용해 숫자 라이닝 figure 통일
+
+---
+
 ## 2026-05-05 — Phase 22.1: 작은 UX 다듬기 + main 머지
 
 Phase 22 직후 사용자 피드백 두 건을 즉시 반영하고, 그동안 누적된 4개 커밋(Phase 21, Phase 22, STEP fix, 뉴스 라벨 정리)을 main에 fast-forward 머지.
