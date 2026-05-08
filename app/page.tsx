@@ -134,7 +134,7 @@ export default function Home() {
                 href={f.href}
                 className={`group block rounded-md border p-5 transition-colors ${
                   f.emphasis
-                    ? 'bg-white dark:bg-zinc-900 border-emerald-200 dark:border-emerald-900/50 ring-1 ring-emerald-500/20 hover:ring-emerald-500/40'
+                    ? 'bg-white dark:bg-zinc-900 border-blue-200 dark:border-blue-900/50 ring-1 ring-blue-500/20 hover:ring-blue-500/40'
                     : 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
                 }`}
               >
@@ -143,23 +143,23 @@ export default function Home() {
                     {f.label}
                   </span>
                   {f.emphasis && (
-                    <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">New</span>
+                    <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">New</span>
                   )}
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {f.title}
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
                   {f.desc}
                 </p>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-300">
                   {f.cta}
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </span>
                 {'authNote' in f && f.authNote && (
-                  <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-stone-500 dark:text-stone-500 font-medium">
+                  <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-500 font-medium">
                     <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
@@ -188,10 +188,10 @@ export default function Home() {
                 href={s.href}
                 className="group block rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors p-4"
               >
-                <div className="text-2xl font-semibold text-slate-300 dark:text-zinc-700 group-hover:text-emerald-300 dark:group-hover:text-emerald-700 transition-colors mb-2 tabular">
+                <div className="text-2xl font-semibold text-slate-300 dark:text-zinc-700 group-hover:text-blue-300 dark:group-hover:text-blue-700 transition-colors mb-2 tabular">
                   {String(s.num).padStart(2, '0')}
                 </div>
-                <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {s.title}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-slate-400">{s.desc}</div>
@@ -207,7 +207,7 @@ export default function Home() {
           <div className="mb-8">
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">자주 묻는 질문</h2>
             <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
-              여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-emerald-600 dark:text-emerald-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
+              여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-blue-600 dark:text-blue-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
             </p>
           </div>
           <div className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden divide-y divide-slate-100 dark:divide-zinc-800">
@@ -310,12 +310,12 @@ function AnonHero({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         <div className="max-w-3xl">
           <span className="pill pill-accent mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
             네이버 API 기반 실시간 분석
           </span>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4 leading-[1.15]">
             내 블로그의 위치를 알고,<br />
-            <span className="text-emerald-500 dark:text-emerald-400">데이터로</span> 글을 씁니다.
+            <span className="text-blue-500 dark:text-blue-400">데이터로</span> 글을 씁니다.
           </h1>
           <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-2xl">
             블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.
@@ -332,7 +332,7 @@ function AnonHero({
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder="분석할 키워드 입력 (예: 수원 맛집)"
-                className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent shadow-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
               />
             </div>
             <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap">

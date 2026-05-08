@@ -31,13 +31,13 @@ interface Props {
  */
 export default function HorizontalBarList({
   items,
-  barClassName = 'bg-emerald-500/80 dark:bg-emerald-400/70',
+  barClassName = 'bg-blue-500/80 dark:bg-blue-400/70',
   rowHeight = 36,
   emptyMessage = '표시할 데이터가 없습니다.',
 }: Props) {
   if (items.length === 0) {
     return (
-      <div className="text-xs text-stone-500 dark:text-stone-400 px-1 py-3">{emptyMessage}</div>
+      <div className="text-xs text-zinc-500 dark:text-zinc-400 px-1 py-3">{emptyMessage}</div>
     );
   }
 
@@ -49,7 +49,7 @@ export default function HorizontalBarList({
         const pct = (it.value / max) * 100;
         const inner = (
           <div
-            className="relative flex items-center px-2 rounded-md hover:bg-stone-50 dark:hover:bg-[#1d2320] transition-colors group"
+            className="relative flex items-center px-2 rounded-md hover:bg-zinc-50 dark:hover:bg-[#1f1f23] transition-colors group"
             style={{ height: rowHeight }}
           >
             {/* Bar background */}
@@ -60,17 +60,17 @@ export default function HorizontalBarList({
             />
             {/* Rank */}
             {it.rank !== undefined && (
-              <span className="relative z-10 w-7 text-[11px] tabular text-stone-400 dark:text-stone-500 font-semibold">
+              <span className="relative z-10 w-7 text-[11px] tabular text-zinc-400 dark:text-zinc-500 font-semibold">
                 {String(it.rank).padStart(2, '0')}
               </span>
             )}
             {/* Label */}
-            <span className="relative z-10 flex-1 text-sm font-medium text-stone-900 dark:text-stone-100 truncate">
+            <span className="relative z-10 flex-1 text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
               {it.label}
             </span>
             {/* Value */}
             {it.display && (
-              <span className="relative z-10 ml-3 text-xs tabular text-stone-600 dark:text-stone-400 whitespace-nowrap">
+              <span className="relative z-10 ml-3 text-xs tabular text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
                 {it.display}
               </span>
             )}

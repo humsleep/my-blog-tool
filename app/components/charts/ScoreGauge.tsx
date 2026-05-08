@@ -16,7 +16,7 @@ interface Props {
 /**
  * SVG 점수 게이지 — 반원 또는 도넛.
  * 다크모드 자동 감지. 점수 구간별 색상(35/50/65/80 기준):
- *   <35 muted / 35-49 amber / 50-64 sky / 65-79 sage / 80+ deep emerald
+ *   <35 muted / 35-49 amber / 50-64 light blue / 65-79 sapphire / 80+ deep sapphire
  */
 export default function ScoreGauge({ value, size = 160, caption, half = true }: Props) {
   const [isDark, setIsDark] = useState(false);
@@ -30,18 +30,17 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
 
   const v = Math.max(0, Math.min(100, value));
 
-  const accent = isDark ? '#6ee7b7' : '#047857';
-  const muted = isDark ? '#3a443d' : '#e7e5e4';
-  const textColor = isDark ? '#fafaf9' : '#1c1917';
-  const subText = isDark ? '#a8a29e' : '#78716c';
+  const muted     = isDark ? '#27272a' : '#e4e4e7';   /* zinc-800 / zinc-200 */
+  const textColor = isDark ? '#fafafa' : '#18181b';   /* zinc-50 / zinc-900 */
+  const subText   = isDark ? '#a1a1aa' : '#71717a';   /* zinc-400 / zinc-500 */
 
-  // 점수에 따라 띠 색상 미세 조정 — 너무 화려하지 않게 액센트 변형만
+  // 점수에 따라 띠 색상 미세 조정 — sapphire 변형 + 저점 amber
   const bandColor =
-    v >= 80 ? (isDark ? '#34d399' : '#047857') :
-    v >= 65 ? (isDark ? '#6ee7b7' : '#059669') :
-    v >= 50 ? (isDark ? '#a7f3d0' : '#10b981') :
-    v >= 35 ? (isDark ? '#fcd34d' : '#d97706') :
-              (isDark ? '#a8a29e' : '#78716c');
+    v >= 80 ? (isDark ? '#3b82f6' : '#1d4ed8') :  /* blue-500 / blue-700 */
+    v >= 65 ? (isDark ? '#60a5fa' : '#2563eb') :  /* blue-400 / blue-600 */
+    v >= 50 ? (isDark ? '#93c5fd' : '#3b82f6') :  /* blue-300 / blue-500 */
+    v >= 35 ? (isDark ? '#fcd34d' : '#d97706') :  /* amber-300 / amber-600 */
+              (isDark ? '#a1a1aa' : '#71717a');   /* zinc-400 / zinc-500 */
 
   const stroke = 12;
   const r = (size - stroke) / 2;
@@ -122,12 +121,12 @@ export function ScoreMiniBar({ label, value }: { label: string; value: number })
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between">
-        <span className="text-xs uppercase tracking-wider text-stone-500 dark:text-stone-400">{label}</span>
-        <span className="tabular text-sm font-semibold text-stone-900 dark:text-stone-100">{v}</span>
+        <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">{label}</span>
+        <span className="tabular text-sm font-semibold text-zinc-900 dark:text-zinc-100">{v}</span>
       </div>
-      <div className="h-1.5 rounded-full bg-stone-100 dark:bg-[#1d2320] overflow-hidden">
+      <div className="h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
         <div
-          className="h-full rounded-full bg-emerald-600 dark:bg-emerald-400 transition-all duration-1000 ease-out"
+          className="h-full rounded-full bg-blue-600 dark:bg-blue-400 transition-all duration-1000 ease-out"
           style={{ width: `${v}%` }}
         />
       </div>

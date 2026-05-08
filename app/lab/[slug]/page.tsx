@@ -115,9 +115,9 @@ export default async function PostPage({
             prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:tracking-tight
             prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
             prose-p:text-ink-muted prose-p:leading-[1.85]
-            prose-strong:text-emerald-700 dark:prose-strong:text-emerald-400 prose-strong:font-semibold
+            prose-strong:text-blue-700 dark:prose-strong:text-blue-400 prose-strong:font-semibold
             prose-em:text-ink prose-em:not-italic prose-em:font-medium
-            prose-a:text-emerald-600 dark:prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+            prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
             prose-ul:text-ink-muted prose-li:my-1
             prose-hr:border-rule-soft"
           dangerouslySetInnerHTML={{ __html: content }}
@@ -128,7 +128,7 @@ export default async function PostPage({
           <div className="ed-ornament mb-8">— END —</div>
           <Link
             href="/lab"
-            className="inline-flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-ink hover:text-emerald-600 dark:hover:text-emerald-400 border-b border-ink hover:border-emerald-600 dark:hover:border-emerald-400 pb-0.5 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-ink hover:text-blue-600 dark:hover:text-blue-400 border-b border-ink hover:border-blue-600 dark:hover:border-blue-400 pb-0.5 transition-colors"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />

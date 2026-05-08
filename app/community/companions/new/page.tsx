@@ -187,7 +187,7 @@ function CompanionNewPage() {
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">로그인이 필요합니다</h1>
             <Link
               href={`/login?next=${encodeURIComponent('/community/companions/new')}`}
-              className="inline-flex items-center px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg"
+              className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
             </Link>
@@ -204,7 +204,7 @@ function CompanionNewPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <Link href="/community/companions" className="hover:text-emerald-500 dark:hover:text-emerald-400">체험단 동행해요</Link>
+            <Link href="/community/companions" className="hover:text-blue-500 dark:hover:text-blue-400">체험단 동행해요</Link>
             <span>/</span>
             <span>{editId ? '글 수정' : '모집글 작성'}</span>
           </div>
@@ -308,7 +308,7 @@ function CompanionNewPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : editId ? '수정 저장' : '모집글 등록'}
             </button>
@@ -320,7 +320,7 @@ function CompanionNewPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500';
+  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500';
 
 function Field({
   label, required, help, children,

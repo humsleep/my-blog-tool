@@ -49,7 +49,7 @@ export default function Pagination({ page, totalPages, onChange, enableArrowKeys
           aria-current={p === page ? 'page' : undefined}
           className={`min-w-[36px] h-9 px-2 text-sm rounded-lg transition-colors tabular-nums ${
             p === page
-              ? 'bg-emerald-500 text-white font-semibold shadow-sm'
+              ? 'bg-blue-500 text-white font-semibold shadow-sm'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
           }`}
         >

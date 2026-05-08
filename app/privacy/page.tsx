@@ -216,7 +216,7 @@ export default function PrivacyPage() {
               </ul>
               <p className="mt-3">
                 권리 행사는 이메일(
-                <a href="mailto:boheme88@naver.com" className="text-emerald-500 dark:text-emerald-400 hover:underline">boheme88@naver.com</a>
+                <a href="mailto:boheme88@naver.com" className="text-blue-500 dark:text-blue-400 hover:underline">boheme88@naver.com</a>
                 )을 통해 요청할 수 있으며, 서비스는 지체 없이 조치합니다.
               </p>
             </section>
@@ -258,7 +258,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">12. 개인정보 보호책임자</h2>
               <div className="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 rounded-lg p-5 space-y-1.5">
                 <p><strong>개인정보 보호책임자:</strong> Boheme BlogLab 운영자</p>
-                <p><strong>이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-emerald-500 dark:text-emerald-400 hover:underline">boheme88@naver.com</a></p>
+                <p><strong>이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-blue-500 dark:text-blue-400 hover:underline">boheme88@naver.com</a></p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 pt-2">
                   이용자는 서비스를 이용하면서 발생한 개인정보 보호 관련 문의, 불만처리, 피해구제 등을 위 이메일로 요청할 수 있으며,
                   서비스는 이용자의 문의에 대해 지체 없이 답변 및 처리해드립니다.
@@ -270,10 +270,10 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">13. 권익침해 구제방법</h2>
               <p className="mb-3">개인정보 침해로 인한 신고 및 상담은 아래 기관에 문의하실 수 있습니다.</p>
               <ul className="list-disc pl-6 space-y-1.5">
-                <li>개인정보분쟁조정위원회: (국번없이) 1833-6972 &middot; <a href="https://www.kopico.go.kr" target="_blank" rel="noopener noreferrer" className="text-emerald-500 dark:text-emerald-400 hover:underline">kopico.go.kr</a></li>
-                <li>개인정보침해신고센터: (국번없이) 118 &middot; <a href="https://privacy.kisa.or.kr" target="_blank" rel="noopener noreferrer" className="text-emerald-500 dark:text-emerald-400 hover:underline">privacy.kisa.or.kr</a></li>
-                <li>대검찰청 사이버수사과: (국번없이) 1301 &middot; <a href="https://www.spo.go.kr" target="_blank" rel="noopener noreferrer" className="text-emerald-500 dark:text-emerald-400 hover:underline">spo.go.kr</a></li>
-                <li>경찰청 사이버수사국: (국번없이) 182 &middot; <a href="https://ecrm.police.go.kr" target="_blank" rel="noopener noreferrer" className="text-emerald-500 dark:text-emerald-400 hover:underline">ecrm.police.go.kr</a></li>
+                <li>개인정보분쟁조정위원회: (국번없이) 1833-6972 &middot; <a href="https://www.kopico.go.kr" target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">kopico.go.kr</a></li>
+                <li>개인정보침해신고센터: (국번없이) 118 &middot; <a href="https://privacy.kisa.or.kr" target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">privacy.kisa.or.kr</a></li>
+                <li>대검찰청 사이버수사과: (국번없이) 1301 &middot; <a href="https://www.spo.go.kr" target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">spo.go.kr</a></li>
+                <li>경찰청 사이버수사국: (국번없이) 182 &middot; <a href="https://ecrm.police.go.kr" target="_blank" rel="noopener noreferrer" className="text-blue-500 dark:text-blue-400 hover:underline">ecrm.police.go.kr</a></li>
               </ul>
             </section>
 

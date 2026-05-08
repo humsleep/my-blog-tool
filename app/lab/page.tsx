@@ -84,7 +84,7 @@ export default async function LabPage() {
                 </div>
                 <div className="lg:col-span-5">
                   <div className="ed-eyebrow mb-4">Cover Story</div>
-                  <h2 className="text-[1.875rem] sm:text-2xl sm:text-3xl lg:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <h2 className="text-[1.875rem] sm:text-2xl sm:text-3xl lg:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {coverPost.title}
                   </h2>
                   {coverPost.description && (
@@ -100,7 +100,7 @@ export default async function LabPage() {
                         })}
                       </time>
                     )}
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-emerald-600 dark:group-hover:text-emerald-400 border-b border-ink group-hover:border-emerald-600 dark:group-hover:border-emerald-400 pb-0.5 transition-colors">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-blue-600 dark:group-hover:text-blue-400 border-b border-ink group-hover:border-blue-600 dark:group-hover:border-blue-400 pb-0.5 transition-colors">
                       읽기
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -124,7 +124,7 @@ export default async function LabPage() {
                   <div className="relative w-full aspect-[16/9] bg-paper-deep border border-rule-soft overflow-hidden mb-5">
                     <PostImage src={`/posts/images/${post.slug}.png`} alt={post.title} />
                   </div>
-                  <h2 className="text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <h2 className="text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {post.title}
                   </h2>
                   {post.description && (

@@ -4,48 +4,51 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────────────
- * Boheme BlogLab — Sage & Charcoal Theme (Phase 29)
+ * Boheme BlogLab — Modern Monochrome Theme (Phase 30)
  *
- *   Tone:        조용한 럭셔리 — Linear/Notion 톤. 데이터 위주, 자연스러운 깊이.
- *   Typography:  Pretendard 단일.
- *   Color:       stone neutral + emerald(sage) 액센트.
- *                Light: 따뜻한 화이트(#fafaf9) + 깊은 세이지 그린(#047857)
- *                Dark:  숲 향 도는 차콜(#0f1411) + 밝은 민트(#6ee7b7) — 눈 편함
+ *   Tone:        Linear / Vercel / Stripe — 극도로 모던. 색을 거의 안 쓰고
+ *                중립 회색만으로 정보 위계를 구성. 액센트는 작은 사파이어 도트.
+ *   Typography:  Wanted Sans Variable (모던 기하학), Pretendard fallback
+ *   Color:       zinc neutral + sapphire(#2563eb) 액센트
+ *                Light: 거의 흰색(#fafafa) + zinc-900 잉크 + 작은 사파이어 포인트
+ *                Dark:  near-black(#0a0a0a) + light sapphire(#60a5fa)
  *   Card:        8px radius + 1px hairline + 미세 그림자
+ *   Spacing:     8pt grid
  * ─────────────────────────────────────────────────────────────────────
  */
 
 :root {
-  /* ── Surface (warm white, stone-tinted) ── */
-  --bg-base:        #fafaf9;   /* stone-50 — 따뜻한 화이트 */
+  /* ── Surface (zinc neutral) ── */
+  --bg-base:        #fafafa;   /* 페이지 배경 — zinc-50 */
   --bg-surface:     #ffffff;   /* 카드 */
-  --bg-elevated:    #f5f5f4;   /* stone-100 — 호버 */
+  --bg-elevated:    #f4f4f5;   /* 호버·하이라이트 — zinc-100 */
   --bg-overlay:     rgba(255,255,255,0.92);
 
   /* ── Text ── */
-  --text-primary:   #1c1917;   /* stone-900 */
-  --text-secondary: #57534e;   /* stone-600 — WCAG AA on white */
-  --text-muted:     #78716c;   /* stone-500 */
-  --text-faint:     #a8a29e;   /* stone-400 */
+  --text-primary:   #18181b;   /* zinc-900 */
+  --text-secondary: #52525b;   /* zinc-600 — WCAG AA on white */
+  --text-muted:     #71717a;   /* zinc-500 */
+  --text-faint:     #a1a1aa;   /* zinc-400 */
 
   /* ── Border ── */
-  --border:         #e7e5e4;   /* stone-200 */
-  --border-subtle:  #f5f5f4;   /* stone-100 */
-  --border-strong:  #d6d3d1;   /* stone-300 */
+  --border:         #e4e4e7;   /* zinc-200 */
+  --border-subtle:  #f4f4f5;   /* zinc-100 */
+  --border-strong:  #d4d4d8;   /* zinc-300 */
 
-  /* ── Accent (Sage / Emerald) ── */
-  --accent:         #047857;   /* emerald-700 — 깊은 세이지 */
-  --accent-hover:   #065f46;   /* emerald-800 */
-  --accent-soft:    #ecfdf5;   /* emerald-50 */
-  --accent-text:    #047857;   /* readable on emerald-50 */
+  /* ── Accent (Sapphire — Linear-style) ── */
+  --accent:         #2563eb;   /* blue-600 */
+  --accent-hover:   #1d4ed8;   /* blue-700 */
+  --accent-soft:    #eff6ff;   /* blue-50 */
+  --accent-text:    #1d4ed8;   /* readable on blue-50 */
+  --accent-ring:    rgba(37,99,235,0.18);   /* focus ring tint */
 
-  /* ── Status (chart-friendly, distinct from accent) ── */
-  --success:        #16a34a;   /* green-600 — accent와 구분되도록 더 밝은 녹 */
+  /* ── Status (distinct from accent) ── */
+  --success:        #16a34a;   /* green-600 */
   --success-bg:     #f0fdf4;
   --success-text:   #15803d;
   --success-border: #bbf7d0;
 
-  --warning:        #d97706;   /* amber-600 — 따뜻한 톤 유지 */
+  --warning:        #d97706;   /* amber-600 */
   --warning-bg:     #fffbeb;
   --warning-text:   #b45309;
   --warning-border: #fde68a;
@@ -55,12 +58,12 @@
   --danger-text:    #b91c1c;
   --danger-border:  #fecaca;
 
-  --info:           #0284c7;   /* sky-600 — 액센트와 충돌 X */
+  --info:           #0ea5e9;   /* sky-500 — accent와 구분 */
   --info-bg:        #f0f9ff;
   --info-text:      #0369a1;
   --info-border:    #bae6fd;
 
-  /* ── Shadow (very subtle, SaaS-style) ── */
+  /* ── Shadow (very subtle, Linear-style) ── */
   --shadow-xs: 0 1px 0 rgb(0 0 0 / 0.04);
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
   --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
@@ -70,28 +73,35 @@
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast:   120ms;
+  --duration-base:   180ms;
+  --duration-slow:   320ms;
 }
 
 .dark {
-  /* 숲 향 도는 따뜻한 차콜 — 순흑보다 눈 편함, 장시간 작업용 */
-  --bg-base:        #0f1411;   /* forest charcoal (warm) */
-  --bg-surface:     #161b18;
-  --bg-elevated:    #1d2320;
-  --bg-overlay:     rgba(15,20,17,0.92);
+  /* near-black + 살짝 elevated surfaces — Vercel/Linear 스타일 */
+  --bg-base:        #0a0a0a;   /* near-black */
+  --bg-surface:     #161618;
+  --bg-elevated:    #1f1f23;
+  --bg-overlay:     rgba(10,10,10,0.92);
 
-  --text-primary:   #fafaf9;   /* stone-50 */
-  --text-secondary: #a8a29e;   /* stone-400 — ~7:1 on bg-surface */
-  --text-muted:     #78716c;   /* stone-500 */
-  --text-faint:     #57534e;   /* stone-600 */
+  --text-primary:   #fafafa;   /* zinc-50 */
+  --text-secondary: #a1a1aa;   /* zinc-400 — ~7:1 on bg-surface */
+  --text-muted:     #71717a;   /* zinc-500 */
+  --text-faint:     #52525b;   /* zinc-600 */
 
-  --border:         #2a322d;   /* warm forest border */
-  --border-subtle:  #1d2320;
-  --border-strong:  #3a443d;
+  --border:         #27272a;   /* zinc-800 */
+  --border-subtle:  #1f1f23;
+  --border-strong:  #3f3f46;   /* zinc-700 */
 
-  --accent:         #6ee7b7;   /* emerald-300 — 다크에서 부드러운 민트 */
-  --accent-hover:   #a7f3d0;   /* emerald-200 */
-  --accent-soft:    rgba(16,185,129,0.12);
-  --accent-text:    #6ee7b7;
+  --accent:         #60a5fa;   /* blue-400 — 다크에서 부드럽게 */
+  --accent-hover:   #93c5fd;   /* blue-300 */
+  --accent-soft:    rgba(59,130,246,0.12);
+  --accent-text:    #93c5fd;
+  --accent-ring:    rgba(96,165,250,0.30);
 
   --success:        #4ade80;
   --success-bg:     rgba(34,197,94,0.12);
@@ -119,27 +129,28 @@
   --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6), 0 4px 8px -2px rgb(0 0 0 / 0.4);
 }
 
-/* ── Tailwind v4 — neutral zinc 팔레트 사용 ──
- * Phase 23의 슬레이트→베이지 매핑을 모두 되돌림. 이제 slate-* 클래스는
- * Tailwind 기본 cool gray 그대로 사용 (분석 사이트에 자연스러움).
- */
+/* ── Tailwind v4 — neutral zinc 기본 ── */
 @theme inline {
   --color-background: var(--bg-base);
   --color-foreground: var(--text-primary);
 
-  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+  /* Wanted Sans Variable 우선, Pretendard fallback, 시스템 폰트 마지막 */
+  --font-sans:
+    'Wanted Sans Variable', 'Wanted Sans',
+    'Pretendard Variable', 'Pretendard',
+    -apple-system, BlinkMacSystemFont, system-ui, Roboto,
     'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR',
     'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     sans-serif;
 
-  /* font-mono — 표·숫자용 */
   --font-mono: 'JetBrains Mono', 'SF Mono', 'IBM Plex Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
 }
 
-/* ── Base body ── */
+/* ── Base ── */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -148,52 +159,82 @@ body {
   font-family: var(--font-sans);
   font-size: 15px;
   line-height: 1.6;
-  letter-spacing: -0.01em;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';   /* 표 숫자(tabular nums) 기본 */
+  letter-spacing: -0.005em;       /* Wanted Sans 기본 트래킹 */
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  font-variation-settings: 'wght' 400;
+  transition: background-color var(--duration-base) var(--ease-out),
+              color var(--duration-base) var(--ease-out);
 }
 
-/* Headings — sans-serif, tight tracking, no italic */
+/* ─── Type scale (Phase 30 — Wanted Sans 기반) ─── */
 h1 {
-  font-size: 1.875rem;       /* 30px */
-  font-weight: 600;
+  font-size: 2rem;               /* 32px */
+  font-weight: 700;
   letter-spacing: -0.025em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: var(--text-primary);
+  font-variation-settings: 'wght' 700;
+}
+@media (min-width: 640px) {
+  h1 { font-size: 2.25rem; }     /* 36px */
 }
 h2 {
-  font-size: 1.5rem;         /* 24px */
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 1.375rem;           /* 22px */
+  font-weight: 700;
+  letter-spacing: -0.022em;
   line-height: 1.25;
   color: var(--text-primary);
+  font-variation-settings: 'wght' 700;
+}
+@media (min-width: 640px) {
+  h2 { font-size: 1.5rem; }      /* 24px */
 }
 h3 {
-  font-size: 1.125rem;       /* 18px */
+  font-size: 1.0625rem;          /* 17px */
   font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.35;
   color: var(--text-primary);
+  font-variation-settings: 'wght' 600;
 }
 h4, h5, h6 {
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+  font-variation-settings: 'wght' 600;
 }
 
 p, li {
   line-height: 1.65;
 }
 
-/* ── Editorial 유틸리티 잔존 — 모던 SaaS로 재정의 (Phase 23 잔재 호환용) ──
- * 옛 .ed-* 클래스를 사용하는 페이지가 자연스럽게 SaaS 톤으로 보이도록 매핑.
- * 새 페이지는 .kpi-*, .panel-* 유틸리티를 사용해야 함.
- */
+/* Display 클래스 — Hero용 거대 타이틀 */
+.display-hero {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw + 1rem, 3.5rem);    /* 40~56px fluid */
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text-primary);
+  font-variation-settings: 'wght' 700;
+}
+
+.display-2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(2rem, 3vw + 1rem, 2.75rem);     /* 32~44px fluid */
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  font-variation-settings: 'wght' 700;
+}
+
+/* ── Editorial 잔재 호환 별칭 (Phase 23/27 → Phase 30 매핑) ── */
 .ed-eyebrow {
-  font-size: 0.75rem;        /* 12px */
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -202,71 +243,32 @@ p, li {
   align-items: center;
   gap: 0.375rem;
 }
-.ed-eyebrow::before { content: none; }    /* 룰 마크 제거 */
+.ed-eyebrow::before { content: none; }
 
-.ed-display {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
-  color: var(--text-primary);
-}
+.ed-display    { font-family: var(--font-sans); font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; color: var(--text-primary); }
+.ed-byline     { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
+.ed-rule       { height: 1px; background-color: var(--border); border: 0; }
+.ed-rule-strong{ height: 1px; background-color: var(--border-strong); border: 0; }
+.ed-ornament   { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 0.75rem; }
+.ed-ornament::before, .ed-ornament::after { content: ""; flex: 1; height: 1px; background-color: var(--border); }
+.ed-dropcap::first-letter { all: unset; }
 
-.ed-byline {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.ed-rule {
-  height: 1px;
-  background-color: var(--border);
-  border: 0;
-}
-.ed-rule-strong {
-  height: 1px;
-  background-color: var(--border-strong);
-  border: 0;
-}
-
-.ed-ornament {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.ed-ornament::before, .ed-ornament::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background-color: var(--border);
-}
-
-.ed-dropcap::first-letter { all: unset; }    /* drop cap 비활성 */
-
-/* ── Modern utility classes ── */
+/* ── Modern utility tokens ── */
 .bg-base       { background-color: var(--bg-base); }
 .bg-surface    { background-color: var(--bg-surface); }
 .bg-elevated   { background-color: var(--bg-elevated); }
 
-.text-primary   { color: var(--text-primary); }
-.text-secondary { color: var(--text-secondary); }
-.text-muted-token { color: var(--text-muted); }
+.text-primary    { color: var(--text-primary); }
+.text-secondary  { color: var(--text-secondary); }
+.text-muted-token{ color: var(--text-muted); }
 
 .border-token  { border-color: var(--border); }
 .border-strong { border-color: var(--border-strong); }
 .border-subtle { border-color: var(--border-subtle); }
 
-/* font-display 잔재 — 그냥 Pretendard 처리 */
-.font-display { font-family: var(--font-sans); font-weight: 600; }
+.font-display { font-family: var(--font-sans); font-weight: 700; }
 
-/* ── Phase 23 → Phase 27 호환 별칭 ── */
+/* Phase 23 잔재 별칭 */
 .bg-paper      { background-color: var(--bg-surface); }
 .bg-paper-deep { background-color: var(--bg-elevated); }
 .text-ink       { color: var(--text-primary); }
@@ -275,26 +277,33 @@ p, li {
 .border-rule       { border-color: var(--border); }
 .border-rule-soft  { border-color: var(--border-subtle); }
 
-/* ── Card — SaaS 분석 사이트 카드 ── */
+/* ── Card ── */
 .card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out);
 }
 .card:hover {
   box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
 }
 
-/* KPI 카드 — 큰 숫자 + 작은 라벨 + 증감 */
+/* KPI 카드 */
 .kpi-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1.25rem;
   box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out);
 }
+.kpi-card:hover { border-color: var(--border-strong); }
 .kpi-label {
   font-size: 0.75rem;
   font-weight: 500;
@@ -303,12 +312,13 @@ p, li {
 }
 .kpi-value {
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.025em;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   line-height: 1.1;
   margin-top: 0.25rem;
+  font-variation-settings: 'wght' 700;
 }
 .kpi-delta {
   display: inline-flex;
@@ -322,7 +332,7 @@ p, li {
 .kpi-delta.negative { color: var(--danger); }
 .kpi-delta.neutral  { color: var(--text-muted); }
 
-/* Section panel — 카드의 더 큰 형제 */
+/* Panel */
 .panel {
   background-color: var(--bg-surface);
   border: 1px solid var(--border);
@@ -351,17 +361,18 @@ p, li {
   min-height: 40px;
   width: 100%;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
-.input-base::placeholder {
-  color: var(--text-faint);
+.input-base::placeholder { color: var(--text-faint); }
+.input-base:hover:not(:focus):not(:disabled) {
+  border-color: var(--border-strong);
 }
 .input-base:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(4 120 87 / 0.18);
-}
-.dark .input-base:focus {
-  box-shadow: 0 0 0 3px rgb(110 231 183 / 0.24);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 /* ── Buttons ── */
@@ -374,10 +385,15 @@ p, li {
   font-weight: 500;
   letter-spacing: -0.005em;
   cursor: pointer;
-  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease,
-    box-shadow 0.15s ease, transform 0.06s ease;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    transform 80ms var(--ease-out);
   white-space: nowrap;
   user-select: none;
+  font-variation-settings: 'wght' 500;
 }
 .btn-base:disabled {
   opacity: 0.5;
@@ -388,17 +404,14 @@ p, li {
 }
 .btn-base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(4 120 87 / 0.35);
-}
-.dark .btn-base:focus-visible {
-  box-shadow: 0 0 0 3px rgb(110 231 183 / 0.40);
+  box-shadow: 0 0 0 3px var(--accent-ring);
 }
 
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }
-.btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem; min-height: 38px; }
+.btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem;  min-height: 38px; }
 .btn-lg { padding: 0.75rem 1.25rem; font-size: 0.9375rem; min-height: 44px; }
 
-/* primary — 주황 액센트 */
+/* primary — sapphire 액센트 */
 .btn-primary {
   background-color: var(--accent);
   color: #ffffff;
@@ -410,8 +423,17 @@ p, li {
   border-color: var(--accent-hover);
   box-shadow: var(--shadow-sm);
 }
+.btn-primary:active:not(:disabled) {
+  background-color: var(--accent-hover);
+  box-shadow: none;
+}
 
-/* secondary — 흰 카드 + 테두리 */
+/* dark에서 primary는 약간 다른 처리 — accent가 light tint이므로 어두운 텍스트 */
+.dark .btn-primary {
+  color: #0a0a0a;
+}
+
+/* secondary */
 .btn-secondary {
   background-color: var(--bg-surface);
   color: var(--text-primary);
@@ -422,8 +444,11 @@ p, li {
   background-color: var(--bg-elevated);
   border-color: var(--border-strong);
 }
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--border);
+}
 
-/* ghost — 투명 */
+/* ghost */
 .btn-ghost {
   background-color: transparent;
   color: var(--text-secondary);
@@ -432,6 +457,9 @@ p, li {
 .btn-ghost:hover:not(:disabled) {
   background-color: var(--bg-elevated);
   color: var(--text-primary);
+}
+.btn-ghost:active:not(:disabled) {
+  background-color: var(--border-subtle);
 }
 
 /* danger */
@@ -452,17 +480,32 @@ p, li {
   font-size: 0.75rem;
   font-weight: 500;
   border: 1px solid transparent;
+  font-variation-settings: 'wght' 500;
 }
 .pill-success { background: var(--success-bg); color: var(--success-text); border-color: var(--success-border); }
 .pill-warning { background: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
 .pill-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-color: var(--danger-border); }
 .pill-info    { background: var(--info-bg);    color: var(--info-text);    border-color: var(--info-border); }
-.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(4,120,87,0.18); }
-.dark .pill-accent { border-color: rgba(110,231,183,0.24); }
+.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(37,99,235,0.18); }
+.dark .pill-accent { border-color: rgba(96,165,250,0.30); }
 .pill-neutral { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border); }
 
-/* tabular-nums helper for tables */
+/* tabular-nums for tables */
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* ── Link inline ── */
+a.link, .link {
+  color: var(--accent-text);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out),
+              text-decoration-color var(--duration-fast) var(--ease-out);
+}
+a.link:hover, .link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -479,10 +522,10 @@ p, li {
 .dark .ql-picker-label { color: var(--text-secondary) !important; }
 
 /* ── Selection ── */
-::selection { background-color: rgb(4 120 87 / 0.22); color: var(--text-primary); }
-.dark ::selection { background-color: rgb(110 231 183 / 0.30); }
+::selection { background-color: rgb(37 99 235 / 0.22); color: var(--text-primary); }
+.dark ::selection { background-color: rgb(96 165 250 / 0.30); }
 
-/* ── Scrollbar 숨김 (가로 스크롤 영역) ── */
+/* ── Scrollbar 숨김 ── */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 

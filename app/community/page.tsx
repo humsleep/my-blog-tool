@@ -66,20 +66,20 @@ export default function CommunityHubPage() {
               className="group relative bg-paper hover:bg-paper-deep transition-colors p-8 sm:p-10"
             >
               <div className="flex items-baseline justify-between mb-6">
-                <span className="text-5xl text-ink-faint group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-none">
+                <span className="text-5xl text-ink-faint group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none">
                   {menu.num}
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-ink-faint">
                   {menu.badge}
                 </span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 leading-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {menu.title}
               </h2>
               <p className="text-sm sm:text-base text-ink-muted leading-[1.7] mb-6">
                 {menu.description}
               </p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-emerald-600 dark:group-hover:text-emerald-400 border-b border-ink group-hover:border-emerald-600 dark:group-hover:border-emerald-400 pb-0.5 transition-colors">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-blue-600 dark:group-hover:text-blue-400 border-b border-ink group-hover:border-blue-600 dark:group-hover:border-blue-400 pb-0.5 transition-colors">
                 바로가기
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -98,7 +98,7 @@ export default function CommunityHubPage() {
             { title: '안전한 만남', desc: '체험단 동행은 오픈채팅 링크로 시작하고, 개인정보는 본문에 적지 마세요.' },
           ].map((item, i) => (
             <div key={item.title} className={i < 2 ? 'sm:pr-8 sm:border-r sm:border-rule-soft' : ''}>
-              <div className="text-emerald-600 dark:text-emerald-400 text-2xl mb-3">{`§ ${i + 1}`}</div>
+              <div className="text-blue-600 dark:text-blue-400 text-2xl mb-3">{`§ ${i + 1}`}</div>
               <h3 className="text-lg font-semibold text-ink mb-2">{item.title}</h3>
               <p className="text-sm text-ink-muted leading-[1.7]">{item.desc}</p>
             </div>

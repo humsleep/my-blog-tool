@@ -306,10 +306,10 @@ function KeywordAnalysisContent() {
   const sortedKeywords = [...keywordData].reverse();
 
   const competitionConfig = (ratio: number) => {
-    if (ratio <= 0.5) return { icon: '🟢', color: 'text-emerald-600 dark:text-emerald-400', label: '최상 (꿀키워드)' };
+    if (ratio <= 0.5) return { icon: '🟢', color: 'text-blue-600 dark:text-blue-400', label: '최상 (꿀키워드)' };
     if (ratio <= 1.0) return { icon: '🟡', color: 'text-yellow-600 dark:text-yellow-400', label: '상 (우수)' };
     if (ratio <= 3.0) return { icon: '⚫', color: 'text-slate-700 dark:text-slate-300', label: '중 (보통)' };
-    if (ratio <= 7.0) return { icon: '🟠', color: 'text-emerald-600 dark:text-emerald-400', label: '하 (치열)' };
+    if (ratio <= 7.0) return { icon: '🟠', color: 'text-blue-600 dark:text-blue-400', label: '하 (치열)' };
     return { icon: '🔴', color: 'text-red-600 dark:text-red-400', label: '최하 (위험)' };
   };
 
@@ -346,13 +346,13 @@ function KeywordAnalysisContent() {
                       if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) analyzeKeywords();
                     }}
                     placeholder="예: 꽃배달, flower, 화환"
-                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     disabled={isLoading}
                   />
                   <button
                     onClick={analyzeKeywords}
                     disabled={isLoading || !inputKeywords.trim()}
-                    className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
+                    className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     {isLoading ? (
                       <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -384,7 +384,7 @@ function KeywordAnalysisContent() {
                         <button
                           type="button"
                           onClick={() => addSavedKeyword(inputKeywords.split(',')[0].trim())}
-                          className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+                          className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
                         >
                           + 현재 키워드 저장
                         </button>
@@ -399,12 +399,12 @@ function KeywordAnalysisContent() {
                         {savedKeywords.map((kw) => (
                           <div
                             key={kw}
-                            className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 group"
+                            className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 group"
                           >
                             <button
                               type="button"
                               onClick={() => { setInputKeywords(kw); setShouldAutoAnalyze(true); }}
-                              className="text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:underline"
+                              className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
                               title="이 키워드로 분석"
                             >
                               {kw}
@@ -412,7 +412,7 @@ function KeywordAnalysisContent() {
                             <button
                               type="button"
                               onClick={() => removeSavedKeyword(kw)}
-                              className="w-4 h-4 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-500 dark:text-emerald-400 text-xs leading-none"
+                              className="w-4 h-4 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 text-blue-500 dark:text-blue-400 text-xs leading-none"
                               title="삭제"
                               aria-label={`${kw} 삭제`}
                             >
@@ -427,12 +427,12 @@ function KeywordAnalysisContent() {
               </div>
 
               {isLoading && currentProgress && (
-                <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg border border-emerald-200 dark:border-emerald-700 flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-700 flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  <p className="text-sm text-emerald-600 dark:text-emerald-300 font-medium">{currentProgress}</p>
+                  <p className="text-sm text-blue-600 dark:text-blue-300 font-medium">{currentProgress}</p>
                 </div>
               )}
               {errorMessage && !isLoading && (
@@ -452,7 +452,7 @@ function KeywordAnalysisContent() {
 
             {/* News-feature highlight banner — dismissible, shown above first results */}
             {sortedKeywords.length > 0 && !newsHintDismissed && (
-              <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-700/60 bg-gradient-to-r from-emerald-50 to-amber-50 dark:from-emerald-950/40 dark:to-amber-950/30 p-4 sm:p-5 relative">
+              <div className="mb-4 rounded-xl border border-blue-200 dark:border-blue-700/60 bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-950/30 p-4 sm:p-5 relative">
                 <button
                   type="button"
                   onClick={dismissNewsHint}
@@ -471,7 +471,7 @@ function KeywordAnalysisContent() {
                       관련 뉴스를 함께 넣어 글 퀄리티 ↑
                     </p>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                      각 키워드 행의 <strong className="text-emerald-600 dark:text-emerald-400">📰 뉴스 보기</strong> 버튼을 누르면
+                      각 키워드 행의 <strong className="text-blue-600 dark:text-blue-400">📰 뉴스 보기</strong> 버튼을 누르면
                       그 키워드의 네이버 최신 뉴스를 골라 AI 프롬프트로 같이 전달합니다.
                       키워드만 가지고 쓴 평범한 글과 최신 뉴스가 녹아든 글의 차이를 비교해 보세요.
                     </p>
@@ -495,7 +495,7 @@ function KeywordAnalysisContent() {
                   <div className="flex gap-2">
                     <button
                       onClick={downloadCSV}
-                      className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
+                      className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
                     >
                       CSV 다운로드
                     </button>
@@ -529,7 +529,7 @@ function KeywordAnalysisContent() {
                           <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
-                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors text-left"
+                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors text-left"
                                 onClick={() => setActionKeyword(item.keyword)}
                               >
                                 {item.keyword}
@@ -542,7 +542,7 @@ function KeywordAnalysisContent() {
                               {formatNumber(item.mobileSearchVolume)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-semibold text-emerald-500 dark:text-emerald-400 text-sm">
+                              <span className="font-semibold text-blue-500 dark:text-blue-400 text-sm">
                                 {formatNumber(item.totalSearchVolume)}
                               </span>
                             </td>
@@ -571,7 +571,7 @@ function KeywordAnalysisContent() {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
                                 onClick={() => setNewsKeyword(item.keyword)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-700 hover:border-emerald-300 dark:hover:border-emerald-600 transition-all min-h-[32px]"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 dark:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-950/70 border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all min-h-[32px]"
                                 title="이 키워드의 최신 뉴스를 AI 프롬프트에 함께 전달합니다"
                               >
                                 📰 뉴스 보기
@@ -613,7 +613,7 @@ function KeywordAnalysisContent() {
                   'CSV 파일로 다운로드',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-emerald-500 dark:text-emerald-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-blue-500 dark:text-blue-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -625,10 +625,10 @@ function KeywordAnalysisContent() {
               <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">경쟁률 가이드</h2>
               <div className="space-y-2.5 text-sm">
                 {[
-                  { icon: '🟢', label: '최상 (꿀키워드)', range: '0.5 이하', desc: '검색량 대비 문서 매우 적음', bg: 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
+                  { icon: '🟢', label: '최상 (꿀키워드)', range: '0.5 이하', desc: '검색량 대비 문서 매우 적음', bg: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
                   { icon: '🟡', label: '상 (우수)', range: '0.5 ~ 1.0', desc: '상단 노출 확률 높음', bg: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800', text: 'text-yellow-700 dark:text-yellow-400' },
                   { icon: '⚫', label: '중 (보통)', range: '1.0 ~ 3.0', desc: '블로그 지수에 따라 결정', bg: 'bg-slate-50 dark:bg-slate-700/40 border-slate-200 dark:border-slate-600', text: 'text-slate-700 dark:text-slate-300' },
-                  { icon: '🟠', label: '하 (치열)', range: '3.0 ~ 7.0', desc: '고퀄리티 포스팅 필요', bg: 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-400' },
+                  { icon: '🟠', label: '하 (치열)', range: '3.0 ~ 7.0', desc: '고퀄리티 포스팅 필요', bg: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
                   { icon: '🔴', label: '최하 (위험)', range: '7.0 이상', desc: '대형 블로그 외 노출 어려움', bg: 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800', text: 'text-red-700 dark:text-red-400' },
                 ].map((item) => (
                   <div key={item.label} className={`p-3 rounded-lg border ${item.bg}`}>
@@ -692,11 +692,11 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/competitor-analysis?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">상위노출 분석</div>
-                    <div className="text-xs text-emerald-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
+                    <div className="text-xs text-blue-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
                   </div>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -706,7 +706,7 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/prompt-generator?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-emerald-400 dark:hover:border-emerald-500 rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-blue-400 dark:hover:border-blue-500 rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">프롬프트 바로 생성</div>
@@ -801,7 +801,7 @@ function KeywordAnalysisContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-emerald-500 dark:text-emerald-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

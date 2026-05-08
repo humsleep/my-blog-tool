@@ -51,11 +51,11 @@ export default function SavedKeywordsCard() {
 
   if (state.kind === 'loading') {
     return (
-      <section className="rounded-md border border-stone-200 dark:border-[#2a322d] bg-white dark:bg-[#161b18] p-5">
-        <div className="h-4 w-24 bg-stone-100 dark:bg-[#1d2320] rounded animate-pulse mb-3" />
+      <section className="rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
+        <div className="h-4 w-24 bg-zinc-100 dark:bg-[#1f1f23] rounded animate-pulse mb-3" />
         <div className="flex gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-7 w-20 rounded-full bg-stone-100 dark:bg-[#1d2320] animate-pulse" />
+            <div key={i} className="h-7 w-20 rounded-full bg-zinc-100 dark:bg-[#1f1f23] animate-pulse" />
           ))}
         </div>
       </section>
@@ -73,13 +73,13 @@ export default function SavedKeywordsCard() {
 
   if (state.kind === 'empty') {
     return (
-      <section className="rounded-md border border-stone-200 dark:border-[#2a322d] bg-white dark:bg-[#161b18] p-5">
+      <section className="rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-stone-500">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
             즐겨찾기 키워드
           </span>
         </div>
-        <p className="text-xs text-stone-600 dark:text-stone-400 mb-3">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
           키워드 분석에서 ★를 누르면 여기에 모입니다. 아침마다 검색량 변동을 한눈에.
         </p>
         <Link href="/keyword-analysis" className="btn-base btn-secondary btn-sm">
@@ -90,12 +90,12 @@ export default function SavedKeywordsCard() {
   }
 
   return (
-    <section className="rounded-md border border-stone-200 dark:border-[#2a322d] bg-white dark:bg-[#161b18] p-5">
+    <section className="rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-stone-500">
+        <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
           즐겨찾기 키워드
         </span>
-        <Link href="/profile/setup" className="text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:underline">
+        <Link href="/profile/setup" className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline">
           관리 →
         </Link>
       </div>
@@ -104,7 +104,7 @@ export default function SavedKeywordsCard() {
           <Link
             key={kw}
             href={`/keyword-analysis?keyword=${encodeURIComponent(kw)}`}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-stone-200 dark:border-[#2a322d] bg-stone-50 dark:bg-[#1d2320] hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-sm font-medium text-stone-900 dark:text-stone-100 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-[#27272a] bg-zinc-50 dark:bg-[#1f1f23] hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 text-sm font-medium text-zinc-900 dark:text-zinc-100 transition-colors"
           >
             <svg className="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />

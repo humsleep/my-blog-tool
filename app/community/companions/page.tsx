@@ -128,7 +128,7 @@ export default function CompanionsPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-emerald-500 dark:hover:text-emerald-400">커뮤니티</Link>
+            <Link href="/community" className="hover:text-blue-500 dark:hover:text-blue-400">커뮤니티</Link>
             <span>›</span>
             <span className="text-slate-700 dark:text-slate-300 font-medium">체험단 동행해요</span>
           </div>
@@ -141,7 +141,7 @@ export default function CompanionsPage() {
             </div>
             <Link
               href="/community/companions/new"
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 모집글 작성
             </Link>
@@ -155,7 +155,7 @@ export default function CompanionsPage() {
               <select
                 value={region ?? ''}
                 onChange={(e) => setRegion(e.target.value || null)}
-                className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">전체</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
@@ -164,7 +164,7 @@ export default function CompanionsPage() {
                 <select
                   value={regionCity ?? ''}
                   onChange={(e) => setRegionCity(e.target.value || null)}
-                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">시·군·구 전체</option>
                   {getCities(region).map((c) => (
@@ -177,7 +177,7 @@ export default function CompanionsPage() {
                   type="checkbox"
                   checked={openOnly}
                   onChange={(e) => setOpenOnly(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-emerald-500 focus:ring-emerald-500 accent-emerald-500"
+                  className="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 accent-blue-500"
                 />
                 모집중만
               </label>
@@ -204,7 +204,7 @@ export default function CompanionsPage() {
               '본인 글은 [모집중 → 마감 → 완료] 상태 변경 가능',
             ]}
             action={
-              <Link href="/community/companions/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold rounded-full shadow-sm">
+              <Link href="/community/companions/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 모집글 작성
               </Link>
             }
@@ -254,7 +254,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
   const dow = new Date(dateStr).toLocaleDateString('ko-KR', { weekday: 'short' });
   const statusCls =
     post.status === '모집중'
-      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+      ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
       : post.status === '마감'
         ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
         : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300';

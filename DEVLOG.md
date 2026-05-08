@@ -5,6 +5,74 @@
 
 ---
 
+## 2026-05-08 — Phase 30: Wanted Sans + Modern Monochrome 리브랜드 (인터랙티브 조화)
+
+**배경**: Phase 29 Sage & Charcoal에 사용자가 만족하지 못함. 폰트도 더 트렌디한 변수 폰트 원함. "메뉴/버튼/호버/클릭 색 변화 모두 조화롭게"가 핵심 요청. `frontend-design` 스킬 + 한국어 SaaS 트렌드 조사 후 옵션 제시 → A. Wanted Sans Variable + A. Modern Monochrome (Linear/Vercel 톤) 합의.
+
+### 1. 폰트 — Wanted Sans Variable
+- `app/layout.tsx`: jsdelivr CDN으로 Wanted Sans Variable webfont 추가. Pretendard는 fallback으로 보존.
+- `globals.css`:
+  - `@theme --font-sans`에 Wanted Sans 우선 + Pretendard fallback + 시스템 폰트
+  - 타입 스케일 재조정: body 15px / h1 32-36px / h2 22-24px / h3 17px / display fluid clamp(2.5rem, 5vw + 1rem, 3.5rem)
+  - 트래킹: body -0.005em, headings -0.022em ~ -0.025em, display -0.03em
+  - line-height: 1.6 body / 1.15 h1 / 1.25 h2
+  - `font-variation-settings: 'wght' N` 적용 (variable font 활용)
+  - 새 클래스 `.display-hero`, `.display-2` (Hero 큰 타이틀용)
+
+### 2. 컬러 — Modern Monochrome (zinc + sapphire)
+- **Light**: `--bg-base #fafafa` (zinc-50) / `--accent #2563eb` (blue-600 sapphire) / text zinc-900
+- **Dark**: `--bg-base #0a0a0a` (near-black) / `--bg-surface #161618` / `--accent #60a5fa` (blue-400)
+- Border: zinc-200 light / zinc-800 dark — 따뜻한 forest 톤 폐기
+- Status: green-600 / amber-600 / red-600 / sky-500 (info — 액센트와 hue 분리)
+- 새 토큰: `--accent-ring` (포커스 ring 전용 RGB tint), `--ease-out`/`--duration-{fast,base,slow}`
+- 셀렉션·focus shadow의 RGB 값까지 전부 sapphire로 정렬
+
+### 3. Tailwind 클래스 일괄 마이그레이션
+- 48개 .tsx 파일 sed:
+  - `\bemerald-\([0-9]\+\)` → `blue-\1`
+  - `\bstone-\([0-9]\+\)` → `zinc-\1`
+- 하드코딩 헥사 sed (Phase 29 잔재 8종 → zinc tokens):
+  - `#0f1411` → `#0a0a0a` (dark bg)
+  - `#161b18` → `#161618` (dark surface)
+  - `#1d2320` → `#1f1f23` (dark elevated)
+  - `#2a322d` → `#27272a` (dark border)
+  - `#fafaf9` → `#fafafa` (light bg)
+  - `#1c1917` → `#18181b` (light text)
+  - 기타 `#1a1f1c`/`#3a443d`도 통일
+- 차트 컴포넌트 하드코딩 sage 헥사 → sapphire 팔레트로 재작성:
+  - `ScoreGauge` band color (35/50/65/80 임계): muted/amber/blue-300/blue-500/blue-700 (light)
+  - `DiagnoseRadar` accent / grid / axisText
+- `manifest.ts` `theme_color` `#047857` → `#0a0a0a`
+- `layout.tsx` viewport themeColor light `#ffffff` → `#fafafa`, dark `#0f172a` → `#0a0a0a`
+
+### 4. 인터랙티브 상태 조화 — 모든 primitives 통일
+**`globals.css`에서 일괄 정의:**
+- 모든 transition: `var(--duration-fast/base/slow) var(--ease-out)` (cubic-bezier(0.22, 1, 0.36, 1))
+- `.btn-primary` hover: `accent-hover` (blue-700 light / blue-300 dark) + shadow elevation
+- `.btn-primary` active: shadow 제거 + translateY(1px)
+- `.btn-secondary` hover: bg-elevated + border-strong / active: bg-border (강한 piano feel)
+- `.btn-ghost` hover: bg-elevated + text-primary / active: bg-border-subtle
+- `.btn-base:focus-visible` 통일된 ring: `0 0 0 3px var(--accent-ring)` (light: rgba(37,99,235,0.18) / dark: rgba(96,165,250,0.30))
+- `.input-base:hover:not(:focus)`: border-strong (피드백 추가)
+- `.input-base:focus`: border-accent + ring-3px
+- `.card:hover`: shadow-md + border-strong (기존엔 shadow만)
+- `.kpi-card:hover`: border-strong 추가
+- 새 `.link` 클래스: 호버 시 underline + offset 3px + thickness 1px
+
+### 5. 잔여 정리
+- `/login` 페이지 그라디언트 `from-emerald → from-blue-500 to-amber-600` (Phase 29 sed 부산물) → `from-blue-500 to-blue-700`로 일관성 회복
+- Navbar / MobileBottomNav active state는 이미 sed로 blue 적용됨 — 변경 없음
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+- 빌드 캐시에 잔존 emerald/stone 없음 확인
+
+### 후속 권장
+- `slate-XXX` 잔존 클래스도 `zinc-XXX`로 마이그레이션하면 톤이 더 통일됨 (현재도 큰 충돌은 없음)
+- 모바일 viewport에서 Wanted Sans Variable의 한국어 메트릭이 너무 가벼울 수 있어 body weight 425 정도로 시도 가능
+
+---
+
 ## 2026-05-08 — Phase 29: Sage & Charcoal 리브랜드 + 데이터 시각화 + 로그인 안내
 
 **배경**: 사용자 피드백 — (1) 메인 컬러 주황이 별로다, 세련된 톤 + 다크모드 눈 편함 원함. (2) 인기검색어·진단 결과가 표·숫자만이라 분석하기 어렵다, 그래프/시각화 필요. (3) 로그인이 필요한 기능을 사전에 안내해주기. `frontend-design` 스킬 로드 후 3개 컬러 팔레트 / 3개 시각화 라이브러리 / 3개 로그인 안내 방식 옵션 제시 → A. Sage & Charcoal + Recharts + 🔒 인라인 배지 합의.

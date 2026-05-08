@@ -7,12 +7,12 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Brand row */}
         <div className="mb-10 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-md bg-emerald-500 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-blue-500 flex items-center justify-center">
             <span className="text-white font-bold text-base leading-none">B</span>
           </div>
           <div>
             <div className="font-semibold text-slate-900 dark:text-slate-100 text-base leading-tight">
-              Boheme<span className="text-emerald-500 dark:text-emerald-400 ml-1">BlogLab</span>
+              Boheme<span className="text-blue-500 dark:text-blue-400 ml-1">BlogLab</span>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-500 leading-tight">한국 블로거를 위한 글쓰기 분석 도구</div>
           </div>
@@ -61,7 +61,7 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
-                  className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+                  className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                 >
                   boheme88@naver.com
                 </a>

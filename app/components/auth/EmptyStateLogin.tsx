@@ -24,19 +24,19 @@ export default function EmptyStateLogin({ title, description, icon, className = 
   const href = `/login?next=${encodeURIComponent(pathname || '/')}`;
 
   return (
-    <div className={`rounded-md border border-dashed border-stone-300 dark:border-[#2a322d] bg-stone-50/50 dark:bg-[#161b18]/50 p-6 sm:p-8 text-center ${className}`}>
-      <div className="mx-auto w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 ring-1 ring-emerald-100 dark:ring-emerald-900/40 flex items-center justify-center mb-4 text-emerald-700 dark:text-emerald-300">
+    <div className={`rounded-md border border-dashed border-zinc-300 dark:border-[#27272a] bg-zinc-50/50 dark:bg-[#161618]/50 p-6 sm:p-8 text-center ${className}`}>
+      <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-100 dark:ring-blue-900/40 flex items-center justify-center mb-4 text-blue-700 dark:text-blue-300">
         {icon ?? (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         )}
       </div>
-      <h3 className="text-base font-semibold text-stone-900 dark:text-stone-100 mb-1.5">
+      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
         {title}
       </h3>
       {description && (
-        <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 leading-relaxed mb-4 max-w-sm mx-auto">
+        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 max-w-sm mx-auto">
           {description}
         </p>
       )}

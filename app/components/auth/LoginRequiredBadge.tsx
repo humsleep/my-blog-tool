@@ -38,7 +38,7 @@ export default function LoginRequiredBadge({
       href={href}
       title={tooltip}
       aria-label={tooltip}
-      className={`group relative inline-flex items-center font-medium rounded-full border border-stone-200 dark:border-[#2a322d] bg-stone-50 dark:bg-[#1a1f1c] text-stone-600 dark:text-stone-300 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors ${sizeCls} ${className}`}
+      className={`group relative inline-flex items-center font-medium rounded-full border border-zinc-200 dark:border-[#27272a] bg-zinc-50 dark:bg-[#161618] text-zinc-600 dark:text-zinc-300 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-700 dark:hover:text-blue-300 transition-colors ${sizeCls} ${className}`}
     >
       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

@@ -105,7 +105,7 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
                 key={r.code}
                 className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer border transition-colors ${
                   reasonCode === r.code
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800'
+                    ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800'
                     : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                 }`}
               >
@@ -115,7 +115,7 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
                   value={r.code}
                   checked={reasonCode === r.code}
                   onChange={() => setReasonCode(r.code)}
-                  className="mt-0.5 accent-emerald-500"
+                  className="mt-0.5 accent-blue-500"
                 />
                 <div className="min-w-0">
                   <div className="text-sm font-medium text-slate-900 dark:text-slate-100">{r.label}</div>
@@ -136,7 +136,7 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
             maxLength={500}
             rows={3}
             placeholder="구체적인 상황을 설명해주시면 처리에 도움이 됩니다."
-            className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 

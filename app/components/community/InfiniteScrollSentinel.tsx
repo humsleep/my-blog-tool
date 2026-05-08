@@ -47,7 +47,7 @@ export default function InfiniteScrollSentinel({
     <div ref={ref} className="py-6 flex items-center justify-center">
       {loading ? (
         <div className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <span className="w-4 h-4 border-2 border-slate-300 border-t-emerald-500 rounded-full animate-spin" />
+          <span className="w-4 h-4 border-2 border-slate-300 border-t-blue-500 rounded-full animate-spin" />
           더 불러오는 중...
         </div>
       ) : hasMore ? (

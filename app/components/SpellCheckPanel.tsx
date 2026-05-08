@@ -94,7 +94,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
         <button
           onClick={run}
           disabled={loading}
-          className="px-2.5 py-1 text-xs font-medium bg-emerald-500 hover:bg-emerald-600 text-white rounded disabled:opacity-50 transition-colors"
+          className="px-2.5 py-1 text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50 transition-colors"
         >
           {loading ? '검사 중...' : result ? '다시 검사' : '검사 실행'}
         </button>
@@ -107,8 +107,8 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
       )}
 
       {!error && result && visibleMatches.length === 0 && (
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg text-center border border-emerald-200 dark:border-emerald-800">
-          <span className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">✓ 맞춤법 이슈 없음</span>
+        <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-center border border-blue-200 dark:border-blue-800">
+          <span className="text-sm text-blue-700 dark:text-blue-400 font-medium">✓ 맞춤법 이슈 없음</span>
         </div>
       )}
 
@@ -146,7 +146,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
                         onReplace(match.offset, match.length, rep);
                         dismiss(match);
                       }}
-                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded transition-colors"
                     >
                       {rep}
                     </button>

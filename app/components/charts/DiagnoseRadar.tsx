@@ -26,10 +26,10 @@ export default function DiagnoseRadar({ activity, visibility, quality, height = 
     return () => observer.disconnect();
   }, []);
 
-  const accent = isDark ? '#6ee7b7' : '#047857';
-  const grid = isDark ? '#2a322d' : '#e7e5e4';
-  const axisText = isDark ? '#a8a29e' : '#57534e';
-  const fillOpacity = isDark ? 0.20 : 0.16;
+  const accent = isDark ? '#60a5fa' : '#2563eb';     /* blue-400 / blue-600 */
+  const grid = isDark ? '#27272a' : '#e4e4e7';       /* zinc-800 / zinc-200 */
+  const axisText = isDark ? '#a1a1aa' : '#52525b';   /* zinc-400 / zinc-600 */
+  const fillOpacity = isDark ? 0.22 : 0.14;
 
   const data = [
     { axis: '활동성', value: activity, fullMark: 100 },

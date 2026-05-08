@@ -22,7 +22,7 @@ export default function EmptyState({ icon, title, description, action, variant, 
         <ul className="mt-4 inline-flex flex-col gap-1 text-left">
           {hints.map((h) => (
             <li key={h} className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
-              <span className="text-emerald-500 flex-shrink-0">•</span>
+              <span className="text-blue-500 flex-shrink-0">•</span>
               <span>{h}</span>
             </li>
           ))}
@@ -36,9 +36,9 @@ export default function EmptyState({ icon, title, description, action, variant, 
 function DefaultIllustration({ variant }: { variant?: 'swap' | 'tips' | 'companions' }) {
   // 부드러운 그라데이션 배경 + 이모지 — 가벼운 일러스트 효과
   const map: Record<string, { emoji: string; gradient: string }> = {
-    swap:       { emoji: '🤝', gradient: 'from-emerald-100 to-amber-100 dark:from-emerald-950/40 dark:to-amber-950/40' },
-    tips:       { emoji: '💡', gradient: 'from-emerald-100 to-teal-100 dark:from-emerald-950/40 dark:to-teal-950/40' },
-    companions: { emoji: '🚶‍♂️', gradient: 'from-rose-100 to-emerald-100 dark:from-rose-950/40 dark:to-emerald-950/40' },
+    swap:       { emoji: '🤝', gradient: 'from-blue-100 to-amber-100 dark:from-blue-950/40 dark:to-amber-950/40' },
+    tips:       { emoji: '💡', gradient: 'from-blue-100 to-teal-100 dark:from-blue-950/40 dark:to-teal-950/40' },
+    companions: { emoji: '🚶‍♂️', gradient: 'from-rose-100 to-blue-100 dark:from-rose-950/40 dark:to-blue-950/40' },
   };
   const cfg = (variant && map[variant]) || { emoji: '✨', gradient: 'from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800' };
 

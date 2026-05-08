@@ -45,12 +45,12 @@ export default function LatestDiagnoseCard() {
 
   if (!data?.latest) {
     return (
-      <section className="rounded-md border border-emerald-200 dark:border-emerald-900/50 ring-1 ring-emerald-500/20 bg-white dark:bg-zinc-900 p-5">
+      <section className="rounded-md border border-blue-200 dark:border-blue-900/50 ring-1 ring-blue-500/20 bg-white dark:bg-zinc-900 p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-emerald-600 dark:text-emerald-400">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-blue-600 dark:text-blue-400">
             Diagnose
           </span>
-          <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">New</span>
+          <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">New</span>
         </div>
         <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5">
           내 블로그는 카테고리 안에서 어디쯤일까요?
@@ -73,7 +73,7 @@ export default function LatestDiagnoseCard() {
     delta === null
       ? 'text-slate-500 dark:text-slate-400'
       : delta > 0
-        ? 'text-emerald-600 dark:text-emerald-400'
+        ? 'text-blue-600 dark:text-blue-400'
         : delta < 0
           ? 'text-rose-600 dark:text-rose-400'
           : 'text-slate-500 dark:text-slate-400';
@@ -81,21 +81,21 @@ export default function LatestDiagnoseCard() {
   const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
 
   return (
-    <section className="rounded-md border border-stone-200 dark:border-[#2a322d] bg-white dark:bg-[#161b18] p-5">
+    <section className="rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-stone-500">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
             마지막 진단
           </span>
-          <div className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
+          <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
             {latest.blog_title ?? latest.blog_id}
-            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
+            <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">·</span>
             {latest.category_label ?? latest.category}
-            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
+            <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">·</span>
             {formatRelativeKr(latest.created_at)}
           </div>
         </div>
-        <Link href="/blog-diagnose" className="text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:underline whitespace-nowrap">
+        <Link href="/blog-diagnose" className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline whitespace-nowrap">
           다시 진단 →
         </Link>
       </div>
@@ -106,14 +106,14 @@ export default function LatestDiagnoseCard() {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-base font-semibold text-stone-900 dark:text-stone-100">
+            <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
               {BAND_LABEL[latest.band]}
             </span>
             <span className={`text-xs font-semibold ${deltaColor}`}>{deltaLabel}</span>
           </div>
-          <div className="text-xs text-stone-600 dark:text-stone-400 mb-3">
+          <div className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
             키워드 <span className="tabular font-semibold">{latest.hit_count ?? 0}</span>개 1페이지 노출
-            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
+            <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">·</span>
             TOP10 <span className="tabular font-semibold">{latest.top_ten_count ?? 0}</span>
           </div>
           <div className="space-y-2">

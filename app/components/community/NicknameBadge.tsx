@@ -15,7 +15,7 @@ export default function NicknameBadge({ nickname, blogUrl, size = 'md' }: Nickna
       href={blogUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className={`${textCls} font-medium text-emerald-500 dark:text-emerald-400 hover:underline inline-flex items-center gap-1`}
+      className={`${textCls} font-medium text-blue-500 dark:text-blue-400 hover:underline inline-flex items-center gap-1`}
     >
       {nickname}
       <svg className="w-3 h-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
