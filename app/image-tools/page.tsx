@@ -1169,7 +1169,7 @@ export default function ImageToolsPage() {
           </div>
           <a
             href="/image-search"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors self-start sm:self-auto"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1196,7 +1196,7 @@ export default function ImageToolsPage() {
             <button
               onClick={handleDownload}
               disabled={!image}
-              className="px-4 py-3 sm:py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
+              className="px-4 py-3 sm:py-2 bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600 active:bg-emerald-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="다운로드"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1254,7 +1254,7 @@ export default function ImageToolsPage() {
                 <div
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
-                  className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-orange-500 transition-colors cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-emerald-500 transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <svg
@@ -1322,7 +1322,7 @@ export default function ImageToolsPage() {
                       }}
                       className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                         editMode === 'crop'
-                          ? 'bg-orange-500 text-white'
+                          ? 'bg-emerald-500 text-white'
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       }`}
                     >
@@ -1337,7 +1337,7 @@ export default function ImageToolsPage() {
                       }}
                       className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                         editMode === 'mosaic'
-                          ? 'bg-orange-500 text-white'
+                          ? 'bg-emerald-500 text-white'
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       }`}
                     >
@@ -1376,7 +1376,7 @@ export default function ImageToolsPage() {
                       <select
                         value={aspectRatio}
                         onChange={(e) => setAspectRatio(e.target.value as AspectRatio)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       >
                         <option value="free">자유 비율</option>
                         <option value="1:1">1:1 (정사각형)</option>
@@ -1427,7 +1427,7 @@ export default function ImageToolsPage() {
                             }
                           }}
                           min="1"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                         />
                       </div>
                       <div>
@@ -1443,7 +1443,7 @@ export default function ImageToolsPage() {
                             }
                           }}
                           min="1"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                         />
                       </div>
                     </div>
@@ -1453,7 +1453,7 @@ export default function ImageToolsPage() {
                         type="checkbox"
                         checked={maintainAspectRatio}
                         onChange={(e) => setMaintainAspectRatio(e.target.checked)}
-                        className="w-4 h-4 text-orange-500 border-rule-soft rounded focus:ring-orange-500"
+                        className="w-4 h-4 text-emerald-500 border-rule-soft rounded focus:ring-emerald-500"
                       />
                       <span>비율 유지하기</span>
                     </label>
@@ -1577,7 +1577,7 @@ export default function ImageToolsPage() {
                             />
                             <button
                               onClick={() => setRotation((prev) => (prev + 90) % 360)}
-                              className="px-3 py-2 bg-orange-500 text-white rounded-lg text-xs font-medium hover:bg-orange-600 transition-colors whitespace-nowrap flex-shrink-0"
+                              className="px-3 py-2 bg-emerald-500 text-white rounded-lg text-xs font-medium hover:bg-emerald-600 transition-colors whitespace-nowrap flex-shrink-0"
                               title="90도 회전"
                             >
                               90° 회전
@@ -1595,7 +1595,7 @@ export default function ImageToolsPage() {
                               onClick={() => setFlipHorizontal(!flipHorizontal)}
                               className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                                 flipHorizontal
-                                  ? 'bg-orange-500 text-white'
+                                  ? 'bg-emerald-500 text-white'
                                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
                               }`}
                             >
@@ -1605,7 +1605,7 @@ export default function ImageToolsPage() {
                               onClick={() => setFlipVertical(!flipVertical)}
                               className={`flex-1 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                                 flipVertical
-                                  ? 'bg-orange-500 text-white'
+                                  ? 'bg-emerald-500 text-white'
                                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
                               }`}
                             >
@@ -1622,7 +1622,7 @@ export default function ImageToolsPage() {
                       <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-medium bg-white"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium bg-white"
                       >
                         <option value="none">원본 (필터 없음)</option>
                         <option value="grayscale">흑백</option>
@@ -1664,7 +1664,7 @@ export default function ImageToolsPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-emerald-500 dark:text-emerald-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

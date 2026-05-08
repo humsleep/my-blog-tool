@@ -164,7 +164,7 @@ function ProfileSetupPage() {
             </p>
             <Link
               href={`/login?next=${encodeURIComponent('/profile/setup?next=' + next)}`}
-              className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
+              className="inline-flex items-center px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
             </Link>
@@ -259,7 +259,7 @@ function ProfileSetupPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : existing ? '수정 저장' : '프로필 등록'}
             </button>
@@ -273,7 +273,7 @@ function ProfileSetupPage() {
             <span className="text-xs text-slate-500 dark:text-slate-400">{savedKeywords.length} / 10</span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-            <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline font-medium">키워드 분석</Link>
+            <Link href="/keyword-analysis" className="text-emerald-500 dark:text-emerald-400 hover:underline font-medium">키워드 분석</Link>
             {' '}페이지에서 자주 검색하는 키워드를 저장해두면 여기서 한눈에 확인하고 다시 분석할 수 있습니다.
           </p>
 
@@ -281,7 +281,7 @@ function ProfileSetupPage() {
             <div className="text-center py-6 text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
               아직 저장된 키워드가 없습니다.
               <div className="mt-2">
-                <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline text-xs font-medium">
+                <Link href="/keyword-analysis" className="text-emerald-500 dark:text-emerald-400 hover:underline text-xs font-medium">
                   키워드 분석으로 가기 →
                 </Link>
               </div>
@@ -291,11 +291,11 @@ function ProfileSetupPage() {
               {savedKeywords.map((kw) => (
                 <div
                   key={kw}
-                  className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 group"
+                  className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 group"
                 >
                   <Link
                     href={`/keyword-analysis?keyword=${encodeURIComponent(kw)}`}
-                    className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline"
+                    className="text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:underline"
                     title="이 키워드로 분석하기"
                   >
                     {kw}
@@ -303,7 +303,7 @@ function ProfileSetupPage() {
                   <button
                     type="button"
                     onClick={() => removeSavedKeyword(kw)}
-                    className="w-4 h-4 rounded-full hover:bg-orange-200 dark:hover:bg-orange-900 text-orange-500 dark:text-orange-400 text-xs leading-none"
+                    className="w-4 h-4 rounded-full hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-500 dark:text-emerald-400 text-xs leading-none"
                     title="삭제"
                     aria-label={`${kw} 삭제`}
                   >
@@ -320,7 +320,7 @@ function ProfileSetupPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500';
 
 function Field({
   label, required, help, children,

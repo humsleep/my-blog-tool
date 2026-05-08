@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: '네이버·티스토리 블로거를 위한 올인원 포스팅 도구',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#f97316',
+    background_color: '#fafaf9',
+    theme_color: '#047857',
     orientation: 'portrait',
     lang: 'ko',
     icons: [

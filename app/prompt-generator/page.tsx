@@ -710,7 +710,7 @@ function PromptGeneratorContent() {
               onClick={() => setMode('beginner')}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 mode === 'beginner'
-                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
@@ -721,7 +721,7 @@ function PromptGeneratorContent() {
               onClick={() => setMode('advanced')}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 mode === 'advanced'
-                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
             >
@@ -731,7 +731,7 @@ function PromptGeneratorContent() {
         </div>
 
         {mode === 'beginner' && (
-          <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg text-xs text-orange-800 dark:text-orange-300">
+          <div className="mb-4 p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs text-emerald-800 dark:text-emerald-300">
             💡 <strong>초보자 모드</strong>: 꼭 필요한 항목(키워드 / 분야 / 어투 / 글 스타일)만 보여드립니다. 익숙해지면 우상단 <strong>고급 모드</strong>로 전환하여 SEO 옵션을 더 세밀하게 조정할 수 있어요.
           </div>
         )}
@@ -751,20 +751,20 @@ function PromptGeneratorContent() {
 
               {/* 뉴스 컨텍스트 미진입 안내 — 더 풍부한 글을 위한 동선 */}
               {!newsContext && (
-                <div className="mb-5 sm:mb-6 rounded-lg border border-dashed border-orange-300 dark:border-orange-700/60 bg-orange-50/40 dark:bg-orange-950/20 p-4 flex items-start gap-3">
+                <div className="mb-5 sm:mb-6 rounded-lg border border-dashed border-emerald-300 dark:border-emerald-700/60 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 flex items-start gap-3">
                   <div className="flex-shrink-0 text-2xl">📰</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
-                      더 풍부한 글을 원하시나요? <span className="text-orange-600 dark:text-orange-400">관련 뉴스</span>를 함께 넣어보세요
+                      더 풍부한 글을 원하시나요? <span className="text-emerald-600 dark:text-emerald-400">관련 뉴스</span>를 함께 넣어보세요
                     </p>
                     <p className="text-xs text-slate-600 dark:text-slate-300 mb-2 leading-relaxed">
-                      <Link href="/keyword-analysis" className="font-medium text-orange-600 dark:text-orange-400 hover:underline">키워드 분석</Link>
+                      <Link href="/keyword-analysis" className="font-medium text-emerald-600 dark:text-emerald-400 hover:underline">키워드 분석</Link>
                       에서 키워드 옆 <strong>📰 뉴스 보기</strong> 버튼을 누르면, 네이버 최신 뉴스를 골라 이 페이지로 가져올 수 있어요.
                       AI가 그 뉴스의 흐름을 자연스럽게 본문에 녹여 차별화된 글을 만들어줍니다.
                     </p>
                     <Link
                       href={keyword ? `/keyword-analysis?keyword=${encodeURIComponent(keyword)}` : '/keyword-analysis'}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
                     >
                       키워드 분석으로 가기
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -777,13 +777,13 @@ function PromptGeneratorContent() {
 
               {/* 뉴스 컨텍스트 — 키워드 분석 → 뉴스 모달에서 가져온 경우 */}
               {newsContext && newsContext.items.length > 0 && (
-                <div className="mb-5 sm:mb-6 rounded-lg border border-orange-200 dark:border-orange-700 bg-orange-50/60 dark:bg-orange-950/30 p-4">
+                <div className="mb-5 sm:mb-6 rounded-lg border border-emerald-200 dark:border-emerald-700 bg-emerald-50/60 dark:bg-emerald-950/30 p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <svg className="w-4 h-4 text-orange-500 dark:text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-emerald-500 dark:text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
-                      <span className="text-sm font-semibold text-orange-600 dark:text-orange-300">
+                      <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-300">
                         가져온 관련 뉴스 ({newsContext.items.length}건)
                       </span>
                     </div>
@@ -802,7 +802,7 @@ function PromptGeneratorContent() {
                   <ul className="space-y-1.5">
                     {newsContext.items.map((it, i) => (
                       <li key={`${it.link}-${i}`} className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
-                        <span className="text-orange-500 dark:text-orange-400 font-medium mr-1">{i + 1}.</span>
+                        <span className="text-emerald-500 dark:text-emerald-400 font-medium mr-1">{i + 1}.</span>
                         {it.title.replace(/<[^>]*>/g, '')}
                       </li>
                     ))}
@@ -822,7 +822,7 @@ function PromptGeneratorContent() {
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="예: 수원 맛집 추천"
-                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                   />
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     블로그 글의 주제가 될 키워드를 입력하세요. 검색량이 큰 키워드일수록 노출 효과가 큽니다.
@@ -841,7 +841,7 @@ function PromptGeneratorContent() {
                       value={relatedKeywords}
                       onChange={(e) => setRelatedKeywords(e.target.value)}
                       placeholder="예: 수원역 맛집, 수원 데이트, 수원 카페"
-                      className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     />
                     <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                       쉼표(,)로 구분 · 메인 키워드와 의미가 비슷한 보조 키워드를 본문에 자연스럽게 분산 배치 → 네이버 SEO ↑
@@ -854,7 +854,7 @@ function PromptGeneratorContent() {
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
                     분야 <span className="text-red-500">*</span>
                     {selectedCategory && (
-                      <span className="ml-2 text-xs text-orange-500 dark:text-orange-400 font-normal">
+                      <span className="ml-2 text-xs text-emerald-500 dark:text-emerald-400 font-normal">
                         선택됨: {selectedCategory}
                       </span>
                     )}
@@ -868,7 +868,7 @@ function PromptGeneratorContent() {
                           key={mainCat}
                           className={`border rounded-lg overflow-hidden transition-colors ${
                             hasSelected
-                              ? 'border-orange-300 dark:border-orange-600 bg-orange-50/30 dark:bg-orange-950/20'
+                              ? 'border-emerald-300 dark:border-emerald-600 bg-emerald-50/30 dark:bg-emerald-950/20'
                               : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40'
                           }`}
                         >
@@ -903,7 +903,7 @@ function PromptGeneratorContent() {
                                     onClick={() => setSelectedCategory(subCat)}
                                     className={`p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
                                       selectedCategory === subCat
-                                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                         : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                                     }`}
                                   >
@@ -934,7 +934,7 @@ function PromptGeneratorContent() {
                             onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               titleStyle === style
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                             }`}
                           >
@@ -960,7 +960,7 @@ function PromptGeneratorContent() {
                           onClick={() => setContentStyle(contentStyle === style ? '' : style)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             contentStyle === style
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -984,11 +984,11 @@ function PromptGeneratorContent() {
                         onClick={() => setPurpose(purpose === opt.value ? '' : opt.value as typeof purpose)}
                         className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                           purpose === opt.value
-                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50'
                             : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
                         }`}
                       >
-                        <div className={`text-xs font-semibold ${purpose === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                        <div className={`text-xs font-semibold ${purpose === opt.value ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>
                           {opt.label}
                         </div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
@@ -1015,7 +1015,7 @@ function PromptGeneratorContent() {
                             onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               targetAudience === audience
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                             }`}
                           >
@@ -1041,7 +1041,7 @@ function PromptGeneratorContent() {
                           onClick={() => setTone(t)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             tone === t
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -1067,7 +1067,7 @@ function PromptGeneratorContent() {
                             onClick={() => setEmojiUsage(usage)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               emojiUsage === usage
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                             }`}
                           >
@@ -1093,7 +1093,7 @@ function PromptGeneratorContent() {
                           onClick={() => setLength(l.value)}
                           className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             length === l.value
-                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                               : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                           }`}
                         >
@@ -1109,9 +1109,9 @@ function PromptGeneratorContent() {
 
                 {/* SEO 강화: 광고·협찬 표시 + 개인 경험 강조도 — 고급 모드만 */}
                 {mode === 'advanced' && (
-                  <div className="border border-orange-200 dark:border-orange-900/50 rounded-lg p-4 bg-orange-50/40 dark:bg-orange-950/20 space-y-4">
+                  <div className="border border-emerald-200 dark:border-emerald-900/50 rounded-lg p-4 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">SEO 강화</span>
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">SEO 강화</span>
                       <span className="text-[11px] text-slate-500 dark:text-slate-400">최신 네이버 가이드 반영</span>
                     </div>
 
@@ -1128,11 +1128,11 @@ function PromptGeneratorContent() {
                             onClick={() => setSponsorship(opt.value as typeof sponsorship)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               sponsorship === opt.value
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${sponsorship === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${sponsorship === opt.value ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>
                               {opt.label}
                             </div>
                             <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
@@ -1157,11 +1157,11 @@ function PromptGeneratorContent() {
                             onClick={() => setExperience(opt.value as typeof experience)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               experience === opt.value
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${experience === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${experience === opt.value ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>
                               {opt.label}
                             </div>
                             <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
@@ -1194,7 +1194,7 @@ function PromptGeneratorContent() {
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="예: 수원시 영통구 / 서울 강남역 / 부산 해운대"
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                       />
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         지역 키워드를 본문·해시태그에 자연스럽게 분산 → 네이버 하이퍼로컬 노출 ↑
@@ -1212,7 +1212,7 @@ function PromptGeneratorContent() {
                         onChange={(e) => setKeyFacts(e.target.value)}
                         rows={4}
                         placeholder={'예시 (한 줄에 하나씩):\n- 영업시간: 11:00~22:00 (월요일 휴무)\n- 가격대: 2인 6만원\n- 주차 가능 (3시간 무료)\n- 예약: 네이버 예약 또는 전화'}
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-y"
                       />
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         가격·시간·장소·연락처 등 정확히 적어야 할 수치를 한 줄에 하나씩 — AI가 누락 없이 본문에 반영
@@ -1230,7 +1230,7 @@ function PromptGeneratorContent() {
                         onChange={(e) => setDifferentiator(e.target.value)}
                         rows={2}
                         placeholder="예: 5년차 워킹맘 시각으로 본 / 직접 3개월 써본 비교 / 현지에서 10년 산 사람의 추천"
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
+                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-y"
                       />
                       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                         다른 일반 글과 구별되는 작가의 관점·이력·경험 → E-E-A-T 강화
@@ -1250,11 +1250,11 @@ function PromptGeneratorContent() {
                             onClick={() => setStructure(opt.value as typeof structure)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               structure === opt.value
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${structure === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${structure === opt.value ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>
                               {opt.label}
                             </div>
                             <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
@@ -1276,7 +1276,7 @@ function PromptGeneratorContent() {
                             onClick={() => setSeasonality(s)}
                             className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               seasonality === s
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                             }`}
                           >
@@ -1302,7 +1302,7 @@ function PromptGeneratorContent() {
                             onClick={() => setCtaType(ctaType === c ? '' : c)}
                             className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               ctaType === c
-                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                                 : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
                             }`}
                           >
@@ -1324,7 +1324,7 @@ function PromptGeneratorContent() {
                       <button
                         type="button"
                         onClick={toggleAllAdditionalOptions}
-                        className="text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 font-medium px-2 py-1 rounded border border-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+                        className="text-xs text-emerald-500 dark:text-emerald-400 hover:text-emerald-600 font-medium px-2 py-1 rounded border border-emerald-400 dark:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
                       >
                         {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
                       </button>
@@ -1340,7 +1340,7 @@ function PromptGeneratorContent() {
                               type="checkbox"
                               checked={additionalOptions.includes(option)}
                               onChange={() => toggleAdditionalOption(option)}
-                              className="w-4 h-4 text-orange-500 border-slate-300 dark:border-slate-500 rounded focus:ring-orange-500 accent-orange-500"
+                              className="w-4 h-4 text-emerald-500 border-slate-300 dark:border-slate-500 rounded focus:ring-emerald-500 accent-emerald-500"
                             />
                             <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
                           </label>
@@ -1355,7 +1355,7 @@ function PromptGeneratorContent() {
                   <button
                     onClick={generatePrompt}
                     disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
                   >
                     {isGenerating ? '생성 중...' : '프롬프트 생성'}
                   </button>
@@ -1388,9 +1388,9 @@ function PromptGeneratorContent() {
                 </div>
 
                 {/* AI 글쓰기로 이동 */}
-                <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
+                <div className="bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-950/40 dark:to-amber-950/40 border border-emerald-200 dark:border-emerald-700 rounded-xl p-5">
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-amber-600 flex items-center justify-center flex-shrink-0">
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
@@ -1437,7 +1437,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트를 복사하여 AI 도구에 사용하세요',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-orange-500 dark:text-orange-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-emerald-500 dark:text-emerald-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -1456,7 +1456,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트는 필요에 따라 수정하여 사용할 수 있습니다',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-orange-500 dark:text-orange-400">•</span>
+                    <span className="text-emerald-500 dark:text-emerald-400">•</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -1492,7 +1492,7 @@ function PromptGeneratorContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-emerald-500 dark:text-emerald-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

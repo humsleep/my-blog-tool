@@ -108,12 +108,12 @@ function CompetitorAnalysisContent() {
               onChange={(e) => setKeyword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && analyzeCompetitors()}
               placeholder="분석할 키워드를 입력하세요 (예: 블로그 포스팅, SEO 최적화)"
-              className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
             />
             <button
               onClick={analyzeCompetitors}
               disabled={loading}
-              className="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? '분석 중...' : '분석하기'}
             </button>
@@ -122,7 +122,7 @@ function CompetitorAnalysisContent() {
 
         {loading && (
           <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-sm">
-            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 dark:border-orange-400 mb-4" />
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-500 dark:border-emerald-400 mb-4" />
             <p className="text-slate-500 dark:text-slate-400">경쟁 블로그를 분석하는 중...</p>
           </div>
         )}
@@ -145,7 +145,7 @@ function CompetitorAnalysisContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
                 <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">전체 포스트 수</div>
-                <div className="text-3xl font-bold text-orange-500 dark:text-orange-400">{data.totalPosts.toLocaleString()}</div>
+                <div className="text-3xl font-bold text-emerald-500 dark:text-emerald-400">{data.totalPosts.toLocaleString()}</div>
               </div>
               <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
                 <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wide">평균 제목 길이</div>
@@ -158,9 +158,9 @@ function CompetitorAnalysisContent() {
             </div>
 
             {/* 💡 분석 인사이트 — 통계 바로 아래 */}
-            <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
-              <h3 className="font-semibold text-orange-800 dark:text-orange-300 mb-2">💡 분석 인사이트</h3>
-              <ul className="space-y-1.5 text-sm text-orange-600 dark:text-orange-400">
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-700 rounded-xl p-5">
+              <h3 className="font-semibold text-emerald-800 dark:text-emerald-300 mb-2">💡 분석 인사이트</h3>
+              <ul className="space-y-1.5 text-sm text-emerald-600 dark:text-emerald-400">
                 <li>• 평균 제목 길이: <strong>{data.averageTitleLength}자</strong> — 이 길이를 참고하여 제목을 작성하세요</li>
                 <li>• 자주 사용되는 단어를 활용하면 검색 노출 가능성이 높아집니다</li>
                 <li>• 상위 블로거들의 포스팅 패턴을 참고하여 콘텐츠 전략을 수립하세요</li>
@@ -178,7 +178,7 @@ function CompetitorAnalysisContent() {
                   {data.commonWords.map((item, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 rounded-full text-sm font-medium border border-orange-100 dark:border-orange-700"
+                      className="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-full text-sm font-medium border border-emerald-100 dark:border-emerald-700"
                     >
                       {item.word} ({item.count})
                     </span>
@@ -195,7 +195,7 @@ function CompetitorAnalysisContent() {
                   {data.topBloggers.map((blogger, idx) => (
                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/40 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <span className="w-7 h-7 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs">
+                        <span className="w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold text-xs">
                           {idx + 1}
                         </span>
                         <span className="font-medium text-slate-900 dark:text-slate-100 text-sm">{blogger.name}</span>
@@ -233,7 +233,7 @@ function CompetitorAnalysisContent() {
                             href={post.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="hover:text-orange-500 dark:hover:text-orange-400 hover:underline"
+                            className="hover:text-emerald-500 dark:hover:text-emerald-400 hover:underline"
                             dangerouslySetInnerHTML={{ __html: sanitizeSearchHighlight(post.title) }}
                           />
                         </h3>
@@ -265,7 +265,7 @@ function CompetitorAnalysisContent() {
                 '경쟁 포스트의 제목, 내용, 블로거 정보를 확인하여 차별화 전략을 수립하세요',
               ].map((text, i) => (
                 <li key={i} className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs">
+                  <span className="flex-shrink-0 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center font-bold text-xs">
                     {i + 1}
                   </span>
                   <span>{text}</span>
@@ -311,7 +311,7 @@ function CompetitorAnalysisContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-emerald-500 dark:text-emerald-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

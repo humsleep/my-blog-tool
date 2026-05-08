@@ -145,11 +145,11 @@ export default function Navbar() {
           {/* Wordmark — Pretendard sans-serif (Phase 27) */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-md bg-orange-500 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-md bg-emerald-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm leading-none">B</span>
               </div>
               <span className="text-[0.95rem] font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                Boheme<span className="text-orange-500 dark:text-orange-400 ml-1">BlogLab</span>
+                Boheme<span className="text-emerald-500 dark:text-emerald-400 ml-1">BlogLab</span>
               </span>
             </Link>
           </div>
@@ -165,7 +165,7 @@ export default function Navbar() {
                   href={t.href}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
@@ -212,7 +212,7 @@ export default function Navbar() {
                     {WORKFLOW.map((group) => (
                       <div key={group.groupLabel} className="p-3">
                         <div className="px-2 mb-2 flex items-center gap-1.5">
-                          <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
+                          <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider">
                             STEP {group.range}
                           </span>
                           <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
@@ -229,17 +229,17 @@ export default function Navbar() {
                                 onClick={() => setMegaOpen(false)}
                                 className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
                                   isActive
-                                    ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300'
                                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                                 }`}
                               >
                                 <div className="flex items-baseline gap-1.5">
-                                  <span className={`text-[11px] font-bold ${isActive ? 'text-orange-500 dark:text-orange-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                  <span className={`text-[11px] font-bold ${isActive ? 'text-emerald-500 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'}`}>
                                     {it.step}
                                   </span>
                                   <span className="font-medium">{it.label}</span>
                                 </div>
-                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-emerald-500/80 dark:text-emerald-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
                                   {it.description}
                                 </div>
                               </Link>
@@ -267,7 +267,7 @@ export default function Navbar() {
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   isCommunityActive
-                    ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
                     : communityOpen
                       ? 'bg-slate-100 text-slate-900 dark:bg-zinc-800 dark:text-slate-100'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
@@ -298,12 +298,12 @@ export default function Navbar() {
                         onClick={() => setCommunityOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
-                            ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-300'
                             : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
                         }`}
                       >
                         <div className="font-medium">{it.label}</div>
-                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-emerald-500/80 dark:text-emerald-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
                           {it.description}
                         </div>
                       </Link>
@@ -321,7 +321,7 @@ export default function Navbar() {
                   href="/lab"
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300'
                       : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
                   }`}
                 >
@@ -350,7 +350,7 @@ export default function Navbar() {
                         unoptimized
                       />
                     ) : (
-                      <span className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center">
+                      <span className="w-7 h-7 rounded-full bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center">
                         {initial}
                       </span>
                     )}
@@ -383,7 +383,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-orange-500 dark:hover:text-orange-400 rounded-lg transition-colors"
+                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-emerald-500 dark:hover:text-emerald-400 rounded-lg transition-colors"
                 >
                   로그인
                 </Link>
@@ -444,7 +444,7 @@ export default function Navbar() {
                         unoptimized
                       />
                     ) : (
-                      <span className="w-8 h-8 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
+                      <span className="w-8 h-8 rounded-full bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                         {initial}
                       </span>
                     )}
@@ -457,7 +457,7 @@ export default function Navbar() {
                     <Link
                       href="/profile/setup"
                       onClick={() => setIsMobileOpen(false)}
-                      className="text-xs text-orange-600 dark:text-orange-400 font-medium hover:underline"
+                      className="text-xs text-emerald-600 dark:text-emerald-400 font-medium hover:underline"
                     >
                       프로필
                     </Link>
@@ -474,7 +474,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileOpen(false)}
-                  className="block px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
+                  className="block px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
                 >
                   로그인 · Google
                 </Link>
@@ -494,13 +494,13 @@ export default function Navbar() {
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                       isActive
-                        ? 'bg-orange-500 text-white'
+                        ? 'bg-emerald-500 text-white'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-medium">블로그 진단</div>
-                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
                         카테고리 상위 % · 약점 분석
                       </div>
                     </div>
@@ -512,7 +512,7 @@ export default function Navbar() {
             {WORKFLOW.map((group) => (
               <div key={group.groupLabel} className="space-y-1">
                 <div className="px-4 flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400 uppercase tracking-wider">
                     STEP {group.range}
                   </span>
                   <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
@@ -528,16 +528,16 @@ export default function Navbar() {
                       onClick={() => setIsMobileOpen(false)}
                       className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                         isActive
-                          ? 'bg-orange-500 text-white'
+                          ? 'bg-emerald-500 text-white'
                           : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
-                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-orange-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-emerald-100' : 'text-slate-400 dark:text-slate-500'}`}>
                         {it.step}
                       </span>
                       <div className="min-w-0">
                         <div className="text-sm font-medium">{it.label}</div>
-                        <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-xs mt-0.5 ${isActive ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
                           {it.description}
                         </div>
                       </div>
@@ -561,13 +561,13 @@ export default function Navbar() {
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                       isActive
-                        ? 'bg-orange-500 text-white'
+                        ? 'bg-emerald-500 text-white'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                     }`}
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-medium">{it.label}</div>
-                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'}`}>
                         {it.description}
                       </div>
                     </div>
@@ -583,7 +583,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileOpen(false)}
                 className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
                   pathname === '/lab' || pathname.startsWith('/lab/')
-                    ? 'bg-orange-500 text-white'
+                    ? 'bg-emerald-500 text-white'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >

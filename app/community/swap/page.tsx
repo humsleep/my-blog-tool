@@ -187,7 +187,7 @@ export default function SwapPage() {
 
         <div className="mb-5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
+            <Link href="/community" className="hover:text-emerald-500 dark:hover:text-emerald-400">커뮤니티</Link>
             <span>›</span>
             <span className="text-slate-700 dark:text-slate-300 font-medium">서이추 해요</span>
           </div>
@@ -201,7 +201,7 @@ export default function SwapPage() {
             <button
               type="button"
               onClick={onClickWrite}
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 내 글 작성
             </button>
@@ -218,13 +218,13 @@ export default function SwapPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="닉네임으로 검색"
-                className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {isDebouncing && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-orange-500 rounded-full animate-spin" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-emerald-500 rounded-full animate-spin" />
               )}
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function SwapPage() {
               <button
                 type="button"
                 onClick={onClickWrite}
-                className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm"
+                className="inline-flex px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold rounded-full shadow-sm"
               >
                 내 글 작성하기
               </button>
@@ -335,7 +335,7 @@ function SwapRow({
   return (
     <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
       <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3">
-        <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
+        <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
           {post.category}
         </span>
         <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
@@ -346,7 +346,7 @@ function SwapRow({
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline truncate"
+          className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline truncate"
         >
           방문하기
           <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -356,7 +356,7 @@ function SwapRow({
         <div className="flex justify-end gap-1 items-center">
           {isMine ? (
             <>
-              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 hover:text-orange-600 dark:hover:text-orange-400 px-1.5">수정</button>
+              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 px-1.5">수정</button>
               <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 px-1.5">삭제</button>
             </>
           ) : (
@@ -368,7 +368,7 @@ function SwapRow({
       <div className="md:hidden px-4 py-3">
         <div className="flex items-start justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
+            <span className="flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
               {post.category}
             </span>
             <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
@@ -391,7 +391,7 @@ function SwapRow({
             href={post.blog_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-orange-600 dark:text-orange-400"
+            className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400"
           >
             블로그 방문
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

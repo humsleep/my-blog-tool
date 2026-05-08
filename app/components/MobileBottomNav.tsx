@@ -80,7 +80,7 @@ export default function MobileBottomNav() {
               href={item.href}
               className={`relative flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] transition-colors ${
                 active
-                  ? 'text-orange-600 dark:text-orange-400'
+                  ? 'text-emerald-600 dark:text-emerald-400'
                   : 'text-slate-500 dark:text-slate-400'
               }`}
               aria-current={active ? 'page' : undefined}

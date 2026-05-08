@@ -130,7 +130,7 @@ export default function TipsListPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
+            <Link href="/community" className="hover:text-emerald-500 dark:hover:text-emerald-400">커뮤니티</Link>
             <span>›</span>
             <span className="text-slate-700 dark:text-slate-300 font-medium">정보 공유</span>
           </div>
@@ -143,7 +143,7 @@ export default function TipsListPage() {
             </div>
             <Link
               href="/community/tips/new"
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 글쓰기
             </Link>
@@ -167,13 +167,13 @@ export default function TipsListPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="제목으로 검색"
-                  className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                  className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
                 />
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 {isDebouncing && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-orange-500 rounded-full animate-spin" />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-emerald-500 rounded-full animate-spin" />
                 )}
               </div>
               <div className="inline-flex flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
@@ -203,7 +203,7 @@ export default function TipsListPage() {
               '댓글과 좋아요로 활발한 소통이 가능합니다',
             ]}
             action={
-              <Link href="/community/tips/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm">
+              <Link href="/community/tips/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 글쓰기
               </Link>
             }
@@ -260,7 +260,7 @@ function TipsRow({ post }: { post: TipsPost }) {
               {post.title}
             </span>
             {post.comment_count > 0 && (
-              <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
+              <span className="flex-shrink-0 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                 [{post.comment_count}]
               </span>
             )}
@@ -279,7 +279,7 @@ function TipsRow({ post }: { post: TipsPost }) {
             <div className="flex items-baseline gap-1.5">
               <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.title}</h3>
               {post.comment_count > 0 && (
-                <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
+                <span className="flex-shrink-0 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                   [{post.comment_count}]
                 </span>
               )}
@@ -305,7 +305,7 @@ function CategoryTab({ active, onClick, label }: { active: boolean; onClick: () 
       onClick={onClick}
       className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
         active
-          ? 'bg-orange-500 text-white border-orange-500'
+          ? 'bg-emerald-500 text-white border-emerald-500'
           : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
       }`}
     >

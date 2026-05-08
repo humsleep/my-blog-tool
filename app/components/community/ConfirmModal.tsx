@@ -37,7 +37,7 @@ export default function ConfirmModal({
   const confirmCls =
     variant === 'danger'
       ? 'bg-red-600 hover:bg-red-700 text-white'
-      : 'bg-orange-500 hover:bg-orange-600 text-white';
+      : 'bg-emerald-500 hover:bg-emerald-600 text-white';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onCancel}>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { clientFetchJson } from '@/app/lib/clientFetch';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 import { BAND_LABEL, type DiagnoseLatestResponse } from '@/app/lib/dashboard/types';
+import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 
 /**
  * 데일리 대시보드 — 마지막 진단 점수 카드.
@@ -44,12 +45,12 @@ export default function LatestDiagnoseCard() {
 
   if (!data?.latest) {
     return (
-      <section className="rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
+      <section className="rounded-md border border-emerald-200 dark:border-emerald-900/50 ring-1 ring-emerald-500/20 bg-white dark:bg-zinc-900 p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-emerald-600 dark:text-emerald-400">
             Diagnose
           </span>
-          <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
+          <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">New</span>
         </div>
         <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5">
           내 블로그는 카테고리 안에서 어디쯤일까요?
@@ -80,53 +81,48 @@ export default function LatestDiagnoseCard() {
   const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
 
   return (
-    <section className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+    <section className="rounded-md border border-stone-200 dark:border-[#2a322d] bg-white dark:bg-[#161b18] p-5">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-slate-500">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-stone-500">
             마지막 진단
           </span>
-          <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
             {latest.blog_title ?? latest.blog_id}
-            <span className="mx-1.5 text-slate-300">·</span>
+            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
             {latest.category_label ?? latest.category}
-            <span className="mx-1.5 text-slate-300">·</span>
+            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
             {formatRelativeKr(latest.created_at)}
           </div>
         </div>
-        <Link href="/blog-diagnose" className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline whitespace-nowrap">
+        <Link href="/blog-diagnose" className="text-xs font-medium text-emerald-700 dark:text-emerald-300 hover:underline whitespace-nowrap">
           다시 진단 →
         </Link>
       </div>
 
-      <div className="flex items-baseline gap-3 mb-2">
-        <span className="text-5xl font-semibold tabular text-slate-900 dark:text-slate-100">
-          {latest.total_score}
-        </span>
-        <span className="text-sm text-slate-500 dark:text-slate-400">/ 100</span>
-        <span className={`text-xs font-semibold ${deltaColor}`}>{deltaLabel}</span>
-      </div>
-
-      <div className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-        <span className="font-medium text-slate-900 dark:text-slate-100">{BAND_LABEL[latest.band]}</span>
-        <span className="mx-1.5 text-slate-300">·</span>
-        키워드 {latest.hit_count ?? 0}개 1페이지 노출 (TOP10 {latest.top_ten_count ?? 0})
-      </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        <MiniMetric label="활동성" value={latest.activity_score} />
-        <MiniMetric label="노출" value={latest.visibility_score} />
-        <MiniMetric label="품질" value={latest.quality_score} />
+      <div className="flex items-center gap-5">
+        <div className="flex-shrink-0">
+          <ScoreGauge value={latest.total_score} size={120} caption="/ 100" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-2 mb-1">
+            <span className="text-base font-semibold text-stone-900 dark:text-stone-100">
+              {BAND_LABEL[latest.band]}
+            </span>
+            <span className={`text-xs font-semibold ${deltaColor}`}>{deltaLabel}</span>
+          </div>
+          <div className="text-xs text-stone-600 dark:text-stone-400 mb-3">
+            키워드 <span className="tabular font-semibold">{latest.hit_count ?? 0}</span>개 1페이지 노출
+            <span className="mx-1.5 text-stone-300 dark:text-stone-600">·</span>
+            TOP10 <span className="tabular font-semibold">{latest.top_ten_count ?? 0}</span>
+          </div>
+          <div className="space-y-2">
+            <ScoreMiniBar label="활동성" value={latest.activity_score} />
+            <ScoreMiniBar label="노출"   value={latest.visibility_score} />
+            <ScoreMiniBar label="품질"   value={latest.quality_score} />
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-function MiniMetric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-md bg-slate-50 dark:bg-zinc-800/50 px-3 py-2 text-center">
-      <div className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400">{label}</div>
-      <div className="text-lg font-semibold tabular text-slate-900 dark:text-slate-100">{value}</div>
-    </div>
   );
 }

@@ -113,7 +113,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4 text-center">
           <p className="text-slate-700 dark:text-slate-200 font-medium">{error || '모집글을 찾을 수 없습니다.'}</p>
-          <Link href="/community/companions" className="inline-block mt-4 text-sm text-orange-500 dark:text-orange-400 hover:underline">
+          <Link href="/community/companions" className="inline-block mt-4 text-sm text-emerald-500 dark:text-emerald-400 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
@@ -131,7 +131,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link href="/community/companions" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+          <Link href="/community/companions" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400">
             ← 목록으로
           </Link>
         </div>
@@ -154,7 +154,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
           {/* 작성자 메타 */}
           <div className="flex items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {post.nickname.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
@@ -176,7 +176,7 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
                 href={author.blog_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline"
+                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
               >
                 블로그
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -210,19 +210,19 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
             </p>
           </div>
 
-          <div className="p-4 bg-orange-50 dark:bg-orange-950/40 rounded-lg">
-            <h2 className="text-sm font-semibold text-orange-800 dark:text-orange-200 mb-1">📞 연락 방법</h2>
+          <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg">
+            <h2 className="text-sm font-semibold text-emerald-800 dark:text-emerald-200 mb-1">📞 연락 방법</h2>
             {isUrl ? (
               <a
                 href={post.contact_method}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-orange-600 dark:text-orange-300 hover:underline break-all"
+                className="text-sm text-emerald-600 dark:text-emerald-300 hover:underline break-all"
               >
                 {post.contact_method}
               </a>
             ) : (
-              <p className="text-sm text-orange-700 dark:text-orange-300 break-words">{post.contact_method}</p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-300 break-words">{post.contact_method}</p>
             )}
           </div>
 

@@ -209,7 +209,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
       <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4 text-center">
           <p className="text-slate-700 dark:text-slate-200 font-medium">{error || '게시글을 찾을 수 없습니다.'}</p>
-          <Link href="/community/tips" className="inline-block mt-4 text-sm text-orange-500 dark:text-orange-400 hover:underline">
+          <Link href="/community/tips" className="inline-block mt-4 text-sm text-emerald-500 dark:text-emerald-400 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
@@ -223,7 +223,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
     <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400">
+          <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400">
             ← 목록으로
           </Link>
         </div>
@@ -242,7 +242,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
           {/* 작성자 메타 */}
           <div className="flex items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {post.nickname.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
@@ -266,7 +266,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                 href={author.blog_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline"
+                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
               >
                 블로그
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -359,7 +359,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               maxLength={1000}
               rows={3}
               placeholder={authed ? '댓글을 입력하세요 (최대 1000자)' : '댓글을 작성하려면 로그인이 필요합니다.'}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               disabled={!authed}
             />
             <div className="flex justify-between items-center">
@@ -367,7 +367,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               <button
                 type="submit"
                 disabled={submittingComment || !commentBody.trim() || !authed}
-                className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+                className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
               >
                 {!authed ? '로그인 후 작성' : submittingComment ? '등록 중...' : '댓글 등록'}
               </button>

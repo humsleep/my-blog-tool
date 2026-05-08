@@ -188,7 +188,7 @@ export default function NewsPanel({
               onClick={() => setSort('sim')}
               className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
                 sort === 'sim'
-                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-300 shadow-sm'
+                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-300 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
@@ -199,7 +199,7 @@ export default function NewsPanel({
               onClick={() => setSort('date')}
               className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
                 sort === 'date'
-                  ? 'bg-white dark:bg-slate-800 text-orange-600 dark:text-orange-300 shadow-sm'
+                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-300 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
@@ -211,7 +211,7 @@ export default function NewsPanel({
               type="checkbox"
               checked={strict}
               onChange={(e) => setStrict(e.target.checked)}
-              className="w-3.5 h-3.5 rounded text-orange-500 focus:ring-orange-500"
+              className="w-3.5 h-3.5 rounded text-emerald-500 focus:ring-emerald-500"
             />
             관련도 낮은 항목 숨김
           </label>
@@ -256,7 +256,7 @@ export default function NewsPanel({
                       checked={checked}
                       disabled={disabled}
                       onChange={() => toggleSelect(item)}
-                      className="mt-1 w-4 h-4 rounded text-orange-500 focus:ring-orange-500 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+                      className="mt-1 w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                       aria-label={`${cleanTitle} 선택`}
                     />
                   )}
@@ -266,7 +266,7 @@ export default function NewsPanel({
                     rel="noopener noreferrer"
                     className="block flex-1 min-w-0 group"
                   >
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 group-hover:text-orange-500 dark:group-hover:text-orange-400 line-clamp-2">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 line-clamp-2">
                       {cleanTitle}
                     </p>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">

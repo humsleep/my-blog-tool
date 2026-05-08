@@ -193,7 +193,7 @@ export default function StartPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && keyword.trim()) setStep('choose'); }}
                 placeholder="예: 수원 맛집 추천"
-                className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-rule text-ink text-2xl sm:text-3xl placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
+                className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-rule text-ink text-2xl sm:text-3xl placeholder-ink-faint focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 transition-colors"
               />
             </div>
 
@@ -319,7 +319,7 @@ export default function StartPage() {
         {step === 'generating' && (
           <div className="py-10 text-center">
             <div className="inline-block mb-8">
-              <svg className="animate-spin h-12 w-12 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-12 w-12 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -338,7 +338,7 @@ export default function StartPage() {
                   }`}
                 >
                   <span className={`inline-block w-4 h-4 border ${
-                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-orange-500 dark:border-orange-400' : 'border-rule-soft'
+                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-emerald-500 dark:border-emerald-400' : 'border-rule-soft'
                   }`}>
                     {i < progressBeat && <svg className="w-full h-full text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                   </span>

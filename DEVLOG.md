@@ -5,6 +5,51 @@
 
 ---
 
+## 2026-05-08 — Phase 29: Sage & Charcoal 리브랜드 + 데이터 시각화 + 로그인 안내
+
+**배경**: 사용자 피드백 — (1) 메인 컬러 주황이 별로다, 세련된 톤 + 다크모드 눈 편함 원함. (2) 인기검색어·진단 결과가 표·숫자만이라 분석하기 어렵다, 그래프/시각화 필요. (3) 로그인이 필요한 기능을 사전에 안내해주기. `frontend-design` 스킬 로드 후 3개 컬러 팔레트 / 3개 시각화 라이브러리 / 3개 로그인 안내 방식 옵션 제시 → A. Sage & Charcoal + Recharts + 🔒 인라인 배지 합의.
+
+### 1. 컬러 시스템 — Sage & Charcoal (`globals.css` 토큰 재정의)
+- **Light**: `--bg-base #fafaf9` (stone-50, 따뜻한 화이트) / `--accent #047857` (emerald-700, 깊은 세이지 그린) / text stone-900
+- **Dark**: `--bg-base #0f1411` (숲 향 도는 차콜, 순흑 X — 장시간 작업 눈 편함) / surface `#161b18` / `--accent #6ee7b7` (emerald-300, 부드러운 민트, 글레어 ↓)
+- **Status**: success=green-600 (액센트와 구분), warning=amber-600, danger=red-600, info=sky-600
+- **Border**: warm forest tint(`#2a322d`) — 다크에서 차가운 zinc 대신 따뜻한 톤
+- 포커스 ring·셀렉션·input shadow의 RGB 값까지 emerald로 갱신
+- Tailwind 클래스 일괄 마이그레이션: 43개 .tsx 파일 `orange-XXX` → `emerald-XXX` (sed `\borange-\([0-9]\+\)` → `emerald-\1`)
+- `manifest.ts` PWA `theme_color` `#f97316` → `#047857`
+
+### 2. 데이터 시각화 — Recharts + 자체 SVG 컴포넌트
+- `npm install recharts@^3.8.1` (React 19 호환 확인)
+- **`app/components/charts/`**:
+  - `DiagnoseRadar.tsx` — 활동성·노출·품질 3축 레이더. MutationObserver로 다크모드 자동 감지, 토큰 색상 스왑.
+  - `ScoreGauge.tsx` — 점수 0~100 SVG 반원 게이지(`half=true` 기본) + 풀 도넛 모드. 점수 구간별 색 미세 조정 (35/50/65/80 임계). `<ScoreMiniBar/>` 보조 export.
+  - `HorizontalBarList.tsx` — 키워드 검색량 비교 가로 막대. max 정규화 + 클릭 시 키워드 분석 점프.
+- **연결 위치**:
+  - `/blog-diagnose` 결과: 총점 카운트만 → 게이지 + 3축 레이더 + 미니바 3분할의 그리드 레이아웃.
+  - 대시보드 `LatestDiagnoseCard`: 큰 숫자만 → mini 게이지 + ScoreMiniBar 3개로 전환.
+  - `/trending`: 표 위에 "TOP 10 한눈에" 가로 막대 카드 추가 (표는 보존 — 풀 데이터 + 비교 시각 한눈에 두 마리).
+
+### 3. 로그인 안내 — 비차단적 패턴
+- **`app/components/auth/`**:
+  - `LoginRequiredBadge.tsx` — 🔒 작은 칩, 호버 툴팁("구글 계정으로 1초 로그인"), 클릭 시 `/login?next=현재경로` redirect.
+  - `EmptyStateLogin.tsx` — 빈 상태 카드. 큰 자물쇠 + 제목 + 설명 + [구글 로그인] CTA. dashed border + emerald soft ring.
+- **적용 위치**:
+  - 홈 anon hero — 핵심 도구 4종 카드의 "AI 글쓰기"에 `authNote` 필드 + 🔒 작은 안내 ("비로그인 1회/일 · 로그인 5회/일")
+  - `SavedKeywordsCard` — 비로그인 사용자에게 EmptyStateLogin 카드 ("로그인하면 즐겨찾기 키워드를 저장할 수 있어요")로 분기. State machine: `loading | anon | empty | list`.
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+- TypeScript 통과
+- 한 번 JSX 파싱 에러 (트렌딩 페이지에서 중첩 `{}` 위치 실수) → 수정 후 통과
+
+### 후속 권장
+- 진단 점수 추적 그래프 (시간순 sparkline) — 진단 이력이 누적되면 `LatestDiagnoseCard` 안에 작은 라인 차트 추가 가능
+- 키워드 분석 결과 표에 검색량 가로 막대 추가 (HorizontalBarList 재사용)
+- 커뮤니티 작성 페이지에 사전 LoginRequiredBadge 노출 (현재는 RLS 차단 후 에러)
+- `slate-XXX` Tailwind 클래스도 stone으로 마이그레이션 (선택 — 현재도 가독성 OK)
+
+---
+
 ## 2026-05-07 — Phase 28: 데일리 대시보드 홈 + 진단 결과 영구 저장
 
 **배경**: Phase 27(SaaS Analytics 톤)은 깔끔하지만 정적 랜딩이라 한 번 둘러보고 글 쓰면 끝나는 구조였음. 사용자가 "마케팅 전 대대적인 개편 — 누구나 쉽게 쓰고 오래 체류할 수 있게" 요청. 5축 전략(데일리 대시보드 / 스튜디오 워크스페이스 / 진단 추적 / 도구↔커뮤니티 / 모바일) 중 ROI가 가장 높은 ① 데일리 대시보드를 첫 phase로 선택. 진단 결과가 누적되어야 변동(delta)을 보여줄 수 있어 ③ 일부(저장 + 최근 1건 조회)도 함께 포함.

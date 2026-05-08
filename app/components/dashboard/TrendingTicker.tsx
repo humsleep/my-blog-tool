@@ -71,7 +71,7 @@ export default function TrendingTicker({
         </div>
         <Link
           href="/trending"
-          className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline whitespace-nowrap"
+          className="text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline whitespace-nowrap"
         >
           전체 보기 →
         </Link>
@@ -101,9 +101,9 @@ export default function TrendingTicker({
               <Link
                 key={`${it.rank}-${it.keyword}`}
                 href={`/keyword-analysis?keyword=${encodeURIComponent(it.keyword)}`}
-                className="group flex-shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-full border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
+                className="group flex-shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-full border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
               >
-                <span className="text-[11px] tabular font-semibold text-slate-400 group-hover:text-orange-500 dark:group-hover:text-orange-400">
+                <span className="text-[11px] tabular font-semibold text-slate-400 group-hover:text-emerald-500 dark:group-hover:text-emerald-400">
                   {String(it.rank).padStart(2, '0')}
                 </span>
                 <span className="text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap">

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CATEGORY_SEEDS } from '@/app/lib/diagnose/category-seeds';
+import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
+import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 
 /**
  * /blog-diagnose — 블로그 진단 페이지.
@@ -43,8 +45,8 @@ const PROGRESS_BEATS = [
 
 const BAND_LABELS: Record<DiagnoseResponse['score']['band'], { label: string; tone: string; desc: string }> = {
   top5:    { label: '카테고리 상위 5%',  tone: 'text-emerald-700 dark:text-emerald-400', desc: '이미 상위권이에요. 이 패턴을 유지·확장하세요.' },
-  top15:   { label: '카테고리 상위 15%', tone: 'text-orange-700 dark:text-orange-400',   desc: '안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.' },
-  top35:   { label: '카테고리 상위 35%', tone: 'text-orange-700 dark:text-orange-400',   desc: '평균 이상. 키워드 전략을 정밀화하면 상위 진입 가능.' },
+  top15:   { label: '카테고리 상위 15%', tone: 'text-emerald-700 dark:text-emerald-400',   desc: '안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.' },
+  top35:   { label: '카테고리 상위 35%', tone: 'text-emerald-700 dark:text-emerald-400',   desc: '평균 이상. 키워드 전략을 정밀화하면 상위 진입 가능.' },
   mid:     { label: '평균 — 성장 중',    tone: 'text-ink',                                desc: '발행과 키워드 정밀도 둘 다 끌어올려야 합니다.' },
   growing: { label: '성장 단계',          tone: 'text-ink-faint',                          desc: '신생/저활동 블로그. 우선 발행 빈도부터 안정화.' },
 };
@@ -122,7 +124,7 @@ export default function BlogDiagnosePage() {
                   onChange={(e) => setBlogInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && blogInput.trim() && category) submit(); }}
                   placeholder="https://blog.naver.com/myblog  또는  myblog"
-                  className="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-rule text-ink text-xl sm:text-2xl placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
+                  className="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-rule text-ink text-xl sm:text-2xl placeholder-ink-faint focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-400 transition-colors"
                 />
                 <p className="mt-2 text-xs text-ink-faint">
                   RSS가 공개된 네이버 블로그만 진단 가능합니다.
@@ -183,7 +185,7 @@ export default function BlogDiagnosePage() {
         {step === 'running' && (
           <div className="py-10 text-center">
             <div className="inline-block mb-8">
-              <svg className="animate-spin h-12 w-12 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-12 w-12 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -197,7 +199,7 @@ export default function BlogDiagnosePage() {
               {PROGRESS_BEATS.map((beat, i) => (
                 <div key={beat} className={`flex items-center gap-3 text-sm transition-colors ${i <= progressBeat ? 'text-ink' : 'text-ink-faint'}`}>
                   <span className={`inline-block w-4 h-4 border ${
-                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-orange-500 dark:border-orange-400' : 'border-rule-soft'
+                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-emerald-500 dark:border-emerald-400' : 'border-rule-soft'
                   }`}>
                     {i < progressBeat && <svg className="w-full h-full text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                   </span>
@@ -224,19 +226,37 @@ export default function BlogDiagnosePage() {
               </a>
             </div>
 
-            {/* Total + band */}
-            <div className="border-y border-rule py-10 mb-12 text-center">
-              <div className="ed-byline mb-3">총점</div>
-              <div className="text-3xl sm:text-4xl sm:text-6xl leading-none text-ink mb-2">{result.score.total}</div>
-              <div className="text-ink-faint mb-4">/ 100</div>
-              <div className={`text-xl sm:text-2xl ${BAND_LABELS[result.score.band].tone}`}>
-                {BAND_LABELS[result.score.band].label}
+            {/* Total — gauge + radar 시각화 */}
+            <section className="border-y border-rule py-10 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                {/* 게이지 + 밴드 + 미니바 */}
+                <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                  <span className="ed-byline mb-3">총점</span>
+                  <ScoreGauge value={result.score.total} size={180} caption="/ 100" />
+                  <div className={`mt-3 text-lg sm:text-xl font-semibold ${BAND_LABELS[result.score.band].tone}`}>
+                    {BAND_LABELS[result.score.band].label}
+                  </div>
+                  <p className="mt-1 text-sm text-ink-muted max-w-xs">{BAND_LABELS[result.score.band].desc}</p>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                    {result.categoryLabel} · {result.keywordCount}개 키워드 분석
+                  </p>
+                </div>
+                {/* 3축 레이더 + 미니바 */}
+                <div className="space-y-4">
+                  <DiagnoseRadar
+                    activity={result.score.activity.score}
+                    visibility={result.score.visibility.score}
+                    quality={result.score.quality.score}
+                    height={240}
+                  />
+                  <div className="grid grid-cols-3 gap-3 px-2">
+                    <ScoreMiniBar label="활동성" value={result.score.activity.score} />
+                    <ScoreMiniBar label="노출"   value={result.score.visibility.score} />
+                    <ScoreMiniBar label="품질"   value={result.score.quality.score} />
+                  </div>
+                </div>
               </div>
-              <p className="mt-2 text-sm text-ink-muted">{BAND_LABELS[result.score.band].desc}</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-                {result.categoryLabel} · {result.keywordCount}개 키워드 분석
-              </p>
-            </div>
+            </section>
 
             {/* 3축 점수 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-rule-soft border border-rule-soft mb-12">
@@ -281,7 +301,7 @@ export default function BlogDiagnosePage() {
                 <ol className="space-y-4 border-y border-rule py-6">
                   {result.score.insights.map((ins, i) => (
                     <li key={i} className="flex gap-4">
-                      <span className="text-orange-600 dark:text-orange-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
                       <span className="text-base text-ink-muted leading-[1.7]">{ins}</span>
                     </li>
                   ))}
@@ -298,7 +318,7 @@ export default function BlogDiagnosePage() {
                     <div key={h.keyword} className="flex justify-between items-baseline py-1.5 border-b border-rule-soft last:border-b-0">
                       <span className="text-sm text-ink-muted truncate pr-3">{h.keyword}</span>
                       <span className={`text-sm tabular-nums flex-shrink-0 ${
-                        h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
+                        h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-ink'
                       }`}>
                         {h.rank === null ? '—' : `${h.rank}위`}
                       </span>

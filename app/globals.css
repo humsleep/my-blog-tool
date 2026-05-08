@@ -4,48 +4,48 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────────────
- * Boheme BlogLab — Modern SaaS Analytics Theme (Phase 27)
+ * Boheme BlogLab — Sage & Charcoal Theme (Phase 29)
  *
- *   Tone:        Linear / Vercel / Stripe 계열 — 데이터 위주, 장식 최소화
- *   Typography:  Pretendard 단일 (디스플레이 세리프 제거)
- *                  h1 SemiBold 24~36px / h2 SemiBold 22~28px / body 14~15px
- *   Color:       white/zinc + 주황 포인트 액센트 + 차트용 status (녹/주황/빨강)
- *   Card:        8px radius + 1px hairline + 미세 그림자 (rgba(0,0,0,0.04))
- *   Background:  순백/다크 zinc — 종이 노이즈·그라디언트 모두 제거
+ *   Tone:        조용한 럭셔리 — Linear/Notion 톤. 데이터 위주, 자연스러운 깊이.
+ *   Typography:  Pretendard 단일.
+ *   Color:       stone neutral + emerald(sage) 액센트.
+ *                Light: 따뜻한 화이트(#fafaf9) + 깊은 세이지 그린(#047857)
+ *                Dark:  숲 향 도는 차콜(#0f1411) + 밝은 민트(#6ee7b7) — 눈 편함
+ *   Card:        8px radius + 1px hairline + 미세 그림자
  * ─────────────────────────────────────────────────────────────────────
  */
 
 :root {
-  /* ── Surface ── */
-  --bg-base:        #fafafa;   /* 페이지 배경 (zinc-50 계열) */
-  --bg-surface:     #ffffff;   /* 카드·패널 */
-  --bg-elevated:    #f4f4f5;   /* 호버·하이라이트 */
+  /* ── Surface (warm white, stone-tinted) ── */
+  --bg-base:        #fafaf9;   /* stone-50 — 따뜻한 화이트 */
+  --bg-surface:     #ffffff;   /* 카드 */
+  --bg-elevated:    #f5f5f4;   /* stone-100 — 호버 */
   --bg-overlay:     rgba(255,255,255,0.92);
 
   /* ── Text ── */
-  --text-primary:   #09090b;   /* zinc-950 */
-  --text-secondary: #52525b;   /* zinc-600 — WCAG AA on white */
-  --text-muted:     #71717a;   /* zinc-500 */
-  --text-faint:     #a1a1aa;   /* zinc-400 */
+  --text-primary:   #1c1917;   /* stone-900 */
+  --text-secondary: #57534e;   /* stone-600 — WCAG AA on white */
+  --text-muted:     #78716c;   /* stone-500 */
+  --text-faint:     #a8a29e;   /* stone-400 */
 
   /* ── Border ── */
-  --border:         #e4e4e7;   /* zinc-200 */
-  --border-subtle:  #f4f4f5;   /* zinc-100 */
-  --border-strong:  #d4d4d8;   /* zinc-300 */
+  --border:         #e7e5e4;   /* stone-200 */
+  --border-subtle:  #f5f5f4;   /* stone-100 */
+  --border-strong:  #d6d3d1;   /* stone-300 */
 
-  /* ── Accent (kept orange) ── */
-  --accent:         #f97316;
-  --accent-hover:   #ea580c;
-  --accent-soft:    #fff7ed;
-  --accent-text:    #c2410c;
+  /* ── Accent (Sage / Emerald) ── */
+  --accent:         #047857;   /* emerald-700 — 깊은 세이지 */
+  --accent-hover:   #065f46;   /* emerald-800 */
+  --accent-soft:    #ecfdf5;   /* emerald-50 */
+  --accent-text:    #047857;   /* readable on emerald-50 */
 
-  /* ── Status (chart-friendly) ── */
-  --success:        #16a34a;
+  /* ── Status (chart-friendly, distinct from accent) ── */
+  --success:        #16a34a;   /* green-600 — accent와 구분되도록 더 밝은 녹 */
   --success-bg:     #f0fdf4;
   --success-text:   #15803d;
   --success-border: #bbf7d0;
 
-  --warning:        #f59e0b;
+  --warning:        #d97706;   /* amber-600 — 따뜻한 톤 유지 */
   --warning-bg:     #fffbeb;
   --warning-text:   #b45309;
   --warning-border: #fde68a;
@@ -55,10 +55,10 @@
   --danger-text:    #b91c1c;
   --danger-border:  #fecaca;
 
-  --info:           #2563eb;
-  --info-bg:        #eff6ff;
-  --info-text:      #1d4ed8;
-  --info-border:    #bfdbfe;
+  --info:           #0284c7;   /* sky-600 — 액센트와 충돌 X */
+  --info-bg:        #f0f9ff;
+  --info-text:      #0369a1;
+  --info-border:    #bae6fd;
 
   /* ── Shadow (very subtle, SaaS-style) ── */
   --shadow-xs: 0 1px 0 rgb(0 0 0 / 0.04);
@@ -73,24 +73,25 @@
 }
 
 .dark {
-  --bg-base:        #0b0b0d;
-  --bg-surface:     #131316;
-  --bg-elevated:    #1c1c20;
-  --bg-overlay:     rgba(11,11,13,0.92);
+  /* 숲 향 도는 따뜻한 차콜 — 순흑보다 눈 편함, 장시간 작업용 */
+  --bg-base:        #0f1411;   /* forest charcoal (warm) */
+  --bg-surface:     #161b18;
+  --bg-elevated:    #1d2320;
+  --bg-overlay:     rgba(15,20,17,0.92);
 
-  --text-primary:   #fafafa;
-  --text-secondary: #a1a1aa;   /* zinc-400, ~7.4:1 on bg-surface */
-  --text-muted:     #71717a;
-  --text-faint:     #52525b;
+  --text-primary:   #fafaf9;   /* stone-50 */
+  --text-secondary: #a8a29e;   /* stone-400 — ~7:1 on bg-surface */
+  --text-muted:     #78716c;   /* stone-500 */
+  --text-faint:     #57534e;   /* stone-600 */
 
-  --border:         #27272a;   /* zinc-800 */
-  --border-subtle:  #1c1c20;
-  --border-strong:  #3f3f46;
+  --border:         #2a322d;   /* warm forest border */
+  --border-subtle:  #1d2320;
+  --border-strong:  #3a443d;
 
-  --accent:         #fb923c;   /* orange-400 — readable on dark */
-  --accent-hover:   #fdba74;
-  --accent-soft:    rgba(249,115,22,0.12);
-  --accent-text:    #fdba74;
+  --accent:         #6ee7b7;   /* emerald-300 — 다크에서 부드러운 민트 */
+  --accent-hover:   #a7f3d0;   /* emerald-200 */
+  --accent-soft:    rgba(16,185,129,0.12);
+  --accent-text:    #6ee7b7;
 
   --success:        #4ade80;
   --success-bg:     rgba(34,197,94,0.12);
@@ -107,10 +108,10 @@
   --danger-text:    #fca5a5;
   --danger-border:  rgba(239,68,68,0.32);
 
-  --info:           #60a5fa;
-  --info-bg:        rgba(59,130,246,0.12);
-  --info-text:      #93c5fd;
-  --info-border:    rgba(59,130,246,0.32);
+  --info:           #38bdf8;
+  --info-bg:        rgba(56,189,248,0.12);
+  --info-text:      #7dd3fc;
+  --info-border:    rgba(56,189,248,0.32);
 
   --shadow-xs: 0 0 0 1px rgb(255 255 255 / 0.04);
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
@@ -357,10 +358,10 @@ p, li {
 }
 .input-base:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.15);
+  box-shadow: 0 0 0 3px rgb(4 120 87 / 0.18);
 }
 .dark .input-base:focus {
-  box-shadow: 0 0 0 3px rgb(251 146 60 / 0.20);
+  box-shadow: 0 0 0 3px rgb(110 231 183 / 0.24);
 }
 
 /* ── Buttons ── */
@@ -387,7 +388,10 @@ p, li {
 }
 .btn-base:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 0.35);
+  box-shadow: 0 0 0 3px rgb(4 120 87 / 0.35);
+}
+.dark .btn-base:focus-visible {
+  box-shadow: 0 0 0 3px rgb(110 231 183 / 0.40);
 }
 
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }
@@ -453,7 +457,8 @@ p, li {
 .pill-warning { background: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
 .pill-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-color: var(--danger-border); }
 .pill-info    { background: var(--info-bg);    color: var(--info-text);    border-color: var(--info-border); }
-.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(249,115,22,0.20); }
+.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(4,120,87,0.18); }
+.dark .pill-accent { border-color: rgba(110,231,183,0.24); }
 .pill-neutral { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border); }
 
 /* tabular-nums helper for tables */
@@ -474,8 +479,8 @@ p, li {
 .dark .ql-picker-label { color: var(--text-secondary) !important; }
 
 /* ── Selection ── */
-::selection { background-color: rgb(249 115 22 / 0.25); color: var(--text-primary); }
-.dark ::selection { background-color: rgb(251 146 60 / 0.30); }
+::selection { background-color: rgb(4 120 87 / 0.22); color: var(--text-primary); }
+.dark ::selection { background-color: rgb(110 231 183 / 0.30); }
 
 /* ── Scrollbar 숨김 (가로 스크롤 영역) ── */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
