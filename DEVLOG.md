@@ -5,6 +5,34 @@
 
 ---
 
+## 2026-05-08 — Phase 32: 키워드 분석 페이지에 TOP 10 비교 시각화
+
+**배경**: 사용자 질문 — "키워드 분석에도 시각화가 추가됐나요?" 확인해보니 표·숫자만 있고 가로 막대 같은 비교 시각화가 없는 상태. Phase 29·31의 후속 권장에 있던 작업.
+
+### 변경 (`app/keyword-analysis/page.tsx`)
+- `HorizontalBarList` 컴포넌트 import (이미 Phase 29에서 만들어둔 재사용 컴포넌트)
+- 결과 표 위에 **"TOP 10 검색량 비교"** 카드 추가:
+  - `sortedKeywords` 사본을 `totalSearchVolume` 내림차순 정렬 후 상위 10개
+  - 각 항목에 순위 + 키워드 라벨 + 검색량 값 + 막대 (가장 큰 값 대비 비율)
+  - 클릭 시 `/competitor-analysis?keyword=...`로 이동 (다음 단계 자연 연결)
+  - `sortedKeywords.length > 1`일 때만 노출 (1개면 비교 의미 없음)
+- 기존 표는 그대로 유지 — 풀 데이터 + 정렬·CSV·삭제 기능 보존
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+
+### 시각화 적용 현황 정리
+- ✅ `/blog-diagnose` 결과: 게이지 + 3축 레이더 + 미니바 (Phase 29~31)
+- ✅ 대시보드 홈: mini 게이지 + 미니바 (Phase 29)
+- ✅ `/trending`: TOP 10 가로 막대 카드 (Phase 29)
+- ✅ `/keyword-analysis`: TOP 10 가로 막대 카드 (Phase 32, 본 작업)
+
+### 후속 권장
+- `/competitor-analysis`: 상위 블로그의 패턴(글자수·이미지수)을 분포 그래프로
+- 진단 점수 시간순 sparkline (이력 누적되면)
+
+---
+
 ## 2026-05-08 — Phase 31: Hermès Luxe 리브랜드 + 콘트라스트 강화 + 블로그 진단 UX 개편
 
 **배경**: 사용자 피드백 — (1) Phase 30의 sapphire blue가 잘 안 보임, 에르메스 시그니처 오렌지로 럭셔리하게 바꾸기. (2) 글자 콘트라스트 약함, 가독성 boost 필요. (3) 블로그 진단의 카테고리 선택이 클릭 가능해 보이지 않음 — UI/UX 개편으로 빠르게 진행할 수 있게.

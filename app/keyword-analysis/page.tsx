@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NewsPanel, { type NewsItem } from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
+import HorizontalBarList from '../components/charts/HorizontalBarList';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
 import { useToast } from '../components/ui/Toast';
@@ -477,6 +478,35 @@ function KeywordAnalysisContent() {
                     </p>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* TOP 10 검색량 비교 카드 — 시각화 (Phase 32) */}
+            {sortedKeywords.length > 1 && (
+              <div className="mb-4 bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 shadow-sm">
+                <div className="flex items-baseline justify-between mb-3">
+                  <div>
+                    <h2 className="font-semibold text-zinc-900 dark:text-zinc-50">
+                      TOP {Math.min(10, sortedKeywords.length)} 검색량 비교
+                    </h2>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
+                      막대 길이는 가장 큰 키워드 대비 비율. 클릭 시 상위노출 분석으로 이동.
+                    </p>
+                  </div>
+                  <span className="text-xs text-zinc-500 dark:text-zinc-400 hidden sm:inline">월간 총 검색량 기준</span>
+                </div>
+                <HorizontalBarList
+                  items={[...sortedKeywords]
+                    .sort((a, b) => b.totalSearchVolume - a.totalSearchVolume)
+                    .slice(0, 10)
+                    .map((k, idx) => ({
+                      rank: idx + 1,
+                      label: k.keyword,
+                      value: k.totalSearchVolume,
+                      display: k.totalSearchVolume.toLocaleString(),
+                      href: `/competitor-analysis?keyword=${encodeURIComponent(k.keyword)}`,
+                    }))}
+                />
               </div>
             )}
 
