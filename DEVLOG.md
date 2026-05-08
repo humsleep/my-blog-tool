@@ -5,6 +5,44 @@
 
 ---
 
+## 2026-05-08 — Phase 33: 상위노출 분석 시각화 + 진단 점수 sparkline
+
+**배경**: Phase 32 후속에서 남아있던 두 항목 일괄 처리 — (1) `/competitor-analysis`에 패턴 시각화, (2) `LatestDiagnoseCard`에 시간순 점수 sparkline.
+
+### 1. 새 차트 컴포넌트 (`app/components/charts/`)
+- **`MonthlyDistribution.tsx`** — Recharts BarChart. YYYYMM/YYYYMMDD/YYYY-MM-DD 키 자동 정규화 → 월(YY.MM)별로 합산 후 막대. 다크모드 자동 감지(`MutationObserver`). Tooltip / cursor / radius 4 디자인 토큰화.
+- **`ScoreSparkline.tsx`** — 경량 SVG 라인+영역 차트. 최신 포인트 강조(원 + 텍스트). Y 도메인은 데이터 ±5 padding으로 변동 감각 ↑. 2개 미만이면 null 반환(자동 숨김).
+
+### 2. 진단 API 확장 (`app/api/blog-diagnose/route.ts`)
+- GET이 `latest`/`previous`/`delta` 외에 `history: { date, score }[]` 추가 (최근 12건, 오래된→최신 순).
+- 비로그인·미저장 시 `history: []`.
+- 응답 타입(`app/lib/dashboard/types.ts`)에 `DiagnoseHistoryPoint`, `DiagnoseLatestResponse.history?` 필드 추가.
+
+### 3. `LatestDiagnoseCard` 점수 추이 sparkline 결합
+- 점수 카드 하단에 점선 분리 후 `ScoreSparkline` + "최근 N회 진단" 라벨.
+- 진단 2건 이상 누적 시에만 노출. 1건이면 미니바만.
+
+### 4. `/competitor-analysis` 패턴 시각화
+- **발행 시간 분포** 새 카드 — `MonthlyDistribution`. 기존엔 `dateDistribution` 데이터가 있어도 화면 어디에도 안 보였음 → 즉시 가시화.
+- **자주 사용되는 단어** 카드 — pill 칩 → `HorizontalBarList`(상위 15개, count 비례 막대). 단어별 빈도 비교가 한눈에.
+- **상위 노출 블로거** 카드 — 평면 list → `HorizontalBarList`(post 수 비례). 점유율 차이 즉시 인지.
+- 카드 톤 / 보더 색상도 Hermès Luxe 토큰(`#221c17` / `#2e2723`)으로 통일.
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+- 한 번 Recharts Tooltip formatter 타입 에러 (number ↔ undefined) → 명시 타입 제거로 수정
+
+### 시각화 적용 현황 (전체)
+| 페이지 | 차트 |
+|---|---|
+| `/blog-diagnose` 결과 | 게이지 + 3축 레이더 + 미니바 |
+| 대시보드 홈 (로그인) | mini 게이지 + 미니바 + **점수 추이 sparkline** (Phase 33) |
+| `/trending` | TOP 10 가로 막대 |
+| `/keyword-analysis` | TOP 10 가로 막대 |
+| `/competitor-analysis` | **월별 막대 + 단어/블로거 가로 막대** (Phase 33) |
+
+---
+
 ## 2026-05-08 — Phase 32: 키워드 분석 페이지에 TOP 10 비교 시각화
 
 **배경**: 사용자 질문 — "키워드 분석에도 시각화가 추가됐나요?" 확인해보니 표·숫자만 있고 가로 막대 같은 비교 시각화가 없는 상태. Phase 29·31의 후속 권장에 있던 작업.

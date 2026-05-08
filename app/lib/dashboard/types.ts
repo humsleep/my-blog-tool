@@ -22,10 +22,16 @@ export interface DiagnoseLatest {
   created_at: string;
 }
 
+export interface DiagnoseHistoryPoint {
+  date: string;
+  score: number;
+}
+
 export interface DiagnoseLatestResponse {
   latest: DiagnoseLatest | null;
   previous: DiagnoseLatest | null;
   delta: number | null;
+  history?: DiagnoseHistoryPoint[];
 }
 
 /** profile.category(커뮤니티 분야) → /api/trending-keywords 의 hint 카테고리로 매핑 */

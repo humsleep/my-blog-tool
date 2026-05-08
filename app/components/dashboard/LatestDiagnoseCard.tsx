@@ -6,6 +6,7 @@ import { clientFetchJson } from '@/app/lib/clientFetch';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 import { BAND_LABEL, type DiagnoseLatestResponse } from '@/app/lib/dashboard/types';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
+import ScoreSparkline from '@/app/components/charts/ScoreSparkline';
 
 /**
  * 데일리 대시보드 — 마지막 진단 점수 카드.
@@ -68,7 +69,8 @@ export default function LatestDiagnoseCard() {
     );
   }
 
-  const { latest, delta } = data;
+  const { latest, delta, history } = data;
+  const sparkPoints = (history ?? []).filter((p) => typeof p.score === 'number');
   const deltaColor =
     delta === null
       ? 'text-zinc-500 dark:text-zinc-400'
@@ -123,6 +125,16 @@ export default function LatestDiagnoseCard() {
           </div>
         </div>
       </div>
+
+      {/* 점수 추이 sparkline — 진단 2건 이상 누적 시 노출 */}
+      {sparkPoints.length >= 2 && (
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-[#2e2723] flex items-center justify-between gap-3">
+          <ScoreSparkline points={sparkPoints} label="점수 추이" width={220} height={48} />
+          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+            최근 {sparkPoints.length}회 진단
+          </span>
+        </div>
+      )}
     </section>
   );
 }

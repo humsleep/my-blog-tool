@@ -156,40 +156,52 @@ export async function POST(request: Request) {
 }
 
 /**
- * GET — 로그인 사용자의 최근 진단 결과 1건 (대시보드 카드용).
- * 비로그인 / 미저장 상태이면 `{ latest: null }` 반환.
+ * GET — 로그인 사용자의 진단 이력
+ * - latest, previous: 직전 두 건 (대시보드 점수 카드 + delta 표시)
+ * - history: 최근 12건 (최신 순 → 오래된 순으로 reverse) — sparkline 용
+ *
+ * 비로그인 / 미저장 상태이면 모두 null/빈 배열.
  */
 export async function GET() {
   if (!isSupabaseConfigured()) {
-    return NextResponse.json({ latest: null });
+    return NextResponse.json({ latest: null, previous: null, delta: null, history: [] });
   }
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ latest: null });
+    if (!user) {
+      return NextResponse.json({ latest: null, previous: null, delta: null, history: [] });
+    }
 
     const { data, error } = await supabase
       .from('diagnose_results')
       .select('id, blog_id, blog_title, category, category_label, total_score, activity_score, visibility_score, quality_score, band, hit_count, top_ten_count, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .limit(2);
+      .limit(12);
 
     if (error) {
       console.error('[blog-diagnose GET] error:', error);
-      return NextResponse.json({ latest: null });
+      return NextResponse.json({ latest: null, previous: null, delta: null, history: [] });
     }
 
     const list = data ?? [];
     const latest = list[0] ?? null;
     const previous = list[1] ?? null;
+
+    // sparkline 용 — 오래된 → 최신 순으로 정렬 (최대 12건)
+    const history = [...list]
+      .reverse()
+      .map((r) => ({ date: r.created_at as string, score: r.total_score as number }));
+
     return NextResponse.json({
       latest,
       previous,
       delta: latest && previous ? latest.total_score - previous.total_score : null,
+      history,
     });
   } catch (err) {
     console.error('[blog-diagnose GET] exception:', err);
-    return NextResponse.json({ latest: null });
+    return NextResponse.json({ latest: null, previous: null, delta: null, history: [] });
   }
 }

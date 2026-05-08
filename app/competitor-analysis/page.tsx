@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import NewsPanel from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
+import HorizontalBarList from '../components/charts/HorizontalBarList';
+import MonthlyDistribution from '../components/charts/MonthlyDistribution';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { sanitizeSearchHighlight } from '../lib/format/article-formats';
 
@@ -168,42 +170,55 @@ function CompetitorAnalysisContent() {
               </ul>
             </div>
 
-            {/* 자주 사용되는 단어 */}
-            {data.commonWords.length > 0 && (
-              <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
-                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
-                  자주 사용되는 단어 <span className="text-zinc-400 dark:text-zinc-500 font-normal text-sm">(키워드 제외)</span>
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {data.commonWords.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 rounded-full text-sm font-medium border border-orange-100 dark:border-orange-700"
-                    >
-                      {item.word} ({item.count})
-                    </span>
-                  ))}
+            {/* 발행 시간 분포 — Recharts 월별 막대 (Phase 33) */}
+            {Object.keys(data.dateDistribution).length > 0 && (
+              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 shadow-sm">
+                <div className="flex items-baseline justify-between mb-3">
+                  <h2 className="font-semibold text-zinc-900 dark:text-zinc-50">발행 시간 분포</h2>
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400">월별 누적 포스트 수</span>
                 </div>
+                <MonthlyDistribution data={data.dateDistribution} height={200} />
+                <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+                  최근 발행이 활발한 시점을 잡아 같은 흐름을 이어가면 노출에 유리합니다.
+                </p>
               </div>
             )}
 
-            {/* 상위 블로거 */}
-            {data.topBloggers.length > 0 && (
-              <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
-                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">상위 노출 블로거</h2>
-                <div className="space-y-2">
-                  {data.topBloggers.map((blogger, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-700/40 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <span className="w-7 h-7 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs">
-                          {idx + 1}
-                        </span>
-                        <span className="font-medium text-zinc-900 dark:text-zinc-100 text-sm">{blogger.name}</span>
-                      </div>
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400">{blogger.count}개 포스트</span>
-                    </div>
-                  ))}
+            {/* 자주 사용되는 단어 — 가로 막대 시각화 */}
+            {data.commonWords.length > 0 && (
+              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 shadow-sm">
+                <div className="flex items-baseline justify-between mb-3">
+                  <h2 className="font-semibold text-zinc-900 dark:text-zinc-50">
+                    자주 사용되는 단어 <span className="text-zinc-500 dark:text-zinc-400 font-normal text-sm">(키워드 제외)</span>
+                  </h2>
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400 hidden sm:inline">상위 {Math.min(15, data.commonWords.length)}개</span>
                 </div>
+                <HorizontalBarList
+                  items={data.commonWords.slice(0, 15).map((w, i) => ({
+                    rank: i + 1,
+                    label: w.word,
+                    value: w.count,
+                    display: `${w.count}회`,
+                  }))}
+                />
+              </div>
+            )}
+
+            {/* 상위 블로거 — 가로 막대 시각화 */}
+            {data.topBloggers.length > 0 && (
+              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 shadow-sm">
+                <div className="flex items-baseline justify-between mb-3">
+                  <h2 className="font-semibold text-zinc-900 dark:text-zinc-50">상위 노출 블로거</h2>
+                  <span className="text-xs text-zinc-600 dark:text-zinc-400">블로거별 포스트 수</span>
+                </div>
+                <HorizontalBarList
+                  items={data.topBloggers.map((b, i) => ({
+                    rank: i + 1,
+                    label: b.name,
+                    value: b.count,
+                    display: `${b.count}개`,
+                  }))}
+                />
               </div>
             )}
 
