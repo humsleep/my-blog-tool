@@ -126,32 +126,32 @@ export default function TipsListPage() {
   }, [category, sort, debouncedQuery]);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-blue-500 dark:hover:text-blue-400">커뮤니티</Link>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
             <span>›</span>
-            <span className="text-slate-700 dark:text-slate-300 font-medium">정보 공유</span>
+            <span className="text-zinc-700 dark:text-zinc-300 font-medium">정보 공유</span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">💡 정보 공유</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">💡 정보 공유</h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 운영 노하우·질문·트러블슈팅을 자유롭게 나눠요
               </p>
             </div>
             <Link
               href="/community/tips/new"
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 글쓰기
             </Link>
           </div>
         </div>
 
-        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md mb-4">
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm space-y-2">
+        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md mb-4">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 shadow-sm space-y-2">
             <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
               <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
                 <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
@@ -167,16 +167,16 @@ export default function TipsListPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="제목으로 검색"
-                  className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                  className="w-full pl-9 pr-9 py-2 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-zinc-700 transition-colors"
                 />
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 {isDebouncing && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-blue-500 rounded-full animate-spin" />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-zinc-300 border-t-orange-500 rounded-full animate-spin" />
                 )}
               </div>
-              <div className="inline-flex flex-shrink-0 bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
+              <div className="inline-flex flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 rounded-lg p-0.5">
                 <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
                 <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
               </div>
@@ -203,7 +203,7 @@ export default function TipsListPage() {
               '댓글과 좋아요로 활발한 소통이 가능합니다',
             ]}
             action={
-              <Link href="/community/tips/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-sm">
+              <Link href="/community/tips/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 글쓰기
               </Link>
             }
@@ -212,9 +212,9 @@ export default function TipsListPage() {
 
         {!loading && posts.length > 0 && (
           <>
-            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
               {/* 컬럼 헤더 — 데스크톱만 */}
-              <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                 <span>분류</span>
                 <span>제목</span>
                 <span>작성자</span>
@@ -222,7 +222,7 @@ export default function TipsListPage() {
                 <span className="text-right">조회</span>
                 <span className="text-right">추천</span>
               </div>
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-700">
                 {posts.map((p) => <TipsRow key={p.id} post={p} />)}
               </ul>
             </div>
@@ -232,7 +232,7 @@ export default function TipsListPage() {
               onLoadMore={loadMore}
             />
             {!hasMore && posts.length > 0 && (
-              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-5 text-center text-xs text-zinc-400 dark:text-zinc-500">
                 마지막 글까지 모두 봤어요 (총 {total}건)
               </p>
             )}
@@ -248,7 +248,7 @@ function TipsRow({ post }: { post: TipsPost }) {
     <li>
       <Link
         href={`/community/tips/${post.id}`}
-        className="block hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors"
+        className="block hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors"
       >
         {/* 데스크톱 — 그리드 컬럼 */}
         <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 items-center px-5 py-3">
@@ -256,19 +256,19 @@ function TipsRow({ post }: { post: TipsPost }) {
             {post.category}
           </span>
           <div className="min-w-0 flex items-center gap-1.5">
-            <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
               {post.title}
             </span>
             {post.comment_count > 0 && (
-              <span className="flex-shrink-0 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+              <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
                 [{post.comment_count}]
               </span>
             )}
           </div>
-          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{post.nickname}</span>
-          <span className="text-xs text-slate-500 dark:text-slate-400">{formatRelativeKr(post.created_at)}</span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 text-right tabular-nums">{post.view_count}</span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 text-right tabular-nums">{post.like_count}</span>
+          <span className="text-xs text-zinc-600 dark:text-zinc-300 truncate">{post.nickname}</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">{formatRelativeKr(post.created_at)}</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 text-right tabular-nums">{post.view_count}</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 text-right tabular-nums">{post.like_count}</span>
         </div>
         {/* 모바일 — 컴팩트 */}
         <div className="md:hidden px-4 py-3 flex items-start gap-2.5">
@@ -277,14 +277,14 @@ function TipsRow({ post }: { post: TipsPost }) {
           </span>
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-1.5">
-              <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.title}</h3>
+              <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{post.title}</h3>
               {post.comment_count > 0 && (
-                <span className="flex-shrink-0 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+                <span className="flex-shrink-0 text-[11px] font-semibold text-orange-600 dark:text-orange-400">
                   [{post.comment_count}]
                 </span>
               )}
             </div>
-            <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="mt-0.5 flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
               <span className="truncate">{post.nickname}</span>
               <span>·</span>
               <span>{formatRelativeKr(post.created_at)}</span>
@@ -305,8 +305,8 @@ function CategoryTab({ active, onClick, label }: { active: boolean; onClick: () 
       onClick={onClick}
       className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-colors ${
         active
-          ? 'bg-blue-500 text-white border-blue-500'
-          : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+          ? 'bg-orange-500 text-white border-orange-500'
+          : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700'
       }`}
     >
       {label}
@@ -321,8 +321,8 @@ function SortButton({ active, onClick, children }: { active: boolean; onClick: (
       onClick={onClick}
       className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
         active
-          ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm'
-          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+          ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm'
+          : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
       }`}
     >
       {children}

@@ -76,11 +76,11 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
     const after = match.context.slice(match.contextOffset + match.contextLength);
     return (
       <span className="font-mono text-xs">
-        <span className="text-slate-500 dark:text-slate-400">{before}</span>
+        <span className="text-zinc-500 dark:text-zinc-400">{before}</span>
         <span className="bg-amber-200 dark:bg-amber-900/50 text-amber-900 dark:text-amber-200 font-semibold px-0.5 rounded">
           {target}
         </span>
-        <span className="text-slate-500 dark:text-slate-400">{after}</span>
+        <span className="text-zinc-500 dark:text-zinc-400">{after}</span>
       </span>
     );
   };
@@ -88,13 +88,13 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+        <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
           맞춤법 · 문법 검사
         </h3>
         <button
           onClick={run}
           disabled={loading}
-          className="px-2.5 py-1 text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50 transition-colors"
+          className="px-2.5 py-1 text-xs font-medium bg-orange-500 hover:bg-orange-600 text-white rounded disabled:opacity-50 transition-colors"
         >
           {loading ? '검사 중...' : result ? '다시 검사' : '검사 실행'}
         </button>
@@ -107,14 +107,14 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
       )}
 
       {!error && result && visibleMatches.length === 0 && (
-        <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-center border border-blue-200 dark:border-blue-800">
-          <span className="text-sm text-blue-700 dark:text-blue-400 font-medium">✓ 맞춤법 이슈 없음</span>
+        <div className="p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg text-center border border-orange-200 dark:border-orange-800">
+          <span className="text-sm text-orange-700 dark:text-orange-400 font-medium">✓ 맞춤법 이슈 없음</span>
         </div>
       )}
 
       {!error && visibleMatches.length > 0 && (
         <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             {visibleMatches.length}개 이슈 발견 · 제안을 클릭하면 에디터에 자동 반영됩니다
           </p>
           {visibleMatches.map((match) => (
@@ -134,11 +134,11 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
                   ✕
                 </button>
               </div>
-              <p className="text-xs text-slate-700 dark:text-slate-300 mb-1.5">{match.message}</p>
+              <p className="text-xs text-zinc-700 dark:text-zinc-300 mb-1.5">{match.message}</p>
               <div className="mb-2">{highlightContext(match)}</div>
               {match.replacements.length > 0 && onReplace && (
                 <div className="flex flex-wrap gap-1">
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 self-center mr-1">제안:</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 self-center mr-1">제안:</span>
                   {match.replacements.map((rep, i) => (
                     <button
                       key={`${rep}-${i}`}
@@ -146,7 +146,7 @@ export default function SpellCheckPanel({ getText, onReplace }: SpellCheckPanelP
                         onReplace(match.offset, match.length, rep);
                         dismiss(match);
                       }}
-                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded transition-colors"
+                      className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-zinc-700 hover:bg-orange-50 dark:hover:bg-orange-950/40 text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-600 rounded transition-colors"
                     >
                       {rep}
                     </button>

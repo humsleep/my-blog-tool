@@ -48,7 +48,7 @@ export default function CommunityHubPage() {
           <div className="ed-eyebrow mb-4">Forum</div>
           <h1 className="text-2xl sm:text-3xl sm:text-3xl lg:text-3xl sm:text-4xl leading-[0.95] tracking-tight text-ink mb-5">
             블로거들이<br />
-            <span className="text-slate-500 dark:text-slate-400">모이는 곳</span>
+            <span className="text-zinc-500 dark:text-zinc-400">모이는 곳</span>
           </h1>
           <p className="text-lg sm:text-xl text-ink-muted leading-[1.6] max-w-[58ch]">
             서이추로 이웃을 늘리고, 운영 정보를 나누고, 체험단 동행자도 함께 찾는 한 줄짜리 커뮤니티.
@@ -66,20 +66,20 @@ export default function CommunityHubPage() {
               className="group relative bg-paper hover:bg-paper-deep transition-colors p-8 sm:p-10"
             >
               <div className="flex items-baseline justify-between mb-6">
-                <span className="text-5xl text-ink-faint group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-none">
+                <span className="text-5xl text-ink-faint group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-none">
                   {menu.num}
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.2em] font-semibold text-ink-faint">
                   {menu.badge}
                 </span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-ink mb-3 leading-tight group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 {menu.title}
               </h2>
               <p className="text-sm sm:text-base text-ink-muted leading-[1.7] mb-6">
                 {menu.description}
               </p>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-blue-600 dark:group-hover:text-blue-400 border-b border-ink group-hover:border-blue-600 dark:group-hover:border-blue-400 pb-0.5 transition-colors">
+              <span className="inline-flex items-center gap-1 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-orange-600 dark:group-hover:text-orange-400 border-b border-ink group-hover:border-orange-600 dark:group-hover:border-orange-400 pb-0.5 transition-colors">
                 바로가기
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -98,7 +98,7 @@ export default function CommunityHubPage() {
             { title: '안전한 만남', desc: '체험단 동행은 오픈채팅 링크로 시작하고, 개인정보는 본문에 적지 마세요.' },
           ].map((item, i) => (
             <div key={item.title} className={i < 2 ? 'sm:pr-8 sm:border-r sm:border-rule-soft' : ''}>
-              <div className="text-blue-600 dark:text-blue-400 text-2xl mb-3">{`§ ${i + 1}`}</div>
+              <div className="text-orange-600 dark:text-orange-400 text-2xl mb-3">{`§ ${i + 1}`}</div>
               <h3 className="text-lg font-semibold text-ink mb-2">{item.title}</h3>
               <p className="text-sm text-ink-muted leading-[1.7]">{item.desc}</p>
             </div>

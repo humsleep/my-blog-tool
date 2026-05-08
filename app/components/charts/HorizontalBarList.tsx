@@ -31,7 +31,7 @@ interface Props {
  */
 export default function HorizontalBarList({
   items,
-  barClassName = 'bg-blue-500/80 dark:bg-blue-400/70',
+  barClassName = 'bg-orange-500/80 dark:bg-orange-400/70',
   rowHeight = 36,
   emptyMessage = '표시할 데이터가 없습니다.',
 }: Props) {

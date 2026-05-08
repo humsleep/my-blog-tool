@@ -92,7 +92,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       {/* ── Hero — 분기 ──────────────────────────────────────────── */}
       {userLoading ? (
         <HeroSkeleton />
@@ -110,7 +110,7 @@ export default function Home() {
       )}
 
       {/* ── 인기 키워드 티커 (모두 표시, 카테고리만 분기) ────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
+      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
           <TrendingTicker
             category={myCategoryLabel ?? '전체'}
@@ -121,11 +121,11 @@ export default function Home() {
       </section>
 
       {/* ── Feature grid (4 KPI-style cards) ─────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">핵심 도구 4종</h2>
-            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">자주 쓰는 도구를 한 손에.</p>
+            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">핵심 도구 4종</h2>
+            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">자주 쓰는 도구를 한 손에.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {features.map((f) => (
@@ -134,25 +134,25 @@ export default function Home() {
                 href={f.href}
                 className={`group block rounded-md border p-5 transition-colors ${
                   f.emphasis
-                    ? 'bg-white dark:bg-zinc-900 border-blue-200 dark:border-blue-900/50 ring-1 ring-blue-500/20 hover:ring-blue-500/40'
-                    : 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
+                    ? 'bg-white dark:bg-zinc-900 border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 hover:ring-orange-500/40'
+                    : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-slate-500 dark:text-slate-500">
+                  <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500 dark:text-zinc-500">
                     {f.label}
                   </span>
                   {f.emphasis && (
-                    <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">New</span>
+                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
                   )}
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                   {f.title}
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-3">
                   {f.desc}
                 </p>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 dark:text-blue-300">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-700 dark:text-orange-300">
                   {f.cta}
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -173,11 +173,11 @@ export default function Home() {
       </section>
 
       {/* ── 8-step workflow ──────────────────────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950">
+      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8 max-w-2xl">
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">8단계 워크플로우</h2>
-            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
+            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">8단계 워크플로우</h2>
+            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
               키워드 리서치부터 이미지 편집까지. 각 단계는 다음 단계로 자연스럽게 이어집니다.
             </p>
           </div>
@@ -186,15 +186,15 @@ export default function Home() {
               <Link
                 key={s.href}
                 href={s.href}
-                className="group block rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-slate-300 dark:hover:border-zinc-700 transition-colors p-4"
+                className="group block rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
               >
-                <div className="text-2xl font-semibold text-slate-300 dark:text-zinc-700 group-hover:text-blue-300 dark:group-hover:text-blue-700 transition-colors mb-2 tabular">
+                <div className="text-2xl font-semibold text-zinc-300 dark:text-zinc-700 group-hover:text-orange-300 dark:group-hover:text-orange-700 transition-colors mb-2 tabular">
                   {String(s.num).padStart(2, '0')}
                 </div>
-                <div className="font-semibold text-sm text-slate-900 dark:text-slate-100 mb-0.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-0.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                   {s.title}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-slate-400">{s.desc}</div>
+                <div className="text-xs text-zinc-500 dark:text-zinc-400">{s.desc}</div>
               </Link>
             ))}
           </div>
@@ -202,15 +202,15 @@ export default function Home() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <section className="border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">자주 묻는 질문</h2>
-            <p className="mt-1.5 text-sm text-slate-600 dark:text-slate-400">
-              여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-blue-600 dark:text-blue-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
+            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">자주 묻는 질문</h2>
+            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+              여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-orange-600 dark:text-orange-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
             </p>
           </div>
-          <div className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden divide-y divide-slate-100 dark:divide-zinc-800">
+          <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800">
             {[
               {
                 q: '회원가입을 꼭 해야 하나요?',
@@ -238,13 +238,13 @@ export default function Home() {
               },
             ].map((item) => (
               <details key={item.q} className="group">
-                <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <span className="font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base">{item.q}</span>
-                  <svg className="w-4 h-4 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                  <span className="font-medium text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">{item.q}</span>
+                  <svg className="w-4 h-4 text-zinc-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </summary>
-                <p className="px-5 pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.a}</p>
+                <p className="px-5 pb-5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
               </details>
             ))}
           </div>
@@ -254,10 +254,10 @@ export default function Home() {
       {/* ── Closing CTA ─────────────────────────────────────────── */}
       <section className="bg-white dark:bg-zinc-950">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight mb-3">
             데이터로 시작하면 결과가 다릅니다.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-8 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 mb-8 max-w-md mx-auto leading-relaxed">
             회원가입 없이 키워드 분석부터 시작할 수 있어요.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -283,13 +283,13 @@ export default function Home() {
 
 function HeroSkeleton() {
   return (
-    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+    <section className="relative border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="max-w-3xl space-y-4">
-          <div className="h-6 w-40 rounded-full bg-slate-100 dark:bg-zinc-800 animate-pulse" />
-          <div className="h-10 w-3/4 rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
-          <div className="h-4 w-2/3 rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
-          <div className="h-12 w-full max-w-xl rounded bg-slate-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-6 w-40 rounded-full bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-10 w-3/4 rounded bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-4 w-2/3 rounded bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
+          <div className="h-12 w-full max-w-xl rounded bg-zinc-100 dark:bg-zinc-800 animate-pulse" />
         </div>
       </div>
     </section>
@@ -306,25 +306,25 @@ function AnonHero({
   onSubmit: (e: React.FormEvent) => void;
 }) {
   return (
-    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+    <section className="relative border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
         <div className="max-w-3xl">
           <span className="pill pill-accent mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 dark:bg-orange-400" />
             네이버 API 기반 실시간 분석
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 mb-4 leading-[1.15]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 mb-4 leading-[1.15]">
             내 블로그의 위치를 알고,<br />
-            <span className="text-blue-500 dark:text-blue-400">데이터로</span> 글을 씁니다.
+            <span className="text-orange-500 dark:text-orange-400">데이터로</span> 글을 씁니다.
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-2xl">
+          <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 max-w-2xl">
             블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.
           </p>
 
           {/* Search */}
           <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 max-w-2xl">
             <div className="relative flex-1">
-              <svg className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
@@ -332,7 +332,7 @@ function AnonHero({
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder="분석할 키워드 입력 (예: 수원 맛집)"
-                className="w-full pl-10 pr-4 py-3 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm"
               />
             </div>
             <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap">
@@ -371,17 +371,17 @@ function LoggedInHero({
   const dateLabel = `${today.getMonth() + 1}월 ${today.getDate()}일`;
 
   return (
-    <section className="relative border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+    <section className="relative border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         {/* Greeting line */}
         <div className="mb-6 sm:mb-8">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-slate-500">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
             {dateLabel} · 오늘의 작업대
           </span>
-          <h1 className="mt-1.5 text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">
+          <h1 className="mt-1.5 text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
             {greetingName}님, 오늘도 데이터로 시작해볼까요?
           </h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
             {myCategoryLabel
               ? `${myCategoryLabel} 분야 인기 키워드와 마지막 진단 점수를 한눈에 확인하세요.`
               : '프로필에서 분야를 등록하면 내 분야 맞춤 키워드를 보여드려요.'}

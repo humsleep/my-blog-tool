@@ -182,26 +182,26 @@ export default function SwapPage() {
   const myUserId = profile?.user_id;
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <div className="mb-5">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-blue-500 dark:hover:text-blue-400">커뮤니티</Link>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
             <span>›</span>
-            <span className="text-slate-700 dark:text-slate-300 font-medium">서이추 해요</span>
+            <span className="text-zinc-700 dark:text-zinc-300 font-medium">서이추 해요</span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">🤝 서이추 해요</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">🤝 서이추 해요</h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 같은 분야 블로거를 만나 서로이웃 추가하세요 · 하루 1회 작성
               </p>
             </div>
             <button
               type="button"
               onClick={onClickWrite}
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 내 글 작성
             </button>
@@ -209,8 +209,8 @@ export default function SwapPage() {
         </div>
 
         {/* Sticky 필터 — Navbar(56px) 아래 */}
-        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md mb-4">
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm space-y-2">
+        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md mb-4">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 shadow-sm space-y-2">
             <CategoryChips selected={category} onSelect={setCategory} />
             <div className="relative">
               <input
@@ -218,13 +218,13 @@ export default function SwapPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="닉네임으로 검색"
-                className="w-full pl-9 pr-9 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-700 transition-colors"
+                className="w-full pl-9 pr-9 py-2 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-zinc-700 transition-colors"
               />
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {isDebouncing && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-slate-300 border-t-blue-500 rounded-full animate-spin" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-zinc-300 border-t-orange-500 rounded-full animate-spin" />
               )}
             </div>
           </div>
@@ -252,7 +252,7 @@ export default function SwapPage() {
               <button
                 type="button"
                 onClick={onClickWrite}
-                className="inline-flex px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-sm"
+                className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm"
               >
                 내 글 작성하기
               </button>
@@ -262,9 +262,9 @@ export default function SwapPage() {
 
         {!loading && posts.length > 0 && (
           <>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {total}건</p>
-            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">총 {total}건</p>
+            <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+              <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                 <span>분야</span>
                 <span>닉네임</span>
                 <span>한마디</span>
@@ -272,7 +272,7 @@ export default function SwapPage() {
                 <span>블로그</span>
                 <span className="text-right">관리</span>
               </div>
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-700">
                 {posts.map((post) => (
                   <SwapRow
                     key={post.id}
@@ -286,7 +286,7 @@ export default function SwapPage() {
             </div>
             <InfiniteScrollSentinel hasMore={hasMore} loading={loadingMore} onLoadMore={loadMore} />
             {!hasMore && posts.length > 0 && (
-              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-5 text-center text-xs text-zinc-400 dark:text-zinc-500">
                 마지막 글까지 모두 봤어요 (총 {total}건)
               </p>
             )}
@@ -294,7 +294,7 @@ export default function SwapPage() {
         )}
 
         {!authLoading && (
-          <div className="mt-8 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-2xl text-xs text-slate-600 dark:text-slate-400 space-y-1">
+          <div className="mt-8 p-4 bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
             <p className="font-medium">이용 안내</p>
             <ul className="list-disc list-inside space-y-0.5">
               <li>읽기는 누구나, 글쓰기는 로그인 후 닉네임 등록이 필요해요.</li>
@@ -333,20 +333,20 @@ function SwapRow({
 }: { post: SwapPost; isMine: boolean; onEdit: () => void; onDelete: () => void }) {
   const formatted = useMemo(() => formatRelativeKr(post.created_at), [post.created_at]);
   return (
-    <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors">
       <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3">
-        <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">
+        <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
           {post.category}
         </span>
-        <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
-        <span className="text-sm text-slate-600 dark:text-slate-300 truncate" title={post.message}>{post.message}</span>
-        <span className="text-xs text-slate-500 dark:text-slate-400">{formatted}</span>
+        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{post.nickname}</span>
+        <span className="text-sm text-zinc-600 dark:text-zinc-300 truncate" title={post.message}>{post.message}</span>
+        <span className="text-xs text-zinc-500 dark:text-zinc-400">{formatted}</span>
         <a
           href={post.blog_url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline truncate"
+          className="inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline truncate"
         >
           방문하기
           <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -356,8 +356,8 @@ function SwapRow({
         <div className="flex justify-end gap-1 items-center">
           {isMine ? (
             <>
-              <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 px-1.5">수정</button>
-              <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 hover:text-red-600 dark:hover:text-red-400 px-1.5">삭제</button>
+              <button type="button" onClick={onEdit} className="text-[11px] text-zinc-500 hover:text-orange-600 dark:hover:text-orange-400 px-1.5">수정</button>
+              <button type="button" onClick={onDelete} className="text-[11px] text-zinc-500 hover:text-red-600 dark:hover:text-red-400 px-1.5">삭제</button>
             </>
           ) : (
             <ReportButton targetType="swap_post" targetId={post.id} variant="icon" />
@@ -368,30 +368,30 @@ function SwapRow({
       <div className="md:hidden px-4 py-3">
         <div className="flex items-start justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">
+            <span className="flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
               {post.category}
             </span>
-            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{post.nickname}</span>
+            <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">{post.nickname}</span>
           </div>
           <div className="flex flex-shrink-0 gap-1 items-center">
             {isMine ? (
               <>
-                <button type="button" onClick={onEdit} className="text-[11px] text-slate-500 px-1">수정</button>
-                <button type="button" onClick={onDelete} className="text-[11px] text-slate-500 px-1">삭제</button>
+                <button type="button" onClick={onEdit} className="text-[11px] text-zinc-500 px-1">수정</button>
+                <button type="button" onClick={onDelete} className="text-[11px] text-zinc-500 px-1">삭제</button>
               </>
             ) : (
               <ReportButton targetType="swap_post" targetId={post.id} variant="icon" />
             )}
           </div>
         </div>
-        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-2">{post.message}</p>
-        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-zinc-600 dark:text-zinc-300 line-clamp-2 mb-2">{post.message}</p>
+        <div className="flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
           <span>{formatted}</span>
           <a
             href={post.blog_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400"
+            className="inline-flex items-center gap-1 font-medium text-orange-600 dark:text-orange-400"
           >
             블로그 방문
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -201,15 +201,15 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   };
 
   if (loading) {
-    return <div className="min-h-[60vh] flex items-center justify-center text-slate-500">불러오는 중...</div>;
+    return <div className="min-h-[60vh] flex items-center justify-center text-zinc-500">불러오는 중...</div>;
   }
 
   if (error || !post) {
     return (
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4 text-center">
-          <p className="text-slate-700 dark:text-slate-200 font-medium">{error || '게시글을 찾을 수 없습니다.'}</p>
-          <Link href="/community/tips" className="inline-block mt-4 text-sm text-blue-500 dark:text-blue-400 hover:underline">
+          <p className="text-zinc-700 dark:text-zinc-200 font-medium">{error || '게시글을 찾을 수 없습니다.'}</p>
+          <Link href="/community/tips" className="inline-block mt-4 text-sm text-orange-500 dark:text-orange-400 hover:underline">
             목록으로 돌아가기
           </Link>
         </div>
@@ -220,41 +220,41 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   const isMine = profile?.user_id === post.user_id;
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <Link href="/community/tips" className="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-blue-500 dark:hover:text-blue-400">
+          <Link href="/community/tips" className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400">
             ← 목록으로
           </Link>
         </div>
 
-        <article className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 sm:p-7 shadow-sm">
+        <article className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-7 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className={`px-2 py-0.5 text-[11px] font-semibold rounded ${categoryBadgeClass(post.category)}`}>
               {post.category}
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4 break-words">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-4 break-words">
             {post.title}
           </h1>
 
           {/* 작성자 메타 */}
-          <div className="flex items-center justify-between gap-3 mb-5 pb-5 border-b border-slate-100 dark:border-slate-700">
+          <div className="flex items-center justify-between gap-3 mb-5 pb-5 border-b border-zinc-100 dark:border-zinc-700">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {post.nickname.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{post.nickname}</span>
+                  <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{post.nickname}</span>
                   {author?.category && (
-                    <span className="text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300">
                       {author.category}
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                <div className="flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   <span>{formatAbsoluteKr(post.created_at)}</span>
                   <span>·</span>
                   <span>조회 {post.view_count}</span>
@@ -266,7 +266,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                 href={author.blog_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline"
               >
                 블로그
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -277,18 +277,18 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           <div
-            className="prose prose-sm sm:prose-base dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 whitespace-pre-wrap break-words"
+            className="prose prose-sm sm:prose-base dark:prose-invert max-w-none text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap break-words"
             dangerouslySetInnerHTML={{ __html: markdownToHtml(post.body) }}
           />
 
-          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <div className="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-700 flex items-center justify-between">
             <button
               type="button"
               onClick={onToggleLike}
               className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 liked
                   ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
-                  : 'bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                  : 'bg-zinc-50 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-600'
               }`}
             >
               {liked ? '♥' : '♡'} 추천 {post.like_count}
@@ -298,7 +298,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                 <>
                   <Link
                     href={`/community/tips/new?id=${post.id}`}
-                    className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                    className="px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
                   >
                     수정
                   </Link>
@@ -317,29 +317,29 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         </article>
 
-        <section className="mt-6 bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">
+        <section className="mt-6 bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
             댓글 {post.comment_count}
           </h2>
 
           {comments.length === 0 && (
-            <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">아직 댓글이 없습니다.</p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center py-4">아직 댓글이 없습니다.</p>
           )}
 
           <div className="space-y-3 mb-5">
             {comments.map((c) => (
-              <div key={c.id} className="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+              <div key={c.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-700/50">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="font-medium text-slate-700 dark:text-slate-200">{c.nickname}</span>
-                    <span className="text-slate-400">·</span>
-                    <span className="text-slate-500 dark:text-slate-400">{formatRelativeKr(c.created_at)}</span>
+                    <span className="font-medium text-zinc-700 dark:text-zinc-200">{c.nickname}</span>
+                    <span className="text-zinc-400">·</span>
+                    <span className="text-zinc-500 dark:text-zinc-400">{formatRelativeKr(c.created_at)}</span>
                   </div>
                   {profile?.user_id === c.user_id ? (
                     <button
                       type="button"
                       onClick={() => setDeletingCommentId(c.id)}
-                      className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                      className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
                     >
                       삭제
                     </button>
@@ -347,7 +347,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
                     <ReportButton targetType="tips_comment" targetId={c.id} variant="icon" />
                   )}
                 </div>
-                <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words">{c.body}</p>
+                <p className="text-sm text-zinc-700 dark:text-zinc-200 whitespace-pre-wrap break-words">{c.body}</p>
               </div>
             ))}
           </div>
@@ -359,15 +359,15 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               maxLength={1000}
               rows={3}
               placeholder={authed ? '댓글을 입력하세요 (최대 1000자)' : '댓글을 작성하려면 로그인이 필요합니다.'}
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               disabled={!authed}
             />
             <div className="flex justify-between items-center">
-              <span className="text-[11px] text-slate-400">{commentBody.length}/1000</span>
+              <span className="text-[11px] text-zinc-400">{commentBody.length}/1000</span>
               <button
                 type="submit"
                 disabled={submittingComment || !commentBody.trim() || !authed}
-                className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+                className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
               >
                 {!authed ? '로그인 후 작성' : submittingComment ? '등록 중...' : '댓글 등록'}
               </button>

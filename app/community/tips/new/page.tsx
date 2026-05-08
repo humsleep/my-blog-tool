@@ -10,7 +10,7 @@ import { markdownToHtml } from '@/app/lib/format/article-formats';
 
 export default function TipsNewPageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-slate-500">불러오는 중...</div>}>
+    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-zinc-500">불러오는 중...</div>}>
       <TipsNewPage />
     </Suspense>
   );
@@ -144,18 +144,18 @@ function TipsNewPage() {
   };
 
   if (loading) {
-    return <div className="min-h-[60vh] flex items-center justify-center text-slate-500">불러오는 중...</div>;
+    return <div className="min-h-[60vh] flex items-center justify-center text-zinc-500">불러오는 중...</div>;
   }
 
   if (authChecked && !authed) {
     return (
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4">
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 text-center">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">로그인이 필요합니다</h1>
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6 text-center">
+            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">로그인이 필요합니다</h1>
             <Link
               href={`/login?next=${encodeURIComponent('/community/tips/new')}`}
-              className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg"
+              className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
             </Link>
@@ -166,23 +166,23 @@ function TipsNewPage() {
   }
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
-          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <Link href="/community/tips" className="hover:text-blue-500 dark:hover:text-blue-400">정보 공유</Link>
+          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+            <Link href="/community/tips" className="hover:text-orange-500 dark:hover:text-orange-400">정보 공유</Link>
             <span>/</span>
             <span>{editId ? '글 수정' : '글쓰기'}</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{editId ? '글 수정' : '새 글 작성'}</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{editId ? '글 수정' : '새 글 작성'}</h1>
         </div>
 
         <form
           onSubmit={onSubmit}
-          className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm space-y-4"
+          className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm space-y-4"
         >
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">카테고리</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">카테고리</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as TipsCategory)}
@@ -194,8 +194,8 @@ function TipsNewPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              제목 <span className="ml-2 text-[11px] font-normal text-slate-500">{title.length}/80</span>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
+              제목 <span className="ml-2 text-[11px] font-normal text-zinc-500">{title.length}/80</span>
             </label>
             <input
               type="text"
@@ -210,20 +210,20 @@ function TipsNewPage() {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                본문 <span className="ml-2 text-[11px] font-normal text-slate-500">{body.length}/10000 · 마크다운 지원</span>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                본문 <span className="ml-2 text-[11px] font-normal text-zinc-500">{body.length}/10000 · 마크다운 지원</span>
               </label>
               <button
                 type="button"
                 onClick={() => setPreview((v) => !v)}
-                className="text-xs font-medium text-blue-500 dark:text-blue-400 hover:underline"
+                className="text-xs font-medium text-orange-500 dark:text-orange-400 hover:underline"
               >
                 {preview ? '편집 보기' : '미리보기'}
               </button>
             </div>
             {preview ? (
               <div
-                className="prose prose-sm dark:prose-invert max-w-none p-4 min-h-[280px] border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                className="prose prose-sm dark:prose-invert max-w-none p-4 min-h-[280px] border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100"
                 dangerouslySetInnerHTML={{ __html: markdownToHtml(body || '_미리볼 내용이 없습니다._') }}
               />
             ) : (
@@ -248,14 +248,14 @@ function TipsNewPage() {
           <div className="flex justify-end gap-2 pt-2">
             <Link
               href="/community/tips"
-              className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+              className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
             >
               취소
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : editId ? '수정 저장' : '작성 완료'}
             </button>
@@ -267,4 +267,4 @@ function TipsNewPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500';
+  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

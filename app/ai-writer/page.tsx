@@ -220,7 +220,7 @@ export default function AiWriterPage() {
 
   return (
     <>
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <PageHeader
             title="AI 글쓰기"
@@ -233,17 +233,17 @@ export default function AiWriterPage() {
               <div
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${
                   usage.remaining > 0
-                    ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-700'
+                    ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-700'
                     : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800'
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {usage.authenticated
                       ? `오늘 ${usage.used} / ${usage.limit}회 사용`
                       : `비로그인 사용량: ${usage.used} / ${usage.limit}회`}
                   </div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                  <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
                     {usage.authenticated
                       ? `로그인 사용자는 하루 ${usage.limit}회까지 무료입니다.`
                       : `로그인하면 하루 ${usage.authedLimit ?? 5}회까지 사용할 수 있어요.`}
@@ -256,7 +256,7 @@ export default function AiWriterPage() {
                 )}
               </div>
             ) : (
-              <div className="h-12 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />
+              <div className="h-12 bg-zinc-100 dark:bg-zinc-800 rounded-lg animate-pulse" />
             )}
           </div>
 
@@ -264,8 +264,8 @@ export default function AiWriterPage() {
             {/* 왼쪽: 입력 + 결과 */}
             <div className="lg:col-span-2 space-y-6">
               <Card>
-                <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">프롬프트</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">프롬프트</h2>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
                   프롬프트 생성 페이지에서 만든 텍스트를 붙여넣거나, 직접 작성해도 됩니다.
                 </p>
                 <textarea
@@ -275,19 +275,19 @@ export default function AiWriterPage() {
                   rows={10}
                   className="input-base font-mono text-sm leading-relaxed resize-y min-h-[200px]"
                 />
-                <div className="flex items-center justify-between mt-2 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center justify-between mt-2 text-xs text-zinc-500 dark:text-zinc-400">
                   <span>{prompt.length.toLocaleString()} / 8,000자</span>
                   <Link
                     href="/prompt-generator"
-                    className="text-blue-500 dark:text-blue-400 hover:underline"
+                    className="text-orange-500 dark:text-orange-400 hover:underline"
                   >
                     프롬프트 생성기로 만들기 →
                   </Link>
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">
-                    메인 키워드 <span className="text-slate-400">(선택)</span>
+                  <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-300 mb-1">
+                    메인 키워드 <span className="text-zinc-400">(선택)</span>
                   </label>
                   <input
                     type="text"
@@ -308,13 +308,13 @@ export default function AiWriterPage() {
                   aria-expanded={optionsOpen}
                 >
                   <div>
-                    <h2 className="font-semibold text-slate-900 dark:text-slate-100">최적화 옵션</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">최적화 옵션</h2>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                       네이버 블로그 홈판 노출 6단계 — 문체·분량·제목·이미지 프롬프트까지 세밀 조정
                     </p>
                   </div>
                   <svg
-                    className={`w-5 h-5 text-slate-400 transition-transform ${optionsOpen ? 'rotate-180' : ''}`}
+                    className={`w-5 h-5 text-zinc-400 transition-transform ${optionsOpen ? 'rotate-180' : ''}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -374,8 +374,8 @@ export default function AiWriterPage() {
                             onClick={() => setOptions((o) => ({ ...o, sectionCount: n as 5 | 6 | 7 }))}
                             className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                               options.sectionCount === n
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300'
                             }`}
                           >
                             {n}개
@@ -386,10 +386,10 @@ export default function AiWriterPage() {
 
                     {/* 인물·제품 정확도 */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                        인물·제품 정확 묘사 대상 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                        인물·제품 정확 묘사 대상 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">
                         실제 모델·제품·인물을 이미지 프롬프트에 정확히 반영 — 상상 합성 방지
                       </p>
                       <input
@@ -402,7 +402,7 @@ export default function AiWriterPage() {
                     </div>
 
                     {/* 토글들 */}
-                    <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
                       <ToggleRow
                         label="이미지 프롬프트 생성"
                         help="소제목별 영문 프롬프트 — Photorealistic / 8k / cinematic lighting"
@@ -488,8 +488,8 @@ export default function AiWriterPage() {
                               key={c.num}
                               className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                                 selectedTitle === c.text
-                                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40'
-                                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'
+                                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/40'
+                                  : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 bg-white dark:bg-zinc-800'
                               }`}
                             >
                               <input
@@ -497,10 +497,10 @@ export default function AiWriterPage() {
                                 name="title-pick"
                                 checked={selectedTitle === c.text}
                                 onChange={() => setSelectedTitle(c.text)}
-                                className="mt-1 accent-blue-500"
+                                className="mt-1 accent-orange-500"
                               />
-                              <span className="flex-1 text-sm text-slate-800 dark:text-slate-200">
-                                <span className="text-blue-500 dark:text-blue-400 font-semibold mr-2">{c.num}.</span>
+                              <span className="flex-1 text-sm text-zinc-800 dark:text-zinc-200">
+                                <span className="text-orange-500 dark:text-orange-400 font-semibold mr-2">{c.num}.</span>
                                 {c.text}
                               </span>
                             </label>
@@ -510,7 +510,7 @@ export default function AiWriterPage() {
                             {selectedTitle && (
                               <button
                                 onClick={() => setSelectedTitle('')}
-                                className="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
+                                className="px-3 py-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded"
                               >
                                 선택 해제
                               </button>
@@ -518,7 +518,7 @@ export default function AiWriterPage() {
                           </div>
                         </div>
                       ) : (
-                        <pre className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
+                        <pre className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-sans">
                           {sections.titles}
                         </pre>
                       )}
@@ -530,13 +530,13 @@ export default function AiWriterPage() {
                     <Card>
                       <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                         <div>
-                          <h2 className="font-semibold text-slate-900 dark:text-slate-100">📄 본문</h2>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                          <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">📄 본문</h2>
+                          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                             공백 제외 {charCount.toLocaleString()}자 · {tab.toUpperCase()} 포맷
-                            {selectedTitle && <span className="ml-1.5 text-blue-500 dark:text-blue-400">· 선택 제목 적용됨</span>}
+                            {selectedTitle && <span className="ml-1.5 text-orange-500 dark:text-orange-400">· 선택 제목 적용됨</span>}
                           </p>
                         </div>
-                        <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        <div className="flex gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
                           {[
                             { key: 'html' as const, label: 'HTML' },
                             { key: 'markdown' as const, label: '마크다운' },
@@ -547,8 +547,8 @@ export default function AiWriterPage() {
                               onClick={() => setTab(t.key)}
                               className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                                 tab === t.key
-                                  ? 'bg-white dark:bg-slate-700 text-blue-500 dark:text-blue-400 shadow-sm'
-                                  : 'text-slate-600 dark:text-slate-300'
+                                  ? 'bg-white dark:bg-zinc-700 text-orange-500 dark:text-orange-400 shadow-sm'
+                                  : 'text-zinc-600 dark:text-zinc-300'
                               }`}
                             >
                               {t.label}
@@ -557,7 +557,7 @@ export default function AiWriterPage() {
                         </div>
                       </div>
                       <div className="relative">
-                        <pre className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
+                        <pre className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-sans">
                           {tabContent}
                         </pre>
                         <div className="absolute top-3 right-3">
@@ -570,7 +570,7 @@ export default function AiWriterPage() {
                         </Button>
                         <CopyButton text={tabContent} label={`${tab.toUpperCase()} 복사`} />
                       </div>
-                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-700 rounded-lg text-xs text-blue-700 dark:text-blue-200 leading-relaxed">
+                      <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-lg text-xs text-orange-700 dark:text-orange-200 leading-relaxed">
                         💡 네이버 에디터 우상단 <strong>"HTML" 토글</strong>을 켜고 <strong>HTML 탭</strong>을 붙여넣으면 제목·소제목·강조가 그대로 적용됩니다.
                       </div>
                     </Card>
@@ -610,11 +610,11 @@ export default function AiWriterPage() {
                   {/* 결과 없을 때 폴백 — 파싱 실패 대비 */}
                   {!sections.body && !sections.titles && (
                     <Card>
-                      <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">생성 결과 (원본)</h2>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                      <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-2">생성 결과 (원본)</h2>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
                         섹션 구조 파싱에 실패했습니다. 원본 마크다운을 직접 활용해 주세요.
                       </p>
-                      <pre className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-sans">
+                      <pre className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-sans">
                         {draft}
                       </pre>
                       <div className="mt-3"><CopyButton text={draft} label="원본 복사" /></div>
@@ -627,41 +627,41 @@ export default function AiWriterPage() {
             {/* 사이드바 */}
             <aside className="lg:col-span-1 space-y-4">
               <Card>
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">6단계 워크플로우</h3>
-                <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                  <li><strong className="text-slate-900 dark:text-slate-100">1.</strong> 사실 검증 (내부)</li>
-                  <li><strong className="text-slate-900 dark:text-slate-100">2.</strong> 제목 후보 1·20개</li>
-                  <li><strong className="text-slate-900 dark:text-slate-100">3.</strong> 소제목 ▣ 5~7개</li>
-                  <li><strong className="text-slate-900 dark:text-slate-100">4.</strong> 본문 (해요체/평서체)</li>
-                  <li><strong className="text-slate-900 dark:text-slate-100">5.</strong> 해시태그 30+10</li>
-                  <li><strong className="text-slate-900 dark:text-slate-100">6.</strong> 이미지 프롬프트 (영문)</li>
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">6단계 워크플로우</h3>
+                <ol className="space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">1.</strong> 사실 검증 (내부)</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">2.</strong> 제목 후보 1·20개</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">3.</strong> 소제목 ▣ 5~7개</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">4.</strong> 본문 (해요체/평서체)</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">5.</strong> 해시태그 30+10</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">6.</strong> 이미지 프롬프트 (영문)</li>
                 </ol>
-                <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
                   Boheme BlogLab 가이드 + 네이버 홈판 노출 에이전트 가이드를 합친 통합 6단계입니다.
                 </p>
               </Card>
 
               <Card>
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 한도</h3>
-                <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">사용 한도</h3>
+                <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-300">
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>비로그인: 하루 1회 무료</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>로그인: 하루 5회 무료</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5">•</span>
+                    <span className="text-orange-500 mt-0.5">•</span>
                     <span>매일 자정(KST) 초기화</span>
                   </li>
                 </ul>
               </Card>
 
               <Card>
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">팁</h3>
-                <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">팁</h3>
+                <ul className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   <li>• 프롬프트 생성기에서 만든 텍스트를 그대로 붙여넣으면 결과가 가장 정확해요.</li>
                   <li>• 제목 20개 모드는 응답이 길어 한도 5회를 신중하게 쓰세요.</li>
                   <li>• 인물·제품 정확 묘사 대상을 입력하면 이미지 프롬프트가 실제 모델을 그대로 그립니다.</li>
@@ -688,7 +688,7 @@ export default function AiWriterPage() {
           <div className="mt-10 text-center">
             <a
               href="/lab"
-              className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -707,8 +707,8 @@ export default function AiWriterPage() {
 function OptionGroup({ label, help, children }: { label: string; help?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{label}</label>
-      {help && <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{help}</p>}
+      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{label}</label>
+      {help && <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">{help}</p>}
       {children}
     </div>
   );
@@ -732,14 +732,14 @@ function RadioCards<T extends string>({
           onClick={() => onChange(it.value)}
           className={`p-3 rounded-lg border text-left transition-colors ${
             value === it.value
-              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50'
-              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+              : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 hover:border-zinc-300'
           }`}
         >
-          <div className={`text-sm font-semibold ${value === it.value ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-200'}`}>
+          <div className={`text-sm font-semibold ${value === it.value ? 'text-orange-600 dark:text-orange-400' : 'text-zinc-700 dark:text-zinc-200'}`}>
             {it.label}
           </div>
-          {it.desc && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{it.desc}</div>}
+          {it.desc && <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{it.desc}</div>}
         </button>
       ))}
     </div>
@@ -758,16 +758,16 @@ function ToggleRow({
   onChange: (c: boolean) => void;
 }) {
   return (
-    <label className="flex items-start justify-between gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer">
+    <label className="flex items-start justify-between gap-3 p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/40 cursor-pointer">
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</div>
-        {help && <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{help}</div>}
+        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-200">{label}</div>
+        {help && <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{help}</div>}
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-          checked ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-600'
+          checked ? 'bg-orange-500' : 'bg-zinc-300 dark:bg-zinc-600'
         }`}
         aria-pressed={checked}
       >
@@ -795,11 +795,11 @@ function SectionHeader({
   return (
     <div className="flex items-start justify-between gap-3 mb-3">
       <div>
-        <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+        <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
           <span className="mr-1.5">{icon}</span>
           {title}
         </h2>
-        {subtitle && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{subtitle}</p>}
       </div>
       {copyText && <CopyButton text={copyText} size="sm" />}
     </div>
@@ -823,7 +823,7 @@ function ResultSection({
     <Card>
       <SectionHeader icon={icon} title={title} subtitle={subtitle} copyText={content} />
       <pre
-        className={`bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-lg p-4 max-h-[400px] overflow-auto whitespace-pre-wrap text-sm text-slate-800 dark:text-slate-200 leading-relaxed ${
+        className={`bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 max-h-[400px] overflow-auto whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed ${
           mono ? 'font-mono text-xs' : 'font-sans'
         }`}
       >

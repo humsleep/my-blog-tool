@@ -17,23 +17,23 @@ export default function GuideSection({ title, items }: GuideSectionProps) {
 
   return (
     <div className="mt-10 max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-sm">
         {/* 토글 헤더 */}
         <button
           onClick={() => setOpen(!open)}
           aria-expanded={open}
-          className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+          className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-950/60 flex items-center justify-center">
+              <svg className="w-4 h-4 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </span>
-            <span className="font-semibold text-slate-900 dark:text-slate-100">{title}</span>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-100">{title}</span>
           </div>
           <svg
-            className={`w-5 h-5 text-slate-400 dark:text-slate-500 transition-transform duration-200 flex-shrink-0 ${open ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 text-zinc-400 dark:text-zinc-500 transition-transform duration-200 flex-shrink-0 ${open ? 'rotate-180' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -44,17 +44,17 @@ export default function GuideSection({ title, items }: GuideSectionProps) {
 
         {/* 펼쳐지는 콘텐츠 */}
         {open && (
-          <div className="border-t border-slate-200 dark:border-slate-700 px-6 py-6">
+          <div className="border-t border-zinc-200 dark:border-zinc-700 px-6 py-6">
             <div className="space-y-8">
               {items.map((item, idx) => (
                 <section key={idx}>
-                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold flex-shrink-0">
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-3 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex-shrink-0">
                       {idx + 1}
                     </span>
                     {item.title}
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-7 whitespace-pre-line">
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-7 whitespace-pre-line">
                     {item.content}
                   </p>
                 </section>

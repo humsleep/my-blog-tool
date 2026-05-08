@@ -145,11 +145,11 @@ export default function Navbar() {
           {/* Wordmark — Pretendard sans-serif (Phase 27) */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-7 h-7 rounded-md bg-blue-500 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-md bg-orange-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm leading-none">B</span>
               </div>
-              <span className="text-[0.95rem] font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
-                Boheme<span className="text-blue-500 dark:text-blue-400 ml-1">BlogLab</span>
+              <span className="text-[0.95rem] font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                Boheme<span className="text-orange-500 dark:text-orange-400 ml-1">BlogLab</span>
               </span>
             </Link>
           </div>
@@ -165,8 +165,8 @@ export default function Navbar() {
                   href={t.href}
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
+                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
                   }`}
                 >
                   {t.label}
@@ -188,8 +188,8 @@ export default function Navbar() {
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
                   megaOpen
-                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
+                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
                 모든 도구
@@ -205,17 +205,17 @@ export default function Navbar() {
 
               {megaOpen && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[680px] max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[680px] max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
                   role="menu"
                 >
-                  <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-slate-700/60">
+                  <div className="grid grid-cols-3 divide-x divide-zinc-100 dark:divide-zinc-700/60">
                     {WORKFLOW.map((group) => (
                       <div key={group.groupLabel} className="p-3">
                         <div className="px-2 mb-2 flex items-center gap-1.5">
-                          <span className="text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">
+                          <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                             STEP {group.range}
                           </span>
-                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                          <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-200">
                             {group.groupLabel}
                           </span>
                         </div>
@@ -229,17 +229,17 @@ export default function Navbar() {
                                 onClick={() => setMegaOpen(false)}
                                 className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
                                   isActive
-                                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300'
-                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                    ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50'
                                 }`}
                               >
                                 <div className="flex items-baseline gap-1.5">
-                                  <span className={`text-[11px] font-bold ${isActive ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                  <span className={`text-[11px] font-bold ${isActive ? 'text-orange-500 dark:text-orange-400' : 'text-zinc-400 dark:text-zinc-500'}`}>
                                     {it.step}
                                   </span>
                                   <span className="font-medium">{it.label}</span>
                                 </div>
-                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-blue-500/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                   {it.description}
                                 </div>
                               </Link>
@@ -267,10 +267,10 @@ export default function Navbar() {
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   isCommunityActive
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
+                    ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                     : communityOpen
-                      ? 'bg-slate-100 text-slate-900 dark:bg-zinc-800 dark:text-slate-100'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
+                      ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
                 }`}
               >
                 커뮤니티
@@ -286,7 +286,7 @@ export default function Navbar() {
 
               {communityOpen && (
                 <div
-                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-slate-200 dark:border-zinc-800 overflow-hidden p-1.5"
+                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
                 >
                   {COMMUNITY_MENU.map((it) => {
@@ -298,12 +298,12 @@ export default function Navbar() {
                         onClick={() => setCommunityOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
-                            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300'
-                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                            ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50'
                         }`}
                       >
                         <div className="font-medium">{it.label}</div>
-                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-blue-500/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-zinc-500 dark:text-zinc-400'}`}>
                           {it.description}
                         </div>
                       </Link>
@@ -321,8 +321,8 @@ export default function Navbar() {
                   href="/lab"
                   className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-slate-900 dark:hover:text-slate-100'
+                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
                   }`}
                 >
                   연구실
@@ -338,7 +338,7 @@ export default function Navbar() {
                 <div className="relative hidden md:block" ref={userMenuRef}>
                   <button
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+                    className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
                   >
                     {avatarUrl ? (
                       <Image
@@ -346,34 +346,34 @@ export default function Navbar() {
                         alt={displayName}
                         width={28}
                         height={28}
-                        className="rounded-full border border-slate-200 dark:border-slate-700"
+                        className="rounded-full border border-zinc-200 dark:border-zinc-700"
                         unoptimized
                       />
                     ) : (
-                      <span className="w-7 h-7 rounded-full bg-blue-500 text-white text-xs font-semibold flex items-center justify-center">
+                      <span className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center">
                         {initial}
                       </span>
                     )}
-                    <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className={`w-3.5 h-3.5 text-zinc-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                   {userMenuOpen && (
-                    <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-                        <div className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{displayName}</div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</div>
+                    <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-zinc-800 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-700">
+                        <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{displayName}</div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{user.email}</div>
                       </div>
                       <Link
                         href="/profile/setup"
                         onClick={() => setUserMenuOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700"
+                        className="block px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 border-b border-zinc-100 dark:border-zinc-700"
                       >
                         프로필 수정
                       </Link>
                       <button
                         onClick={() => signOut()}
-                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                        className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50"
                       >
                         로그아웃
                       </button>
@@ -383,7 +383,7 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-blue-500 dark:hover:text-blue-400 rounded-lg transition-colors"
+                  className="hidden md:inline-flex items-center px-3 py-1.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:text-orange-500 dark:hover:text-orange-400 rounded-lg transition-colors"
                 >
                   로그인
                 </Link>
@@ -393,7 +393,7 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? '라이트모드로 전환' : '다크모드로 전환'}
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -408,7 +408,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
               aria-label="메뉴 열기"
             >
               {!isMobileOpen ? (
@@ -427,12 +427,12 @@ export default function Navbar() {
 
       {/* Mobile Menu — 8단계 워크플로우 평면 노출 */}
       {isMobileOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 max-h-[calc(100vh-56px)] overflow-y-auto">
+        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 max-h-[calc(100vh-56px)] overflow-y-auto">
           <div className="px-3 py-3 space-y-4">
             {/* Auth on mobile */}
             {configured && (
               user ? (
-                <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
                   <div className="flex items-center gap-2 min-w-0">
                     {avatarUrl ? (
                       <Image
@@ -444,27 +444,27 @@ export default function Navbar() {
                         unoptimized
                       />
                     ) : (
-                      <span className="w-8 h-8 rounded-full bg-blue-500 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
+                      <span className="w-8 h-8 rounded-full bg-orange-500 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0">
                         {initial}
                       </span>
                     )}
                     <div className="min-w-0">
-                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{displayName}</div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</div>
+                      <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{displayName}</div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{user.email}</div>
                     </div>
                   </div>
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <Link
                       href="/profile/setup"
                       onClick={() => setIsMobileOpen(false)}
-                      className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                      className="text-xs text-orange-600 dark:text-orange-400 font-medium hover:underline"
                     >
                       프로필
                     </Link>
-                    <span className="text-slate-300 dark:text-slate-600">·</span>
+                    <span className="text-zinc-300 dark:text-zinc-600">·</span>
                     <button
                       onClick={() => signOut()}
-                      className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                      className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
                     >
                       로그아웃
                     </button>
@@ -474,7 +474,7 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setIsMobileOpen(false)}
-                  className="block px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
+                  className="block px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg text-center min-h-[44px] flex items-center justify-center"
                 >
                   로그인 · Google
                 </Link>
@@ -484,7 +484,7 @@ export default function Navbar() {
             {/* 블로그 진단 — 워크플로우와 별개의 메타 도구 (Phase 26: 맨 앞 우선) */}
             <div className="space-y-1">
               <div className="px-4">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">분석</span>
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">분석</span>
               </div>
               {(() => {
                 const isActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
@@ -494,13 +494,13 @@ export default function Navbar() {
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                       isActive
-                        ? 'bg-blue-500 text-white'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        ? 'bg-orange-500 text-white'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                     }`}
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-medium">블로그 진단</div>
-                      <div className={`text-xs mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                         카테고리 상위 % · 약점 분석
                       </div>
                     </div>
@@ -512,10 +512,10 @@ export default function Navbar() {
             {WORKFLOW.map((group) => (
               <div key={group.groupLabel} className="space-y-1">
                 <div className="px-4 flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
                     STEP {group.range}
                   </span>
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                     {group.groupLabel}
                   </span>
                 </div>
@@ -528,16 +528,16 @@ export default function Navbar() {
                       onClick={() => setIsMobileOpen(false)}
                       className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                         isActive
-                          ? 'bg-blue-500 text-white'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-orange-500 text-white'
+                          : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                       }`}
                     >
-                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-blue-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-orange-100' : 'text-zinc-400 dark:text-zinc-500'}`}>
                         {it.step}
                       </span>
                       <div className="min-w-0">
                         <div className="text-sm font-medium">{it.label}</div>
-                        <div className={`text-xs mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                        <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                           {it.description}
                         </div>
                       </div>
@@ -548,9 +548,9 @@ export default function Navbar() {
             ))}
 
             {/* 커뮤니티 */}
-            <div className="pt-2 border-t border-slate-200 dark:border-slate-700 space-y-1">
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700 space-y-1">
               <div className="px-4">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">커뮤니티</span>
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">커뮤니티</span>
               </div>
               {COMMUNITY_MENU.map((it) => {
                 const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -561,13 +561,13 @@ export default function Navbar() {
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
                       isActive
-                        ? 'bg-blue-500 text-white'
-                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        ? 'bg-orange-500 text-white'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                     }`}
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-medium">{it.label}</div>
-                      <div className={`text-xs mt-0.5 ${isActive ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                         {it.description}
                       </div>
                     </div>
@@ -577,14 +577,14 @@ export default function Navbar() {
             </div>
 
             {/* 연구실 */}
-            <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700">
               <Link
                 href="/lab"
                 onClick={() => setIsMobileOpen(false)}
                 className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
                   pathname === '/lab' || pathname.startsWith('/lab/')
-                    ? 'bg-blue-500 text-white'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? 'bg-orange-500 text-white'
+                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
                 연구실

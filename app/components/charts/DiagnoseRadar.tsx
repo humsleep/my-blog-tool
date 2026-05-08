@@ -26,9 +26,9 @@ export default function DiagnoseRadar({ activity, visibility, quality, height = 
     return () => observer.disconnect();
   }, []);
 
-  const accent = isDark ? '#60a5fa' : '#2563eb';     /* blue-400 / blue-600 */
-  const grid = isDark ? '#27272a' : '#e4e4e7';       /* zinc-800 / zinc-200 */
-  const axisText = isDark ? '#a1a1aa' : '#52525b';   /* zinc-400 / zinc-600 */
+  const accent = isDark ? '#fb923c' : '#ea580c';     /* orange-400 / orange-600 — Hermès */
+  const grid = isDark ? '#2e2723' : '#e4e4e7';       /* warm dark border / zinc-200 */
+  const axisText = isDark ? '#d4d4d8' : '#3f3f46';   /* zinc-300 / zinc-700 — boosted contrast */
   const fillOpacity = isDark ? 0.22 : 0.14;
 
   const data = [

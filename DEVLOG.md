@@ -5,6 +5,60 @@
 
 ---
 
+## 2026-05-08 — Phase 31: Hermès Luxe 리브랜드 + 콘트라스트 강화 + 블로그 진단 UX 개편
+
+**배경**: 사용자 피드백 — (1) Phase 30의 sapphire blue가 잘 안 보임, 에르메스 시그니처 오렌지로 럭셔리하게 바꾸기. (2) 글자 콘트라스트 약함, 가독성 boost 필요. (3) 블로그 진단의 카테고리 선택이 클릭 가능해 보이지 않음 — UI/UX 개편으로 빠르게 진행할 수 있게.
+
+### 1. 컬러 — Hermès Luxe (orange + warm cocoa dark)
+- **Light**: `--bg-base #fafaf9` (warm zinc-50, 살짝 크림) / `--accent #ea580c` (orange-600 — Hermès 시그니처) / text zinc-950
+- **Dark**: `--bg-base #1a1410` (deep cocoa-charcoal — Hermès leather 톤) / `--bg-surface #221c17` / `--accent #fb923c` (orange-400, 다크에서 부드럽게)
+- 다크 버튼 primary 텍스트: `#1a1410` (배경과 일치하는 코코아 — orange-400 위에 어두운 텍스트가 더 가독)
+- 51개 .tsx `blue-*` → `orange-*` sed
+- 44개 .tsx `slate-*` → `zinc-*` sed (Phase 30 후속 정리)
+
+### 2. 콘트라스트 boost — 글자 가독성 ↑
+**globals.css 토큰 강화:**
+- Light `--text-secondary`: `#52525b` (zinc-600) → `#3f3f46` (zinc-700)
+- Light `--text-muted`: `#71717a` (zinc-500) → `#52525b` (zinc-600)
+- Dark `--text-secondary`: `#a1a1aa` (zinc-400) → `#d4d4d8` (zinc-300) — 다크에서 본문 가독성 폭증
+- Dark `--text-muted`: `#71717a` → `#a1a1aa` (zinc-400)
+- `--border-strong`: `#d4d4d8` (zinc-300) → `#a1a1aa` (zinc-400). hover 시 시각적 변화 명확.
+- `--accent-soft` opacity 다크 0.12 → 0.18 (배지 가독성 ↑)
+
+### 3. 블로그 진단 페이지 UX 전면 개편 (`app/blog-diagnose/page.tsx`)
+- **Hero 톤 전환**: 옛 `text-ink` 잔재 클래스 → 명시적 `text-zinc-950 dark:text-zinc-50` + 큰 디스플레이 타이틀(text-5xl)
+- **진행 스텝 표시**: 새 progress chip ol — "1 블로그 입력 → 2 분야 선택 → 3 진단 시작"이 입력 진행에 따라 자동 ✓로 전환. 사용자에게 "지금 어디까지 했는지" 즉시 알림.
+- **블로그 입력 카드화**: 옛 `border-b-2` underline 입력 → 명시적 카드 컨테이너 + 두꺼운 input border + bg-zinc-50 + focus 시 ring-orange-500/20. 클릭 가능 영역이 한눈에 보임.
+- **카테고리 선택 카드화 (핵심)**:
+  - 옛: `gap-px` 배경색만 다른 8개 평면 박스 → 클릭 가능한지 모름
+  - 새: 각 항목이 **rounded border-2 카드**, hover 시 orange-300 border + soft bg + shadow
+  - 선택됨: orange-500 두꺼운 border + orange-50 bg + ring-2 + 우상단 ✓ 체크 아이콘 + orange-700 텍스트
+  - 라벨 헤더에 "✓ {선택된 분야} 선택됨" 실시간 표시
+  - `aria-pressed` 추가 (스크린리더 호환)
+- **CTA 버튼 동적 라벨**: 입력 미완성 시 "입력을 모두 완료해주세요" / 완료 시 "진단 시작 (30~50초) →" — 상태 명시.
+- **경고 배너 톤업**: 옛 회색 hairline 박스 → amber-50 bg + amber-200 border (눈에 띄도록).
+
+### 4. 차트 팔레트 정렬
+- `ScoreGauge` band color 임계: orange-500/orange-600/orange-700 변형 + 저점 yellow-300/yellow-600
+- `DiagnoseRadar` accent: `#ea580c` (light) / `#fb923c` (dark), axisText 콘트라스트 boost
+- 차트 텍스트 색을 `--text-secondary` boost 값에 맞춰 zinc-700/zinc-300 사용
+
+### 5. 잔여 정리
+- `manifest.ts theme_color`: `#047857` → `#ea580c` (Hermès)
+- `layout.tsx viewport themeColor`: light `#fafaf9` / dark `#1a1410` (warm cocoa)
+- `::selection`, `.pill-accent` border RGB 모두 orange로 정렬
+- status 컬러 중 `--warning`을 yellow-600으로 (orange와 hue 분리 — accent와 안 헷갈림)
+
+### 검증
+- `IP_HASH_SALT=… npm run build` → 43 페이지 클린
+
+### 후속 권장
+- 키워드 분석 결과 표 검색량 컬럼에 `HorizontalBarList` 적용 (사용자가 한눈에 비교)
+- `/community` 작성 페이지에도 진단 페이지처럼 진행 스텝 표시 + 카드형 입력 적용
+- Wanted Sans Variable FOUT 완화 (`font-display: swap`)
+
+---
+
 ## 2026-05-08 — Phase 30: Wanted Sans + Modern Monochrome 리브랜드 (인터랙티브 조화)
 
 **배경**: Phase 29 Sage & Charcoal에 사용자가 만족하지 못함. 폰트도 더 트렌디한 변수 폰트 원함. "메뉴/버튼/호버/클릭 색 변화 모두 조화롭게"가 핵심 요청. `frontend-design` 스킬 + 한국어 SaaS 트렌드 조사 후 옵션 제시 → A. Wanted Sans Variable + A. Modern Monochrome (Linear/Vercel 톤) 합의.

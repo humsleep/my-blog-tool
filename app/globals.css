@@ -4,43 +4,43 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ─────────────────────────────────────────────────────────────────────
- * Boheme BlogLab — Modern Monochrome Theme (Phase 30)
+ * Boheme BlogLab — Hermès Luxe Theme (Phase 31)
  *
- *   Tone:        Linear / Vercel / Stripe — 극도로 모던. 색을 거의 안 쓰고
- *                중립 회색만으로 정보 위계를 구성. 액센트는 작은 사파이어 도트.
+ *   Tone:        에르메스의 시그니처 오렌지를 액센트로. 럭셔리 톤.
+ *                Hermès 박스 = 따뜻한 화이트 + 깊은 잉크 + 강렬한 오렌지 리본.
  *   Typography:  Wanted Sans Variable (모던 기하학), Pretendard fallback
- *   Color:       zinc neutral + sapphire(#2563eb) 액센트
- *                Light: 거의 흰색(#fafafa) + zinc-900 잉크 + 작은 사파이어 포인트
- *                Dark:  near-black(#0a0a0a) + light sapphire(#60a5fa)
- *   Card:        8px radius + 1px hairline + 미세 그림자
- *   Spacing:     8pt grid
+ *   Color:       warm zinc neutral + Hermès orange(#ea580c) 액센트
+ *                Light: 따뜻한 흰색(#fafaf9) + zinc-950 잉크 + Hermès orange
+ *                Dark:  깊은 코코아 차콜(#1a1410) + Hermès orange-400
+ *   Contrast:    body text-secondary를 zinc-700/zinc-300으로 강화.
+ *                ALL caption muted text도 한 단계 boost.
  * ─────────────────────────────────────────────────────────────────────
  */
 
 :root {
-  /* ── Surface (zinc neutral) ── */
-  --bg-base:        #fafafa;   /* 페이지 배경 — zinc-50 */
+  /* ── Surface (warm zinc neutral) ── */
+  --bg-base:        #fafaf9;   /* 페이지 배경 — warm zinc-50 (살짝 크림) */
   --bg-surface:     #ffffff;   /* 카드 */
-  --bg-elevated:    #f4f4f5;   /* 호버·하이라이트 — zinc-100 */
-  --bg-overlay:     rgba(255,255,255,0.92);
+  --bg-elevated:    #f5f5f4;   /* 호버 */
+  --bg-overlay:     rgba(255,255,255,0.94);
 
-  /* ── Text ── */
-  --text-primary:   #18181b;   /* zinc-900 */
-  --text-secondary: #52525b;   /* zinc-600 — WCAG AA on white */
-  --text-muted:     #71717a;   /* zinc-500 */
-  --text-faint:     #a1a1aa;   /* zinc-400 */
+  /* ── Text — 콘트라스트 boost ── */
+  --text-primary:   #09090b;   /* zinc-950 — 최대 대비 */
+  --text-secondary: #3f3f46;   /* zinc-700 — boosted (이전 zinc-600). 본문 가독성 ↑ */
+  --text-muted:     #52525b;   /* zinc-600 — boosted */
+  --text-faint:     #71717a;   /* zinc-500 */
 
   /* ── Border ── */
   --border:         #e4e4e7;   /* zinc-200 */
   --border-subtle:  #f4f4f5;   /* zinc-100 */
-  --border-strong:  #d4d4d8;   /* zinc-300 */
+  --border-strong:  #a1a1aa;   /* zinc-400 — boosted (이전 zinc-300). hover 시 시각적 변화 명확 */
 
-  /* ── Accent (Sapphire — Linear-style) ── */
-  --accent:         #2563eb;   /* blue-600 */
-  --accent-hover:   #1d4ed8;   /* blue-700 */
-  --accent-soft:    #eff6ff;   /* blue-50 */
-  --accent-text:    #1d4ed8;   /* readable on blue-50 */
-  --accent-ring:    rgba(37,99,235,0.18);   /* focus ring tint */
+  /* ── Accent (Hermès Orange) ── */
+  --accent:         #ea580c;   /* orange-600 — Hermès 시그니처 톤 */
+  --accent-hover:   #c2410c;   /* orange-700 */
+  --accent-soft:    #fff7ed;   /* orange-50 */
+  --accent-text:    #c2410c;   /* orange-700 — orange-50 위 가독성 */
+  --accent-ring:    rgba(234,88,12,0.22);
 
   /* ── Status (distinct from accent) ── */
   --success:        #16a34a;   /* green-600 */
@@ -48,26 +48,26 @@
   --success-text:   #15803d;
   --success-border: #bbf7d0;
 
-  --warning:        #d97706;   /* amber-600 */
-  --warning-bg:     #fffbeb;
-  --warning-text:   #b45309;
-  --warning-border: #fde68a;
+  --warning:        #ca8a04;   /* yellow-600 — orange와 구분되도록 더 노란 톤 */
+  --warning-bg:     #fefce8;
+  --warning-text:   #854d0e;
+  --warning-border: #fef08a;
 
   --danger:         #dc2626;
   --danger-bg:      #fef2f2;
   --danger-text:    #b91c1c;
   --danger-border:  #fecaca;
 
-  --info:           #0ea5e9;   /* sky-500 — accent와 구분 */
+  --info:           #0284c7;   /* sky-600 */
   --info-bg:        #f0f9ff;
   --info-text:      #0369a1;
   --info-border:    #bae6fd;
 
-  /* ── Shadow (very subtle, Linear-style) ── */
+  /* ── Shadow ── */
   --shadow-xs: 0 1px 0 rgb(0 0 0 / 0.04);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-lg: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 4px 12px -2px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 
   /* ── Radius ── */
   --radius-sm: 6px;
@@ -82,51 +82,51 @@
 }
 
 .dark {
-  /* near-black + 살짝 elevated surfaces — Vercel/Linear 스타일 */
-  --bg-base:        #0a0a0a;   /* near-black */
-  --bg-surface:     #161618;
-  --bg-elevated:    #1f1f23;
-  --bg-overlay:     rgba(10,10,10,0.92);
+  /* warm cocoa-charcoal — Hermès leather 톤 + 눈 편함 */
+  --bg-base:        #1a1410;   /* deep cocoa-charcoal (warm) */
+  --bg-surface:     #221c17;   /* warm dark surface */
+  --bg-elevated:    #2c2520;   /* warm dark elevated */
+  --bg-overlay:     rgba(26,20,16,0.94);
 
-  --text-primary:   #fafafa;   /* zinc-50 */
-  --text-secondary: #a1a1aa;   /* zinc-400 — ~7:1 on bg-surface */
-  --text-muted:     #71717a;   /* zinc-500 */
-  --text-faint:     #52525b;   /* zinc-600 */
+  --text-primary:   #fafaf9;   /* almost white */
+  --text-secondary: #d4d4d8;   /* zinc-300 — boosted (이전 zinc-400). 다크모드 가독성 ↑ */
+  --text-muted:     #a1a1aa;   /* zinc-400 — boosted (이전 zinc-500) */
+  --text-faint:     #71717a;   /* zinc-500 */
 
-  --border:         #27272a;   /* zinc-800 */
-  --border-subtle:  #1f1f23;
-  --border-strong:  #3f3f46;   /* zinc-700 */
+  --border:         #2e2723;   /* warm dark border */
+  --border-subtle:  #221c17;
+  --border-strong:  #4d423b;   /* warm dark strong */
 
-  --accent:         #60a5fa;   /* blue-400 — 다크에서 부드럽게 */
-  --accent-hover:   #93c5fd;   /* blue-300 */
-  --accent-soft:    rgba(59,130,246,0.12);
-  --accent-text:    #93c5fd;
-  --accent-ring:    rgba(96,165,250,0.30);
+  --accent:         #fb923c;   /* orange-400 — Hermès on dark, 부드럽게 */
+  --accent-hover:   #fdba74;   /* orange-300 */
+  --accent-soft:    rgba(234,88,12,0.18);
+  --accent-text:    #fdba74;
+  --accent-ring:    rgba(251,146,60,0.32);
 
   --success:        #4ade80;
-  --success-bg:     rgba(34,197,94,0.12);
+  --success-bg:     rgba(34,197,94,0.14);
   --success-text:   #86efac;
-  --success-border: rgba(34,197,94,0.32);
+  --success-border: rgba(34,197,94,0.34);
 
-  --warning:        #fbbf24;
-  --warning-bg:     rgba(245,158,11,0.12);
-  --warning-text:   #fcd34d;
-  --warning-border: rgba(245,158,11,0.32);
+  --warning:        #facc15;
+  --warning-bg:     rgba(202,138,4,0.14);
+  --warning-text:   #fde047;
+  --warning-border: rgba(202,138,4,0.34);
 
   --danger:         #f87171;
-  --danger-bg:      rgba(239,68,68,0.12);
+  --danger-bg:      rgba(239,68,68,0.14);
   --danger-text:    #fca5a5;
-  --danger-border:  rgba(239,68,68,0.32);
+  --danger-border:  rgba(239,68,68,0.34);
 
   --info:           #38bdf8;
-  --info-bg:        rgba(56,189,248,0.12);
+  --info-bg:        rgba(56,189,248,0.14);
   --info-text:      #7dd3fc;
-  --info-border:    rgba(56,189,248,0.32);
+  --info-border:    rgba(56,189,248,0.34);
 
-  --shadow-xs: 0 0 0 1px rgb(255 255 255 / 0.04);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
-  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.3);
-  --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.6), 0 4px 8px -2px rgb(0 0 0 / 0.4);
+  --shadow-xs: 0 0 0 1px rgb(255 255 255 / 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.45);
+  --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.55), 0 1px 2px -1px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.65), 0 4px 8px -2px rgb(0 0 0 / 0.45);
 }
 
 /* ── Tailwind v4 — neutral zinc 기본 ── */
@@ -411,7 +411,7 @@ p, li {
 .btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem;  min-height: 38px; }
 .btn-lg { padding: 0.75rem 1.25rem; font-size: 0.9375rem; min-height: 44px; }
 
-/* primary — sapphire 액센트 */
+/* primary — Hermès orange 액센트 */
 .btn-primary {
   background-color: var(--accent);
   color: #ffffff;
@@ -428,9 +428,9 @@ p, li {
   box-shadow: none;
 }
 
-/* dark에서 primary는 약간 다른 처리 — accent가 light tint이므로 어두운 텍스트 */
+/* dark에서 primary — accent가 orange-400 (밝은 톤)이므로 어두운 텍스트 사용 */
 .dark .btn-primary {
-  color: #0a0a0a;
+  color: #1a1410;   /* 다크 bg와 잘 어울리는 깊은 코코아 */
 }
 
 /* secondary */
@@ -486,8 +486,8 @@ p, li {
 .pill-warning { background: var(--warning-bg); color: var(--warning-text); border-color: var(--warning-border); }
 .pill-danger  { background: var(--danger-bg);  color: var(--danger-text);  border-color: var(--danger-border); }
 .pill-info    { background: var(--info-bg);    color: var(--info-text);    border-color: var(--info-border); }
-.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(37,99,235,0.18); }
-.dark .pill-accent { border-color: rgba(96,165,250,0.30); }
+.pill-accent  { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(234,88,12,0.22); }
+.dark .pill-accent { border-color: rgba(251,146,60,0.32); }
 .pill-neutral { background: var(--bg-elevated); color: var(--text-secondary); border-color: var(--border); }
 
 /* tabular-nums for tables */
@@ -522,8 +522,8 @@ a.link:hover, .link:hover {
 .dark .ql-picker-label { color: var(--text-secondary) !important; }
 
 /* ── Selection ── */
-::selection { background-color: rgb(37 99 235 / 0.22); color: var(--text-primary); }
-.dark ::selection { background-color: rgb(96 165 250 / 0.30); }
+::selection { background-color: rgb(234 88 12 / 0.24); color: var(--text-primary); }
+.dark ::selection { background-color: rgb(251 146 60 / 0.32); }
 
 /* ── Scrollbar 숨김 ── */
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

@@ -165,14 +165,14 @@ export default function NewsPanel({
   };
 
   return (
-    <div className={compact ? '' : 'bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm'}>
+    <div className={compact ? '' : 'bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm'}>
       {!compact && (
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
             &ldquo;{keyword}&rdquo; 관련 최신 뉴스
           </h3>
           {data && (
-            <span className="text-xs text-slate-400 dark:text-slate-500">
+            <span className="text-xs text-zinc-400 dark:text-zinc-500">
               총 {data.total.toLocaleString()}건
             </span>
           )}
@@ -181,15 +181,15 @@ export default function NewsPanel({
 
       {/* 정렬 / 필터 컨트롤 */}
       {!loading && !error && (
-        <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-slate-100 dark:border-slate-700/60">
-          <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-700/40 p-0.5 text-xs">
+        <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-zinc-100 dark:border-zinc-700/60">
+          <div className="inline-flex rounded-lg bg-zinc-100 dark:bg-zinc-700/40 p-0.5 text-xs">
             <button
               type="button"
               onClick={() => setSort('sim')}
               className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
                 sort === 'sim'
-                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-300 shadow-sm'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-zinc-800 text-orange-600 dark:text-orange-300 shadow-sm'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
               }`}
             >
               정확도순
@@ -199,19 +199,19 @@ export default function NewsPanel({
               onClick={() => setSort('date')}
               className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
                 sort === 'date'
-                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-300 shadow-sm'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-zinc-800 text-orange-600 dark:text-orange-300 shadow-sm'
+                  : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
               }`}
             >
               최신순
             </button>
           </div>
-          <label className="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
+          <label className="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={strict}
               onChange={(e) => setStrict(e.target.checked)}
-              className="w-3.5 h-3.5 rounded text-blue-500 focus:ring-blue-500"
+              className="w-3.5 h-3.5 rounded text-orange-500 focus:ring-orange-500"
             />
             관련도 낮은 항목 숨김
           </label>
@@ -219,7 +219,7 @@ export default function NewsPanel({
       )}
 
       {loading && (
-        <div className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        <div className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
           <svg className="animate-spin h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -235,13 +235,13 @@ export default function NewsPanel({
       )}
 
       {!loading && !error && data && visibleItems.length === 0 && (
-        <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">
+        <p className="py-6 text-center text-sm text-zinc-400 dark:text-zinc-500">
           관련 뉴스를 찾지 못했습니다.
         </p>
       )}
 
       {!loading && !error && visibleItems.length > 0 && (
-        <ul className="divide-y divide-slate-100 dark:divide-slate-700/50">
+        <ul className="divide-y divide-zinc-100 dark:divide-zinc-700/50">
           {visibleItems.map((item, i) => {
             const checked = isSelected(item);
             const disabled = !checked && selected.length >= MAX_SELECT;
@@ -256,7 +256,7 @@ export default function NewsPanel({
                       checked={checked}
                       disabled={disabled}
                       onChange={() => toggleSelect(item)}
-                      className="mt-1 w-4 h-4 rounded text-blue-500 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+                      className="mt-1 w-4 h-4 rounded text-orange-500 focus:ring-orange-500 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                       aria-label={`${cleanTitle} 선택`}
                     />
                   )}
@@ -266,13 +266,13 @@ export default function NewsPanel({
                     rel="noopener noreferrer"
                     className="block flex-1 min-w-0 group"
                   >
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 group-hover:text-blue-500 dark:group-hover:text-blue-400 line-clamp-2">
+                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-orange-500 dark:group-hover:text-orange-400 line-clamp-2">
                       {cleanTitle}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
                       {cleanDesc}
                     </p>
-                    <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+                    <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
                       {formatPubDate(item.pubDate)}
                     </p>
                   </a>
@@ -285,9 +285,9 @@ export default function NewsPanel({
 
       {/* 하단 CTA — selectable일 때만 */}
       {selectable && !loading && !error && (
-        <div className="sticky bottom-0 -mx-5 -mb-4 mt-4 px-5 py-3 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-t border-slate-200 dark:border-slate-700">
+        <div className="sticky bottom-0 -mx-5 -mb-4 mt-4 px-5 py-3 bg-white/95 dark:bg-zinc-800/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-700">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
               {selected.length === 0
                 ? `최대 ${MAX_SELECT}건까지 선택 가능`
                 : `${selected.length}건 선택됨${selected.length >= MAX_SELECT ? ' (최대)' : ''}`}

@@ -68,9 +68,9 @@ function ToastItemView({ item, onClose }: { item: ToastItem; onClose: () => void
   }, [onClose]);
 
   const styles = {
-    success: 'bg-blue-500 text-white',
+    success: 'bg-orange-500 text-white',
     error:   'bg-red-500 text-white',
-    info:    'bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900',
+    info:    'bg-zinc-800 text-white dark:bg-zinc-100 dark:text-zinc-900',
   }[item.variant];
 
   const icon = {

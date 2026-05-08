@@ -50,19 +50,19 @@ function LoginContent() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 py-12">
+    <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 py-12">
       <div className="max-w-md w-full">
-        <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-lg overflow-hidden">
           <div className="px-8 pt-10 pb-8 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md mx-auto mb-5">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-md mx-auto mb-5">
               <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
               Boheme BlogLab 로그인
             </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
               로그인하고 AI 초안 생성 기능을<br />하루 2회 무료로 사용해보세요
             </p>
           </div>
@@ -84,7 +84,7 @@ function LoginContent() {
             <button
               onClick={signInWithGoogle}
               disabled={loading || !configured}
-              className="w-full flex items-center justify-center gap-3 px-5 py-3 bg-white hover:bg-slate-50 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-200 font-medium text-sm transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-3 px-5 py-3 bg-white hover:bg-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 border border-zinc-300 dark:border-zinc-600 rounded-lg text-zinc-700 dark:text-zinc-200 font-medium text-sm transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -96,17 +96,17 @@ function LoginContent() {
             </button>
 
             <div className="mt-6 text-center">
-              <Link href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+              <Link href="/" className="text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
                 ← 메인으로 돌아가기
               </Link>
             </div>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+        <p className="mt-6 text-center text-xs text-zinc-400 dark:text-zinc-500 leading-relaxed">
           로그인 시 이메일과 프로필 이름만 저장됩니다.<br />
           자세한 내용은{' '}
-          <Link href="/privacy" className="underline hover:text-slate-600 dark:hover:text-slate-300">개인정보처리방침</Link>
+          <Link href="/privacy" className="underline hover:text-zinc-600 dark:hover:text-zinc-300">개인정보처리방침</Link>
           을 확인하세요.
         </p>
       </div>
@@ -118,7 +118,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center">
-        <div className="text-slate-500 dark:text-slate-400">로딩 중...</div>
+        <div className="text-zinc-500 dark:text-zinc-400">로딩 중...</div>
       </div>
     }>
       <LoginContent />

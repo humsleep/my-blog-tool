@@ -49,7 +49,7 @@ function chipClass(active: boolean) {
     'flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
     'border',
     active
-      ? 'bg-blue-500 text-white border-blue-500'
-      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700',
+      ? 'bg-orange-500 text-white border-orange-500'
+      : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-700',
   ].join(' ');
 }

@@ -25,7 +25,7 @@ export default function EmptyStateLogin({ title, description, icon, className = 
 
   return (
     <div className={`rounded-md border border-dashed border-zinc-300 dark:border-[#27272a] bg-zinc-50/50 dark:bg-[#161618]/50 p-6 sm:p-8 text-center ${className}`}>
-      <div className="mx-auto w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-100 dark:ring-blue-900/40 flex items-center justify-center mb-4 text-blue-700 dark:text-blue-300">
+      <div className="mx-auto w-12 h-12 rounded-full bg-orange-50 dark:bg-orange-950/40 ring-1 ring-orange-100 dark:ring-orange-900/40 flex items-center justify-center mb-4 text-orange-700 dark:text-orange-300">
         {icon ?? (
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />

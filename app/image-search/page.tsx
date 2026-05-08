@@ -119,16 +119,16 @@ export default function ImageSearchPage() {
     sourceStatus.unsplash === 'UNSPLASH_ACCESS_KEY 미설정';
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">무료 이미지 검색</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">무료 이미지 검색</h1>
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
             Pexels + Unsplash 무료 저작권 이미지를 검색하여 블로그에 바로 활용하세요
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm mb-6">
+        <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm mb-6">
           <div className="flex flex-col sm:flex-row gap-2">
             <input
               type="text"
@@ -136,18 +136,18 @@ export default function ImageSearchPage() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !loading) search(); }}
               placeholder="예: coffee, flower, cat (영문 키워드 권장)"
-              className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               disabled={loading}
             />
             <button
               onClick={search}
               disabled={loading || !query.trim()}
-              className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[44px]"
+              className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors min-h-[44px]"
             >
               {loading ? '검색 중...' : '검색'}
             </button>
           </div>
-          <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+          <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
             영문 키워드가 더 풍부한 결과를 반환합니다. 한국어 키워드도 지원되지만 결과가 적을 수 있습니다.
           </p>
         </div>
@@ -182,14 +182,14 @@ export default function ImageSearchPage() {
 
         {!loading && items.length > 0 && (
           <>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
               총 {items.length}장 · 클릭 시 이미지 편집기로 바로 전송됩니다
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                  className="group relative rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                 >
                   <div className="relative w-full h-48">
                     <Image
@@ -208,18 +208,18 @@ export default function ImageSearchPage() {
                     <button
                       onClick={() => sendToEditor(item)}
                       disabled={transferring === item.id}
-                      className="px-3 py-1.5 text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-60"
+                      className="px-3 py-1.5 text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white rounded disabled:opacity-60"
                     >
                       {transferring === item.id ? '전송 중...' : '편집기로 보내기'}
                     </button>
                     <button
                       onClick={() => downloadDirect(item)}
-                      className="px-3 py-1.5 text-xs font-semibold bg-white/90 hover:bg-white text-slate-900 rounded"
+                      className="px-3 py-1.5 text-xs font-semibold bg-white/90 hover:bg-white text-zinc-900 rounded"
                     >
                       다운로드
                     </button>
                   </div>
-                  <div className="px-2 py-1.5 text-[11px] text-slate-600 dark:text-slate-400 bg-white/90 dark:bg-slate-800/90 truncate">
+                  <div className="px-2 py-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-white/90 dark:bg-zinc-800/90 truncate">
                     © <a href={item.photographerUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{item.photographer}</a>
                     {' · '}
                     <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
@@ -230,7 +230,7 @@ export default function ImageSearchPage() {
               ))}
             </div>
             {(sourceStatus.pexels || sourceStatus.unsplash) && hasAnyApiKey && (
-              <p className="mt-4 text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-4 text-xs text-zinc-400 dark:text-zinc-500">
                 {sourceStatus.pexels && <>Pexels: {sourceStatus.pexels}. </>}
                 {sourceStatus.unsplash && <>Unsplash: {sourceStatus.unsplash}.</>}
               </p>
@@ -238,7 +238,7 @@ export default function ImageSearchPage() {
           </>
         )}
 
-        <div className="mt-6 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-xs text-slate-600 dark:text-slate-400">
+        <div className="mt-6 p-4 bg-zinc-100 dark:bg-zinc-800/50 rounded-lg text-xs text-zinc-600 dark:text-zinc-400">
           <p className="font-medium mb-1">라이선스 안내</p>
           <p>
             Pexels와 Unsplash의 이미지는 무료로 상업적 이용이 가능하지만, 저작자 표기(attribution)는 권장됩니다.
@@ -266,7 +266,7 @@ export default function ImageSearchPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

@@ -116,30 +116,30 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
       <form
         onSubmit={onSubmit}
-        className="bg-white dark:bg-slate-800 rounded-xl p-6 max-w-md w-full shadow-xl space-y-4"
+        className="bg-white dark:bg-zinc-800 rounded-xl p-6 max-w-md w-full shadow-xl space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {isEdit ? '서이추 글 수정' : '서이추 글 작성'}
         </h3>
         {!isEdit && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             하루 1회만 작성할 수 있어요. 작성 후 본인이 직접 언제든 수정·삭제할 수 있습니다.
           </p>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
             닉네임
           </label>
-          <div className="px-3 py-2.5 text-sm bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-300">
+          <div className="px-3 py-2.5 text-sm bg-zinc-100 dark:bg-zinc-700 rounded-lg text-zinc-700 dark:text-zinc-300">
             {profile.nickname}
           </div>
-          <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
             프로필 닉네임이 자동으로 사용됩니다.{' '}
             <a
               href="/profile/setup"
-              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              className="text-orange-600 dark:text-orange-400 hover:underline font-medium"
             >
               프로필에서 변경 →
             </a>{' '}
@@ -148,7 +148,7 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
             블로그 주소 <span className="text-red-500">*</span>
           </label>
           <input
@@ -163,7 +163,7 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
             분야 <span className="text-red-500">*</span>
           </label>
           <select value={category} onChange={(e) => setCategory(e.target.value)} className={fieldCls} required>
@@ -172,9 +172,9 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
             한마디 <span className="text-red-500">*</span>
-            <span className="ml-2 text-[11px] font-normal text-slate-500">{message.length}/200</span>
+            <span className="ml-2 text-[11px] font-normal text-zinc-500">{message.length}/200</span>
           </label>
           <textarea
             value={message}
@@ -197,14 +197,14 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+            className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
           >
             취소
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+            className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
           >
             {submitting ? '저장 중...' : isEdit ? '수정 저장' : '작성 완료'}
           </button>
@@ -215,4 +215,4 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500';
+  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

@@ -7,18 +7,18 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 sm:p-10">
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">서비스 이용약관</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-10">
+        <div className="bg-white dark:bg-zinc-800/80 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 sm:p-10">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">서비스 이용약관</h1>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-10">
             <strong>최종 수정일:</strong> 2026년 5월 2일 &middot; <strong>시행일:</strong> 2026년 5월 2일
           </p>
 
-          <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-slate-700 dark:text-slate-300 space-y-10">
+          <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-zinc-700 dark:text-zinc-300 space-y-10">
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제1조 (목적)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제1조 (목적)</h2>
               <p>
                 본 약관은 Boheme BlogLab(이하 &ldquo;서비스&rdquo;)이 제공하는 모든 온라인 서비스의 이용과 관련하여
                 서비스 제공자와 이용자의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
@@ -26,7 +26,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제2조 (정의)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제2조 (정의)</h2>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>&ldquo;서비스&rdquo;</strong>란 Boheme BlogLab 웹사이트에서 제공하는 키워드 분석, 상위노출 분석, 프롬프트 생성, AI 초안 생성, 포스팅 에디터, 이미지 검색 및 편집 등 일체의 온라인 서비스를 의미합니다.</li>
                 <li><strong>&ldquo;이용자&rdquo;</strong>란 본 약관에 따라 서비스를 이용하는 회원 및 비회원을 말합니다.</li>
@@ -38,7 +38,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제3조 (약관의 게시와 개정)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제3조 (약관의 게시와 개정)</h2>
               <p className="mb-3">
                 서비스는 본 약관의 내용을 이용자가 쉽게 알 수 있도록 웹사이트 하단에 게시합니다.
                 서비스는 관련 법령을 위배하지 않는 범위에서 본 약관을 개정할 수 있으며,
@@ -52,7 +52,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제4조 (서비스의 제공 및 변경)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제4조 (서비스의 제공 및 변경)</h2>
               <p className="mb-3">서비스는 다음과 같은 서비스를 제공합니다.</p>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>인기 검색어 트렌드 조회</li>
@@ -71,7 +71,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제5조 (서비스의 이용 및 제한)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제5조 (서비스의 이용 및 제한)</h2>
               <p className="mb-3">
                 서비스는 연중무휴 1일 24시간 제공됨을 원칙으로 하되, 다음의 경우에는 서비스 제공이 일시 중단될 수 있습니다.
               </p>
@@ -84,7 +84,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제6조 (회원가입 및 계정 관리)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제6조 (회원가입 및 계정 관리)</h2>
               <p className="mb-3">
                 서비스는 Google 소셜 로그인만을 제공하며, 별도의 아이디/비밀번호는 수집하지 않습니다.
                 회원가입은 Google 계정으로 최초 로그인 시 자동으로 완료되며, 이때 본 약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
@@ -92,13 +92,13 @@ export default function TermsPage() {
               <p>
                 이용자는 자신의 Google 계정을 안전하게 관리할 책임이 있으며, 계정의 부정 사용으로 인한 책임은
                 이용자 본인에게 있습니다. 회원 탈퇴는 이메일(
-                <a href="mailto:boheme88@naver.com" className="text-blue-500 dark:text-blue-400 hover:underline">boheme88@naver.com</a>
+                <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a>
                 )로 요청할 수 있습니다.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제7조 (이용자의 의무)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제7조 (이용자의 의무)</h2>
               <p className="mb-3">이용자는 다음 행위를 해서는 안 됩니다.</p>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>타인의 계정을 도용하거나 허위 정보로 가입하는 행위</li>
@@ -112,7 +112,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제8조 (AI 생성 콘텐츠에 관한 특별 고지)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제8조 (AI 생성 콘텐츠에 관한 특별 고지)</h2>
               <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-5 mb-4">
                 <p className="font-semibold text-amber-900 dark:text-amber-300 mb-2">
                   ⚠️ 중요: AI 초안의 한계와 이용자 책임
@@ -133,10 +133,10 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제9조 (커뮤니티 이용)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제9조 (커뮤니티 이용)</h2>
               <p className="mb-3">서비스 내 커뮤니티(서이추 해요, 체험단 동행해요 등)는 회원이 닉네임을 등록한 후 이용할 수 있으며, 다음 사항을 준수해야 합니다.</p>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">가. 작성 한도 (Rate Limit)</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">가. 작성 한도 (Rate Limit)</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li><strong>서이추 해요:</strong> 1인 24시간 1글</li>
                 <li><strong>체험단 동행해요:</strong> 1인 24시간 3건</li>
@@ -144,14 +144,14 @@ export default function TermsPage() {
                 <li>한도는 도배&middot;스팸 방지를 위함이며 서비스 운영 상황에 따라 조정될 수 있습니다.</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">나. 닉네임 정책</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">나. 닉네임 정책</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>닉네임은 2~16자, 한글&middot;영문&middot;숫자&middot;_&middot;-만 사용할 수 있으며 모든 회원이 고유하게 보유합니다.</li>
                 <li>닉네임 변경은 24시간에 1회로 제한됩니다 (잦은 변경으로 인한 혼란 방지).</li>
                 <li>타인을 사칭하거나 공공질서&middot;미풍양속에 반하는 닉네임은 사전 통지 없이 변경 또는 차단될 수 있습니다.</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">다. 금지 행위</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">다. 금지 행위</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>도배&middot;광고성 게시물 (외부 유료 서비스 홍보, 무관한 링크 반복 등)</li>
                 <li>욕설, 비방, 차별&middot;혐오 표현, 인신공격</li>
@@ -161,7 +161,7 @@ export default function TermsPage() {
                 <li>체험단 동행을 빙자한 결제 유도, 다단계, 사기성 만남 제안</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">라. 신고 및 자동 숨김</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">라. 신고 및 자동 숨김</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>이용자는 부적절한 게시물&middot;댓글에 대해 6가지 사유 중 선택하여 신고할 수 있습니다 (도배&middot;광고, 욕설&middot;비방, 음란&middot;선정성, 개인정보 노출, 불법 정보, 기타).</li>
                 <li>동일 게시물이 <strong>5건 이상 신고 누적</strong> 시 시스템에 의해 자동으로 숨김 처리되며, 운영자가 검토 후 복원 또는 영구 삭제 여부를 결정합니다.</li>
@@ -169,21 +169,21 @@ export default function TermsPage() {
                 <li>운영자는 약관 위반이 명백한 경우 신고 누적 없이도 게시물을 즉시 숨김&middot;삭제할 수 있습니다.</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">마. 차단 정책</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">마. 차단 정책</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>약관을 반복적으로 위반하는 회원은 운영자의 판단에 따라 커뮤니티 작성 권한이 제한될 수 있습니다.</li>
                 <li>차단된 회원은 모든 커뮤니티(서이추, 정보 공유, 체험단 동행)에 글&middot;댓글을 작성할 수 없습니다.</li>
-                <li>차단 해제는 이메일(<a href="mailto:boheme88@naver.com" className="text-blue-500 dark:text-blue-400 hover:underline">boheme88@naver.com</a>)로 사유 소명 후 운영자 검토를 거쳐 결정됩니다.</li>
+                <li>차단 해제는 이메일(<a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a>)로 사유 소명 후 운영자 검토를 거쳐 결정됩니다.</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">바. 체험단 동행 안전 안내</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">바. 체험단 동행 안전 안내</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>연락은 <strong>오픈채팅</strong>으로 진행하는 것을 권장하며, 전화번호&middot;카카오톡 ID 등 직접 식별 가능한 개인정보 공개는 자제해주세요.</li>
                 <li>처음 만나는 동행자와는 공공장소에서 시작하시고, 결제 유도&middot;계좌 송금 요구 등 의심스러운 행위가 있을 경우 즉시 차단&middot;신고해주세요.</li>
                 <li>서비스는 동행 과정에서 발생한 어떠한 분쟁&middot;사고에 대해서도 책임지지 않습니다.</li>
               </ul>
 
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mt-4 mb-2">사. 게시물 권리 및 책임</h3>
+              <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mt-4 mb-2">사. 게시물 권리 및 책임</h3>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>회원이 작성한 게시물&middot;댓글의 저작권은 작성자에게 귀속됩니다.</li>
                 <li>회원은 본인 게시물&middot;댓글에 대해 언제든 수정&middot;삭제할 수 있습니다 (단, 서이추 해요는 24시간 cooldown 내에서는 수정만 가능).</li>
@@ -193,7 +193,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제10조 (서비스 이용 요금)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제10조 (서비스 이용 요금)</h2>
               <p>
                 현재 서비스는 모든 기능을 무료로 제공합니다. 단, AI 초안 생성 등 일부 기능은 일일 이용 한도가 있으며,
                 향후 유료 멤버십 또는 요금제가 도입될 경우 별도 공지 후 적용합니다. 유료 전환 시에도 기존의 무료 제공
@@ -202,7 +202,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제11조 (지적재산권)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제11조 (지적재산권)</h2>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>서비스에 포함된 로고, 디자인, UI, 텍스트, 소스 코드 등은 서비스 제공자 또는 정당한 권리자의 저작물입니다.</li>
                 <li>이용자는 서비스를 이용함으로써 얻은 정보 중 서비스 제공자에게 지적재산권이 귀속된 정보를 허락 없이 복제, 전송, 출판, 배포할 수 없습니다.</li>
@@ -212,7 +212,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제12조 (이용 제한 및 계정 해지)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제12조 (이용 제한 및 계정 해지)</h2>
               <p className="mb-3">
                 서비스는 이용자가 본 약관을 위반한 경우 사전 통지 없이 서비스 이용을 제한하거나 계정을 해지할 수 있습니다.
                 특히 다음의 경우 즉시 조치할 수 있습니다.
@@ -226,7 +226,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제13조 (면책조항)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제13조 (면책조항)</h2>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li>서비스는 천재지변, 전쟁, 기간통신사업자의 서비스 중지, 외부 API 장애 등 불가항력적 사유로 서비스를 제공할 수 없는 경우 책임이 면제됩니다.</li>
                 <li>서비스는 이용자의 귀책사유로 인한 서비스 이용 장애에 대하여 책임을 지지 않습니다.</li>
@@ -237,7 +237,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제14조 (준거법 및 관할)</h2>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제14조 (준거법 및 관할)</h2>
               <p>
                 본 약관은 대한민국 법령에 따라 규율되고 해석됩니다.
                 서비스 이용과 관련하여 서비스 제공자와 이용자 사이에 분쟁이 발생한 경우, 원만한 해결을 위해 필요한 모든 노력을 다하되,
@@ -246,19 +246,19 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4">제15조 (문의 및 연락처)</h2>
-              <div className="bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 rounded-lg p-5 space-y-1.5">
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제15조 (문의 및 연락처)</h2>
+              <div className="bg-zinc-50 dark:bg-zinc-700/40 border border-zinc-200 dark:border-zinc-600 rounded-lg p-5 space-y-1.5">
                 <p><strong>서비스명:</strong> Boheme BlogLab</p>
-                <p><strong>운영 이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-blue-500 dark:text-blue-400 hover:underline">boheme88@naver.com</a></p>
-                <p className="text-sm text-slate-500 dark:text-slate-400 pt-2">
+                <p><strong>운영 이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a></p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 pt-2">
                   약관 또는 서비스 이용 관련 문의는 위 이메일로 연락 주시기 바랍니다.
                 </p>
               </div>
             </section>
 
-            <section className="pt-4 border-t border-slate-200 dark:border-slate-700">
-              <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">부칙</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+            <section className="pt-4 border-t border-zinc-200 dark:border-zinc-700">
+              <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">부칙</h3>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 본 약관은 2026년 5월 2일부터 시행합니다. (2026년 4월 23일 시행 약관에 커뮤니티 운영 조항을 추가&middot;개정함)
               </p>
             </section>

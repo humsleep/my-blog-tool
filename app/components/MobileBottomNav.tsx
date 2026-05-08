@@ -68,7 +68,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-lg border-t border-slate-200 dark:border-zinc-800 safe-bottom"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-200 dark:border-zinc-800 safe-bottom"
       aria-label="하단 네비게이션"
     >
       <div className="grid grid-cols-4 max-w-md mx-auto">
@@ -80,8 +80,8 @@ export default function MobileBottomNav() {
               href={item.href}
               className={`relative flex flex-col items-center justify-center gap-0.5 py-2 min-h-[56px] transition-colors ${
                 active
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-slate-500 dark:text-slate-400'
+                  ? 'text-orange-600 dark:text-orange-400'
+                  : 'text-zinc-500 dark:text-zinc-400'
               }`}
               aria-current={active ? 'page' : undefined}
             >

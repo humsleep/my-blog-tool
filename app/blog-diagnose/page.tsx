@@ -44,9 +44,9 @@ const PROGRESS_BEATS = [
 ];
 
 const BAND_LABELS: Record<DiagnoseResponse['score']['band'], { label: string; tone: string; desc: string }> = {
-  top5:    { label: '카테고리 상위 5%',  tone: 'text-blue-700 dark:text-blue-400', desc: '이미 상위권이에요. 이 패턴을 유지·확장하세요.' },
-  top15:   { label: '카테고리 상위 15%', tone: 'text-blue-700 dark:text-blue-400',   desc: '안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.' },
-  top35:   { label: '카테고리 상위 35%', tone: 'text-blue-700 dark:text-blue-400',   desc: '평균 이상. 키워드 전략을 정밀화하면 상위 진입 가능.' },
+  top5:    { label: '카테고리 상위 5%',  tone: 'text-orange-700 dark:text-orange-400', desc: '이미 상위권이에요. 이 패턴을 유지·확장하세요.' },
+  top15:   { label: '카테고리 상위 15%', tone: 'text-orange-700 dark:text-orange-400',   desc: '안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.' },
+  top35:   { label: '카테고리 상위 35%', tone: 'text-orange-700 dark:text-orange-400',   desc: '평균 이상. 키워드 전략을 정밀화하면 상위 진입 가능.' },
   mid:     { label: '평균 — 성장 중',    tone: 'text-ink',                                desc: '발행과 키워드 정밀도 둘 다 끌어올려야 합니다.' },
   growing: { label: '성장 단계',          tone: 'text-ink-faint',                          desc: '신생/저활동 블로그. 우선 발행 빈도부터 안정화.' },
 };
@@ -99,24 +99,48 @@ export default function BlogDiagnosePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* ─── INPUT ──────────────────────────────────────────────── */}
         {step === 'input' && (
           <div>
-            <div className="ed-eyebrow mb-6">My Blog</div>
-            <h1 className="text-[2rem] sm:text-2xl sm:text-3xl leading-[1.05] tracking-tight text-ink mb-4">
-              내 블로그는<br />
-              <span className="text-slate-500 dark:text-slate-400">카테고리 상위 몇 %일까?</span>
+            <span className="pill pill-accent mb-5 inline-flex">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-600 dark:bg-orange-400" />
+              블로그 진단
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 mb-4 leading-[1.1]">
+              내 블로그는 카테고리 안에서<br />
+              <span className="text-orange-600 dark:text-orange-400">상위 몇 %</span>일까요?
             </h1>
-            <p className="text-base sm:text-lg text-ink-muted mb-10 leading-[1.7]">
-              네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드립니다.
+            <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-300 mb-10 leading-relaxed">
+              네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드려요.
             </p>
 
+            {/* 진행 스텝 표시 */}
+            <ol className="flex items-center gap-2 mb-8 text-xs">
+              <li className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${blogInput.trim() ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}>
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">{blogInput.trim() ? '✓' : '1'}</span>
+                블로그 입력
+              </li>
+              <span className="text-zinc-400">→</span>
+              <li className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${category ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}>
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">{category ? '✓' : '2'}</span>
+                분야 선택
+              </li>
+              <span className="text-zinc-400">→</span>
+              <li className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">3</span>
+                진단 시작
+              </li>
+            </ol>
+
             <div className="space-y-8 mb-10">
-              {/* 블로그 ID 입력 */}
-              <div>
-                <label htmlFor="blogId" className="ed-byline mb-3 block">블로그 주소 또는 아이디</label>
+              {/* 블로그 ID 입력 — 카드형 */}
+              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 sm:p-6 shadow-sm">
+                <label htmlFor="blogId" className="block mb-3">
+                  <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">블로그 주소 또는 아이디</span>
+                  <span className="ml-2 text-[11px] text-orange-600 dark:text-orange-400 font-medium">필수</span>
+                </label>
                 <input
                   id="blogId"
                   type="text"
@@ -124,58 +148,84 @@ export default function BlogDiagnosePage() {
                   onChange={(e) => setBlogInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter' && blogInput.trim() && category) submit(); }}
                   placeholder="https://blog.naver.com/myblog  또는  myblog"
-                  className="w-full px-0 py-3 bg-transparent border-0 border-b-2 border-rule text-ink text-xl sm:text-2xl placeholder-ink-faint focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                  className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#1a1410] border-2 border-zinc-200 dark:border-[#2e2723] rounded-lg text-zinc-900 dark:text-zinc-50 text-base sm:text-lg placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20 transition-all"
                 />
-                <p className="mt-2 text-xs text-ink-faint">
+                <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
                   RSS가 공개된 네이버 블로그만 진단 가능합니다.
                 </p>
               </div>
 
-              {/* 카테고리 선택 */}
-              <div>
-                <div className="ed-byline mb-3">메인 카테고리</div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-rule-soft border border-rule-soft">
-                  {CATEGORY_SEEDS.map((c) => (
-                    <button
-                      key={c.value}
-                      type="button"
-                      onClick={() => setCategory(c.value)}
-                      className={`text-left p-4 transition-colors ${
-                        category === c.value
-                          ? 'bg-ink text-paper'
-                          : 'bg-paper hover:bg-paper-deep'
-                      }`}
-                    >
-                      <div className={`text-sm font-semibold ${category === c.value ? 'text-paper' : 'text-ink'}`}>
-                        {c.label}
-                      </div>
-                    </button>
-                  ))}
+              {/* 카테고리 선택 — 카드형 + 명확한 selected 상태 */}
+              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 sm:p-6 shadow-sm">
+                <div className="flex items-baseline justify-between mb-4">
+                  <label className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                    메인 카테고리
+                    <span className="ml-2 text-[11px] text-orange-600 dark:text-orange-400 font-medium">필수</span>
+                  </label>
+                  {category && (
+                    <span className="text-xs text-orange-700 dark:text-orange-300 font-medium">
+                      ✓ {CATEGORY_SEEDS.find((c) => c.value === category)?.label} 선택됨
+                    </span>
+                  )}
                 </div>
-                <p className="mt-2 text-xs text-ink-faint">
-                  대상 블로그가 가장 많이 다루는 분야를 선택해주세요.
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                  {CATEGORY_SEEDS.map((c) => {
+                    const selected = category === c.value;
+                    return (
+                      <button
+                        key={c.value}
+                        type="button"
+                        onClick={() => setCategory(c.value)}
+                        className={`relative text-left px-3 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                          selected
+                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/40 ring-2 ring-orange-500/25 shadow-sm'
+                            : 'border-zinc-200 dark:border-[#3a312a] bg-white dark:bg-[#1a1410] hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 hover:shadow-sm'
+                        }`}
+                        aria-pressed={selected}
+                      >
+                        <span className={`block text-sm font-semibold ${
+                          selected
+                            ? 'text-orange-700 dark:text-orange-300'
+                            : 'text-zinc-900 dark:text-zinc-100'
+                        }`}>
+                          {c.label}
+                        </span>
+                        {selected && (
+                          <span className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400">
+                  대상 블로그가 가장 많이 다루는 분야를 선택해주세요. 선택한 분야의 핵심 키워드 30개로 진단합니다.
                 </p>
               </div>
             </div>
 
             {/* 안내 + CTA */}
-            <div className="px-4 py-4 mb-6 border border-rule-soft text-xs text-ink-muted leading-relaxed">
-              <strong className="text-ink">⚠️ 측정 한계</strong> — 네이버는 일일 방문자·블로그 지수를 공개하지 않아 공개 데이터로 합리적 추정만 가능합니다.
-              결과는 절대 점수가 아닌 카테고리 내 상대적 위치로 해석해주세요.
+            <div className="px-4 py-3 mb-6 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+              <strong className="text-amber-900 dark:text-amber-100">⚠️ 측정 한계</strong> — 네이버는 일일 방문자·블로그 지수를 공개하지 않아 공개 데이터로 합리적 추정만 가능합니다. 결과는 절대 점수가 아닌 카테고리 내 상대적 위치로 해석해주세요.
             </div>
 
-            <div className="flex items-center justify-between border-t border-rule-soft pt-6">
-              <Link href="/" className="text-sm text-ink-faint hover:text-ink transition-colors">취소</Link>
+            <div className="flex items-center justify-between border-t border-zinc-200 dark:border-[#2e2723] pt-6">
+              <Link href="/" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">← 취소</Link>
               <button
                 type="button"
                 onClick={submit}
                 disabled={!blogInput.trim() || !category}
-                className="btn-base btn-primary btn-md"
+                className="btn-base btn-primary btn-lg"
               >
-                진단 시작 (30~50초)
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                {!blogInput.trim() || !category ? '입력을 모두 완료해주세요' : '진단 시작 (30~50초)'}
+                {blogInput.trim() && category && (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
@@ -185,7 +235,7 @@ export default function BlogDiagnosePage() {
         {step === 'running' && (
           <div className="py-10 text-center">
             <div className="inline-block mb-8">
-              <svg className="animate-spin h-12 w-12 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-12 w-12 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -199,7 +249,7 @@ export default function BlogDiagnosePage() {
               {PROGRESS_BEATS.map((beat, i) => (
                 <div key={beat} className={`flex items-center gap-3 text-sm transition-colors ${i <= progressBeat ? 'text-ink' : 'text-ink-faint'}`}>
                   <span className={`inline-block w-4 h-4 border ${
-                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-blue-500 dark:border-blue-400' : 'border-rule-soft'
+                    i < progressBeat ? 'bg-ink border-ink' : i === progressBeat ? 'border-orange-500 dark:border-orange-400' : 'border-rule-soft'
                   }`}>
                     {i < progressBeat && <svg className="w-full h-full text-paper" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                   </span>
@@ -301,7 +351,7 @@ export default function BlogDiagnosePage() {
                 <ol className="space-y-4 border-y border-rule py-6">
                   {result.score.insights.map((ins, i) => (
                     <li key={i} className="flex gap-4">
-                      <span className="text-blue-600 dark:text-blue-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
+                      <span className="text-orange-600 dark:text-orange-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
                       <span className="text-base text-ink-muted leading-[1.7]">{ins}</span>
                     </li>
                   ))}
@@ -318,7 +368,7 @@ export default function BlogDiagnosePage() {
                     <div key={h.keyword} className="flex justify-between items-baseline py-1.5 border-b border-rule-soft last:border-b-0">
                       <span className="text-sm text-ink-muted truncate pr-3">{h.keyword}</span>
                       <span className={`text-sm tabular-nums flex-shrink-0 ${
-                        h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-ink'
+                        h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
                       }`}>
                         {h.rank === null ? '—' : `${h.rank}위`}
                       </span>

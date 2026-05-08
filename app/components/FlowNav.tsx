@@ -30,14 +30,14 @@ const STEP_LABELS = [
 
 export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, note }: FlowNavProps) {
   return (
-    <div className="hidden md:block mt-8 bg-gradient-to-br from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-950/40 border border-blue-200 dark:border-blue-700 rounded-xl p-5 sm:p-6">
+    <div className="hidden md:block mt-8 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5 sm:p-6">
       {/* Progress */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <div className="text-xs font-semibold text-blue-500 dark:text-blue-400 uppercase tracking-wider">
+          <div className="text-xs font-semibold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
             STEP {currentStep} / {totalSteps}
           </div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">
             {stepLabel}
           </div>
         </div>
@@ -47,8 +47,8 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
                 i < currentStep
-                  ? 'bg-blue-500 dark:bg-blue-400'
-                  : 'bg-slate-200 dark:bg-slate-700'
+                  ? 'bg-orange-500 dark:bg-orange-400'
+                  : 'bg-zinc-200 dark:bg-zinc-700'
               }`}
               title={STEP_LABELS[i]}
             />
@@ -57,11 +57,11 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
       </div>
 
       {/* Heading */}
-      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+      <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
         다음 단계로 이동
       </h3>
       {note && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">{note}</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">{note}</p>
       )}
 
       {/* Actions */}
@@ -74,8 +74,8 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
               href={action.href}
               className={`group flex items-center justify-between gap-3 px-5 py-4 rounded-lg border transition-all ${
                 isPrimary
-                  ? 'bg-blue-500 hover:bg-blue-600 border-blue-500 text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-blue-400 dark:hover:border-blue-500'
+                  ? 'bg-orange-500 hover:bg-orange-600 border-orange-500 text-white shadow-sm'
+                  : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500'
               }`}
             >
               <div className="min-w-0 flex-1">
@@ -83,7 +83,7 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
                 {action.description && (
                   <div
                     className={`text-xs mt-0.5 ${
-                      isPrimary ? 'text-blue-100' : 'text-slate-500 dark:text-slate-400'
+                      isPrimary ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'
                     }`}
                   >
                     {action.description}

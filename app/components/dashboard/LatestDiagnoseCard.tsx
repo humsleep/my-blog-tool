@@ -35,27 +35,27 @@ export default function LatestDiagnoseCard() {
 
   if (loading) {
     return (
-      <section className="rounded-md border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-        <div className="h-4 w-24 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
-        <div className="h-12 w-32 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
-        <div className="h-3 w-48 bg-slate-100 dark:bg-zinc-800 rounded animate-pulse" />
+      <section className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+        <div className="h-4 w-24 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
+        <div className="h-12 w-32 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
+        <div className="h-3 w-48 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
       </section>
     );
   }
 
   if (!data?.latest) {
     return (
-      <section className="rounded-md border border-blue-200 dark:border-blue-900/50 ring-1 ring-blue-500/20 bg-white dark:bg-zinc-900 p-5">
+      <section className="rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-blue-600 dark:text-blue-400">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
             Diagnose
           </span>
-          <span className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">New</span>
+          <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
         </div>
-        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5">
+        <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
           내 블로그는 카테고리 안에서 어디쯤일까요?
         </h3>
-        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
           카테고리 핵심 키워드 30개로 활동성 · 노출 · 품질을 한 번에 진단합니다. 1분 안에 점수가 나와요.
         </p>
         <Link href="/blog-diagnose" className="btn-base btn-primary btn-sm">
@@ -71,12 +71,12 @@ export default function LatestDiagnoseCard() {
   const { latest, delta } = data;
   const deltaColor =
     delta === null
-      ? 'text-slate-500 dark:text-slate-400'
+      ? 'text-zinc-500 dark:text-zinc-400'
       : delta > 0
-        ? 'text-blue-600 dark:text-blue-400'
+        ? 'text-orange-600 dark:text-orange-400'
         : delta < 0
           ? 'text-rose-600 dark:text-rose-400'
-          : 'text-slate-500 dark:text-slate-400';
+          : 'text-zinc-500 dark:text-zinc-400';
   const deltaPrefix = delta === null ? '' : delta > 0 ? '+' : '';
   const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
 
@@ -95,7 +95,7 @@ export default function LatestDiagnoseCard() {
             {formatRelativeKr(latest.created_at)}
           </div>
         </div>
-        <Link href="/blog-diagnose" className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline whitespace-nowrap">
+        <Link href="/blog-diagnose" className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline whitespace-nowrap">
           다시 진단 →
         </Link>
       </div>

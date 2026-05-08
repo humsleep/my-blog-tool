@@ -15,7 +15,7 @@ import { safeNextPath } from '@/app/lib/security/safe-redirect';
 
 export default function ProfileSetupPageWrapper() {
   return (
-    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-slate-500">불러오는 중...</div>}>
+    <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-zinc-500">불러오는 중...</div>}>
       <ProfileSetupPage />
     </Suspense>
   );
@@ -147,7 +147,7 @@ function ProfileSetupPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-slate-500 dark:text-slate-400">
+      <div className="min-h-[60vh] flex items-center justify-center text-zinc-500 dark:text-zinc-400">
         불러오는 중...
       </div>
     );
@@ -155,16 +155,16 @@ function ProfileSetupPage() {
 
   if (authChecked && !authed) {
     return (
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-10">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-10">
         <div className="max-w-md mx-auto px-4">
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 text-center">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">로그인이 필요합니다</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6 text-center">
+            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">로그인이 필요합니다</h1>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
               프로필을 등록하려면 먼저 로그인해주세요.
             </p>
             <Link
               href={`/login?next=${encodeURIComponent('/profile/setup?next=' + next)}`}
-              className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg"
+              className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
             </Link>
@@ -175,13 +175,13 @@ function ProfileSetupPage() {
   }
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-xl mx-auto px-4 sm:px-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             {existing ? '프로필 수정' : '커뮤니티 프로필 등록'}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
             커뮤니티 게시글에 표시될 닉네임과 블로그 정보를 입력하세요.
             {!existing && ' 한 번만 등록하면 모든 커뮤니티에서 사용됩니다.'}
           </p>
@@ -189,7 +189,7 @@ function ProfileSetupPage() {
 
         <form
           onSubmit={onSubmit}
-          className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm space-y-5"
+          className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm space-y-5"
         >
           <Field label="닉네임" required help="2~16자 · 한글/영문/숫자/_/- · 24시간 1회 변경">
             <input
@@ -244,7 +244,7 @@ function ProfileSetupPage() {
             </div>
           )}
           {info && (
-            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-400">
+            <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-3 text-sm text-orange-700 dark:text-orange-400">
               {info}
             </div>
           )}
@@ -252,14 +252,14 @@ function ProfileSetupPage() {
           <div className="flex justify-end gap-2 pt-2">
             <Link
               href={next}
-              className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+              className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
             >
               취소
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : existing ? '수정 저장' : '프로필 등록'}
             </button>
@@ -267,21 +267,21 @@ function ProfileSetupPage() {
         </form>
 
         {/* ── 즐겨찾기 키워드 (키워드분석 페이지에서 저장한 항목 노출) ── */}
-        <section className="mt-6 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
+        <section className="mt-6 bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm">
           <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">즐겨찾기 키워드</h2>
-            <span className="text-xs text-slate-500 dark:text-slate-400">{savedKeywords.length} / 10</span>
+            <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">즐겨찾기 키워드</h2>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">{savedKeywords.length} / 10</span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-            <Link href="/keyword-analysis" className="text-blue-500 dark:text-blue-400 hover:underline font-medium">키워드 분석</Link>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+            <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline font-medium">키워드 분석</Link>
             {' '}페이지에서 자주 검색하는 키워드를 저장해두면 여기서 한눈에 확인하고 다시 분석할 수 있습니다.
           </p>
 
           {savedKeywords.length === 0 ? (
-            <div className="text-center py-6 text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-700 rounded-lg">
+            <div className="text-center py-6 text-sm text-zinc-400 dark:text-zinc-500 border border-dashed border-zinc-200 dark:border-zinc-700 rounded-lg">
               아직 저장된 키워드가 없습니다.
               <div className="mt-2">
-                <Link href="/keyword-analysis" className="text-blue-500 dark:text-blue-400 hover:underline text-xs font-medium">
+                <Link href="/keyword-analysis" className="text-orange-500 dark:text-orange-400 hover:underline text-xs font-medium">
                   키워드 분석으로 가기 →
                 </Link>
               </div>
@@ -291,11 +291,11 @@ function ProfileSetupPage() {
               {savedKeywords.map((kw) => (
                 <div
                   key={kw}
-                  className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 group"
+                  className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 group"
                 >
                   <Link
                     href={`/keyword-analysis?keyword=${encodeURIComponent(kw)}`}
-                    className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                    className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline"
                     title="이 키워드로 분석하기"
                   >
                     {kw}
@@ -303,7 +303,7 @@ function ProfileSetupPage() {
                   <button
                     type="button"
                     onClick={() => removeSavedKeyword(kw)}
-                    className="w-4 h-4 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 text-blue-500 dark:text-blue-400 text-xs leading-none"
+                    className="w-4 h-4 rounded-full hover:bg-orange-200 dark:hover:bg-orange-900 text-orange-500 dark:text-orange-400 text-xs leading-none"
                     title="삭제"
                     aria-label={`${kw} 삭제`}
                   >
@@ -320,7 +320,7 @@ function ProfileSetupPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500';
+  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 function Field({
   label, required, help, children,
@@ -329,12 +329,12 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
         {label}
         {required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
-      {help && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{help}</p>}
+      {help && <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{help}</p>}
     </div>
   );
 }

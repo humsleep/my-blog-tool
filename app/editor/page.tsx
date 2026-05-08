@@ -331,27 +331,27 @@ export default function EditorPage() {
   }, []);
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">포스팅 에디터</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">실시간 금칙어 검사와 맞춤법 교정을 지원합니다</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">포스팅 에디터</h1>
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">실시간 금칙어 검사와 맞춤법 교정을 지원합니다</p>
         </div>
 
         {draftNotice && (
-          <div className="mb-4 bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-950/40 border border-blue-200 dark:border-blue-700 rounded-xl p-4 flex items-start gap-3">
-            <svg className="w-5 h-5 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mb-4 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-4 flex items-start gap-3">
+            <svg className="w-5 h-5 text-orange-500 dark:text-orange-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-blue-800 dark:text-blue-200 font-medium">{draftNotice}</p>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+              <p className="text-sm text-orange-800 dark:text-orange-200 font-medium">{draftNotice}</p>
+              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
                 [나의 경험 삽입] 플레이스홀더를 직접 작성한 경험으로 바꾸면 AI 티 없는 글이 됩니다.
               </p>
             </div>
             <button
               onClick={() => setDraftNotice(null)}
-              className="text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex-shrink-0"
+              className="text-orange-400 hover:text-orange-500 dark:hover:text-orange-300 flex-shrink-0"
               aria-label="닫기"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -364,9 +364,9 @@ export default function EditorPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Editor Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   본문 작성 {stats.foundWords.length > 0 && (
                     <span className="text-red-600 dark:text-red-400 text-xs ml-2">
                       ({stats.foundWords.length}개 금칙어 발견)
@@ -388,13 +388,13 @@ export default function EditorPage() {
                         }
                       }
                     }}
-                    className="px-3 py-2 text-xs text-blue-500 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 rounded-lg transition-colors min-h-[36px]"
+                    className="px-3 py-2 text-xs text-orange-500 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-950/30 rounded-lg transition-colors min-h-[36px]"
                   >
                     샘플 텍스트
                   </button>
                   <button
                     onClick={optimizeReadability}
-                    className="px-3 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors min-h-[36px] font-medium"
+                    className="px-3 py-2 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors min-h-[36px] font-medium"
                   >
                     가독성 최적화
                   </button>
@@ -409,7 +409,7 @@ export default function EditorPage() {
                       }
                     }}
                     disabled={!content.trim()}
-                    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
+                    className="px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[36px]"
                   >
                     복사하기
                   </button>
@@ -417,7 +417,7 @@ export default function EditorPage() {
               </div>
               
               {/* Quill Editor */}
-              <div className="border border-slate-200 dark:border-slate-600 rounded-lg overflow-hidden">
+              <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg overflow-hidden">
                 <QuillEditor
                   key="quill-editor"
                   ref={quillEditorRef}
@@ -441,11 +441,11 @@ export default function EditorPage() {
                       const replacementValue = replacements[replacementKey] || '';
                       
                       return (
-                        <div key={idx} className="p-3 bg-white dark:bg-slate-800 rounded-lg border border-red-200 dark:border-red-800/50">
+                        <div key={idx} className="p-3 bg-white dark:bg-zinc-800 rounded-lg border border-red-200 dark:border-red-800/50">
                           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                             <div className="flex gap-2 items-center">
                               <span className="font-semibold text-red-600 dark:text-red-400 text-sm whitespace-nowrap">{pos.word}</span>
-                              <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
+                              <span className="text-xs text-zinc-400 dark:text-zinc-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
                             </div>
                             <div className="flex-1 flex gap-2 items-center">
                               <input
@@ -456,11 +456,11 @@ export default function EditorPage() {
                                   [replacementKey]: e.target.value
                                 }))}
                                 placeholder="대체할 단어 입력"
-                                className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[36px]"
+                                className="flex-1 px-3 py-2 text-sm border border-zinc-200 dark:border-zinc-600 rounded bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent min-h-[36px]"
                               />
                               <button
                                 onClick={() => handleReplace(pos, replacementValue)}
-                                className="flex-shrink-0 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded transition-colors whitespace-nowrap min-h-[36px] min-w-[50px]"
+                                className="flex-shrink-0 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded transition-colors whitespace-nowrap min-h-[36px] min-w-[50px]"
                               >
                                 적용
                               </button>
@@ -475,16 +475,16 @@ export default function EditorPage() {
             </div>
 
             {/* SEO 가이드 섹션 (아코디언) */}
-            <div className="mt-5 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+            <div className="mt-5 bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-sm">
               <button
                 onClick={() => setIsSeoGuideOpen(!isSeoGuideOpen)}
-                className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+                className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors"
               >
-                <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
                   블로그 성공을 위한 포스팅 완벽 가이드
                 </h2>
                 <svg
-                  className={`w-5 h-5 text-slate-500 dark:text-slate-400 transform transition-transform ${isSeoGuideOpen ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-zinc-500 dark:text-zinc-400 transform transition-transform ${isSeoGuideOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -493,9 +493,9 @@ export default function EditorPage() {
                 </svg>
               </button>
               {isSeoGuideOpen && (
-                <div className="px-5 py-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="px-5 py-4 border-t border-zinc-200 dark:border-zinc-700">
                   <div 
-                    className="prose prose-sm max-w-none prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-li:text-slate-600 dark:prose-li:text-slate-400"
+                    className="prose prose-sm max-w-none prose-headings:text-zinc-900 dark:prose-headings:text-zinc-100 prose-p:text-zinc-600 dark:prose-p:text-zinc-400 prose-li:text-zinc-600 dark:prose-li:text-zinc-400"
                     dangerouslySetInnerHTML={{ __html: SEO_GUIDE_CONTENT }}
                   />
                 </div>
@@ -506,22 +506,22 @@ export default function EditorPage() {
           {/* Sidebar with Stats */}
           <div className="lg:col-span-1 space-y-4">
             {/* Stats Card */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">실시간 분석</h2>
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-4">실시간 분석</h2>
               
               {/* Character Count */}
               <div className="mb-5">
-                <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">글자 수</h3>
+                <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">글자 수</h3>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">공백 포함</span>
-                    <span className="text-lg font-bold text-blue-500 dark:text-blue-400">
+                  <div className="flex justify-between items-center p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg">
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">공백 포함</span>
+                    <span className="text-lg font-bold text-orange-500 dark:text-orange-400">
                       {stats.withSpaces.toLocaleString()}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-lg">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">공백 제외</span>
-                    <span className="text-lg font-bold text-slate-700 dark:text-slate-300">
+                  <div className="flex justify-between items-center p-3 bg-zinc-50 dark:bg-zinc-700/40 rounded-lg">
+                    <span className="text-sm text-zinc-600 dark:text-zinc-400">공백 제외</span>
+                    <span className="text-lg font-bold text-zinc-700 dark:text-zinc-300">
                       {stats.withoutSpaces.toLocaleString()}
                     </span>
                   </div>
@@ -530,10 +530,10 @@ export default function EditorPage() {
 
               {/* Forbidden Words Check */}
               <div>
-                <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">금칙어 검사</h3>
+                <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2 uppercase tracking-wide">금칙어 검사</h3>
                 {stats.foundWords.length === 0 ? (
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-center border border-blue-200 dark:border-blue-800">
-                    <span className="text-sm text-blue-700 dark:text-blue-400 font-medium">✓ 금칙어 없음</span>
+                  <div className="p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg text-center border border-orange-200 dark:border-orange-800">
+                    <span className="text-sm text-orange-700 dark:text-orange-400 font-medium">✓ 금칙어 없음</span>
                   </div>
                 ) : (
                   <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
@@ -591,7 +591,7 @@ export default function EditorPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

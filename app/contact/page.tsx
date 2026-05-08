@@ -25,7 +25,7 @@ export default function ContactPage() {
                   <h3 className="font-semibold text-gray-900 mb-2">이메일</h3>
                   <a 
                     href="mailto:boheme88@naver.com?subject=Boheme PostLab 문의"
-                    className="text-blue-600 hover:text-blue-700 text-lg font-medium"
+                    className="text-orange-600 hover:text-orange-700 text-lg font-medium"
                   >
                     boheme88@naver.com
                   </a>
@@ -66,22 +66,22 @@ export default function ContactPage() {
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">자주 묻는 질문 (FAQ)</h2>
               <div className="space-y-4">
-                <div className="border-l-4 border-blue-600 pl-4">
+                <div className="border-l-4 border-orange-600 pl-4">
                   <h3 className="font-semibold text-gray-900 mb-2">서비스는 무료인가요?</h3>
                   <p className="text-gray-700">
                     네, Boheme PostLab의 모든 기능은 무료로 제공됩니다. 회원가입도 필요하지 않습니다.
                   </p>
                 </div>
                 
-                <div className="border-l-4 border-blue-600 pl-4">
+                <div className="border-l-4 border-orange-600 pl-4">
                   <h3 className="font-semibold text-gray-900 mb-2">개인정보는 어떻게 보호되나요?</h3>
                   <p className="text-gray-700">
                     본 사이트는 회원가입 기능이 없어 사용자의 개인정보를 수집하지 않습니다. 
-                    자세한 내용은 <a href="/privacy" className="text-blue-600 hover:text-blue-700">개인정보처리방침</a>을 참고해주세요.
+                    자세한 내용은 <a href="/privacy" className="text-orange-600 hover:text-orange-700">개인정보처리방침</a>을 참고해주세요.
                   </p>
                 </div>
                 
-                <div className="border-l-4 border-blue-600 pl-4">
+                <div className="border-l-4 border-orange-600 pl-4">
                   <h3 className="font-semibold text-gray-900 mb-2">서비스 이용 중 문제가 발생했어요</h3>
                   <p className="text-gray-700">
                     문제가 발생한 페이지, 브라우저 정보, 오류 메시지 등을 포함하여 이메일로 문의해주시면 
@@ -96,19 +96,19 @@ export default function ContactPage() {
               <div className="flex flex-wrap gap-4">
                 <a 
                   href="/about" 
-                  className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
+                  className="text-orange-600 hover:text-orange-700 hover:underline font-medium"
                 >
                   서비스 소개 →
                 </a>
                 <a 
                   href="/terms" 
-                  className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
+                  className="text-orange-600 hover:text-orange-700 hover:underline font-medium"
                 >
                   이용약관 →
                 </a>
                 <a 
                   href="/privacy" 
-                  className="text-blue-600 hover:text-blue-700 hover:underline font-medium"
+                  className="text-orange-600 hover:text-orange-700 hover:underline font-medium"
                 >
                   개인정보처리방침 →
                 </a>

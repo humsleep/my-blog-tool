@@ -306,21 +306,21 @@ function KeywordAnalysisContent() {
   const sortedKeywords = [...keywordData].reverse();
 
   const competitionConfig = (ratio: number) => {
-    if (ratio <= 0.5) return { icon: '🟢', color: 'text-blue-600 dark:text-blue-400', label: '최상 (꿀키워드)' };
+    if (ratio <= 0.5) return { icon: '🟢', color: 'text-orange-600 dark:text-orange-400', label: '최상 (꿀키워드)' };
     if (ratio <= 1.0) return { icon: '🟡', color: 'text-yellow-600 dark:text-yellow-400', label: '상 (우수)' };
-    if (ratio <= 3.0) return { icon: '⚫', color: 'text-slate-700 dark:text-slate-300', label: '중 (보통)' };
-    if (ratio <= 7.0) return { icon: '🟠', color: 'text-blue-600 dark:text-blue-400', label: '하 (치열)' };
+    if (ratio <= 3.0) return { icon: '⚫', color: 'text-zinc-700 dark:text-zinc-300', label: '중 (보통)' };
+    if (ratio <= 7.0) return { icon: '🟠', color: 'text-orange-600 dark:text-orange-400', label: '하 (치열)' };
     return { icon: '🔴', color: 'text-red-600 dark:text-red-400', label: '최하 (위험)' };
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-6 sm:py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">키워드 분석</h1>
-          <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">키워드 분석</h1>
+          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
             네이버 검색광고 API를 사용하여 키워드 검색량과 경쟁률을 분석합니다
           </p>
         </div>
@@ -331,10 +331,10 @@ function KeywordAnalysisContent() {
           <div className="lg:col-span-3 space-y-4">
 
             {/* Input Card */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 sm:p-6 shadow-sm">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm">
               <div className="space-y-3">
-                <label htmlFor="keywords-input" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  검색할 키워드 <span className="text-slate-400 dark:text-slate-500 font-normal">(쉼표로 구분, 최대 10개)</span>
+                <label htmlFor="keywords-input" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                  검색할 키워드 <span className="text-zinc-400 dark:text-zinc-500 font-normal">(쉼표로 구분, 최대 10개)</span>
                 </label>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
@@ -346,13 +346,13 @@ function KeywordAnalysisContent() {
                       if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) analyzeKeywords();
                     }}
                     placeholder="예: 꽃배달, flower, 화환"
-                    className="flex-1 px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="flex-1 px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                     disabled={isLoading}
                   />
                   <button
                     onClick={analyzeKeywords}
                     disabled={isLoading || !inputKeywords.trim()}
-                    className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
+                    className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     {isLoading ? (
                       <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -369,29 +369,29 @@ function KeywordAnalysisContent() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-slate-400 dark:text-slate-500">
+                <p className="text-xs text-zinc-400 dark:text-zinc-500">
                   여러 키워드를 쉼표로 구분하여 입력하세요. 결과는 최대 100개까지 표시됩니다.
                 </p>
 
                 {/* 즐겨찾기 키워드 (로그인 사용자) */}
                 {savedKeywordsUserId && (
-                  <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700">
+                  <div className="pt-3 mt-3 border-t border-zinc-100 dark:border-zinc-700">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        ⭐ 즐겨찾기 <span className="font-normal text-slate-400">({savedKeywords.length}/10)</span>
+                      <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                        ⭐ 즐겨찾기 <span className="font-normal text-zinc-400">({savedKeywords.length}/10)</span>
                       </span>
                       {inputKeywords.trim() && (
                         <button
                           type="button"
                           onClick={() => addSavedKeyword(inputKeywords.split(',')[0].trim())}
-                          className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                          className="text-xs text-orange-600 dark:text-orange-400 hover:underline font-medium"
                         >
                           + 현재 키워드 저장
                         </button>
                       )}
                     </div>
                     {savedKeywords.length === 0 ? (
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                      <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
                         자주 검색하는 키워드를 저장해두면 클릭 한 번으로 다시 분석할 수 있어요.
                       </p>
                     ) : (
@@ -399,12 +399,12 @@ function KeywordAnalysisContent() {
                         {savedKeywords.map((kw) => (
                           <div
                             key={kw}
-                            className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 group"
+                            className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 group"
                           >
                             <button
                               type="button"
                               onClick={() => { setInputKeywords(kw); setShouldAutoAnalyze(true); }}
-                              className="text-xs font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                              className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline"
                               title="이 키워드로 분석"
                             >
                               {kw}
@@ -412,7 +412,7 @@ function KeywordAnalysisContent() {
                             <button
                               type="button"
                               onClick={() => removeSavedKeyword(kw)}
-                              className="w-4 h-4 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 text-blue-500 dark:text-blue-400 text-xs leading-none"
+                              className="w-4 h-4 rounded-full hover:bg-orange-200 dark:hover:bg-orange-900 text-orange-500 dark:text-orange-400 text-xs leading-none"
                               title="삭제"
                               aria-label={`${kw} 삭제`}
                             >
@@ -427,12 +427,12 @@ function KeywordAnalysisContent() {
               </div>
 
               {isLoading && currentProgress && (
-                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-700 flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
+                <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/50 rounded-lg border border-orange-200 dark:border-orange-700 flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-orange-500 dark:text-orange-400 flex-shrink-0" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  <p className="text-sm text-blue-600 dark:text-blue-300 font-medium">{currentProgress}</p>
+                  <p className="text-sm text-orange-600 dark:text-orange-300 font-medium">{currentProgress}</p>
                 </div>
               )}
               {errorMessage && !isLoading && (
@@ -452,26 +452,26 @@ function KeywordAnalysisContent() {
 
             {/* News-feature highlight banner — dismissible, shown above first results */}
             {sortedKeywords.length > 0 && !newsHintDismissed && (
-              <div className="mb-4 rounded-xl border border-blue-200 dark:border-blue-700/60 bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-950/30 p-4 sm:p-5 relative">
+              <div className="mb-4 rounded-xl border border-orange-200 dark:border-orange-700/60 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/30 p-4 sm:p-5 relative">
                 <button
                   type="button"
                   onClick={dismissNewsHint}
-                  className="absolute top-2 right-2 w-7 h-7 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60 flex items-center justify-center text-lg leading-none"
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-white/60 dark:hover:bg-zinc-800/60 flex items-center justify-center text-lg leading-none"
                   aria-label="안내 닫기"
                   title="안내 닫기"
                 >
                   ×
                 </button>
                 <div className="flex items-start gap-3 pr-6">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-2xl">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center text-2xl">
                     📰
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-0.5">
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-0.5">
                       관련 뉴스를 함께 넣어 글 퀄리티 ↑
                     </p>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                      각 키워드 행의 <strong className="text-blue-600 dark:text-blue-400">📰 뉴스 보기</strong> 버튼을 누르면
+                    <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                      각 키워드 행의 <strong className="text-orange-600 dark:text-orange-400">📰 뉴스 보기</strong> 버튼을 누르면
                       그 키워드의 네이버 최신 뉴스를 골라 AI 프롬프트로 같이 전달합니다.
                       키워드만 가지고 쓴 평범한 글과 최신 뉴스가 녹아든 글의 차이를 비교해 보세요.
                     </p>
@@ -482,20 +482,20 @@ function KeywordAnalysisContent() {
 
             {/* Results Table */}
             {sortedKeywords.length > 0 && (
-              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700">
+              <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-5 py-4 border-b border-zinc-200 dark:border-zinc-700">
                   <div>
-                    <h2 className="font-semibold text-slate-900 dark:text-slate-100">
-                      분석 결과 <span className="text-slate-500 dark:text-slate-400 font-normal text-sm">({sortedKeywords.length}개)</span>
+                    <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      분석 결과 <span className="text-zinc-500 dark:text-zinc-400 font-normal text-sm">({sortedKeywords.length}개)</span>
                     </h2>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
                       키워드 클릭 시 다음 단계 선택 (상위노출 분석 / 프롬프트 생성)
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={downloadCSV}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
+                      className="px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
                     >
                       CSV 다운로드
                     </button>
@@ -510,43 +510,43 @@ function KeywordAnalysisContent() {
 
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
-                    <thead className="bg-slate-50 dark:bg-slate-900/50">
+                    <thead className="bg-zinc-50 dark:bg-zinc-900/50">
                       <tr>
                         {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '관련 뉴스', '액션'].map((h, i) => (
                           <th
                             key={i}
-                            className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap"
+                            className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider whitespace-nowrap"
                           >
                             {h}
                           </th>
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                    <tbody className="divide-y divide-zinc-100 dark:divide-zinc-700/50">
                       {sortedKeywords.map((item, rowIndex) => {
                         const comp = competitionConfig(item.competitionRatio);
                         return (
-                          <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                          <tr key={item.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
-                                className="font-semibold text-sm text-slate-900 dark:text-slate-100 hover:text-blue-500 dark:hover:text-blue-400 transition-colors text-left"
+                                className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 hover:text-orange-500 dark:hover:text-orange-400 transition-colors text-left"
                                 onClick={() => setActionKeyword(item.keyword)}
                               >
                                 {item.keyword}
                               </button>
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
                               {formatNumber(item.pcSearchVolume)}
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
                               {formatNumber(item.mobileSearchVolume)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className="font-semibold text-blue-500 dark:text-blue-400 text-sm">
+                              <span className="font-semibold text-orange-500 dark:text-orange-400 text-sm">
                                 {formatNumber(item.totalSearchVolume)}
                               </span>
                             </td>
-                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-400">
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-zinc-600 dark:text-zinc-400">
                               {formatNumber(item.documentCount)}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
@@ -559,9 +559,9 @@ function KeywordAnalysisContent() {
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm">
                               {wikiViews[item.keyword] === undefined ? (
-                                <span className="text-slate-300 dark:text-slate-600">…</span>
+                                <span className="text-zinc-300 dark:text-zinc-600">…</span>
                               ) : wikiViews[item.keyword] === null ? (
-                                <span className="text-slate-400 dark:text-slate-500">—</span>
+                                <span className="text-zinc-400 dark:text-zinc-500">—</span>
                               ) : (
                                 <span className="text-amber-600 dark:text-amber-400 font-medium">
                                   {formatNumber(wikiViews[item.keyword] as number)}
@@ -571,7 +571,7 @@ function KeywordAnalysisContent() {
                             <td className="px-4 py-3 whitespace-nowrap">
                               <button
                                 onClick={() => setNewsKeyword(item.keyword)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-600 dark:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-950/70 border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all min-h-[32px]"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all min-h-[32px]"
                                 title="이 키워드의 최신 뉴스를 AI 프롬프트에 함께 전달합니다"
                               >
                                 📰 뉴스 보기
@@ -580,7 +580,7 @@ function KeywordAnalysisContent() {
                             <td className="px-4 py-3 whitespace-nowrap text-center">
                               <button
                                 onClick={() => deleteKeyword(item.id)}
-                                className="text-slate-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                                className="text-zinc-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
                                 title="삭제"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -602,9 +602,9 @@ function KeywordAnalysisContent() {
           <div className="lg:col-span-1 space-y-4">
 
             {/* How to use */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 방법</h2>
-              <ol className="space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">사용 방법</h2>
+              <ol className="space-y-2.5 text-sm text-zinc-600 dark:text-zinc-400">
                 {[
                   '키워드를 쉼표로 구분하여 입력 (최대 10개)',
                   '검색 버튼 클릭',
@@ -613,7 +613,7 @@ function KeywordAnalysisContent() {
                   'CSV 파일로 다운로드',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-blue-500 dark:text-blue-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-orange-500 dark:text-orange-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -621,28 +621,28 @@ function KeywordAnalysisContent() {
             </div>
 
             {/* Competition Guide */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">경쟁률 가이드</h2>
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">경쟁률 가이드</h2>
               <div className="space-y-2.5 text-sm">
                 {[
-                  { icon: '🟢', label: '최상 (꿀키워드)', range: '0.5 이하', desc: '검색량 대비 문서 매우 적음', bg: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
+                  { icon: '🟢', label: '최상 (꿀키워드)', range: '0.5 이하', desc: '검색량 대비 문서 매우 적음', bg: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800', text: 'text-orange-700 dark:text-orange-400' },
                   { icon: '🟡', label: '상 (우수)', range: '0.5 ~ 1.0', desc: '상단 노출 확률 높음', bg: 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800', text: 'text-yellow-700 dark:text-yellow-400' },
-                  { icon: '⚫', label: '중 (보통)', range: '1.0 ~ 3.0', desc: '블로그 지수에 따라 결정', bg: 'bg-slate-50 dark:bg-slate-700/40 border-slate-200 dark:border-slate-600', text: 'text-slate-700 dark:text-slate-300' },
-                  { icon: '🟠', label: '하 (치열)', range: '3.0 ~ 7.0', desc: '고퀄리티 포스팅 필요', bg: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800', text: 'text-blue-700 dark:text-blue-400' },
+                  { icon: '⚫', label: '중 (보통)', range: '1.0 ~ 3.0', desc: '블로그 지수에 따라 결정', bg: 'bg-zinc-50 dark:bg-zinc-700/40 border-zinc-200 dark:border-zinc-600', text: 'text-zinc-700 dark:text-zinc-300' },
+                  { icon: '🟠', label: '하 (치열)', range: '3.0 ~ 7.0', desc: '고퀄리티 포스팅 필요', bg: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800', text: 'text-orange-700 dark:text-orange-400' },
                   { icon: '🔴', label: '최하 (위험)', range: '7.0 이상', desc: '대형 블로그 외 노출 어려움', bg: 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800', text: 'text-red-700 dark:text-red-400' },
                 ].map((item) => (
                   <div key={item.label} className={`p-3 rounded-lg border ${item.bg}`}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span>{item.icon}</span>
                       <span className={`font-semibold ${item.text}`}>{item.label}</span>
-                      <span className="ml-auto text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                      <span className="ml-auto text-xs text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-700 px-1.5 py-0.5 rounded">
                         {item.range}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 ml-5">{item.desc}</p>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 ml-5">{item.desc}</p>
                   </div>
                 ))}
-                <p className="text-xs text-center text-slate-400 dark:text-slate-500 pt-1">
+                <p className="text-xs text-center text-zinc-400 dark:text-zinc-500 pt-1">
                   경쟁률 = 문서수 ÷ 검색량
                 </p>
               </div>
@@ -650,16 +650,16 @@ function KeywordAnalysisContent() {
 
             {/* Stats */}
             {keywordData.length > 0 && (
-              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-                <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">통계</h2>
+              <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+                <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">통계</h2>
                 <div className="space-y-2.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">총 키워드</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">{keywordData.length}개</span>
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400">총 키워드</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">{keywordData.length}개</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-slate-500 dark:text-slate-400">평균 검색량</span>
-                    <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    <span className="text-sm text-zinc-500 dark:text-zinc-400">평균 검색량</span>
+                    <span className="font-semibold text-zinc-900 dark:text-zinc-100">
                       {formatNumber(Math.round(keywordData.reduce((s, i) => s + i.totalSearchVolume, 0) / keywordData.length))}
                     </span>
                   </div>
@@ -676,14 +676,14 @@ function KeywordAnalysisContent() {
             onClick={() => setActionKeyword(null)}
           >
             <div
-              className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
+              className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-md w-full overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+              <div className="px-5 py-4 border-b border-zinc-200 dark:border-zinc-700">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
                   &ldquo;{actionKeyword}&rdquo; 다음 단계 선택
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                   이 키워드로 어떻게 진행하시겠어요?
                 </p>
               </div>
@@ -692,11 +692,11 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/competitor-analysis?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">상위노출 분석</div>
-                    <div className="text-xs text-blue-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
+                    <div className="text-xs text-orange-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
                   </div>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -706,11 +706,11 @@ function KeywordAnalysisContent() {
                   onClick={() => {
                     router.push(`/prompt-generator?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:border-blue-400 dark:hover:border-blue-500 rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">프롬프트 바로 생성</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">경쟁 분석 건너뛰고 글쓰기</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">경쟁 분석 건너뛰고 글쓰기</div>
                   </div>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -720,7 +720,7 @@ function KeywordAnalysisContent() {
               <div className="px-4 pb-4">
                 <button
                   onClick={() => setActionKeyword(null)}
-                  className="w-full px-4 py-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                  className="w-full px-4 py-2 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
                 >
                   취소
                 </button>
@@ -736,16 +736,16 @@ function KeywordAnalysisContent() {
             onClick={() => setNewsKeyword(null)}
           >
             <div
-              className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+              className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200 dark:border-zinc-700">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
                   &ldquo;{newsKeyword}&rdquo; 관련 최신 뉴스
                 </h3>
                 <button
                   onClick={() => setNewsKeyword(null)}
-                  className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded"
+                  className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded"
                   aria-label="닫기"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -801,7 +801,7 @@ function KeywordAnalysisContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -817,8 +817,8 @@ function KeywordAnalysisContent() {
 export default function KeywordAnalysisPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="text-slate-500 dark:text-slate-400">로딩 중...</div>
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+        <div className="text-zinc-500 dark:text-zinc-400">로딩 중...</div>
       </div>
     }>
       <KeywordAnalysisContent />

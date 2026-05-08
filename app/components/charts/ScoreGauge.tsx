@@ -15,8 +15,8 @@ interface Props {
 
 /**
  * SVG 점수 게이지 — 반원 또는 도넛.
- * 다크모드 자동 감지. 점수 구간별 색상(35/50/65/80 기준):
- *   <35 muted / 35-49 amber / 50-64 light blue / 65-79 sapphire / 80+ deep sapphire
+ * 다크모드 자동 감지. 점수 구간별 색상(Hermès orange 변형):
+ *   <35 muted / 35-49 yellow / 50-64 light orange / 65-79 orange / 80+ deep orange
  */
 export default function ScoreGauge({ value, size = 160, caption, half = true }: Props) {
   const [isDark, setIsDark] = useState(false);
@@ -30,16 +30,16 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
 
   const v = Math.max(0, Math.min(100, value));
 
-  const muted     = isDark ? '#27272a' : '#e4e4e7';   /* zinc-800 / zinc-200 */
-  const textColor = isDark ? '#fafafa' : '#18181b';   /* zinc-50 / zinc-900 */
-  const subText   = isDark ? '#a1a1aa' : '#71717a';   /* zinc-400 / zinc-500 */
+  const muted     = isDark ? '#2e2723' : '#e4e4e7';   /* warm dark border / zinc-200 */
+  const textColor = isDark ? '#fafafa' : '#09090b';   /* zinc-50 / zinc-950 */
+  const subText   = isDark ? '#a1a1aa' : '#52525b';   /* zinc-400 / zinc-600 */
 
-  // 점수에 따라 띠 색상 미세 조정 — sapphire 변형 + 저점 amber
+  // 점수에 따라 띠 색상 — Hermès orange 변형 + 저점 yellow
   const bandColor =
-    v >= 80 ? (isDark ? '#3b82f6' : '#1d4ed8') :  /* blue-500 / blue-700 */
-    v >= 65 ? (isDark ? '#60a5fa' : '#2563eb') :  /* blue-400 / blue-600 */
-    v >= 50 ? (isDark ? '#93c5fd' : '#3b82f6') :  /* blue-300 / blue-500 */
-    v >= 35 ? (isDark ? '#fcd34d' : '#d97706') :  /* amber-300 / amber-600 */
+    v >= 80 ? (isDark ? '#fb923c' : '#c2410c') :  /* orange-400 / orange-700 */
+    v >= 65 ? (isDark ? '#fdba74' : '#ea580c') :  /* orange-300 / orange-600 */
+    v >= 50 ? (isDark ? '#fed7aa' : '#f97316') :  /* orange-200 / orange-500 */
+    v >= 35 ? (isDark ? '#fde047' : '#ca8a04') :  /* yellow-300 / yellow-600 */
               (isDark ? '#a1a1aa' : '#71717a');   /* zinc-400 / zinc-500 */
 
   const stroke = 12;
@@ -126,7 +126,7 @@ export function ScoreMiniBar({ label, value }: { label: string; value: number })
       </div>
       <div className="h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
         <div
-          className="h-full rounded-full bg-blue-600 dark:bg-blue-400 transition-all duration-1000 ease-out"
+          className="h-full rounded-full bg-orange-600 dark:bg-orange-400 transition-all duration-1000 ease-out"
           style={{ width: `${v}%` }}
         />
       </div>

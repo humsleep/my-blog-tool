@@ -124,38 +124,38 @@ export default function CompanionsPage() {
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-6 pb-10">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-5">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
-            <Link href="/community" className="hover:text-blue-500 dark:hover:text-blue-400">커뮤니티</Link>
+          <div className="flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 mb-2">
+            <Link href="/community" className="hover:text-orange-500 dark:hover:text-orange-400">커뮤니티</Link>
             <span>›</span>
-            <span className="text-slate-700 dark:text-slate-300 font-medium">체험단 동행해요</span>
+            <span className="text-zinc-700 dark:text-zinc-300 font-medium">체험단 동행해요</span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">🚶‍♂️ 체험단 동행해요</h1>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">🚶‍♂️ 체험단 동행해요</h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 체험단 선정 후 함께 갈 동행자를 찾아보세요
               </p>
             </div>
             <Link
               href="/community/companions/new"
-              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
+              className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-semibold rounded-full shadow-sm hover:shadow-md transition-all"
             >
               + 모집글 작성
             </Link>
           </div>
         </div>
 
-        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-slate-50/90 dark:bg-slate-950/90 backdrop-blur-md mb-4">
-          <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm">
+        <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md mb-4">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 shadow-sm">
             <div className="flex items-center gap-2 whitespace-nowrap overflow-x-auto scrollbar-hide">
-              <label className="flex-shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400">지역</label>
+              <label className="flex-shrink-0 text-xs font-medium text-zinc-500 dark:text-zinc-400">지역</label>
               <select
                 value={region ?? ''}
                 onChange={(e) => setRegion(e.target.value || null)}
-                className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-shrink-0 px-3 py-1.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="">전체</option>
                 {REGIONS.map((r) => <option key={r} value={r}>{r}</option>)}
@@ -164,7 +164,7 @@ export default function CompanionsPage() {
                 <select
                   value={regionCity ?? ''}
                   onChange={(e) => setRegionCity(e.target.value || null)}
-                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-shrink-0 px-3 py-1.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <option value="">시·군·구 전체</option>
                   {getCities(region).map((c) => (
@@ -172,12 +172,12 @@ export default function CompanionsPage() {
                   ))}
                 </select>
               )}
-              <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-slate-200 dark:border-slate-700">
+              <label className="flex-shrink-0 inline-flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-300 cursor-pointer pl-3 ml-auto sm:ml-0 border-l sm:border-l-0 border-zinc-200 dark:border-zinc-700">
                 <input
                   type="checkbox"
                   checked={openOnly}
                   onChange={(e) => setOpenOnly(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500 accent-blue-500"
+                  className="w-4 h-4 rounded border-zinc-300 text-orange-500 focus:ring-orange-500 accent-orange-500"
                 />
                 모집중만
               </label>
@@ -204,7 +204,7 @@ export default function CompanionsPage() {
               '본인 글은 [모집중 → 마감 → 완료] 상태 변경 가능',
             ]}
             action={
-              <Link href="/community/companions/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold rounded-full shadow-sm">
+              <Link href="/community/companions/new" className="inline-flex px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold rounded-full shadow-sm">
                 모집글 작성
               </Link>
             }
@@ -213,9 +213,9 @@ export default function CompanionsPage() {
 
         {!loading && posts.length > 0 && (
           <>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">총 {total}건</p>
-            <div className="bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 px-5 py-2.5 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">총 {total}건</p>
+            <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+              <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 px-5 py-2.5 bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-700 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                 <span>상태</span>
                 <span>제목</span>
                 <span>지역</span>
@@ -223,13 +223,13 @@ export default function CompanionsPage() {
                 <span>작성자</span>
                 <span>작성일</span>
               </div>
-              <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-700">
                 {posts.map((post) => <CompanionRow key={post.id} post={post} />)}
               </ul>
             </div>
             <InfiniteScrollSentinel hasMore={hasMore} loading={loadingMore} onLoadMore={loadMore} />
             {!hasMore && posts.length > 0 && (
-              <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-5 text-center text-xs text-zinc-400 dark:text-zinc-500">
                 마지막 글까지 모두 봤어요 (총 {total}건)
               </p>
             )}
@@ -254,14 +254,14 @@ function CompanionRow({ post }: { post: CompanionPost }) {
   const dow = new Date(dateStr).toLocaleDateString('ko-KR', { weekday: 'short' });
   const statusCls =
     post.status === '모집중'
-      ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+      ? 'bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300'
       : post.status === '마감'
-        ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+        ? 'bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400'
         : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300';
   const created = formatRelativeKr(post.created_at);
 
   return (
-    <li className="hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
+    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors">
       <Link href={`/community/companions/${post.id}`} className="block">
         {/* 데스크톱 — 그리드 행 */}
         <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 items-center px-5 py-3">
@@ -269,17 +269,17 @@ function CompanionRow({ post }: { post: CompanionPost }) {
             {post.status}
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{post.title}</p>
+            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{post.title}</p>
             {post.brand_name && (
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">📍 {post.brand_name}</p>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">📍 {post.brand_name}</p>
             )}
           </div>
-          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{formatFullRegion(post.region, post.region_city)}</span>
-          <span className="text-xs text-slate-600 dark:text-slate-300">
+          <span className="text-xs text-zinc-600 dark:text-zinc-300 truncate">{formatFullRegion(post.region, post.region_city)}</span>
+          <span className="text-xs text-zinc-600 dark:text-zinc-300">
             {dateStr} ({dow})
           </span>
-          <span className="text-xs text-slate-600 dark:text-slate-300 truncate">{post.nickname}</span>
-          <span className="text-xs text-slate-500 dark:text-slate-400">{created}</span>
+          <span className="text-xs text-zinc-600 dark:text-zinc-300 truncate">{post.nickname}</span>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">{created}</span>
         </div>
 
         {/* 모바일 — 컴팩트 */}
@@ -288,11 +288,11 @@ function CompanionRow({ post }: { post: CompanionPost }) {
             <span className={`flex-shrink-0 px-1.5 py-0.5 text-[11px] font-semibold rounded-full ${statusCls}`}>
               {post.status}
             </span>
-            <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-1">
+            <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100 line-clamp-1">
               {post.title}
             </h3>
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 flex-wrap">
+          <div className="flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400 flex-wrap">
             <span>📍 {formatFullRegion(post.region, post.region_city)}</span>
             <span>·</span>
             <span>📅 {dateStr}</span>

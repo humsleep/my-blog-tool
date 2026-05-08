@@ -128,36 +128,36 @@ export default function TrendingPage() {
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">
             인기 검색어 트렌드
           </h1>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-zinc-500 dark:text-zinc-400">
             네이버 검색광고 API를 활용한 실시간 인기 검색어를 확인하세요
           </p>
         </div>
 
         {/* Filter Card */}
-        <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6 overflow-hidden">
+        <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm mb-6 overflow-hidden">
 
           {/* 조회 기간 행 */}
-          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-700/60">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">조회 기간</span>
+              <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">조회 기간</span>
               {/* 세그먼트 컨트롤 */}
-              <div className="flex bg-slate-100 dark:bg-slate-700/60 rounded-lg p-0.5">
+              <div className="flex bg-zinc-100 dark:bg-zinc-700/60 rounded-lg p-0.5">
                 {PERIODS.map((p) => (
                   <button
                     key={p.value}
                     onClick={() => setPeriod(p.value)}
                     className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-150 whitespace-nowrap ${
                       period === p.value
-                        ? 'bg-white dark:bg-slate-600 text-blue-500 dark:text-blue-300 shadow-sm'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                        ? 'bg-white dark:bg-zinc-600 text-orange-500 dark:text-orange-300 shadow-sm'
+                        : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200'
                     }`}
                   >
                     {p.label}
@@ -170,7 +170,7 @@ export default function TrendingPage() {
             <button
               onClick={fetchTrendingKeywords}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-400 text-white text-sm font-medium rounded-lg transition-colors disabled:cursor-not-allowed"
             >
               <svg
                 className={`w-4 h-4 flex-shrink-0 ${loading ? 'animate-spin' : ''}`}
@@ -185,10 +185,10 @@ export default function TrendingPage() {
 
           {/* 직접 설정 날짜 피커 */}
           {period === 'custom' && (
-            <div className="px-5 py-4 bg-blue-50/60 dark:bg-blue-950/20 border-b border-slate-100 dark:border-slate-700/60">
+            <div className="px-5 py-4 bg-orange-50/60 dark:bg-orange-950/20 border-b border-zinc-100 dark:border-zinc-700/60">
               <div className="flex flex-wrap items-end gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">시작일</label>
+                  <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">시작일</label>
                   <input
                     type="date"
                     value={startDate}
@@ -199,12 +199,12 @@ export default function TrendingPage() {
                       if (endDate) setEndDate(clampEndDate(e.target.value, endDate));
                       setDateError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="h-9 px-3 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
-                <div className="flex items-end pb-[9px] text-slate-400 dark:text-slate-500 text-sm font-medium select-none">~</div>
+                <div className="flex items-end pb-[9px] text-zinc-400 dark:text-zinc-500 text-sm font-medium select-none">~</div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">종료일</label>
+                  <label className="block text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">종료일</label>
                   <input
                     type="date"
                     value={endDate}
@@ -216,11 +216,11 @@ export default function TrendingPage() {
                       if (clamped !== e.target.value) setDateError('최대 1년(365일)까지 설정할 수 있습니다.');
                       else setDateError(null);
                     }}
-                    className="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="h-9 px-3 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 {startDate && endDate && !dateError && (
-                  <span className="text-xs text-slate-400 dark:text-slate-500 pb-[10px]">
+                  <span className="text-xs text-zinc-400 dark:text-zinc-500 pb-[10px]">
                     {Math.round((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))}일
                   </span>
                 )}
@@ -233,7 +233,7 @@ export default function TrendingPage() {
                   {dateError}
                 </p>
               )}
-              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
                 최대 조회 기간은 <strong>1년(365일)</strong>입니다.
               </p>
             </div>
@@ -241,7 +241,7 @@ export default function TrendingPage() {
 
           {/* 카테고리 행 */}
           <div className="px-5 py-4">
-            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 block">카테고리</span>
+            <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3 block">카테고리</span>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -249,8 +249,8 @@ export default function TrendingPage() {
                   onClick={() => setCategory(cat.value)}
                   className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-150 border ${
                     category === cat.value
-                      ? 'bg-blue-500 border-blue-500 text-white shadow-sm'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-blue-400 hover:text-blue-500 dark:hover:border-blue-500 dark:hover:text-blue-400'
+                      ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
+                      : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600 text-zinc-600 dark:text-zinc-300 hover:border-orange-400 hover:text-orange-500 dark:hover:border-orange-500 dark:hover:text-orange-400'
                   }`}
                 >
                   {cat.label}
@@ -262,9 +262,9 @@ export default function TrendingPage() {
 
         {/* Loading state */}
         {loading && !data && (
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-sm">
-            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 dark:border-blue-400 mb-4" />
-            <p className="text-slate-500 dark:text-slate-400">인기 검색어를 불러오는 중...</p>
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-12 text-center shadow-sm">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 dark:border-orange-400 mb-4" />
+            <p className="text-zinc-500 dark:text-zinc-400">인기 검색어를 불러오는 중...</p>
           </div>
         )}
 
@@ -304,13 +304,13 @@ export default function TrendingPage() {
 
         {/* Results Table */}
         {data && data.keywords.length > 0 && (
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
-            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-sm">
+            <div className="px-5 py-4 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
                 {category} 카테고리 인기 검색어{' '}
-                <span className="text-slate-500 dark:text-slate-400 font-normal text-sm">({data.total}개)</span>
+                <span className="text-zinc-500 dark:text-zinc-400 font-normal text-sm">({data.total}개)</span>
               </h2>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+              <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
                 {period === 'custom'
                   ? `${startDate} ~ ${endDate} 기간 검색량 기준`
                   : `${PERIODS.find((p) => p.value === period)?.label} 검색량 기준`}
@@ -319,7 +319,7 @@ export default function TrendingPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-50 dark:bg-slate-900/30">
+                <thead className="bg-zinc-50 dark:bg-zinc-900/30">
                   <tr>
                     {['순위', '검색어',
                       `PC 검색량${period === 'daily' ? ' (일)' : period === 'weekly' ? ' (주)' : period === 'custom' ? ' (기간)' : ' (월)'}`,
@@ -329,7 +329,7 @@ export default function TrendingPage() {
                     ].map((h, i) => (
                       <th
                         key={i}
-                        className={`px-5 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider ${
+                        className={`px-5 py-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider ${
                           i >= 2 && i <= 4 ? 'text-right' : i === 5 ? 'text-center' : 'text-left'
                         }`}
                       >
@@ -338,16 +338,16 @@ export default function TrendingPage() {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-700/50">
                   {data.keywords.map((item) => (
-                    <tr key={item.rank} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                    <tr key={item.rank} className="hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
                       <td className="px-5 py-3.5 whitespace-nowrap">
                         <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
                           item.rank <= 3
                             ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300'
                             : item.rank <= 10
-                            ? 'bg-blue-100 dark:bg-blue-800/50 text-blue-700 dark:text-blue-300'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                            ? 'bg-orange-100 dark:bg-orange-800/50 text-orange-700 dark:text-orange-300'
+                            : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
                         }`}>
                           {item.rank}
                         </span>
@@ -355,26 +355,26 @@ export default function TrendingPage() {
                       <td className="px-5 py-3.5">
                         <button
                           onClick={() => handleKeywordClick(item.keyword)}
-                          className="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 hover:underline font-medium text-sm text-left"
+                          className="text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300 hover:underline font-medium text-sm text-left"
                         >
                           {item.keyword}
                         </button>
                       </td>
-                      <td className="px-5 py-3.5 whitespace-nowrap text-right text-sm text-slate-600 dark:text-slate-400">
+                      <td className="px-5 py-3.5 whitespace-nowrap text-right text-sm text-zinc-600 dark:text-zinc-400">
                         {item.monthlyPcQcCnt.toLocaleString()}
                       </td>
-                      <td className="px-5 py-3.5 whitespace-nowrap text-right text-sm text-slate-600 dark:text-slate-400">
+                      <td className="px-5 py-3.5 whitespace-nowrap text-right text-sm text-zinc-600 dark:text-zinc-400">
                         {item.monthlyMobileQcCnt.toLocaleString()}
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap text-right">
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm">
+                        <span className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">
                           {item.totalCount.toLocaleString()}
                         </span>
                       </td>
                       <td className="px-5 py-3.5 whitespace-nowrap text-center">
                         <Link
                           href={`/keyword-analysis?keyword=${encodeURIComponent(item.keyword)}`}
-                          className="inline-flex items-center px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors"
                         >
                           분석하기
                         </Link>
@@ -388,15 +388,15 @@ export default function TrendingPage() {
         )}
 
         {data && data.keywords.length === 0 && !loading && (
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center shadow-sm">
-            <p className="text-slate-500 dark:text-slate-400">검색 결과가 없습니다.</p>
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-12 text-center shadow-sm">
+            <p className="text-zinc-500 dark:text-zinc-400">검색 결과가 없습니다.</p>
           </div>
         )}
 
         {/* 이용 안내 */}
-        <div className="mt-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-700 rounded-xl p-5">
-          <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">💡 이용 안내</h3>
-          <ul className="space-y-1.5 text-sm text-blue-600 dark:text-blue-400">
+        <div className="mt-6 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
+          <h3 className="text-sm font-semibold text-orange-800 dark:text-orange-300 mb-2">💡 이용 안내</h3>
+          <ul className="space-y-1.5 text-sm text-orange-600 dark:text-orange-400">
             {[
               '인기 검색어는 네이버 검색광고 API를 통해 제공됩니다.',
               '검색량은 월간 기준으로 표시됩니다.',
@@ -433,7 +433,7 @@ export default function TrendingPage() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />

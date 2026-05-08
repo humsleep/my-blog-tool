@@ -32,7 +32,7 @@ export default function ReportButton({
     setOpen(true);
   };
 
-  const baseCls = 'text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 transition-colors';
+  const baseCls = 'text-zinc-400 hover:text-red-500 dark:text-zinc-500 dark:hover:text-red-400 transition-colors';
 
   return (
     <>

@@ -694,24 +694,24 @@ function PromptGeneratorContent() {
   };
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-4 sm:py-6 md:py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">프롬프트 생성</h1>
-            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 mt-1.5">
+            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">프롬프트 생성</h1>
+            <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
               키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
             </p>
           </div>
           {/* 초보자 / 고급 모드 토글 */}
-          <div className="inline-flex bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5 self-start sm:self-auto">
+          <div className="inline-flex bg-zinc-100 dark:bg-zinc-700 rounded-lg p-0.5 self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setMode('beginner')}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 mode === 'beginner'
-                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-500 dark:text-slate-400'
+                  ? 'bg-white dark:bg-zinc-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  : 'text-zinc-500 dark:text-zinc-400'
               }`}
             >
               초보자 모드
@@ -721,8 +721,8 @@ function PromptGeneratorContent() {
               onClick={() => setMode('advanced')}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                 mode === 'advanced'
-                  ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-500 dark:text-slate-400'
+                  ? 'bg-white dark:bg-zinc-800 text-orange-600 dark:text-orange-400 shadow-sm'
+                  : 'text-zinc-500 dark:text-zinc-400'
               }`}
             >
               고급 모드
@@ -731,14 +731,14 @@ function PromptGeneratorContent() {
         </div>
 
         {mode === 'beginner' && (
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-blue-800 dark:text-blue-300">
+          <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg text-xs text-orange-800 dark:text-orange-300">
             💡 <strong>초보자 모드</strong>: 꼭 필요한 항목(키워드 / 분야 / 어투 / 글 스타일)만 보여드립니다. 익숙해지면 우상단 <strong>고급 모드</strong>로 전환하여 SEO 옵션을 더 세밀하게 조정할 수 있어요.
           </div>
         )}
 
         {presetUserId && presetLoaded && (
-          <div className="mb-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-full text-[11px] text-blue-700 dark:text-blue-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <div className="mb-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 rounded-full text-[11px] text-orange-700 dark:text-orange-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
             로그인 사용자 — 선택한 옵션이 자동 저장되어 다음 방문에 복원됩니다
           </div>
         )}
@@ -746,25 +746,25 @@ function PromptGeneratorContent() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Input Section */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
-              <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4 sm:mb-6">프롬프트 설정</h2>
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
+              <h2 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4 sm:mb-6">프롬프트 설정</h2>
 
               {/* 뉴스 컨텍스트 미진입 안내 — 더 풍부한 글을 위한 동선 */}
               {!newsContext && (
-                <div className="mb-5 sm:mb-6 rounded-lg border border-dashed border-blue-300 dark:border-blue-700/60 bg-blue-50/40 dark:bg-blue-950/20 p-4 flex items-start gap-3">
+                <div className="mb-5 sm:mb-6 rounded-lg border border-dashed border-orange-300 dark:border-orange-700/60 bg-orange-50/40 dark:bg-orange-950/20 p-4 flex items-start gap-3">
                   <div className="flex-shrink-0 text-2xl">📰</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
-                      더 풍부한 글을 원하시나요? <span className="text-blue-600 dark:text-blue-400">관련 뉴스</span>를 함께 넣어보세요
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                      더 풍부한 글을 원하시나요? <span className="text-orange-600 dark:text-orange-400">관련 뉴스</span>를 함께 넣어보세요
                     </p>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mb-2 leading-relaxed">
-                      <Link href="/keyword-analysis" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">키워드 분석</Link>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-300 mb-2 leading-relaxed">
+                      <Link href="/keyword-analysis" className="font-medium text-orange-600 dark:text-orange-400 hover:underline">키워드 분석</Link>
                       에서 키워드 옆 <strong>📰 뉴스 보기</strong> 버튼을 누르면, 네이버 최신 뉴스를 골라 이 페이지로 가져올 수 있어요.
                       AI가 그 뉴스의 흐름을 자연스럽게 본문에 녹여 차별화된 글을 만들어줍니다.
                     </p>
                     <Link
                       href={keyword ? `/keyword-analysis?keyword=${encodeURIComponent(keyword)}` : '/keyword-analysis'}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline"
                     >
                       키워드 분석으로 가기
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -777,32 +777,32 @@ function PromptGeneratorContent() {
 
               {/* 뉴스 컨텍스트 — 키워드 분석 → 뉴스 모달에서 가져온 경우 */}
               {newsContext && newsContext.items.length > 0 && (
-                <div className="mb-5 sm:mb-6 rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50/60 dark:bg-blue-950/30 p-4">
+                <div className="mb-5 sm:mb-6 rounded-lg border border-orange-200 dark:border-orange-700 bg-orange-50/60 dark:bg-orange-950/30 p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <svg className="w-4 h-4 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-orange-500 dark:text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                       </svg>
-                      <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">
+                      <span className="text-sm font-semibold text-orange-600 dark:text-orange-300">
                         가져온 관련 뉴스 ({newsContext.items.length}건)
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setNewsContext(null)}
-                      className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 flex-shrink-0"
+                      className="text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 flex-shrink-0"
                       title="뉴스 제거"
                     >
                       제거
                     </button>
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-2">
                     아래 뉴스의 흐름이 프롬프트 상단에 자동으로 포함되어 글에 반영됩니다.
                   </p>
                   <ul className="space-y-1.5">
                     {newsContext.items.map((it, i) => (
-                      <li key={`${it.link}-${i}`} className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
-                        <span className="text-blue-500 dark:text-blue-400 font-medium mr-1">{i + 1}.</span>
+                      <li key={`${it.link}-${i}`} className="text-xs text-zinc-700 dark:text-zinc-300 line-clamp-1">
+                        <span className="text-orange-500 dark:text-orange-400 font-medium mr-1">{i + 1}.</span>
                         {it.title.replace(/<[^>]*>/g, '')}
                       </li>
                     ))}
@@ -813,7 +813,7 @@ function PromptGeneratorContent() {
               <div className="space-y-5 sm:space-y-6">
                 {/* Keyword Input */}
                 <div>
-                  <label htmlFor="keyword" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <label htmlFor="keyword" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                     키워드 <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -822,9 +822,9 @@ function PromptGeneratorContent() {
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="예: 수원 맛집 추천"
-                    className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                   />
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                  <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                     블로그 글의 주제가 될 키워드를 입력하세요. 검색량이 큰 키워드일수록 노출 효과가 큽니다.
                   </p>
                 </div>
@@ -832,8 +832,8 @@ function PromptGeneratorContent() {
                 {/* 연관 키워드 (LSI) — 고급 모드만 */}
                 {mode === 'advanced' && (
                   <div>
-                    <label htmlFor="related" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                      연관 키워드 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    <label htmlFor="related" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                      연관 키워드 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                     </label>
                     <input
                       id="related"
@@ -841,9 +841,9 @@ function PromptGeneratorContent() {
                       value={relatedKeywords}
                       onChange={(e) => setRelatedKeywords(e.target.value)}
                       placeholder="예: 수원역 맛집, 수원 데이트, 수원 카페"
-                      className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                     />
-                    <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                    <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                       쉼표(,)로 구분 · 메인 키워드와 의미가 비슷한 보조 키워드를 본문에 자연스럽게 분산 배치 → 네이버 SEO ↑
                     </p>
                   </div>
@@ -851,10 +851,10 @@ function PromptGeneratorContent() {
 
                 {/* Category Selection — Accordion */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
                     분야 <span className="text-red-500">*</span>
                     {selectedCategory && (
-                      <span className="ml-2 text-xs text-blue-500 dark:text-blue-400 font-normal">
+                      <span className="ml-2 text-xs text-orange-500 dark:text-orange-400 font-normal">
                         선택됨: {selectedCategory}
                       </span>
                     )}
@@ -868,24 +868,24 @@ function PromptGeneratorContent() {
                           key={mainCat}
                           className={`border rounded-lg overflow-hidden transition-colors ${
                             hasSelected
-                              ? 'border-blue-300 dark:border-blue-600 bg-blue-50/30 dark:bg-blue-950/20'
-                              : 'border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40'
+                              ? 'border-orange-300 dark:border-orange-600 bg-orange-50/30 dark:bg-orange-950/20'
+                              : 'border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700/40'
                           }`}
                         >
                           <button
                             type="button"
                             onClick={() => setOpenCategory(isOpen && !hasSelected ? null : mainCat)}
-                            className="w-full flex items-center justify-between px-4 py-3 text-left min-h-[44px] hover:bg-slate-100/60 dark:hover:bg-slate-700/60 transition-colors"
+                            className="w-full flex items-center justify-between px-4 py-3 text-left min-h-[44px] hover:bg-zinc-100/60 dark:hover:bg-zinc-700/60 transition-colors"
                             aria-expanded={isOpen}
                           >
-                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">
                               {mainCat}
-                              <span className="ml-2 text-xs font-normal text-slate-400 dark:text-slate-500">
+                              <span className="ml-2 text-xs font-normal text-zinc-400 dark:text-zinc-500">
                                 {subCats.length}개
                               </span>
                             </span>
                             <svg
-                              className={`w-4 h-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                              className={`w-4 h-4 text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -903,8 +903,8 @@ function PromptGeneratorContent() {
                                     onClick={() => setSelectedCategory(subCat)}
                                     className={`p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
                                       selectedCategory === subCat
-                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                        : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                        : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                                     }`}
                                   >
                                     {subCat}
@@ -922,10 +922,10 @@ function PromptGeneratorContent() {
                 {/* Title Style Selection — 고급 모드만 */}
                 {mode === 'advanced' && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                      제목 스타일 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                      제목 스타일 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                     </label>
-                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                       <div className="flex flex-wrap gap-2">
                         {TITLE_STYLES.map((style) => (
                           <button
@@ -934,8 +934,8 @@ function PromptGeneratorContent() {
                             onClick={() => setTitleStyle(titleStyle === style ? '' : style)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               titleStyle === style
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                             }`}
                           >
                             {style}
@@ -948,10 +948,10 @@ function PromptGeneratorContent() {
 
                 {/* Content Style Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
                     글 스타일
                   </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                  <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                     <div className="flex flex-wrap gap-2">
                       {CONTENT_STYLES.map((style) => (
                         <button
@@ -960,8 +960,8 @@ function PromptGeneratorContent() {
                           onClick={() => setContentStyle(contentStyle === style ? '' : style)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             contentStyle === style
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                           }`}
                         >
                           {style}
@@ -973,8 +973,8 @@ function PromptGeneratorContent() {
 
                 {/* 글의 목적 — 양쪽 모드 모두 노출 (결말·CTA가 달라짐) */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    글의 목적 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                    글의 목적 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {PURPOSES.map((opt) => (
@@ -984,18 +984,18 @@ function PromptGeneratorContent() {
                         onClick={() => setPurpose(purpose === opt.value ? '' : opt.value as typeof purpose)}
                         className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                           purpose === opt.value
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50'
-                            : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                            : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 hover:border-zinc-300'
                         }`}
                       >
-                        <div className={`text-xs font-semibold ${purpose === opt.value ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                        <div className={`text-xs font-semibold ${purpose === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                           {opt.label}
                         </div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
+                        <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight">{opt.help}</div>
                       </button>
                     ))}
                   </div>
-                  <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
                     💡 글의 목적에 따라 결말·CTA·전체 톤이 달라집니다.
                   </p>
                 </div>
@@ -1003,10 +1003,10 @@ function PromptGeneratorContent() {
                 {/* Target Audience Selection — 고급 모드만 */}
                 {mode === 'advanced' && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                      타겟 독자 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                      타겟 독자 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                     </label>
-                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                       <div className="flex flex-wrap gap-2">
                         {TARGET_AUDIENCES.map((audience) => (
                           <button
@@ -1015,8 +1015,8 @@ function PromptGeneratorContent() {
                             onClick={() => setTargetAudience(targetAudience === audience ? '' : audience)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               targetAudience === audience
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                             }`}
                           >
                             {audience}
@@ -1029,10 +1029,10 @@ function PromptGeneratorContent() {
 
                 {/* Tone Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
                     어투/톤앤매너 <span className="text-red-500">*</span>
                   </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                  <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                     <div className="flex flex-wrap gap-2">
                       {TONES.map((t) => (
                         <button
@@ -1041,8 +1041,8 @@ function PromptGeneratorContent() {
                           onClick={() => setTone(t)}
                           className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             tone === t
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                           }`}
                         >
                           {t}
@@ -1055,10 +1055,10 @@ function PromptGeneratorContent() {
                 {/* Emoji Usage Selection — 고급 모드만 */}
                 {mode === 'advanced' && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                      이모지 활용도 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                    <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                      이모지 활용도 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                     </label>
-                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                       <div className="flex flex-wrap gap-2">
                         {EMOJI_USAGE.map((usage) => (
                           <button
@@ -1067,8 +1067,8 @@ function PromptGeneratorContent() {
                             onClick={() => setEmojiUsage(usage)}
                             className={`px-4 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               emojiUsage === usage
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                             }`}
                           >
                             {usage}
@@ -1081,10 +1081,10 @@ function PromptGeneratorContent() {
 
                 {/* Length Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-                    글 길이 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                    글 길이 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                   </label>
-                  <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                  <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {LENGTHS.map((l) => (
                         <button
@@ -1093,8 +1093,8 @@ function PromptGeneratorContent() {
                           onClick={() => setLength(l.value)}
                           className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                             length === l.value
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                              : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                              ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                              : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                           }`}
                         >
                           {l.label}
@@ -1102,23 +1102,23 @@ function PromptGeneratorContent() {
                       ))}
                     </div>
                   </div>
-                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                  <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-500">
                     네이버 노출은 1500~2500자가 가장 안정적입니다.
                   </p>
                 </div>
 
                 {/* SEO 강화: 광고·협찬 표시 + 개인 경험 강조도 — 고급 모드만 */}
                 {mode === 'advanced' && (
-                  <div className="border border-blue-200 dark:border-blue-900/50 rounded-lg p-4 bg-blue-50/40 dark:bg-blue-950/20 space-y-4">
+                  <div className="border border-orange-200 dark:border-orange-900/50 rounded-lg p-4 bg-orange-50/40 dark:bg-orange-950/20 space-y-4">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">SEO 강화</span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">최신 네이버 가이드 반영</span>
+                      <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">SEO 강화</span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">최신 네이버 가이드 반영</span>
                     </div>
 
                     {/* 광고·협찬 표시 */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        광고·협찬 표시 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        광고·협찬 표시 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {SPONSORSHIP_OPTIONS.map((opt) => (
@@ -1128,26 +1128,26 @@ function PromptGeneratorContent() {
                             onClick={() => setSponsorship(opt.value as typeof sponsorship)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               sponsorship === opt.value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 hover:border-zinc-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${sponsorship === opt.value ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${sponsorship === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                               {opt.label}
                             </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
+                            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{opt.help}</div>
                           </button>
                         ))}
                       </div>
-                      <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
                         ⚠️ 협찬·제휴 글에 표시를 누락하면 네이버 검색 노출 페널티 대상이 될 수 있습니다.
                       </p>
                     </div>
 
                     {/* 개인 경험 강조도 */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        개인 경험 강조도 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        개인 경험 강조도 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {EXPERIENCE_LEVELS.map((opt) => (
@@ -1157,18 +1157,18 @@ function PromptGeneratorContent() {
                             onClick={() => setExperience(opt.value as typeof experience)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               experience === opt.value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 hover:border-zinc-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${experience === opt.value ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${experience === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                               {opt.label}
                             </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{opt.help}</div>
+                            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">{opt.help}</div>
                           </button>
                         ))}
                       </div>
-                      <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
                         💡 네이버는 직접 경험·체험이 담긴 글의 노출을 우대합니다 (E-E-A-T 가이드).
                       </p>
                     </div>
@@ -1180,13 +1180,13 @@ function PromptGeneratorContent() {
                   <div className="border border-amber-200 dark:border-amber-900/50 rounded-lg p-4 bg-amber-50/40 dark:bg-amber-950/20 space-y-4">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider">맞춤 정보</span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400">입력할수록 글이 구체적이고 차별화됩니다</span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400">입력할수록 글이 구체적이고 차별화됩니다</span>
                     </div>
 
                     {/* 지역 정보 */}
                     <div>
-                      <label htmlFor="location" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        지역 정보 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label htmlFor="location" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        지역 정보 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <input
                         id="location"
@@ -1194,17 +1194,17 @@ function PromptGeneratorContent() {
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="예: 수원시 영통구 / 서울 강남역 / 부산 해운대"
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                       />
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                         지역 키워드를 본문·해시태그에 자연스럽게 분산 → 네이버 하이퍼로컬 노출 ↑
                       </p>
                     </div>
 
                     {/* 본문에 꼭 포함할 핵심 정보 */}
                     <div>
-                      <label htmlFor="keyfacts" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        본문에 꼭 포함할 핵심 정보 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label htmlFor="keyfacts" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        본문에 꼭 포함할 핵심 정보 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <textarea
                         id="keyfacts"
@@ -1212,17 +1212,17 @@ function PromptGeneratorContent() {
                         onChange={(e) => setKeyFacts(e.target.value)}
                         rows={4}
                         placeholder={'예시 (한 줄에 하나씩):\n- 영업시간: 11:00~22:00 (월요일 휴무)\n- 가격대: 2인 6만원\n- 주차 가능 (3시간 무료)\n- 예약: 네이버 예약 또는 전화'}
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
+                        className="w-full px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
                       />
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                         가격·시간·장소·연락처 등 정확히 적어야 할 수치를 한 줄에 하나씩 — AI가 누락 없이 본문에 반영
                       </p>
                     </div>
 
                     {/* 차별화 포인트 */}
                     <div>
-                      <label htmlFor="diff" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        이 글만의 차별화 포인트 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label htmlFor="diff" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        이 글만의 차별화 포인트 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <textarea
                         id="diff"
@@ -1230,17 +1230,17 @@ function PromptGeneratorContent() {
                         onChange={(e) => setDifferentiator(e.target.value)}
                         rows={2}
                         placeholder="예: 5년차 워킹맘 시각으로 본 / 직접 3개월 써본 비교 / 현지에서 10년 산 사람의 추천"
-                        className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y"
+                        className="w-full px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-y"
                       />
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                         다른 일반 글과 구별되는 작가의 관점·이력·경험 → E-E-A-T 강화
                       </p>
                     </div>
 
                     {/* 본문 구조 */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        본문 구조 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        본문 구조 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {STRUCTURES.map((opt) => (
@@ -1250,14 +1250,14 @@ function PromptGeneratorContent() {
                             onClick={() => setStructure(opt.value as typeof structure)}
                             className={`p-2.5 rounded-lg border text-left transition-colors min-h-[56px] ${
                               structure === opt.value
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 hover:border-slate-300'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 hover:border-zinc-300'
                             }`}
                           >
-                            <div className={`text-xs font-semibold ${structure === opt.value ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                            <div className={`text-xs font-semibold ${structure === opt.value ? 'text-orange-600 dark:text-orange-400' : 'text-zinc-700 dark:text-zinc-300'}`}>
                               {opt.label}
                             </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">{opt.help}</div>
+                            <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-tight">{opt.help}</div>
                           </button>
                         ))}
                       </div>
@@ -1265,8 +1265,8 @@ function PromptGeneratorContent() {
 
                     {/* 시기·시즌 */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        시기·시즌 <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        시기·시즌 <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {SEASONALITY_OPTIONS.map((s) => (
@@ -1276,23 +1276,23 @@ function PromptGeneratorContent() {
                             onClick={() => setSeasonality(s)}
                             className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               seasonality === s
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                             }`}
                           >
                             {s}
                           </button>
                         ))}
                       </div>
-                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
                         시즌 키워드는 그 시기에 검색량이 폭증 → 노출 기회 ↑
                       </p>
                     </div>
 
                     {/* 결말 CTA */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        결말 CTA <span className="text-slate-400 font-normal text-xs">(선택)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                        결말 CTA <span className="text-zinc-400 font-normal text-xs">(선택)</span>
                       </label>
                       <div className="flex flex-wrap gap-2">
                         {CTA_TYPES.map((c) => (
@@ -1302,8 +1302,8 @@ function PromptGeneratorContent() {
                             onClick={() => setCtaType(ctaType === c ? '' : c)}
                             className={`px-3 py-2 rounded-lg border transition-colors text-xs font-medium min-h-[36px] touch-manipulation ${
                               ctaType === c
-                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'
-                                : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-500'
+                                ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
+                                : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
                             }`}
                           >
                             {c}
@@ -1318,31 +1318,31 @@ function PromptGeneratorContent() {
                 {mode === 'advanced' && (
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                        추가 구성 옵션 <span className="text-slate-400 font-normal text-xs">(선택 · 다중 선택 가능)</span>
+                      <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        추가 구성 옵션 <span className="text-zinc-400 font-normal text-xs">(선택 · 다중 선택 가능)</span>
                       </label>
                       <button
                         type="button"
                         onClick={toggleAllAdditionalOptions}
-                        className="text-xs text-blue-500 dark:text-blue-400 hover:text-blue-600 font-medium px-2 py-1 rounded border border-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
+                        className="text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 font-medium px-2 py-1 rounded border border-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950/30 transition-colors"
                       >
                         {additionalOptions.length === ADDITIONAL_OPTIONS.length ? '전체 해제' : '전체 선택'}
                       </button>
                     </div>
-                    <div className="border border-slate-200 dark:border-slate-600 rounded-lg p-3 bg-slate-50 dark:bg-slate-700/40">
+                    <div className="border border-zinc-200 dark:border-zinc-600 rounded-lg p-3 bg-zinc-50 dark:bg-zinc-700/40">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                         {ADDITIONAL_OPTIONS.map((option) => (
                           <label
                             key={option}
-                            className="flex items-center gap-2 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600/40 p-2 rounded-lg transition-colors"
+                            className="flex items-center gap-2 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-600/40 p-2 rounded-lg transition-colors"
                           >
                             <input
                               type="checkbox"
                               checked={additionalOptions.includes(option)}
                               onChange={() => toggleAdditionalOption(option)}
-                              className="w-4 h-4 text-blue-500 border-slate-300 dark:border-slate-500 rounded focus:ring-blue-500 accent-blue-500"
+                              className="w-4 h-4 text-orange-500 border-zinc-300 dark:border-zinc-500 rounded focus:ring-orange-500 accent-orange-500"
                             />
-                            <span className="text-sm text-slate-700 dark:text-slate-300">{option}</span>
+                            <span className="text-sm text-zinc-700 dark:text-zinc-300">{option}</span>
                           </label>
                         ))}
                       </div>
@@ -1355,13 +1355,13 @@ function PromptGeneratorContent() {
                   <button
                     onClick={generatePrompt}
                     disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
                   >
                     {isGenerating ? '생성 중...' : '프롬프트 생성'}
                   </button>
                   <button
                     onClick={resetForm}
-                    className="px-6 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors min-h-[44px] text-sm"
+                    className="px-6 py-3 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors min-h-[44px] text-sm"
                   >
                     초기화
                   </button>
@@ -1371,35 +1371,35 @@ function PromptGeneratorContent() {
 
             {/* Generated Prompt */}
             {generatedPrompt && (
-              <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm space-y-4">
+              <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm space-y-4">
                 <div className="flex justify-between items-center">
-                  <h2 className="font-semibold text-slate-900 dark:text-slate-100">생성된 프롬프트</h2>
+                  <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">생성된 프롬프트</h2>
                   <button
                     onClick={copyToClipboard}
-                    className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-medium rounded-lg transition-colors"
+                    className="px-4 py-2 bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-zinc-700 dark:text-zinc-200 text-xs font-medium rounded-lg transition-colors"
                   >
                     복사하기
                   </button>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700 max-h-80 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 font-sans">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-700 max-h-80 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300 font-sans">
                     {generatedPrompt}
                   </pre>
                 </div>
 
                 {/* AI 글쓰기로 이동 */}
-                <div className="bg-gradient-to-br from-blue-50 to-amber-50 dark:from-blue-950/40 dark:to-amber-950/40 border border-blue-200 dark:border-blue-700 rounded-xl p-5">
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5">
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-amber-600 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center flex-shrink-0">
                       <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-1">
+                      <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
                         이 프롬프트로 AI 글 받기
                       </h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
                         AI 글쓰기 페이지로 이동해 Claude가 완성된 글을 작성합니다. HTML·마크다운·일반 텍스트 3가지 포맷으로 즉시 복사할 수 있어요. (비로그인 1회/일, 로그인 5회/일 무료)
                       </p>
                     </div>
@@ -1425,9 +1425,9 @@ function PromptGeneratorContent() {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-4">
             {/* How to use */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">사용 방법</h2>
-              <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">사용 방법</h2>
+              <ol className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
                 {[
                   '블로그 글의 주제가 될 키워드를 입력하세요 (필수)',
                   '분야와 어투/톤앤매너를 선택하세요 (필수)',
@@ -1437,7 +1437,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트를 복사하여 AI 도구에 사용하세요',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-blue-500 dark:text-blue-400 font-bold text-xs mt-0.5">{i + 1}.</span>
+                    <span className="text-orange-500 dark:text-orange-400 font-bold text-xs mt-0.5">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -1445,9 +1445,9 @@ function PromptGeneratorContent() {
             </div>
 
             {/* Tips */}
-            <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-5 shadow-sm">
-              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">팁</h2>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+            <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm">
+              <h2 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-3">팁</h2>
+              <ul className="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
                 {[
                   '키워드는 구체적이고 명확하게 입력하세요',
                   '제목 스타일을 선택하면 상위 노출 확률을 높일 수 있습니다',
@@ -1456,7 +1456,7 @@ function PromptGeneratorContent() {
                   '생성된 프롬프트는 필요에 따라 수정하여 사용할 수 있습니다',
                 ].map((text, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-blue-500 dark:text-blue-400">•</span>
+                    <span className="text-orange-500 dark:text-orange-400">•</span>
                     <span>{text}</span>
                   </li>
                 ))}
@@ -1492,7 +1492,7 @@ function PromptGeneratorContent() {
         <div className="mt-10 text-center">
           <a
             href="/lab"
-            className="inline-flex items-center gap-1.5 text-sm text-blue-500 dark:text-blue-400 hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm text-orange-500 dark:text-orange-400 hover:underline"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -1508,15 +1508,15 @@ function PromptGeneratorContent() {
 export default function PromptGeneratorPage() {
   return (
     <Suspense fallback={
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen py-8">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">프롬프트 생성</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">프롬프트 생성</h1>
           </div>
-          <div className="bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+          <div className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6 shadow-sm">
             <div className="animate-pulse">
-              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-4" />
-              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
+              <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-3/4 mb-4" />
+              <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded w-1/2" />
             </div>
           </div>
         </div>
