@@ -115,7 +115,7 @@ export default function Home() {
           <TrendingTicker
             category={myCategoryLabel ?? '전체'}
             label={myCategoryLabel ? '내 분야 트렌드' : '오늘의 트렌드'}
-            limit={12}
+            limit={10}
           />
         </div>
       </section>
