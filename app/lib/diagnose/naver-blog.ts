@@ -195,3 +195,70 @@ export function findRankInResults(
   }
   return null;
 }
+
+/** RSS link → PostView.naver URL 로 변환.
+ *  네이버 블로그 글 페이지는 iframe 으로 본문을 감싸기 때문에 그대로 fetch하면 본문이 안 보임.
+ *  PostView.naver를 직접 호출하면 iframe 내부 본문 HTML을 직접 받아 정확한 글자수·이미지 수 측정 가능.
+ */
+function toPostViewUrl(postUrl: string): string | null {
+  if (/PostView\.naver/i.test(postUrl)) return postUrl;
+  const m = postUrl.match(/blog\.naver\.com\/([a-zA-Z0-9_]+)\/(\d+)/i);
+  if (!m) return null;
+  return `https://blog.naver.com/PostView.naver?blogId=${m[1]}&logNo=${m[2]}&redirect=Dlog&widgetTypeCall=true&directAccess=false`;
+}
+
+export interface PostBodyMetrics {
+  contentLength: number;
+  imageCount: number;
+}
+
+/** 네이버 블로그 글 본문(HTML) 가져와 글자수·이미지 수 추출.
+ *
+ *  RSS의 description은 잘려있어 부정확하므로, 정확한 quality 측정에는 실제 본문 페이지가 필요.
+ *  본문 컨테이너 우선순위:
+ *    1) `.se-main-container`  — 스마트에디터 ONE (현행)
+ *    2) `#postViewArea`        — 구 에디터
+ *    3) `<body>` 전체          — fallback
+ *
+ *  실패 시(타임아웃·네트워크 오류·매칭 실패) null. 호출자는 RSS 값 유지.
+ */
+export async function fetchPostBody(postUrl: string): Promise<PostBodyMetrics | null> {
+  const viewUrl = toPostViewUrl(postUrl);
+  if (!viewUrl) return null;
+  try {
+    const res = await fetchWithRetry(viewUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; BohemeBlogLab/1.0; +https://bohemebloglab.com)',
+        Accept: 'text/html,application/xhtml+xml,*/*;q=0.8',
+      },
+      cache: 'no-store',
+      retries: 1,
+      timeoutMs: 8_000,
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    if (html.length < 500) return null;
+
+    let region = '';
+    const seIdx = html.search(/<div[^>]*class=["'][^"']*se-main-container[^"']*["'][^>]*>/i);
+    if (seIdx >= 0) {
+      region = html.slice(seIdx);
+    } else {
+      const oldIdx = html.search(/<div[^>]*id=["']postViewArea["'][^>]*>/i);
+      if (oldIdx >= 0) {
+        region = html.slice(oldIdx);
+      } else {
+        const bodyMatch = html.match(/<body[\s\S]*?<\/body>/i);
+        region = bodyMatch ? bodyMatch[0] : html;
+      }
+    }
+
+    const imageCount = countTags(region, 'img');
+    const stripped = stripHtml(region);
+    const contentLength = stripped.length;
+    if (contentLength < 50) return null;
+    return { contentLength, imageCount };
+  } catch {
+    return null;
+  }
+}

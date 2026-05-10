@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-05-10 — Phase 34.1: 진단 본문 측정 정확도 개선 (PostView.naver)
+
+**버그**: HealthChecklist의 "글당 평균 800자+" / "글당 이미지 2장+" 체크가 실제 1,000자/2장 이상인 글에서도 항상 미통과. 원인은 `quality.avgCharsPerPost` / `avgImagesPerPost`가 RSS `<description>`(본문 일부 250~500자 + 썸네일 0~1장)을 기반으로 계산되고 있어서 실제값보다 훨씬 작게 측정되던 것.
+
+### 1. `naver-blog.ts` — `fetchPostBody(postUrl)` 추가
+- RSS link → `https://blog.naver.com/PostView.naver?blogId=...&logNo=...` 변환 후 fetch.
+- iframe 내부 본문 HTML이 직접 응답되므로 본문 영역 정확 측정 가능.
+- 본문 컨테이너 우선순위: `.se-main-container` (스마트에디터 ONE) → `#postViewArea` (구 에디터) → `<body>` 전체 (fallback).
+- timeout 8초 + retry 1회. 실패 시 null 반환 → 호출자가 RSS 값 유지.
+
+### 2. `/api/blog-diagnose/route.ts` 흐름 변경
+- RSS 받은 직후 최근 12편 본문을 병렬 fetch (concurrency 3).
+- 성공한 글은 `RssItem`의 `contentLength` / `imageCount`를 실제값으로 덮어씀, `fetchedIndices: Set<number>`에 인덱스 기록.
+- `scoreQuality(qualityItems)` 호출 시 fetch 성공한 글들만 입력 → RSS 잘린 데이터로 평균이 끌려 내려가지 않음.
+- 실패 시 warnings에 명확히 안내 ("X편 중 Y편만 본문 측정 성공" 또는 "전부 실패 — RSS 요약 기준").
+
+### 3. `scoring.ts` 임계값 재조정
+- 정확 측정 도입에 맞춰 `sChars`: `(avgChars - 200)/600` → `(avgChars - 300)/1200`. 1,500자 만점 / 300자 미만 0.
+- "RSS 본문은 잘려 있어 실제는 더 길 수 있어요" 안내 문구 제거 (더이상 사실 아님).
+
+### 4. UI 문구 정리 (`blog-diagnose/page.tsx`)
+- HealthChecklist `글당 평균 800자+` 디테일 "(RSS 기준)" → "(최근 글 본문 측정)".
+- 미통과 advice에서 "RSS는 본문이 잘릴 수 있어..." 한 문장 제거.
+
+### 영향
+- 추가 네트워크 비용: 최근 12편 × 3 동시성 → 약 4~10초. 기존 30~50초 진단 + 4~10초 = 35~60초 (Vercel maxDuration 60초 한계 안).
+- quality 점수가 일반적으로 +20~40점 상승 가능 (그동안 RSS 잘림으로 페널티 받던 부분이 해소).
+- HealthChecklist 8개 체크 중 글자수·이미지 체크가 실제 콘텐츠 기준으로 정확히 통과/미통과.
+
+---
+
 ## 2026-05-10 — Phase 34: 인기검색어 랭킹 보드 + 진단 차별화 (분포·체크·30일 플랜)
 
 **배경**: 사용자 피드백 — (1) 홈 인기 검색어가 가로 스크롤 12개 칩이라 "순위" 느낌이 없음, (2) 블로그 진단은 매번 블로그 URL/카테고리를 다시 입력해야 하고, 결과 페이지의 게이지가 잘려 보이며, 다른 사이트와 비교해 분석이 얕음.

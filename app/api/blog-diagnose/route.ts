@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { extractBlogId, fetchRss, searchBlogByQuery, type BlogSearchItem } from '@/app/lib/diagnose/naver-blog';
+import { extractBlogId, fetchRss, fetchPostBody, searchBlogByQuery, type BlogSearchItem } from '@/app/lib/diagnose/naver-blog';
 import { findCategorySeed } from '@/app/lib/diagnose/category-seeds';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits, summarizeRss } from '@/app/lib/diagnose/scoring';
 import { createClient } from '@/app/lib/supabase/server';
@@ -83,6 +83,35 @@ export async function POST(request: Request) {
   const rss = await fetchRss(blogId);
   const { items, warnings } = summarizeRss(rss);
 
+  // 3.5) 최근 N편 본문 실제 측정.
+  //      RSS description은 잘려있어 글자수·이미지 수가 부정확 (실제 1,500자/3장이어도 RSS는 400자/1장 수준).
+  //      네이버 PostView.naver를 추가 호출해 정확한 본문 길이/이미지 수로 덮어쓴다.
+  //      샘플은 최근 12편만 — 시간(maxDuration 60초) + 비용 균형.
+  const QUALITY_SAMPLE_SIZE = 12;
+  const sampleSize = Math.min(items.length, QUALITY_SAMPLE_SIZE);
+  const fetchedIndices = new Set<number>();
+  if (sampleSize > 0) {
+    const sample = items.slice(0, sampleSize);
+    const bodies = await runPool(
+      sample,
+      async (it) => fetchPostBody(it.link),
+      3,
+    );
+    for (let i = 0; i < sampleSize; i++) {
+      const b = bodies[i];
+      if (b) {
+        items[i].contentLength = b.contentLength;
+        items[i].imageCount = b.imageCount;
+        fetchedIndices.add(i);
+      }
+    }
+    if (fetchedIndices.size === 0) {
+      warnings.push('본문 상세 측정에 실패해 RSS 요약 기준으로 글자수·이미지 수가 산출됐어요. (네이버 일시 차단 또는 비공개 글 가능성)');
+    } else if (fetchedIndices.size < sampleSize) {
+      warnings.push(`최근 ${sampleSize}편 중 ${fetchedIndices.size}편만 본문 측정에 성공했어요. 나머지는 RSS 요약 기준입니다.`);
+    }
+  }
+
   // 4) 카테고리 키워드 30개로 검색해 랭크 매핑 (노출 점수)
   //    동시성 5, 요청 간 120ms gap → 30개 약 7~12초 소요 (네이버 응답 속도 변동에 따라)
   const searchResults = await runPool(
@@ -103,9 +132,13 @@ export async function POST(request: Request) {
   const hits = mapHits(enriched, blogId);
 
   // 5) 점수 산출
+  //    품질은 본문 fetch가 성공한 최근 샘플만으로 — RSS 잘린 데이터로 평균이 낮아지지 않도록.
   const activity = scoreActivity(items);
   const visibility = scoreVisibility(hits);
-  const quality = scoreQuality(items);
+  const qualityItems = fetchedIndices.size > 0
+    ? items.filter((_, i) => fetchedIndices.has(i))
+    : items;
+  const quality = scoreQuality(qualityItems);
 
   if (items.length === 0) {
     warnings.push('RSS에서 글을 찾지 못해 활동성·품질 점수가 0이에요. 노출 점수만 참고해주세요.');
