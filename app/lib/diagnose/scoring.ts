@@ -188,8 +188,8 @@ export function scoreQuality(items: RssItem[]): QualityScore {
   const categoryConsistency = cats.length ? topCount / cats.length : 0;
 
   // 점수
-  // 1. 글자수: RSS 본문은 잘릴 수 있어 보수적 — 800자 이상 만점, 200자 미만 0
-  const sChars = clamp01((avgChars - 200) / 600);
+  // 1. 글자수: 최근 글 본문 실제 측정값 기준 — 1,500자 이상 만점, 300자 미만 0
+  const sChars = clamp01((avgChars - 300) / 1200);
   // 2. 이미지: 글당 평균 3장 만점, 0장 0
   const sImg = clamp01(avgImages / 3);
   // 3. 카테고리 일관성: 60% 집중 만점, 20% 이하 0 (C-Rank 친화)
@@ -255,7 +255,7 @@ export function compose(
 
   // 품질 인사이트
   if (quality.avgCharsPerPost < 700) {
-    insights.push(`글당 평균 ${quality.avgCharsPerPost}자 — 1,500자 안팎으로 늘리면 D.I.A. 점수에 유리합니다. (RSS 본문은 잘려 있어 실제는 더 길 수 있어요.)`);
+    insights.push(`글당 평균 ${quality.avgCharsPerPost}자 — 1,500자 안팎으로 늘리면 D.I.A. 점수에 유리합니다.`);
   }
   if (quality.avgImagesPerPost < 1) {
     insights.push('글당 이미지가 거의 없어요. 한 편에 3~5장 정도 적절히 배치하면 체류시간이 늘어납니다.');

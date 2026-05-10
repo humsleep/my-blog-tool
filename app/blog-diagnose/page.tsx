@@ -662,9 +662,9 @@ function HealthChecklist({ score }: { score: DiagnoseResponse['score'] }) {
     },
     {
       label: '글당 평균 800자+',
-      detail: `평균 ${score.quality.avgCharsPerPost.toLocaleString()}자 (RSS 기준)`,
+      detail: `평균 ${score.quality.avgCharsPerPost.toLocaleString()}자 (최근 글 본문 측정)`,
       pass:   score.quality.avgCharsPerPost >= 800,
-      advice: 'D.I.A. 점수에 유리하려면 1,500자 안팎이 권장됩니다. RSS는 본문이 잘릴 수 있어 실제는 더 길 수도 있어요.',
+      advice: 'D.I.A. 점수에 유리하려면 1,500자 안팎이 권장됩니다.',
     },
     {
       label: '글당 이미지 2장+',
