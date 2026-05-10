@@ -45,22 +45,27 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
   const stroke = 12;
   const r = (size - stroke) / 2;
   const cx = size / 2;
-  const cy = half ? size - stroke / 2 : size / 2;
 
   if (half) {
+    // 반원 게이지 — 호의 양 끝점이 cy 라인에 있고 위쪽으로 부풀어 오른다.
+    //   cy = size/2 (호 양끝)
+    //   viewBox 높이 = size/2 + stroke + 캡션·점수 텍스트 여백
+    const cy = size / 2;
+    const vbH = Math.ceil(size / 2 + stroke + size * 0.10);
+    const arcPath = `M ${stroke / 2},${cy} A ${r},${r} 0 0,1 ${size - stroke / 2},${cy}`;
     const circumference = Math.PI * r;
     const offset = circumference * (1 - v / 100);
     return (
-      <svg width={size} height={size / 2 + stroke} viewBox={`0 0 ${size} ${size / 2 + stroke}`} className="block">
+      <svg width={size} height={vbH} viewBox={`0 0 ${size} ${vbH}`} className="block">
         <path
-          d={`M ${stroke / 2},${cy} a ${r},${r} 0 0,1 ${size - stroke},0`}
+          d={arcPath}
           fill="none"
           stroke={muted}
           strokeWidth={stroke}
           strokeLinecap="round"
         />
         <path
-          d={`M ${stroke / 2},${cy} a ${r},${r} 0 0,1 ${size - stroke},0`}
+          d={arcPath}
           fill="none"
           stroke={bandColor}
           strokeWidth={stroke}
@@ -69,11 +74,24 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
           strokeDashoffset={offset}
           style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1)' }}
         />
-        <text x={cx} y={cy - 8} textAnchor="middle" fill={textColor} style={{ fontSize: size * 0.28, fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.04em' }}>
+        {/* 점수 — 호 안쪽 (cy 보다 위) */}
+        <text
+          x={cx}
+          y={cy - size * 0.04}
+          textAnchor="middle"
+          fill={textColor}
+          style={{ fontSize: size * 0.28, fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.04em' }}
+        >
           {v}
         </text>
         {caption && (
-          <text x={cx} y={cy + 12} textAnchor="middle" fill={subText} style={{ fontSize: size * 0.10, fontWeight: 500 }}>
+          <text
+            x={cx}
+            y={cy + size * 0.085}
+            textAnchor="middle"
+            fill={subText}
+            style={{ fontSize: size * 0.085, fontWeight: 500, letterSpacing: '0.02em' }}
+          >
             {caption}
           </text>
         )}
@@ -81,6 +99,7 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
     );
   }
 
+  const cy = size / 2;
   // 풀 도넛
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - v / 100);

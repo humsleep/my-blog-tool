@@ -5,6 +5,33 @@ import Link from 'next/link';
 import { CATEGORY_SEEDS } from '@/app/lib/diagnose/category-seeds';
 import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
+import { useUser } from '@/app/lib/supabase/useUser';
+import { fetchMyProfile } from '@/app/lib/community/profile';
+
+/**
+ * 프로필 분야(한국어) → 진단 카테고리 시드(영문) 매핑.
+ * CATEGORIES(`@/app/lib/community/categories`)는 한국어 라벨을 그대로 저장하지만,
+ * CATEGORY_SEEDS는 영문 슬러그를 쓰므로 한 번 매핑한다.
+ */
+const PROFILE_TO_DIAGNOSE: Record<string, string> = {
+  '일상':       'lifestyle',
+  '맛집':       'food-travel',
+  '여행':       'food-travel',
+  '요리/음식':  'food-travel',
+  '인테리어':   'lifestyle',
+  '반려동물':   'lifestyle',
+  '육아/결혼':  'parenting',
+  '건강/운동':  'health-fitness',
+  '스포츠':     'health-fitness',
+  '뷰티/패션':  'fashion-beauty',
+  'IT/기술':    'info-howto',
+  '교육/학습':  'info-howto',
+  '경제/투자':  'info-howto',
+  '부동산':     'info-howto',
+  '자동차':     'review',
+  '게임':       'culture',
+  '영화/드라마':'culture',
+};
 
 /**
  * /blog-diagnose — 블로그 진단 페이지.
@@ -58,6 +85,36 @@ export default function BlogDiagnosePage() {
   const [error, setError] = useState('');
   const [result, setResult] = useState<DiagnoseResponse | null>(null);
   const [progressBeat, setProgressBeat] = useState(0);
+  const [prefillNotice, setPrefillNotice] = useState<string | null>(null);
+
+  const { user } = useUser();
+
+  // 로그인 상태면 프로필에서 블로그 URL · 분야 자동 채움
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    fetchMyProfile().then((profile) => {
+      if (cancelled || !profile) return;
+      const filled: string[] = [];
+      if (profile.blog_url && !blogInput.trim()) {
+        setBlogInput(profile.blog_url);
+        filled.push('블로그 주소');
+      }
+      if (profile.category && !category) {
+        const mapped = PROFILE_TO_DIAGNOSE[profile.category];
+        if (mapped) {
+          setCategory(mapped);
+          filled.push('분야');
+        }
+      }
+      if (filled.length > 0) {
+        setPrefillNotice(`프로필에서 ${filled.join(' · ')}을(를) 가져왔어요. 필요하면 수정 가능합니다.`);
+      }
+    });
+    return () => { cancelled = true; };
+    // 최초 1회만 — blogInput/category 변경에 다시 트리거 X
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   // running 단계에서 progress beat 회전
   useEffect(() => {
@@ -133,6 +190,15 @@ export default function BlogDiagnosePage() {
                 진단 시작
               </li>
             </ol>
+
+            {prefillNotice && (
+              <div className="mb-6 px-4 py-3 rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50 dark:bg-orange-950/30 text-xs text-orange-800 dark:text-orange-200 flex items-start gap-2">
+                <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{prefillNotice}</span>
+              </div>
+            )}
 
             <div className="space-y-8 mb-10">
               {/* 블로그 ID 입력 — 카드형 */}
@@ -278,12 +344,12 @@ export default function BlogDiagnosePage() {
 
             {/* Total — gauge + radar 시각화 */}
             <section className="border-y border-rule py-10 mb-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
                 {/* 게이지 + 밴드 + 미니바 */}
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                   <span className="ed-byline mb-3">총점</span>
-                  <ScoreGauge value={result.score.total} size={180} caption="/ 100" />
-                  <div className={`mt-3 text-lg sm:text-xl font-semibold ${BAND_LABELS[result.score.band].tone}`}>
+                  <ScoreGauge value={result.score.total} size={200} caption="/ 100" />
+                  <div className={`mt-2 text-lg sm:text-xl font-semibold ${BAND_LABELS[result.score.band].tone}`}>
                     {BAND_LABELS[result.score.band].label}
                   </div>
                   <p className="mt-1 text-sm text-ink-muted max-w-xs">{BAND_LABELS[result.score.band].desc}</p>
@@ -297,7 +363,7 @@ export default function BlogDiagnosePage() {
                     activity={result.score.activity.score}
                     visibility={result.score.visibility.score}
                     quality={result.score.quality.score}
-                    height={240}
+                    height={260}
                   />
                   <div className="grid grid-cols-3 gap-3 px-2">
                     <ScoreMiniBar label="활동성" value={result.score.activity.score} />
@@ -307,6 +373,15 @@ export default function BlogDiagnosePage() {
                 </div>
               </div>
             </section>
+
+            {/* ── 노출 분포 — 30개 키워드 어디 분포되어 있는지 한눈에 ── */}
+            <RankDistribution hits={result.score.visibility.hits} />
+
+            {/* ── 블로그 건강 체크 — 8개 체크포인트 ✓/✗ 시각화 ── */}
+            <HealthChecklist score={result.score} />
+
+            {/* ── 30일 액션 플랜 — 가장 약한 축 기반 weekly 추천 ── */}
+            <ActionPlan score={result.score} categoryLabel={result.categoryLabel} />
 
             {/* 3축 점수 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-rule-soft border border-rule-soft mb-12">
@@ -457,5 +532,369 @@ function ScoreCard({
         ))}
       </dl>
     </div>
+  );
+}
+
+/* ─── 노출 분포 차트 — 30개 키워드 노출 구간별 분포 ────────────────
+ *
+ *  TOP10 / 11~20 / 21~30 / 미진입 4구간으로 막대 + 개수 표시.
+ *  카테고리 내 위치를 빠르게 파악할 수 있게 도움.
+ */
+function RankDistribution({ hits }: { hits: { keyword: string; rank: number | null }[] }) {
+  if (hits.length === 0) return null;
+
+  const buckets = {
+    top10:  hits.filter((h) => h.rank !== null && h.rank <= 10).length,
+    rank20: hits.filter((h) => h.rank !== null && h.rank > 10 && h.rank <= 20).length,
+    rank30: hits.filter((h) => h.rank !== null && h.rank > 20 && h.rank <= 30).length,
+    miss:   hits.filter((h) => h.rank === null).length,
+  };
+  const total = hits.length;
+  const pct = (n: number) => Math.round((n / total) * 100);
+
+  const segs = [
+    { key: 'top10',  label: '1~10위',  count: buckets.top10,  pct: pct(buckets.top10),  cls: 'bg-orange-600 dark:bg-orange-400' },
+    { key: 'rank20', label: '11~20위', count: buckets.rank20, pct: pct(buckets.rank20), cls: 'bg-orange-400 dark:bg-orange-500' },
+    { key: 'rank30', label: '21~30위', count: buckets.rank30, pct: pct(buckets.rank30), cls: 'bg-amber-300 dark:bg-amber-700' },
+    { key: 'miss',   label: '미진입',  count: buckets.miss,   pct: pct(buckets.miss),   cls: 'bg-zinc-200 dark:bg-zinc-700' },
+  ];
+
+  return (
+    <section className="mb-12">
+      <div className="flex items-baseline justify-between mb-3">
+        <div className="ed-eyebrow">노출 분포</div>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">{total}개 키워드 기준</span>
+      </div>
+
+      {/* 스택 막대 */}
+      <div className="flex h-7 w-full overflow-hidden rounded-md border border-rule-soft mb-3 bg-zinc-50 dark:bg-zinc-900">
+        {segs.map((s) => s.count > 0 && (
+          <div
+            key={s.key}
+            className={`${s.cls} flex items-center justify-center text-[10px] font-semibold text-white/95 transition-all`}
+            style={{ width: `${s.pct}%` }}
+            title={`${s.label} ${s.count}개 (${s.pct}%)`}
+          >
+            {s.pct >= 8 ? `${s.pct}%` : ''}
+          </div>
+        ))}
+      </div>
+
+      {/* 범례 + 개수 */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {segs.map((s) => (
+          <div
+            key={s.key}
+            className="flex items-center gap-2 px-3 py-2 rounded-md border border-rule-soft bg-paper"
+          >
+            <span className={`inline-block w-2.5 h-2.5 rounded-sm ${s.cls}`} />
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] text-ink-faint">{s.label}</div>
+              <div className="text-sm font-semibold text-ink tabular-nums">{s.count}개</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 해석 */}
+      <p className="mt-3 text-xs text-ink-muted leading-relaxed">
+        {buckets.top10 >= total * 0.2
+          ? `TOP10 진입 키워드가 ${buckets.top10}개로 카테고리 권위가 잘 누적되고 있습니다.`
+          : buckets.top10 + buckets.rank20 + buckets.rank30 >= total * 0.3
+            ? `1페이지 진입은 있지만 TOP10이 ${buckets.top10}개로 적습니다. 진입한 키워드의 글 패턴을 다른 글에 확장해보세요.`
+            : `1페이지 진입이 ${buckets.top10 + buckets.rank20 + buckets.rank30}개로 부족합니다. 검색량은 적지만 경쟁이 약한 롱테일 키워드부터 공략하세요.`}
+      </p>
+    </section>
+  );
+}
+
+/* ─── 블로그 건강 체크 — 8개 체크포인트 ✓/✗ ────────────────────────
+ *
+ *  네이버 블로그 운영 핵심 지표 8개를 체크리스트로 시각화.
+ *  사용자가 "내가 뭘 잘하고 뭘 못하고 있는지" 한눈에 알 수 있게.
+ */
+function HealthChecklist({ score }: { score: DiagnoseResponse['score'] }) {
+  type Check = {
+    label: string;
+    detail: string;
+    pass: boolean;
+    advice?: string;
+  };
+
+  const checks: Check[] = [
+    {
+      label: '주 2회 이상 발행',
+      detail: `최근 30일 ${score.activity.postsLast30d}편 발행`,
+      pass:   score.activity.postsLast30d >= 8,
+      advice: '최소 주 2회 (월 8편) 발행해야 알고리즘이 활성 블로그로 인식해요.',
+    },
+    {
+      label: '7일 이내 최신 글',
+      detail: Number.isFinite(score.activity.daysSinceLastPost)
+        ? `${Math.round(score.activity.daysSinceLastPost)}일 전 마지막 글`
+        : '발행 데이터 없음',
+      pass:   Number.isFinite(score.activity.daysSinceLastPost) && score.activity.daysSinceLastPost <= 7,
+      advice: '7일 넘게 글이 없으면 블로그 지수가 빠르게 떨어집니다.',
+    },
+    {
+      label: '꾸준한 발행 간격',
+      detail: Number.isFinite(score.activity.avgIntervalDays)
+        ? `평균 ${score.activity.avgIntervalDays}일, 표준편차 ${score.activity.cadenceStdDays}일`
+        : '데이터 부족',
+      pass:   Number.isFinite(score.activity.avgIntervalDays)
+              && score.activity.avgIntervalDays > 0
+              && score.activity.cadenceStdDays / score.activity.avgIntervalDays <= 0.7,
+      advice: '발행 간격이 들쭉날쭉하면 알고리즘이 신뢰도를 낮게 봅니다. 같은 요일에 발행하세요.',
+    },
+    {
+      label: '1페이지 진입 30%+',
+      detail: `${score.visibility.hitCount} / ${score.visibility.totalKeywords}개 진입 (${
+        Math.round((score.visibility.hitCount / Math.max(1, score.visibility.totalKeywords)) * 100)
+      }%)`,
+      pass:   score.visibility.hitCount / Math.max(1, score.visibility.totalKeywords) >= 0.3,
+      advice: '카테고리 핵심 키워드의 30% 이상 1페이지 진입이 평균 합격선입니다.',
+    },
+    {
+      label: 'TOP 10 진입 글 보유',
+      detail: `상위 10위 ${score.visibility.topTenCount}개`,
+      pass:   score.visibility.topTenCount >= 1,
+      advice: '단 1개라도 TOP10 글이 있으면 그 패턴을 다른 글에 복제할 수 있어요.',
+    },
+    {
+      label: '글당 평균 800자+',
+      detail: `평균 ${score.quality.avgCharsPerPost.toLocaleString()}자 (RSS 기준)`,
+      pass:   score.quality.avgCharsPerPost >= 800,
+      advice: 'D.I.A. 점수에 유리하려면 1,500자 안팎이 권장됩니다. RSS는 본문이 잘릴 수 있어 실제는 더 길 수도 있어요.',
+    },
+    {
+      label: '글당 이미지 2장+',
+      detail: `평균 ${score.quality.avgImagesPerPost}장`,
+      pass:   score.quality.avgImagesPerPost >= 2,
+      advice: '체류시간을 늘리려면 한 편에 3~5장의 이미지가 적절합니다.',
+    },
+    {
+      label: '카테고리 집중도 50%+',
+      detail: score.quality.topCategory
+        ? `${score.quality.topCategory} ${Math.round(score.quality.categoryConsistency * 100)}%`
+        : '카테고리 정보 없음',
+      pass:   score.quality.categoryConsistency >= 0.5,
+      advice: '한 분야에 집중해야 C-Rank가 누적됩니다. 분야가 흩어지면 전문성 점수가 낮아집니다.',
+    },
+  ];
+
+  const passed = checks.filter((c) => c.pass).length;
+  const ratio = passed / checks.length;
+  const tone =
+    ratio >= 0.75 ? 'text-orange-700 dark:text-orange-300' :
+    ratio >= 0.5  ? 'text-orange-600 dark:text-orange-400' :
+                    'text-zinc-700 dark:text-zinc-300';
+
+  return (
+    <section className="mb-12">
+      <div className="flex items-baseline justify-between mb-3">
+        <div className="ed-eyebrow">블로그 건강 체크</div>
+        <span className={`text-sm font-semibold tabular-nums ${tone}`}>
+          {passed} / {checks.length} 통과
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {checks.map((c) => (
+          <div
+            key={c.label}
+            className={`flex items-start gap-3 p-3 rounded-md border ${
+              c.pass
+                ? 'border-orange-200 dark:border-orange-900/40 bg-orange-50/40 dark:bg-orange-950/15'
+                : 'border-rule-soft bg-paper'
+            }`}
+          >
+            <span
+              className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                c.pass
+                  ? 'bg-orange-500 dark:bg-orange-400 text-white dark:text-zinc-950'
+                  : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400'
+              }`}
+              aria-label={c.pass ? '통과' : '미통과'}
+            >
+              {c.pass ? (
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-semibold text-ink">{c.label}</div>
+              <div className="text-xs text-ink-muted mt-0.5 tabular-nums">{c.detail}</div>
+              {!c.pass && c.advice && (
+                <div className="text-[11px] text-ink-faint mt-1.5 leading-relaxed">{c.advice}</div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── 30일 액션 플랜 — 가장 약한 축에 맞는 weekly 추천 ────────────── */
+function ActionPlan({
+  score, categoryLabel,
+}: {
+  score: DiagnoseResponse['score'];
+  categoryLabel: string;
+}) {
+  // 가장 약한 축 결정 (점수가 낮을수록 우선)
+  const axes: { key: 'activity' | 'visibility' | 'quality'; label: string; value: number }[] = [
+    { key: 'activity',   label: '활동성', value: score.activity.score },
+    { key: 'visibility', label: '노출',   value: score.visibility.score },
+    { key: 'quality',    label: '품질',   value: score.quality.score },
+  ];
+  axes.sort((a, b) => a.value - b.value);
+  const weakest = axes[0];
+
+  const targets = score.visibility.hits.filter((h) => h.rank === null).slice(0, 3);
+  const targetLabel = targets.length > 0
+    ? targets.map((t) => `「${t.keyword}」`).join(', ')
+    : `${categoryLabel} 분야의 미진입 키워드`;
+
+  const plans: Record<typeof weakest.key, { week: string; title: string; tasks: string[] }[]> = {
+    activity: [
+      {
+        week: 'Week 1',
+        title: '발행 페이스 회복',
+        tasks: [
+          '이번 주 안에 최소 2편 발행 — 짧아도 좋으니 끊긴 흐름부터 끊어내기',
+          '발행 시간을 정해두고 캘린더에 반복 일정 등록 (예: 화/목 오전 10시)',
+          '미발행 초안 정리 — 70% 완성된 글 1개를 마감해서 발행',
+        ],
+      },
+      {
+        week: 'Week 2',
+        title: '주간 리듬 만들기',
+        tasks: [
+          '주제 분류표 작성 — 주력 카테고리 1개에 80% 글 몰빵',
+          '같은 요일에 같은 주제로 발행 (예: 매주 화요일=리뷰, 목요일=노하우)',
+          '글감 백로그 5개 미리 적어두기 (제목 + 핵심 메시지만)',
+        ],
+      },
+      {
+        week: 'Week 3~4',
+        title: '꾸준함 정착',
+        tasks: [
+          '주 2~3회 발행을 4주 연속 — 알고리즘이 활성 블로그로 인식하기 시작',
+          '내가 발행한 글 중 검색 노출된 글의 패턴 분석 (제목·길이·구조)',
+          '한 달 결과 리뷰 + 다음 달 콘텐츠 캘린더 작성',
+        ],
+      },
+    ],
+    visibility: [
+      {
+        week: 'Week 1',
+        title: '진입 가능한 키워드 찾기',
+        tasks: [
+          `미진입 키워드 ${targetLabel} 중 1개 선택 — 검색량 적어도 OK`,
+          '키워드 분석 페이지에서 검색량 1천~5천짜리 롱테일로 확장 (예: "OOO 추천" → "OOO 가성비 추천")',
+          '경쟁 글 상위 5개의 제목·소제목·이미지 수 정리',
+        ],
+      },
+      {
+        week: 'Week 2',
+        title: '상위 글 패턴 복제',
+        tasks: [
+          '상위 글의 헤딩 구조를 그대로 가져와서 내 경험으로 채우기',
+          '제목에 키워드를 자연스럽게 포함 — 단어 시작 부분에 배치',
+          '본문 1,500자 + 이미지 5장 + 표 1개 구성으로 발행',
+        ],
+      },
+      {
+        week: 'Week 3~4',
+        title: '진입 후 강화',
+        tasks: [
+          '발행 후 7일~14일 사이 순위 체크 — 진입했다면 다음 키워드로 같은 패턴 반복',
+          '진입한 글에 댓글 달리는 키워드 변형으로 후속 글 작성',
+          '한 달 뒤 다시 진단해서 변화 추이 확인',
+        ],
+      },
+    ],
+    quality: [
+      {
+        week: 'Week 1',
+        title: '글 길이 기준 세우기',
+        tasks: [
+          `다음 글부터 본문 ${score.quality.avgCharsPerPost < 800 ? '1,500자' : '2,000자'} 이상 작성`,
+          '제목 → 도입 → 본론 (3~5개 소제목) → 마무리 구조 고정',
+          '각 소제목 아래 이미지 1장 + 본문 2~3문단',
+        ],
+      },
+      {
+        week: 'Week 2',
+        title: '이미지·시각자료 보강',
+        tasks: [
+          `글당 이미지 ${score.quality.avgImagesPerPost < 2 ? '3장' : '5장'} 이상 배치 — 직접 찍은 사진 우선`,
+          '캡처/도식이 필요하면 이미지 편집 페이지에서 모자이크·크롭 정리',
+          '대체 텍스트(alt) 입력 — SEO + 접근성 동시 확보',
+        ],
+      },
+      {
+        week: 'Week 3~4',
+        title: '카테고리 집중',
+        tasks: [
+          score.quality.topCategory
+            ? `「${score.quality.topCategory}」 카테고리에 80% 이상 발행 집중`
+            : '주력 카테고리 1개를 정하고 80% 이상 그 안에서 글쓰기',
+          '곁다리 주제는 별도 블로그/메모 앱으로 분리',
+          '한 달 후 D.I.A./C-Rank 점수 변화를 다시 진단',
+        ],
+      },
+    ],
+  };
+
+  const selected = plans[weakest.key];
+
+  return (
+    <section className="mb-12">
+      <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+        <div className="ed-eyebrow">30일 액션 플랜</div>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+          가장 약한 축 · {weakest.label} {weakest.value}점
+        </span>
+      </div>
+
+      <p className="text-sm text-ink-muted mb-4 leading-relaxed">
+        지금 가장 점수가 낮은 <span className="font-semibold text-ink">{weakest.label}</span> 영역에 맞춰
+        4주짜리 실행 플랜을 추천합니다. 해당 주 끝에 체크하고 다음 주로 넘어가세요.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {selected.map((plan, idx) => (
+          <div
+            key={plan.week}
+            className="rounded-md border border-rule-soft bg-paper p-4"
+          >
+            <div className="flex items-baseline justify-between mb-2">
+              <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
+                {plan.week}
+              </span>
+              <span className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 text-xs font-bold flex items-center justify-center tabular-nums">
+                {idx + 1}
+              </span>
+            </div>
+            <h4 className="text-sm font-semibold text-ink mb-2.5">{plan.title}</h4>
+            <ul className="space-y-1.5">
+              {plan.tasks.map((task, i) => (
+                <li key={i} className="flex gap-2 text-xs text-ink-muted leading-relaxed">
+                  <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
+                  <span>{task}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
