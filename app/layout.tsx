@@ -21,12 +21,22 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bohemebloglab.com"),
-  title: "Boheme PostLab - 블로그 포스팅 도우미",
-  description: "네이버/티스토리 블로거를 위한 글자 수 세기, 금칙어 검사, 이미지 편집 도구",
-  keywords: ["블로그", "포스팅", "글자수", "금칙어", "이미지 편집", "네이버 블로그", "티스토리", "블로그 도구"],
-  authors: [{ name: "Boheme PostLab" }],
-  creator: "Boheme PostLab",
-  publisher: "Boheme PostLab",
+  title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
+  description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.",
+  keywords: ["블로그", "블로그 진단", "키워드 분석", "AI 글쓰기", "네이버 블로그", "티스토리", "블로그 도구", "포스팅", "금칙어", "이미지 편집"],
+  authors: [{ name: "Boheme BlogLab" }],
+  creator: "Boheme BlogLab",
+  publisher: "Boheme BlogLab",
+  icons: {
+    icon: [
+      { url: "/icon.svg",     type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   robots: {
     index: true,
     follow: true,
@@ -42,22 +52,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     url: "https://bohemebloglab.com",
-    title: "Boheme PostLab - 블로그 포스팅 도우미",
-    description: "네이버/티스토리 블로거를 위한 글자 수 세기, 금칙어 검사, 이미지 편집 도구",
-    siteName: "Boheme PostLab",
+    title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
+    description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.",
+    siteName: "Boheme BlogLab",
     images: [
       {
         url: "https://bohemebloglab.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Boheme PostLab - 블로그 포스팅 도우미",
+        alt: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Boheme PostLab - 블로그 포스팅 도우미",
-    description: "네이버/티스토리 블로거를 위한 글자 수 세기, 금칙어 검사, 이미지 편집 도구",
+    title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
+    description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지.",
     images: ["https://bohemebloglab.com/og-image.png"],
   },
   verification: {

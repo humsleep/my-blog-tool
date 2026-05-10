@@ -199,12 +199,32 @@ export function findRankInResults(
 /** RSS link → PostView.naver URL 로 변환.
  *  네이버 블로그 글 페이지는 iframe 으로 본문을 감싸기 때문에 그대로 fetch하면 본문이 안 보임.
  *  PostView.naver를 직접 호출하면 iframe 내부 본문 HTML을 직접 받아 정확한 글자수·이미지 수 측정 가능.
+ *
+ *  보안: 항상 `blog.naver.com` 도메인으로 고정해 SSRF 방지.
+ *  RSS link가 외부 도메인을 가리키더라도 blogId/logNo만 추출해 우리가 안전한 URL을 다시 조립한다.
  */
 function toPostViewUrl(postUrl: string): string | null {
-  if (/PostView\.naver/i.test(postUrl)) return postUrl;
-  const m = postUrl.match(/blog\.naver\.com\/([a-zA-Z0-9_]+)\/(\d+)/i);
-  if (!m) return null;
-  return `https://blog.naver.com/PostView.naver?blogId=${m[1]}&logNo=${m[2]}&redirect=Dlog&widgetTypeCall=true&directAccess=false`;
+  // 1) 표준 형태: blog.naver.com/{id}/{logNo}
+  let blogId: string | null = null;
+  let logNo: string | null = null;
+  const pathMatch = postUrl.match(/blog\.naver\.com\/([a-zA-Z0-9_]+)\/(\d+)/i);
+  if (pathMatch) {
+    blogId = pathMatch[1];
+    logNo = pathMatch[2];
+  } else {
+    // 2) 쿼리 파라미터 형태: ?blogId=foo&logNo=12345 — 호스트는 무시하고 파라미터만 신뢰
+    const idMatch = postUrl.match(/[?&]blogId=([a-zA-Z0-9_]+)/i);
+    const noMatch = postUrl.match(/[?&]logNo=(\d+)/i);
+    if (idMatch && noMatch) {
+      blogId = idMatch[1];
+      logNo = noMatch[1];
+    }
+  }
+  if (!blogId || !logNo) return null;
+  // ID/logNo 형식 재검증 (정규식만으론 부족할 수 있어 한번 더 화이트리스트 검사)
+  if (!/^[a-zA-Z0-9_]{2,40}$/.test(blogId)) return null;
+  if (!/^\d{1,20}$/.test(logNo)) return null;
+  return `https://blog.naver.com/PostView.naver?blogId=${blogId}&logNo=${logNo}&redirect=Dlog&widgetTypeCall=true&directAccess=false`;
 }
 
 export interface PostBodyMetrics {

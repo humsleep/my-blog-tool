@@ -13,6 +13,7 @@ export function escapeLikePattern(s: string): string {
  *
  * 허용:
  *   - 동일 도메인의 path-only ("/foo", "/community/swap?x=1")
+ *   - 인코딩된 path ("%2Fcommunity%2Fswap" → "/community/swap")
  *
  * 차단:
  *   - 절대 URL ("https://evil.com/foo")
@@ -24,13 +25,22 @@ export function escapeLikePattern(s: string): string {
  */
 export function safeNextPath(next: string | null | undefined, fallback = '/'): string {
   if (!next) return fallback;
+  // 인코딩된 형태로 들어왔을 수 있음 — 한 단계 풀어서 검증
+  let candidate = next;
+  if (candidate.includes('%')) {
+    try {
+      candidate = decodeURIComponent(candidate);
+    } catch {
+      return fallback;
+    }
+  }
   // 1) 반드시 "/" 로 시작
-  if (!next.startsWith('/')) return fallback;
+  if (!candidate.startsWith('/')) return fallback;
   // 2) "//..." (protocol-relative) 차단
-  if (next.startsWith('//')) return fallback;
+  if (candidate.startsWith('//')) return fallback;
   // 3) "/\\..." 같은 변종 차단 (일부 브라우저가 백슬래시를 슬래시로 해석)
-  if (next.startsWith('/\\')) return fallback;
+  if (candidate.startsWith('/\\')) return fallback;
   // 4) "javascript:" 등 스킴 차단 (path 안에 들어올 수 없지만 방어적으로)
-  if (/^\/?\s*(javascript|data|vbscript|file):/i.test(next)) return fallback;
-  return next;
+  if (/^\/?\s*(javascript|data|vbscript|file):/i.test(candidate)) return fallback;
+  return candidate;
 }

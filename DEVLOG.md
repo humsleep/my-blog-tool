@@ -5,6 +5,71 @@
 
 ---
 
+## 2026-05-10 — Phase 35: 오픈 전 launch-readiness 일괄 패치
+
+**배경**: 오픈 전 정밀 점검에서 발견된 10개 이슈 일괄 처리. 법무 페이지는 사실상 충분(개인 사이트라 법인 정보 불요)이라 그쪽은 가벼운 다듬기만.
+
+### CRITICAL/HIGH
+
+**1. `safeNextPath` 이중 인코딩 → 로그인 후 원위치 복귀 실패** (`app/lib/security/safe-redirect.ts`)
+- `?next=` 값이 인코딩되어 들어왔을 때 한 단계 `decodeURIComponent` 후 검증.
+- `app/profile/setup/page.tsx:166` 의 nested `next` 도 inner를 별도 인코딩.
+
+**2. 진단 30~50초 결과 휘발 방지** (`app/blog-diagnose/page.tsx`)
+- `bbl:diagnose:v1` sessionStorage 키에 `{blogInput, category, result, savedAt}` 저장.
+- 진단 시작 시 입력값, 결과 도착 시 결과까지 캐시. 24시간 만료.
+- 마운트 시 자동 복원. `reset()` 호출하면 캐시 클리어.
+
+**3. `/start` → 8단계 모드 전환 시 draft 유실 방지** (`app/start/page.tsx:385`)
+- `<Link>` → `<button>`으로 바꿔 클릭 시 `sessionStorage.setItem('aiDraft', ...)` 후 `router.push`.
+
+**4. PWA manifest PNG 아이콘** (`public/icon-{192,512}.png`, `public/apple-touch-icon.png`)
+- sharp로 `icon.svg` → 192/512/180 PNG 생성. manifest.icons 갱신.
+- `app/layout.tsx` metadata.icons에 `apple` 항목 추가 (iOS 홈스크린 고해상도).
+- 동시에 og-image.png 686KB → 122KB로 압축.
+
+**5. `next.config.ts` 보안 헤더 추가**
+- HSTS, X-Content-Type-Options, X-Frame-Options=SAMEORIGIN, Referrer-Policy, Permissions-Policy. CSP는 의존성 많아 후일 별도 phase.
+
+**6. SSRF 방어 강화** (`app/lib/diagnose/naver-blog.ts:toPostViewUrl`)
+- 외부 도메인의 `?...PostView.naver`도 그대로 받아주던 분기 제거. 항상 `blog.naver.com`으로 재조립. blogId/logNo 화이트리스트 정규식 두 번 검증.
+
+**7. `/ai-writer` 한도 초과 안내 배너**
+- `usage.remaining <= 0` 전용 카피: "오늘 한도 모두 사용 / 자정(KST) 초기화 / 키워드 분석·프롬프트 생성·금칙어는 무제한". 비로그인이면 Google 로그인 CTA 유지.
+
+### MEDIUM/LOW
+
+**8. `/about` 다크모드 + 콘텐츠 갱신**
+- `bg-gray-*` 토큰 → `dark:bg-zinc-*` 적용. `Boheme PostLab` (legacy 명) → `Boheme BlogLab`.
+- 5개 핵심 도구 카드 + 서비스 특징 + 법적 안내 링크.
+
+**9. 메뉴 일관성**
+- Navbar `COMMUNITY_MENU` 의 tips 주석 해제 (서이추 / 정보 공유 / 체험단 동행 3개 모두 노출).
+- `/community/page.tsx` 허브에 tips 카드 추가 (3개로).
+- `Footer.tsx`에 "커뮤니티" 컬럼 신설 + tools 컬럼에 AI 글쓰기 추가.
+
+**10. 닉네임 24h 변경 제한 사전 안내** (`app/profile/setup/page.tsx`)
+- `existing.nickname_changed_at` 기반으로 "다음 변경 가능: 약 N시간 후" 동적 help text.
+
+**11. 모바일 하단 탭바 폰트 11px → 12px (`text-xs`)**
+- WCAG AA 가독성.
+
+**12. Layout metadata 정리**
+- title `Boheme PostLab` → `Boheme BlogLab` 정정. description/og/twitter 일치.
+- `icons` 항목 신설.
+
+**13. console.error 정보 노출 정리**
+- `app/components/AdSense.tsx`: 무시.
+- `app/api/ai-draft/route.ts:Claude API error`: 응답 본문 누설 방지 — 에러 클래스명만 로깅, 사용자에겐 일반 메시지.
+
+**14. 린트 에러**
+- `/lab` 향한 `<a>` → `<Link>` (`prompt-generator/page.tsx`, `trending/page.tsx`).
+
+### 검증
+- `npm run build` 클린 (43 페이지). manifest 타입 에러는 `purpose: 'any maskable'` → 별 항목 분할로 해결.
+
+---
+
 ## 2026-05-10 — Phase 34.2: 진단 방법·측정 기준 패널 (`MethodologyPanel`)
 
 **배경**: 사용자에게 점수가 어떻게 산출되는지 투명하게 알려야 신뢰가 쌓임. 8개 건강 체크 항목의 통과 기준, 3축 가중치, 데이터 소스, 측정 한계를 한 번에 볼 수 있게.

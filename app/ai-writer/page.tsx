@@ -239,14 +239,22 @@ export default function AiWriterPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    {usage.authenticated
-                      ? `오늘 ${usage.used} / ${usage.limit}회 사용`
-                      : `비로그인 사용량: ${usage.used} / ${usage.limit}회`}
+                    {usage.remaining <= 0
+                      ? (usage.authenticated
+                          ? '오늘 한도를 모두 사용했어요'
+                          : '비로그인 일일 한도(1회)를 사용했어요')
+                      : (usage.authenticated
+                          ? `오늘 ${usage.used} / ${usage.limit}회 사용`
+                          : `비로그인 사용량: ${usage.used} / ${usage.limit}회`)}
                   </div>
                   <div className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
-                    {usage.authenticated
-                      ? `로그인 사용자는 하루 ${usage.limit}회까지 무료입니다.`
-                      : `로그인하면 하루 ${usage.authedLimit ?? 5}회까지 사용할 수 있어요.`}
+                    {usage.remaining <= 0
+                      ? (usage.authenticated
+                          ? `한도는 자정(KST)에 초기화돼요. 키워드 분석·프롬프트 생성·금칙어 검사는 횟수 제한 없이 사용할 수 있어요.`
+                          : `로그인하면 하루 ${usage.authedLimit ?? 5}회까지 사용할 수 있고, 자정(KST)에 한도가 초기화돼요.`)
+                      : (usage.authenticated
+                          ? `로그인 사용자는 하루 ${usage.limit}회까지 무료입니다.`
+                          : `로그인하면 하루 ${usage.authedLimit ?? 5}회까지 사용할 수 있어요.`)}
                   </div>
                 </div>
                 {!usage.authenticated && configured && (

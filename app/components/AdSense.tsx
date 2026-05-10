@@ -16,8 +16,8 @@ export default function AdSense() {
     if (adsenseId && typeof window !== 'undefined') {
       try {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (e) {
-        console.error('AdSense error:', e);
+      } catch {
+        /* AdSense slot push failure는 운영에 영향 없음 — 무시 */
       }
     }
   }, [adsenseId]);

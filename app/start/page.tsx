@@ -382,9 +382,24 @@ export default function StartPage() {
                 <button onClick={reset} className="btn-base btn-secondary btn-md">
                   다른 키워드로 다시
                 </button>
-                <Link href={`/keyword-analysis?keyword=${encodeURIComponent(keyword)}`} className="btn-base btn-secondary btn-md">
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 8단계 모드로 이동하기 전에 draft를 sessionStorage에 보관 → editor 페이지에서 복원
+                    if (draft) {
+                      try {
+                        sessionStorage.setItem(
+                          'aiDraft',
+                          JSON.stringify({ content: draft, keyword: keyword.trim() || undefined, createdAt: Date.now() }),
+                        );
+                      } catch { /* ignore quota */ }
+                    }
+                    router.push(`/keyword-analysis?keyword=${encodeURIComponent(keyword)}`);
+                  }}
+                  className="btn-base btn-secondary btn-md"
+                >
                   8단계 정밀 모드로 →
-                </Link>
+                </button>
               </div>
             </div>
 

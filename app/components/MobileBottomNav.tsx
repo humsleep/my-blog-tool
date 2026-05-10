@@ -86,7 +86,7 @@ export default function MobileBottomNav() {
               aria-current={active ? 'page' : undefined}
             >
               {item.icon(active)}
-              <span className={`text-[11px] ${active ? 'font-semibold' : 'font-medium'}`}>
+              <span className={`text-xs ${active ? 'font-semibold' : 'font-medium'}`}>
                 {item.label}
               </span>
             </Link>

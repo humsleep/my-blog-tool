@@ -28,10 +28,10 @@ const CORE_TOOLS: { href: string; label: string }[] = [
   { href: '/editor', label: '에디터' },
 ];
 
-/** 커뮤니티 — 메뉴 (드롭다운). 일부 메뉴는 활성화 전 임시 숨김. */
+/** 커뮤니티 — 메뉴 (드롭다운). */
 const COMMUNITY_MENU: { href: string; label: string; description: string }[] = [
-  { href: '/community/swap', label: '서이추 해요', description: '같은 분야 블로거 매칭' },
-  // { href: '/community/tips', label: '정보 공유', description: '운영 노하우·질문 게시판' }, // 사이트 활성화 후 오픈 예정
+  { href: '/community/swap',       label: '서이추 해요',     description: '같은 분야 블로거 매칭' },
+  { href: '/community/tips',       label: '정보 공유',        description: '운영 노하우·질문 게시판' },
   { href: '/community/companions', label: '체험단 동행해요', description: '체험단 동행자 모집' },
 ];
 
