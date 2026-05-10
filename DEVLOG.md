@@ -38,6 +38,9 @@
 ### 검증
 - `IP_HASH_SALT=… npm run build` → 43 페이지 클린, 타입 에러 없음.
 
+### 배포
+- 직접 `git push origin main`이 원격에서 403으로 차단됨 → GitHub MCP로 PR #5 생성 후 머지(머지 커밋 `d640116`). 이후 main 직접 push가 막혀 있을 경우 동일 흐름(PR + merge)으로 진행.
+
 ---
 
 ## 2026-05-08 — Phase 33: 상위노출 분석 시각화 + 진단 점수 sparkline
