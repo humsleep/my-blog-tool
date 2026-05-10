@@ -274,6 +274,8 @@ export default function BlogDiagnosePage() {
             </div>
 
             {/* 안내 + CTA */}
+            <MethodologyPanel defaultOpen={false} />
+
             <div className="px-4 py-3 mb-6 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
               <strong className="text-amber-900 dark:text-amber-100">⚠️ 측정 한계</strong> — 네이버는 일일 방문자·블로그 지수를 공개하지 않아 공개 데이터로 합리적 추정만 가능합니다. 결과는 절대 점수가 아닌 카테고리 내 상대적 위치로 해석해주세요.
             </div>
@@ -463,6 +465,9 @@ export default function BlogDiagnosePage() {
               </section>
             )}
 
+            {/* 측정 방법 / 기준 — 점수 해석할 때 참조 */}
+            <MethodologyPanel defaultOpen={false} />
+
             {/* Next actions */}
             <section className="border-t border-rule pt-10 mb-10">
               <div className="ed-eyebrow mb-4">다음 단계</div>
@@ -504,6 +509,154 @@ export default function BlogDiagnosePage() {
         )}
       </div>
     </div>
+  );
+}
+
+/* ─── 측정 방법 · 기준 패널 ─────────────────────────────────────
+ *
+ *  사용자에게 진단 원리·통과 기준·데이터 소스를 투명하게 공개.
+ *  입력 페이지 (사전 안내) + 결과 페이지 (사후 해석) 양쪽에 노출.
+ *  collapsible <details> — 기본 닫힘. 필요할 때만 펼쳐 보도록.
+ */
+function MethodologyPanel({ defaultOpen = false }: { defaultOpen?: boolean }) {
+  return (
+    <details
+      open={defaultOpen}
+      className="group mb-6 rounded-lg border border-zinc-200 dark:border-[#2e2723] bg-white dark:bg-[#221c17] overflow-hidden"
+    >
+      <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-[#1a1410] transition-colors">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 text-sm">
+            📊
+          </span>
+          <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">진단 방법 · 측정 기준</span>
+          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">어떻게 점수를 매기나요?</span>
+        </div>
+        <svg
+          className="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </summary>
+
+      <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-zinc-100 dark:border-[#2e2723] text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-5">
+        {/* 1. 3축 가중치 */}
+        <div>
+          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
+            3축 가중평균
+          </h4>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
+            총점은 세 축의 점수를 가중평균(0~100)으로 합산합니다.
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: '활동성', weight: '25%', desc: '발행 빈도·꾸준함·최신성' },
+              { label: '노출',   weight: '50%', desc: '카테고리 키워드 검색 노출' },
+              { label: '품질',   weight: '25%', desc: '본문 길이·이미지·집중도' },
+            ].map((a) => (
+              <div
+                key={a.label}
+                className="rounded-md border border-rule-soft bg-paper px-3 py-2.5"
+              >
+                <div className="flex items-baseline justify-between mb-1">
+                  <span className="text-sm font-semibold text-ink">{a.label}</span>
+                  <span className="text-[11px] tabular-nums text-orange-700 dark:text-orange-300 font-semibold">{a.weight}</span>
+                </div>
+                <div className="text-[11px] text-ink-faint leading-snug">{a.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 2. 8개 건강 체크 통과 기준 */}
+        <div>
+          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
+            건강 체크 8개 항목 · 통과 기준
+          </h4>
+          <div className="overflow-hidden rounded-md border border-rule-soft">
+            <table className="w-full text-xs">
+              <thead className="bg-zinc-50 dark:bg-[#1a1410] text-ink-faint">
+                <tr>
+                  <th className="text-left font-medium px-3 py-2">항목</th>
+                  <th className="text-left font-medium px-3 py-2">통과 기준</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-rule-soft">
+                {[
+                  ['주 2회 이상 발행',     '최근 30일 8편 이상'],
+                  ['7일 이내 최신 글',      '마지막 발행이 7일 이내'],
+                  ['꾸준한 발행 간격',      '간격 표준편차 / 평균 ≤ 0.7'],
+                  ['1페이지 진입 30%+',    '키워드 30개 검색 → 30위 이내 진입이 9개 이상'],
+                  ['TOP 10 진입 글 보유',   '10위 이내 진입 키워드 1개 이상'],
+                  ['글당 평균 800자+',      '최근 12편 본문 평균 800자 이상'],
+                  ['글당 이미지 2장+',      '최근 12편 본문 평균 2장 이상'],
+                  ['카테고리 집중도 50%+',  'RSS 카테고리 최빈값 비율 50% 이상'],
+                ].map(([k, v]) => (
+                  <tr key={k}>
+                    <td className="px-3 py-2 font-medium text-ink whitespace-nowrap">{k}</td>
+                    <td className="px-3 py-2 text-ink-muted">{v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* 3. 데이터 소스 */}
+        <div>
+          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
+            데이터 소스
+          </h4>
+          <ul className="space-y-1.5 text-xs text-ink-muted">
+            <li className="flex gap-2">
+              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
+              <span><strong className="text-ink">네이버 블로그 RSS</strong> — 최근 글 발행 일자·제목·카테고리. 활동성 점수의 원천.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
+              <span><strong className="text-ink">네이버 검색 OpenAPI</strong> — 카테고리별 핵심 키워드 30개로 블로그 검색을 호출해 30위 이내 노출 여부를 확인. 노출 점수의 원천.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
+              <span><strong className="text-ink">PostView.naver (본문)</strong> — 최근 12편의 실제 본문 페이지를 추가 fetch해 글자수·이미지 수를 정확 측정. 품질 점수의 원천.</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* 4. 측정 한계 */}
+        <div>
+          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
+            측정 한계 · 주의
+          </h4>
+          <ul className="space-y-1.5 text-xs text-ink-muted">
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>네이버는 일일 방문자·블로그 지수를 공개하지 않아 모든 점수는 공개 데이터로 추정한 결과입니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>RSS·본문이 비공개이거나 RSS 발행이 꺼져 있으면 진단 자체가 불가합니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>"1페이지 진입"은 네이버 검색 OpenAPI display=30 기준 — 실제 PC 1페이지(10위)보다 넓은 범위입니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>RSS에 카테고리 태그가 없는 블로그는 카테고리 집중도가 낮게 잡힐 수 있습니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>점수 → 밴드(상위 5/15/35% 등) 매핑은 절대 백분위가 아니라 임계값 기준입니다. 카테고리 내 위치를 가늠하는 참고용으로 사용하세요.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </details>
   );
 }
 
