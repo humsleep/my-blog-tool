@@ -18,8 +18,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 pt-8 border-t border-zinc-100 dark:border-zinc-900">
-          <div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 pt-8 border-t border-zinc-100 dark:border-zinc-900">
+          <div className="col-span-2 md:col-span-1">
             <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">소개</h3>
             <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
               네이버·티스토리 블로거가 키워드 리서치부터 이미지 편집까지 한 도구에서 끝낼 수 있도록 만들어졌습니다.
@@ -35,8 +35,29 @@ export default function Footer() {
                 { href: '/competitor-analysis', label: '경쟁 블로그 분석' },
                 { href: '/trending', label: '인기 검색어' },
                 { href: '/prompt-generator', label: '프롬프트 생성' },
+                { href: '/ai-writer', label: 'AI 글쓰기' },
                 { href: '/editor', label: '금칙어 검사기' },
                 { href: '/image-tools', label: '이미지 편집' },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">커뮤니티</h3>
+            <ul className="space-y-2">
+              {[
+                { href: '/community/swap',       label: '서이추 해요' },
+                { href: '/community/tips',       label: '정보 공유' },
+                { href: '/community/companions', label: '체험단 동행해요' },
               ].map((item) => (
                 <li key={item.href}>
                   <Link

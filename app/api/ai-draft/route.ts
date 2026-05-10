@@ -331,9 +331,13 @@ export async function POST(request: Request) {
       },
     });
   } catch (err) {
-    console.error('Claude API error:', err);
-    const message = err instanceof Error ? err.message : 'AI 호출 실패';
-    return NextResponse.json({ error: `AI 생성 중 오류: ${message}` }, { status: 502 });
+    // 사용자에게는 일반화된 메시지, 서버 로그에는 에러 클래스명만 (응답 본문 누설 방지)
+    const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
+    console.error(`[ai-draft] Claude call failed: ${cls}`);
+    return NextResponse.json(
+      { error: 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.' },
+      { status: 502 },
+    );
   }
 }
 

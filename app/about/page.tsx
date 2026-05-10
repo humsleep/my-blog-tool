@@ -2,114 +2,120 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: '서비스 소개 - Boheme PostLab',
-  description: 'Boheme PostLab은 네이버/티스토리 블로거를 위한 전문적인 포스팅 도구를 제공합니다.',
+  title: '서비스 소개 - Boheme BlogLab',
+  description: 'Boheme BlogLab은 네이버·티스토리 블로거를 위한 데이터 기반 글쓰기 도구를 제공합니다.',
 };
 
 export default function AboutPage() {
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8 sm:py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-md border border-gray-100 p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">서비스 소개</h1>
-          
-          <div className="prose prose-sm max-w-none text-gray-700 space-y-6">
+        <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8">
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-8">서비스 소개</h1>
+
+          <div className="prose prose-sm max-w-none text-zinc-700 dark:text-zinc-300 space-y-8">
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Boheme PostLab이란?</h2>
-              <p>
-                Boheme PostLab은 네이버 블로그와 티스토리 블로거를 위한 전문적인 포스팅 도구 모음 서비스입니다. 
-                블로그 포스트 작성에 필요한 다양한 기능을 한 곳에서 제공하여, 더 효율적이고 품질 높은 콘텐츠를 만들 수 있도록 도와드립니다.
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Boheme BlogLab이란?</h2>
+              <p className="leading-relaxed">
+                Boheme BlogLab은 네이버 블로그·티스토리 블로거를 위한 올인원 글쓰기 도구입니다.
+                블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법 검사, 이미지 검색·편집까지
+                — 한국 블로거에게 필요한 데이터 기반 워크플로우를 한 곳에 모았습니다.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">주요 서비스</h2>
-              
-              <div className="space-y-6 mt-6">
-                <div className="border-l-4 border-orange-600 pl-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">1. 키워드 분석</h3>
-                  <p className="text-gray-700">
-                    블로그 포스트에 적합한 키워드를 분석하고 추천합니다. 네이버 검색광고 API를 활용하여 
-                    검색량, 경쟁도, 문서 수 등을 종합적으로 분석하여 최적의 키워드를 찾을 수 있습니다.
-                  </p>
-                  <Link href="/keyword-analysis" className="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2 inline-block">
-                    키워드 분석 도구 사용하기 →
-                  </Link>
-                </div>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">핵심 도구</h2>
 
-                <div className="border-l-4 border-orange-600 pl-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">2. 프롬프트 생성</h3>
-                  <p className="text-gray-700">
-                    AI 도구를 활용한 블로그 글 작성을 위한 최적의 프롬프트를 생성합니다. 
-                    키워드, 분야, 스타일, 타겟 독자 등을 선택하면 네이버 블로그 상위 노출을 위한 
-                    최적화된 프롬프트가 자동으로 생성됩니다.
-                  </p>
-                  <Link href="/prompt-generator" className="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2 inline-block">
-                    프롬프트 생성 도구 사용하기 →
-                  </Link>
-                </div>
-
-                <div className="border-l-4 border-orange-600 pl-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">3. 금칙어 검사기</h3>
-                  <p className="text-gray-700">
-                    실시간 글자 수 세기와 금칙어 검사 기능이 있는 전문적인 에디터입니다. 
-                    네이버 블로그 정책에 위배될 수 있는 금칙어를 자동으로 검사하고, 
-                    글자 수를 실시간으로 확인할 수 있습니다.
-                  </p>
-                  <Link href="/editor" className="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2 inline-block">
-                    금칙어 검사기 사용하기 →
-                  </Link>
-                </div>
-
-                <div className="border-l-4 border-orange-600 pl-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">4. 이미지 편집</h3>
-                  <p className="text-gray-700">
-                    이미지 리사이징, 모자이크 처리 등 블로그 포스트에 필요한 간단한 이미지 편집 기능을 제공합니다. 
-                    별도의 이미지 편집 프로그램 없이 웹 브라우저에서 바로 이미지를 편집할 수 있습니다.
-                  </p>
-                  <Link href="/image-tools" className="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2 inline-block">
-                    이미지 편집 도구 사용하기 →
-                  </Link>
-                </div>
+              <div className="space-y-5 mt-4">
+                {[
+                  {
+                    n: 1,
+                    title: '블로그 진단',
+                    desc: '네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3축 점수를 매기고, 30일 액션 플랜까지 자동 추천합니다.',
+                    href: '/blog-diagnose',
+                    cta: '내 블로그 진단하기',
+                  },
+                  {
+                    n: 2,
+                    title: '키워드 분석',
+                    desc: '네이버 검색광고 API의 실제 월간 검색량과 블로그 OpenAPI의 발행 문서 수로 검색량·경쟁률·황금 키워드를 한 표에 펼칩니다.',
+                    href: '/keyword-analysis',
+                    cta: '키워드 분석',
+                  },
+                  {
+                    n: 3,
+                    title: 'AI 글쓰기',
+                    desc: 'Claude Sonnet 4.6이 6단계로 제목·본문·해시태그·이미지 프롬프트까지 한 번에 만듭니다. 비로그인 1회/일, 로그인 5회/일 무료.',
+                    href: '/ai-writer',
+                    cta: 'AI 글쓰기',
+                  },
+                  {
+                    n: 4,
+                    title: '금칙어·맞춤법',
+                    desc: '실시간 글자수 카운트 + 네이버 정책 위반 가능 단어 검사 + LanguageTool 기반 맞춤법 점검까지 발행 전에 한 번에.',
+                    href: '/editor',
+                    cta: '에디터로 정리',
+                  },
+                  {
+                    n: 5,
+                    title: '이미지 검색·편집',
+                    desc: 'Pexels·Unsplash 무료 저작권 이미지 통합 검색과 크롭·모자이크·필터 등 간단한 편집 기능을 제공합니다.',
+                    href: '/image-search',
+                    cta: '이미지 검색',
+                  },
+                ].map((s) => (
+                  <div
+                    key={s.n}
+                    className="border-l-4 border-orange-500 dark:border-orange-400 pl-4"
+                  >
+                    <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+                      {s.n}. {s.title}
+                    </h3>
+                    <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">{s.desc}</p>
+                    <Link
+                      href={s.href}
+                      className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium mt-2 inline-block"
+                    >
+                      {s.cta} →
+                    </Link>
+                  </div>
+                ))}
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">서비스 특징</h2>
-              <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                <li><strong>무료 사용:</strong> 모든 기능을 무료로 제공합니다.</li>
-                <li><strong>회원가입 불필요:</strong> 회원가입이나 로그인 없이 바로 사용할 수 있습니다.</li>
-                <li><strong>간편한 사용:</strong> 복잡한 설치나 추가 프로그램 없이 웹 브라우저에서 바로 사용 가능합니다.</li>
-                <li><strong>실시간 처리:</strong> 모든 작업이 브라우저에서 실시간으로 처리됩니다.</li>
-                <li><strong>개인정보 보호:</strong> 회원가입 기능이 없어 사용자의 개인정보를 수집하지 않습니다.</li>
-                <li><strong>지속적 개선:</strong> 사용자 피드백을 반영하여 지속적으로 서비스를 개선합니다.</li>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">서비스 특징</h2>
+              <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <li><strong>대부분 무료, 회원가입 없이 시작:</strong> 키워드 분석·인기 검색어·프롬프트 생성·이미지 검색은 회원가입 없이 무제한 사용 가능합니다.</li>
+                <li><strong>로그인 시 추가 혜택:</strong> AI 글쓰기 일일 5회, 진단 점수 추적, 즐겨찾기 키워드, 커뮤니티 글 작성을 위해 Google 로그인이 필요합니다.</li>
+                <li><strong>실제 데이터 기반:</strong> 네이버 검색광고·OpenAPI·블로그 RSS·PostView 본문을 직접 호출해 추정값이 아닌 실측치를 사용합니다.</li>
+                <li><strong>개인정보 최소 수집:</strong> Google OAuth로 받은 이메일과 사용자가 자발적으로 입력한 닉네임·블로그 URL 외 민감정보를 수집하지 않습니다.</li>
+                <li><strong>커뮤니티 동행:</strong> 같은 분야 블로거 매칭(서이추), 운영 노하우 공유(정보 공유), 체험단 동행 — 혼자 운영하는 블로거의 동료 찾기를 돕습니다.</li>
+                <li><strong>지속적 개선:</strong> 사용자 피드백을 반영해 매주 도구를 업데이트합니다.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">이용 대상</h2>
-              <p>
-                Boheme PostLab은 다음과 같은 분들에게 유용합니다:
-              </p>
-              <ul className="list-disc pl-6 mt-4 space-y-2 text-gray-700">
-                <li>네이버 블로그 운영자</li>
-                <li>티스토리 블로그 운영자</li>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">이용 대상</h2>
+              <ul className="list-disc pl-6 space-y-2 text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <li>네이버 블로그·티스토리 운영자</li>
                 <li>블로그 포스팅을 준비하는 콘텐츠 크리에이터</li>
-                <li>SEO 최적화가 필요한 블로거</li>
-                <li>효율적인 포스팅 작성 도구를 찾는 사용자</li>
+                <li>SEO·키워드 전략을 데이터로 검증하고 싶은 블로거</li>
+                <li>AI 글쓰기를 효율적으로 활용하고 싶은 사용자</li>
+                <li>같은 분야 블로거와 교류하고 싶은 분</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">문의 및 제안</h2>
-              <p>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">문의 및 제안</h2>
+              <p className="leading-relaxed">
                 서비스 개선을 위한 제안이나 문의사항이 있으시면 언제든지 연락주세요.
               </p>
-              <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                <p className="font-medium text-gray-900">이메일</p>
-                <a 
+              <div className="bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 p-4 rounded-lg mt-4">
+                <p className="font-medium text-zinc-900 dark:text-zinc-100 text-sm mb-1">이메일</p>
+                <a
                   href="mailto:boheme88@naver.com?subject=서비스 개선 제안"
-                  className="text-orange-600 hover:text-orange-700"
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
                 >
                   boheme88@naver.com
                 </a>
@@ -117,16 +123,27 @@ export default function AboutPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">개인정보처리방침</h2>
-              <p>
-                본 사이트의 개인정보 처리에 대한 자세한 내용은 개인정보처리방침을 참고해주세요.
-              </p>
-              <Link 
-                href="/privacy" 
-                className="text-orange-600 hover:text-orange-700 text-sm font-medium mt-2 inline-block"
-              >
-                개인정보처리방침 보기 →
-              </Link>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">법적 안내</h2>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href="/privacy"
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium"
+                >
+                  개인정보처리방침 →
+                </Link>
+                <Link
+                  href="/terms"
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium"
+                >
+                  이용약관 →
+                </Link>
+                <Link
+                  href="/contact"
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm font-medium"
+                >
+                  문의 →
+                </Link>
+              </div>
             </section>
           </div>
         </div>
@@ -134,4 +151,3 @@ export default function AboutPage() {
     </div>
   );
 }
-

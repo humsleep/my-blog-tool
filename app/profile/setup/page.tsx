@@ -163,7 +163,7 @@ function ProfileSetupPage() {
               프로필을 등록하려면 먼저 로그인해주세요.
             </p>
             <Link
-              href={`/login?next=${encodeURIComponent('/profile/setup?next=' + next)}`}
+              href={`/login?next=${encodeURIComponent(`/profile/setup?next=${encodeURIComponent(next)}`)}`}
               className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg"
             >
               로그인하기
@@ -191,7 +191,18 @@ function ProfileSetupPage() {
           onSubmit={onSubmit}
           className="bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 sm:p-6 shadow-sm space-y-5"
         >
-          <Field label="닉네임" required help="2~16자 · 한글/영문/숫자/_/- · 24시간 1회 변경">
+          <Field
+            label="닉네임"
+            required
+            help={(() => {
+              if (!existing?.nickname_changed_at) return '2~16자 · 한글/영문/숫자/_/- · 등록 후 24시간에 1회 변경 가능';
+              const last = new Date(existing.nickname_changed_at);
+              const next = new Date(last.getTime() + 24 * 60 * 60 * 1000);
+              if (next <= new Date()) return '2~16자 · 한글/영문/숫자/_/- · 지금 변경 가능';
+              const remainHours = Math.max(1, Math.ceil((next.getTime() - Date.now()) / 3_600_000));
+              return `2~16자 · 한글/영문/숫자/_/- · 다음 변경 가능: 약 ${remainHours}시간 후`;
+            })()}
+          >
             <input
               type="text"
               value={nickname}

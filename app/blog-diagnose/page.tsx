@@ -70,6 +70,17 @@ const PROGRESS_BEATS = [
   '결과 정리 중',
 ];
 
+/** sessionStorage key — 진단 결과/입력값 캐시 */
+const DIAGNOSE_STORAGE_KEY = 'bbl:diagnose:v1';
+
+/** 진단 입력값 + 결과를 sessionStorage에 직렬화. 실패 시 무시 (quotaExceeded 등). */
+function persistDiagnose(state: { blogInput: string; category: string; result?: DiagnoseResponse }) {
+  if (typeof window === 'undefined') return;
+  try {
+    sessionStorage.setItem(DIAGNOSE_STORAGE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
+  } catch { /* swallow */ }
+}
+
 const BAND_LABELS: Record<DiagnoseResponse['score']['band'], { label: string; tone: string; desc: string }> = {
   top5:    { label: '카테고리 상위 5%',  tone: 'text-orange-700 dark:text-orange-400', desc: '이미 상위권이에요. 이 패턴을 유지·확장하세요.' },
   top15:   { label: '카테고리 상위 15%', tone: 'text-orange-700 dark:text-orange-400',   desc: '안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.' },
@@ -88,6 +99,38 @@ export default function BlogDiagnosePage() {
   const [prefillNotice, setPrefillNotice] = useState<string | null>(null);
 
   const { user } = useUser();
+
+  // 진단 결과를 sessionStorage에 보존 — 30~50초 작업 후 결과를 실수로 놓치지 않도록.
+  //   running 중 새 탭/새로고침/뒤로가기 → 같은 입력값으로 자동 재제출
+  //   result 단계 → 결과 자체를 캐시했다가 새로고침 시 즉시 복원
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = sessionStorage.getItem(DIAGNOSE_STORAGE_KEY);
+      if (!raw) return;
+      const cached = JSON.parse(raw) as {
+        blogInput?: string;
+        category?: string;
+        result?: DiagnoseResponse;
+        savedAt?: number;
+      };
+      // 24시간 지나면 캐시 폐기
+      if (cached.savedAt && Date.now() - cached.savedAt > 24 * 60 * 60 * 1000) {
+        sessionStorage.removeItem(DIAGNOSE_STORAGE_KEY);
+        return;
+      }
+      if (cached.blogInput) setBlogInput(cached.blogInput);
+      if (cached.category) setCategory(cached.category);
+      if (cached.result) {
+        setResult(cached.result);
+        setStep('result');
+      }
+    } catch {
+      sessionStorage.removeItem(DIAGNOSE_STORAGE_KEY);
+    }
+    // 최초 1회만 복원
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 로그인 상태면 프로필에서 블로그 URL · 분야 자동 채움
   useEffect(() => {
@@ -128,6 +171,8 @@ export default function BlogDiagnosePage() {
     setStep('running');
     setProgressBeat(0);
     setError('');
+    // 진행 상태 저장 — running 중 새로고침되어도 입력값 복원
+    persistDiagnose({ blogInput: blogInput.trim(), category });
     try {
       const res = await fetch('/api/blog-diagnose', {
         method: 'POST',
@@ -140,8 +185,11 @@ export default function BlogDiagnosePage() {
         setStep('error');
         return;
       }
-      setResult(data as DiagnoseResponse);
+      const payload = data as DiagnoseResponse;
+      setResult(payload);
       setStep('result');
+      // 결과 캐시 — 새로고침해도 결과 유지
+      persistDiagnose({ blogInput: blogInput.trim(), category, result: payload });
     } catch (e) {
       setError(e instanceof Error ? e.message : '네트워크 오류');
       setStep('error');
@@ -153,6 +201,9 @@ export default function BlogDiagnosePage() {
     setResult(null);
     setError('');
     setProgressBeat(0);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(DIAGNOSE_STORAGE_KEY);
+    }
   };
 
   return (

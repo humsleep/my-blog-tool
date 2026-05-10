@@ -23,8 +23,15 @@ const MENUS: MenuCard[] = [
     badge: 'Matching',
   },
   {
-    href: '/community/companions',
+    href: '/community/tips',
     num: '02',
+    title: '정보 공유',
+    description: '블로그 운영 노하우, SEO 팁, 네이버 정책 변경 같은 정보를 카테고리별로 모아 공유합니다. 댓글·좋아요로 좋은 글을 띄워주세요.',
+    badge: 'Tips',
+  },
+  {
+    href: '/community/companions',
+    num: '03',
     title: '체험단 동행해요',
     description: '체험단 선정 후 함께 갈 동행자를 지역·날짜로 찾습니다. 시·군·구까지 좁혀서 검색할 수 있어요.',
     badge: 'Companion',
