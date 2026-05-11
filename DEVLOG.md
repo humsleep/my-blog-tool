@@ -5,6 +5,39 @@
 
 ---
 
+## 2026-05-11 — Phase 35.2: favicon · 아이콘 브랜드 통일
+
+**문제**: 브랜드 아이덴티티가 세 곳에서 따로 놀고 있었음.
+- Navbar / Footer 로고 박스: 오렌지 사각형 + **"B"** 글자
+- `public/icon.svg` / 생성된 PNG (PWA·홈스크린): 오렌지 사각형 + **연필** 아이콘 ✏️
+- `app/favicon.ico` (브라우저 탭): 별도 old 파일 (May 4)
+
+### 수정
+**1. `public/icon.svg` 를 "B" 디자인으로 교체**
+- 같은 오렌지 그라데이션 사각형 (rx=96).
+- 흰색 "B" 글자를 path로 (폰트 의존성 제거 — sharp librsvg에서 OS 폰트 미설치 시 fallback 사라지는 리스크 방지).
+- evenodd fill-rule 로 가운데 두 빈 공간 처리.
+
+**2. PNG 일괄 재생성** (sharp + librsvg, compressionLevel 9)
+- `icon-192.png` / `icon-512.png` (PWA maskable)
+- `apple-touch-icon.png` (180×180, iOS 홈스크린)
+
+**3. `app/favicon.ico` 멀티 사이즈 재생성**
+- 16/32/48 PNG payload 를 ICONDIR + ICONDIRENTRY 로 패키징한 multi-resolution ICO.
+- Windows Vista+ 와 모든 modern 브라우저는 PNG payload 형태의 ICO 지원.
+
+**4. `app/layout.tsx` metadata.icons 확장**
+- `icon: [SVG + favicon.ico + icon-192 + icon-512]` 순서 — modern 브라우저는 SVG 우선, 구버전은 ICO fallback.
+- `shortcut: [favicon.ico]` 별도 명시 (legacy `rel="shortcut icon"` 호환).
+
+### 검증
+- `npm run build` 클린 (43 페이지).
+- 192px / 32px 렌더 시각 확인 — 오렌지 그라데이션 + 굵은 흰색 "B".
+
+이제 브라우저 탭 / 모바일 홈스크린 / 사이트 헤더가 같은 브랜드 마크를 사용.
+
+---
+
 ## 2026-05-10 — Phase 35.1: QA 단위/통합/회귀 테스트 + 자투리 정리
 
 **배경**: 오픈 전 전문 QA 점검. 단위 테스트(93) / 통합 스모크(47) / 회귀(40) 작성하고, 검증 중 발견된 issue 정리.

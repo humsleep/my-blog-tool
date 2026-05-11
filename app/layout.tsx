@@ -29,10 +29,14 @@ export const metadata: Metadata = {
   publisher: "Boheme BlogLab",
   icons: {
     icon: [
+      // SVG는 modern 브라우저 우선 (벡터 — 어떤 사이즈로도 선명).
+      // PNG 192/512 는 PWA / 안드로이드 홈스크린용. favicon.ico 는 구식 브라우저 호환.
       { url: "/icon.svg",     type: "image/svg+xml" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon.ico",  sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/icon-192.png", sizes: "192x192",          type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512",          type: "image/png" },
     ],
+    shortcut: [{ url: "/favicon.ico" }],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
