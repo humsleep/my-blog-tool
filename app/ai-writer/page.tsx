@@ -8,11 +8,12 @@ import PageHeader from '../components/ui/PageHeader';
 import Card from '../components/ui/Card';
 import { Button, LinkButton } from '../components/ui/Button';
 import CopyButton from '../components/ui/CopyButton';
+import RichCopyButton from '../components/ui/RichCopyButton';
 import { useUser } from '../lib/supabase/useUser';
 import { markdownToHtml, markdownToPlain } from '../lib/format/article-formats';
 import { safeJson } from '../lib/clientFetch';
 
-type FormatTab = 'html' | 'markdown' | 'plain';
+type FormatTab = 'preview' | 'html' | 'markdown' | 'plain';
 
 interface UsageState {
   authenticated: boolean;
@@ -107,7 +108,7 @@ export default function AiWriterPage() {
   const [options, setOptions] = useState<DraftOptions>(DEFAULT_OPTIONS);
   const [optionsOpen, setOptionsOpen] = useState(true);
   const [draft, setDraft] = useState('');
-  const [tab, setTab] = useState<FormatTab>('html');
+  const [tab, setTab] = useState<FormatTab>('preview');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [usage, setUsage] = useState<UsageState | null>(null);
@@ -258,11 +259,13 @@ export default function AiWriterPage() {
 
   const bodyForTab = useMemo(() => {
     const body = sections?.body || '';
-    if (!body) return { html: '', markdown: '', plain: '' };
+    if (!body) return { preview: '', html: '', markdown: '', plain: '' };
     // 선택된 제목이 있으면 본문 위에 H1으로 추가
     const withTitle = selectedTitle ? `# ${selectedTitle}\n\n${body}` : body;
+    const html = markdownToHtml(withTitle);
     return {
-      html: markdownToHtml(withTitle),
+      preview: html, // 미리보기 = 렌더된 HTML
+      html,
       markdown: withTitle,
       plain: markdownToPlain(withTitle),
     };
@@ -593,14 +596,15 @@ export default function AiWriterPage() {
                         <div>
                           <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">📄 본문</h2>
                           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                            공백 제외 {charCount.toLocaleString()}자 · {tab.toUpperCase()} 포맷
+                            공백 제외 {charCount.toLocaleString()}자
                             {selectedTitle && <span className="ml-1.5 text-orange-500 dark:text-orange-400">· 선택 제목 적용됨</span>}
                           </p>
                         </div>
                         <div className="flex gap-1 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
                           {[
+                            { key: 'preview' as const, label: '미리보기' },
                             { key: 'html' as const, label: 'HTML' },
-                            { key: 'markdown' as const, label: '마크다운' },
+                            { key: 'markdown' as const, label: 'MD' },
                             { key: 'plain' as const, label: '일반' },
                           ].map((t) => (
                             <button
@@ -617,23 +621,68 @@ export default function AiWriterPage() {
                           ))}
                         </div>
                       </div>
-                      <div className="relative">
-                        <pre className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-sans">
-                          {tabContent}
-                        </pre>
-                        <div className="absolute top-3 right-3">
-                          <CopyButton text={tabContent} size="sm" />
+
+                      {/* 본문 본체 — 미리보기는 렌더, 나머지는 코드 */}
+                      {tab === 'preview' ? (
+                        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950">
+                          <div className="flex items-center gap-1.5 px-3 py-2 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 rounded-t-lg">
+                            <span className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                            <span className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                            <span className="w-2 h-2 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                            <span className="ml-2 text-[11px] text-zinc-500 dark:text-zinc-400">네이버 블로그 미리보기</span>
+                          </div>
+                          <div
+                            className="preview-naver px-5 sm:px-7 py-6 max-h-[560px] overflow-auto"
+                            dangerouslySetInnerHTML={{ __html: bodyForTab.preview }}
+                          />
                         </div>
-                      </div>
-                      <div className="mt-3 flex flex-col sm:flex-row gap-2">
-                        <Button onClick={handleSendToEditor} variant="secondary" size="md" fullWidth>
-                          에디터로 보내서 다듬기 →
-                        </Button>
-                        <CopyButton text={tabContent} label={`${tab.toUpperCase()} 복사`} />
-                      </div>
-                      <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-lg text-xs text-orange-700 dark:text-orange-200 leading-relaxed">
-                        💡 네이버 에디터 우상단 <strong>"HTML" 토글</strong>을 켜고 <strong>HTML 탭</strong>을 붙여넣으면 제목·소제목·강조가 그대로 적용됩니다.
-                      </div>
+                      ) : (
+                        <div className="relative">
+                          <pre className="bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 max-h-[480px] overflow-auto whitespace-pre-wrap text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-sans">
+                            {tabContent}
+                          </pre>
+                          <div className="absolute top-3 right-3">
+                            <CopyButton text={tabContent} size="sm" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 액션 영역 — 미리보기 탭은 "서식 포함 복사"를 메인 CTA로 */}
+                      {tab === 'preview' ? (
+                        <>
+                          <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                            <RichCopyButton
+                              html={bodyForTab.html}
+                              plain={bodyForTab.plain}
+                              size="lg"
+                              fullWidth
+                            />
+                          </div>
+                          <div className="mt-2 flex flex-col sm:flex-row gap-2">
+                            <Button onClick={handleSendToEditor} variant="secondary" size="md" fullWidth>
+                              에디터로 보내서 다듬기 →
+                            </Button>
+                            <CopyButton text={bodyForTab.plain} label="일반 텍스트 복사" />
+                          </div>
+                          <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-700 rounded-lg text-xs text-orange-700 dark:text-orange-200 leading-relaxed">
+                            💡 위 <strong>&quot;네이버에 붙여넣기&quot;</strong> 버튼을 누른 뒤 네이버 블로그 에디터에서 <strong>Ctrl+V</strong> 만 하면 제목·소제목·강조까지 그대로 들어갑니다. HTML 토글을 켜지 않아도 됩니다.
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="mt-3 flex flex-col sm:flex-row gap-2">
+                            <Button onClick={handleSendToEditor} variant="secondary" size="md" fullWidth>
+                              에디터로 보내서 다듬기 →
+                            </Button>
+                            <CopyButton text={tabContent} label={`${tab === 'html' ? 'HTML' : tab === 'markdown' ? '마크다운' : '일반 텍스트'} 복사`} />
+                          </div>
+                          <div className="mt-3 p-3 bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 rounded-lg text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            {tab === 'html' && <>HTML 탭 — 티스토리·워드프레스 등에서 HTML 편집 모드로 붙여넣을 때 사용하세요. 네이버는 <strong>&quot;미리보기&quot;</strong> 탭의 서식 복사가 더 편합니다.</>}
+                            {tab === 'markdown' && <>마크다운 탭 — Notion·Obsidian·VS Code 등 외부 마크다운 에디터로 옮길 때 사용하세요.</>}
+                            {tab === 'plain' && <>일반 텍스트 — 모든 서식이 제거된 평문입니다. 메모장·메신저 등에 붙여넣기 좋습니다.</>}
+                          </div>
+                        </>
+                      )}
                     </Card>
                   )}
 
