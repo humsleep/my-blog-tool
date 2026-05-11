@@ -2,9 +2,11 @@ import Link from 'next/link';
 
 /**
  * 미니멀 Footer — 한 줄 구성.
- *  좌: 브랜드 마크 + © · 우: 약관 · 개인정보 · 문의
+ *  좌: 브랜드 마크 + © · 우: 소개 · 약관 · 개인정보 · 문의
  *  도구·커뮤니티 네비게이션은 Navbar / MobileBottomNav 가 담당하므로
  *  Footer에는 법무 + 연락처만 남긴다 (modern SaaS 트렌드).
+ *
+ *  "문의" 클릭 시 /contact 페이지(FAQ 우선, 메일은 보조)로 이동.
  */
 export default function Footer() {
   return (
@@ -22,28 +24,18 @@ export default function Footer() {
 
           <nav className="flex flex-wrap gap-x-5 gap-y-2">
             {[
-              { href: '/about',                                             label: '소개' },
-              { href: '/terms',                                             label: '이용약관' },
-              { href: '/privacy',                                           label: '개인정보처리방침' },
-              { href: 'mailto:boheme88@naver.com?subject=사이트 개선 제안', label: '문의' },
+              { href: '/about',   label: '소개' },
+              { href: '/terms',   label: '이용약관' },
+              { href: '/privacy', label: '개인정보처리방침' },
+              { href: '/contact', label: '문의' },
             ].map((item) => (
-              item.href.startsWith('mailto:') ? (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                >
-                  {item.label}
-                </Link>
-              )
+              <Link
+                key={item.href}
+                href={item.href}
+                className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              >
+                {item.label}
+              </Link>
             ))}
           </nav>
         </div>

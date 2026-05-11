@@ -13,8 +13,10 @@ import { COMMUNITY_TO_TRENDING_CATEGORY } from '@/app/lib/dashboard/types';
 /**
  * 홈 — 데일리 대시보드 (Phase 28).
  *
- * 비로그인: Hero (검색 + 진단 CTA) + 전체 인기 키워드 + 도구 그리드 + 워크플로우 + FAQ + 클로징
- * 로그인:   인사 + 마지막 진단 카드 + 즐겨찾기 카드 + 내 분야 인기 키워드 + 도구/워크플로우/FAQ/클로징
+ * 비로그인: Hero (검색 + 진단 CTA) + 전체 인기 키워드 + 도구 그리드 + 워크플로우 + 클로징
+ * 로그인:   인사 + 마지막 진단 카드 + 즐겨찾기 카드 + 내 분야 인기 키워드 + 도구/워크플로우/클로징
+ *
+ * FAQ는 /contact 페이지로 분리 (푸터 "문의" 클릭 → FAQ 우선, 메일은 보조).
  */
 export default function Home() {
   const router = useRouter();
@@ -196,56 +198,6 @@ export default function Home() {
                 </div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400">{s.desc}</div>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────────────── */}
-      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">자주 묻는 질문</h2>
-            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-              여기 없는 질문은 <a href="mailto:boheme88@naver.com" className="text-orange-600 dark:text-orange-400 hover:underline">boheme88@naver.com</a>로 보내주세요.
-            </p>
-          </div>
-          <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800">
-            {[
-              {
-                q: '회원가입을 꼭 해야 하나요?',
-                a: '아니요. 키워드 분석·인기검색어·프롬프트 생성·이미지 검색은 회원가입 없이 무제한 사용 가능합니다. 회원가입은 AI 글쓰기 일일 5회(비로그인 1회), 커뮤니티 글 작성, 즐겨찾기 키워드 자동 저장, 진단 점수 추적을 위해 필요합니다.',
-              },
-              {
-                q: '블로그 진단은 어떤 데이터로 점수를 매기나요?',
-                a: '네이버 블로그 RSS로 최근 글의 발행 빈도·글자수·이미지·카테고리를 수집하고, 카테고리별 핵심 키워드 30개를 검색해 1페이지 진입율을 측정합니다. 활동성 25% / 노출 50% / 품질 25% 가중평균으로 0~100점 산출.',
-              },
-              {
-                q: 'AI 글쓰기는 정말 무료인가요?',
-                a: '네. 비로그인 일일 1회, 로그인 일일 5회까지 완전 무료입니다.',
-              },
-              {
-                q: '네이버 블로그에 바로 사용할 수 있나요?',
-                a: 'AI 글쓰기 결과를 마크다운/HTML 형태로 복사한 뒤 네이버 블로그 에디터에 붙여넣으면 됩니다. 에디터 페이지에서 금칙어·맞춤법까지 점검한 후 발행하시면 좋습니다.',
-              },
-              {
-                q: '키워드 데이터는 어디서 오나요?',
-                a: '네이버 검색광고 API의 실제 월간 검색량과 네이버 블로그 OpenAPI의 발행 문서 수를 기반으로 합니다.',
-              },
-              {
-                q: '내가 입력한 키워드나 글이 다른 사람에게 공개되나요?',
-                a: '아니요. 키워드 분석·AI 글쓰기 결과는 본인 화면에만 표시되며 저장되지 않습니다. 진단 결과는 본인 계정으로만 저장됩니다. 커뮤니티에 직접 작성한 글만 공개됩니다.',
-              },
-            ].map((item) => (
-              <details key={item.q} className="group">
-                <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">{item.q}</span>
-                  <svg className="w-4 h-4 text-zinc-400 flex-shrink-0 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-                <p className="px-5 pb-5 text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{item.a}</p>
-              </details>
             ))}
           </div>
         </div>

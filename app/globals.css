@@ -546,3 +546,51 @@ a.link:hover, .link:hover {
 @media (display-mode: standalone), (max-width: 767px) {
   html { overscroll-behavior-y: contain; }
 }
+
+/* ── 네이버 본문 미리보기 스타일 ──
+ *  AI 글쓰기 결과를 네이버 블로그 본문 톤과 흡사하게 렌더링.
+ *  사용처: app/ai-writer/page.tsx 미리보기 탭, app/editor (드래프트 미리보기).
+ */
+.preview-naver {
+  font-size: 16px;
+  line-height: 1.78;
+  color: var(--text-primary);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.preview-naver h1,
+.preview-naver h2,
+.preview-naver h3 {
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.preview-naver h1 { font-size: 1.625rem; line-height: 1.35; margin: 0.4em 0 0.6em; }
+.preview-naver h2 { font-size: 1.25rem;  line-height: 1.4;  margin: 1.5em 0 0.55em; padding-bottom: 0.35em; border-bottom: 1px solid var(--border-subtle); }
+.preview-naver h3 { font-size: 1.0625rem; line-height: 1.45; margin: 1.3em 0 0.4em; color: var(--accent); }
+.preview-naver p  { margin: 0.55em 0 0.9em; }
+.preview-naver strong { font-weight: 700; color: var(--text-primary); }
+.preview-naver em { font-style: normal; background: linear-gradient(transparent 65%, color-mix(in srgb, var(--accent) 30%, transparent) 65%); padding: 0 0.1em; }
+.preview-naver ul,
+.preview-naver ol { margin: 0.6em 0 1em; padding-left: 1.4em; }
+.preview-naver ul { list-style: disc; }
+.preview-naver ol { list-style: decimal; }
+.preview-naver li { margin: 0.25em 0; }
+.preview-naver blockquote {
+  margin: 1em 0;
+  padding: 0.5em 0.9em;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  color: var(--text-secondary);
+  border-radius: 0 6px 6px 0;
+}
+.preview-naver code {
+  background: var(--bg-elevated);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.92em;
+  color: var(--accent);
+}
+.preview-naver a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.preview-naver > *:first-child { margin-top: 0; }
+.preview-naver > *:last-child  { margin-bottom: 0; }
