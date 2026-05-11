@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-05-11 — Phase 36.5: maxDuration 60s → 300s + per-request SDK timeout
+
+**문제**: Phase 36.4 에서 스트리밍을 도입했음에도 timeout 메시지가 계속 발생.
+
+**근본 원인** (두 개의 hard limit 이 그대로 남아 있었음):
+1. `export const maxDuration = 60` — Vercel 함수가 60초에 강제 종료. 스트리밍이라도 함수 자체는 종료됨.
+2. `new Anthropic({ timeout: 58_000 })` — SDK 가 streaming/non-streaming 모두에 58초 default timeout 적용. 스트리밍 응답이 58초를 넘으면 SDK 가 abort.
+
+스트리밍은 byte 가 흐르는 동안 Vercel 이 *연결을* 안 끊지만, 함수 자체의 *실행 시간 cap*은 그대로 유효.
+
+### 수정
+1. **`maxDuration: 60 → 300`** (Vercel Pro 플랜 최대치). Hobby 라면 60 으로 자동 cap 됨.
+2. **인스턴스 default timeout 제거**, 호출별로 per-request 명시:
+   - 스트리밍: `{ timeout: 290_000 }` (290초, Vercel 300s 직전)
+   - 비-스트리밍(/start): `{ timeout: 58_000 }` (60s 함수 한도 직전, 기존 동작)
+3. **Elapsed-time 로그**: 스트리밍 시작/종료/실패 시점에 `totalMs`, `ttfbMs` (time-to-first-byte), `outChars` 출력 — 실제로 얼마나 걸리는지 추적 가능.
+
+이제 스트리밍 호출은 5분까지 안정적으로 처리 가능. 비-스트리밍은 기존 동작 유지.
+
+### 검증
+- `npm run build` 클린.
+- 단위 테스트 79/79.
+
+---
+
 ## 2026-05-11 — Phase 36.4: AI 글쓰기 SSE 스트리밍 도입 (timeout 진짜 해결)
 
 **문제**: Phase 36.3 의 max_tokens 축소 + compact 기본값으로도 일부 사용자에게 timeout 지속.

@@ -5,7 +5,10 @@ import { getAdminClient } from '@/app/lib/supabase/admin';
 import { getClientIp, hashIp } from '@/app/lib/security/ip-hash';
 
 export const runtime = 'nodejs';
-export const maxDuration = 60;
+// Vercel Pro 플랜 최대치(300s). 스트리밍 요청은 사용자가 글을 다 받기까지 시간이 길어질 수
+// 있어 60s 한도로는 잘림. 비-스트리밍 경로(/start 의 짧은 호출)는 어차피 25~40s 이내에 끝나
+// 므로 maxDuration 을 늘려도 추가 비용 없음.
+export const maxDuration = 300;
 
 const LIMITS = { authed: 5, anon: 1 } as const;
 const MODEL = 'claude-sonnet-4-6';
@@ -287,9 +290,10 @@ export async function POST(request: Request) {
   };
 
   const systemPrompt = buildSystemPrompt(safeOptions);
-  // Anthropic SDK 가 자체 타임아웃을 들고 있어 Vercel maxDuration(60s) 직전에 abort.
-  // 너무 짧게 잡으면 정상 응답도 끊김 → 58s 로 여유 확보.
-  const anthropic = new Anthropic({ apiKey, timeout: 58_000, maxRetries: 0 });
+  // 인스턴스 자체에는 default timeout 을 두지 않고, 요청마다 per-request 로 지정.
+  //   - 스트리밍 (긴 출력): 290s — Vercel maxDuration 300s 직전
+  //   - 비-스트리밍 (짧은 출력): 58s — 60s 미만 (구 동작 유지)
+  const anthropic = new Anthropic({ apiKey, maxRetries: 0 });
 
   // 출력 토큰 한도 — 출력 시간 = 토큰 수에 거의 비례하므로 timeout 직결.
   // Phase 36.1 이후 기본 옵션이 single titles + no image prompts 라
@@ -311,24 +315,35 @@ export async function POST(request: Request) {
 
     const readableStream = new ReadableStream({
       async start(controller) {
+        const t0 = Date.now();
+        let firstChunkAt: number | null = null;
         let fullText = '';
         try {
-          const aiStream = anthropic.messages.stream({
-            model: MODEL,
-            max_tokens: maxTokens,
-            system: [
-              { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
-            ],
-            messages: [{ role: 'user', content: prompt }],
-          });
+          // per-request timeout 290s — Vercel maxDuration 300s 직전.
+          // 인스턴스 default(없음)가 아닌 호출별로 지정해 비-스트리밍 경로와 분리.
+          const aiStream = anthropic.messages.stream(
+            {
+              model: MODEL,
+              max_tokens: maxTokens,
+              system: [
+                { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+              ],
+              messages: [{ role: 'user', content: prompt }],
+            },
+            { timeout: 290_000 },
+          );
 
           aiStream.on('text', (text) => {
+            if (firstChunkAt === null) firstChunkAt = Date.now();
             fullText += text;
             sendEvent(controller, { type: 'chunk', text });
           });
 
           // 스트림 종료까지 대기 — 실패 시 throw 됨
           await aiStream.finalMessage();
+          const elapsed = Date.now() - t0;
+          const ttfb = firstChunkAt !== null ? firstChunkAt - t0 : -1;
+          console.log(`[ai-draft stream] ok — totalMs=${elapsed} ttfbMs=${ttfb} outChars=${fullText.length}`);
 
           if (!fullText) {
             sendEvent(controller, { type: 'error', error: 'AI가 빈 응답을 반환했습니다. 다시 시도해주세요.' });
@@ -357,7 +372,9 @@ export async function POST(request: Request) {
           const errName = typeof errObj.name === 'string' ? errObj.name : '';
           const msg = err instanceof Error ? err.message.slice(0, 300) : '';
           const httpStatus = typeof errObj.status === 'number' ? errObj.status : undefined;
-          console.error(`[ai-draft stream] failed — name=${errName} status=${httpStatus ?? 'none'} msg="${msg}"`);
+          const elapsedAtFail = Date.now() - t0;
+          const ttfbAtFail = firstChunkAt !== null ? firstChunkAt - t0 : -1;
+          console.error(`[ai-draft stream] failed — name=${errName} status=${httpStatus ?? 'none'} elapsedMs=${elapsedAtFail} ttfbMs=${ttfbAtFail} outChars=${fullText.length} msg="${msg}"`);
 
           let userMsg = 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
           if (errName === 'APIConnectionTimeoutError' || /time(?:d|out)|aborted|abort/i.test(msg)) {
@@ -389,18 +406,22 @@ export async function POST(request: Request) {
 
   // ── 기존 non-streaming 경로 ────────────────────────────────
   try {
-    const response = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: maxTokens,
-      system: [
-        {
-          type: 'text',
-          text: systemPrompt,
-          cache_control: { type: 'ephemeral' },
-        },
-      ],
-      messages: [{ role: 'user', content: prompt }],
-    });
+    // per-request timeout 58s — /start 의 짧은 호출용. 60s 한도 직전에 abort.
+    const response = await anthropic.messages.create(
+      {
+        model: MODEL,
+        max_tokens: maxTokens,
+        system: [
+          {
+            type: 'text',
+            text: systemPrompt,
+            cache_control: { type: 'ephemeral' },
+          },
+        ],
+        messages: [{ role: 'user', content: prompt }],
+      },
+      { timeout: 58_000 },
+    );
 
     const textBlock = response.content.find((b) => b.type === 'text');
     const draftText = textBlock && textBlock.type === 'text' ? textBlock.text : '';
