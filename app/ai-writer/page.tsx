@@ -162,59 +162,76 @@ export default function AiWriterPage() {
     setDraft('');
     setSelectedTitle('');
     try {
+      // SSE 스트리밍 요청 — Anthropic 출력 토큰이 많아 Vercel 60s 한도를 넘기는 케이스
+      // 방지. byte 가 흐르는 한 Vercel 은 함수를 끊지 않음.
       const res = await fetch('/api/ai-draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, keyword: keyword || null, options }),
+        body: JSON.stringify({ prompt, keyword: keyword || null, options, stream: true }),
       });
-      // 비-JSON 응답(Vercel timeout / Anthropic overload / gateway HTML 등)도 안전 처리
-      const data = await safeJson<{
-        draft?: string;
-        error?: string;
-        used?: number;
-        limit?: number;
-        authenticated?: boolean;
-        usage?: { used: number; limit: number; remaining: number };
-      }>(res);
-      if (!res.ok) {
-        // 1) 우리가 만든 JSON 에러 → 그대로 노출
-        // 2) 비-JSON (timeout 등) → 상태코드로 사용자 친화 메시지 구성
-        let msg: string;
-        if (data.error) {
-          msg = data.error;
-        } else if (data._parseError) {
-          msg = res.status === 504 || res.status === 408
+
+      if (!res.ok || !res.body) {
+        // 에러 응답은 JSON
+        const data = await safeJson<{ error?: string }>(res);
+        const msg = data.error
+          ?? (res.status === 504 || res.status === 408
             ? 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.'
             : res.status >= 500
               ? 'AI 서버가 일시적으로 응답하지 않아요. 잠시 후 다시 시도해주세요.'
-              : `요청 실패 (HTTP ${res.status})`;
-        } else {
-          msg = `요청 실패 (HTTP ${res.status})`;
-        }
+              : `요청 실패 (HTTP ${res.status})`);
         setError(msg);
-        if (typeof data.used === 'number' && typeof data.limit === 'number') {
-          setUsage({
-            authenticated: data.authenticated ?? false,
-            used: data.used,
-            limit: data.limit,
-            remaining: Math.max(0, data.limit - data.used),
-          });
+        return;
+      }
+
+      // SSE 파서 — `data: {...}\n\n` 단위로 끊어 처리
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let acc = '';
+      let streamError: string | null = null;
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        // SSE 는 \n\n 으로 이벤트 구분
+        let idx;
+        while ((idx = buffer.indexOf('\n\n')) !== -1) {
+          const raw = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          if (!raw.startsWith('data:')) continue;
+          const payload = raw.slice(5).trim();
+          if (!payload) continue;
+          try {
+            const evt = JSON.parse(payload) as
+              | { type: 'chunk'; text: string }
+              | { type: 'done'; usage: { used: number; limit: number; remaining: number }; authenticated: boolean }
+              | { type: 'error'; error: string };
+            if (evt.type === 'chunk') {
+              acc += evt.text;
+              setDraft(acc);
+            } else if (evt.type === 'done') {
+              setUsage({
+                authenticated: evt.authenticated,
+                used: evt.usage.used,
+                limit: evt.usage.limit,
+                remaining: evt.usage.remaining,
+              });
+            } else if (evt.type === 'error') {
+              streamError = evt.error;
+            }
+          } catch {
+            // malformed event, skip
+          }
         }
-        return;
       }
-      // res.ok 인데 비-JSON 이면(드물지만 가능) 안내
-      if (data._parseError || !data.draft) {
-        setError('AI 응답을 파싱하지 못했어요. 잠시 후 다시 시도해주세요.');
-        return;
-      }
-      setDraft(data.draft);
-      if (data.usage) {
-        setUsage({
-          authenticated: data.authenticated ?? false,
-          used: data.usage.used,
-          limit: data.usage.limit,
-          remaining: data.usage.remaining,
-        });
+
+      if (streamError) {
+        // 부분 출력은 그대로 두고 에러만 표시 — 사용자가 부분 결과도 확인 가능
+        setError(streamError);
+      } else if (!acc) {
+        setError('AI 응답을 받지 못했어요. 잠시 후 다시 시도해주세요.');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'AI 호출 실패');
