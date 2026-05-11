@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-05-11 — Phase 36.2: `/api/ai-draft` 에러 분류 + 로그 보강
+
+**문제**: Phase 36.1 패치 후에도 사용자가 `AI 생성 중 일시적인 오류가 발생했어요` 메시지를 받고 있음. 이 카피는 fallback (status=502).
+
+**근본 원인**: catch 블록의 분기에서 `cls === 'APIError'` 만 검사했는데, Anthropic SDK 는 base `APIError` 가 아니라 subclass(`BadRequestError` / `AuthenticationError` / `RateLimitError` / `InternalServerError` / `OverloadedError` / `NotFoundError` / `APIConnectionError`) 로 throw 함. `constructor.name` 은 subclass 이름이라 매칭 실패 → 모든 케이스가 fallback 으로 떨어짐.
+
+### 수정 (`app/api/ai-draft/route.ts` catch 블록)
+- **class 이름 의존 제거** — `err.status` 필드만 보고 분기. subclass 어떤 것이든 status 만 있으면 정확히 분기.
+- **분기 확대**:
+  - 401/403 → 운영자 알려주세요
+  - 404 → 모델 설정 문제 (운영자)
+  - 429 → 호출량 한도 초과
+  - 503/529 → 일시 혼잡
+  - 400/422 → 프롬프트 형식 문제
+  - >=500 → 서버 오류 응답
+  - `APIConnectionError` / network 에러 → 연결 실패
+  - timeout / abort → 시간 초과
+- **로그 강화**: `class=X status=Y msg="..."` 한 줄 — Vercel 로그에서 즉시 원인 추적 가능.
+
+### 검증
+- `npm run build` 클린, 단위 테스트 79/79.
+- 운영 배포 후 Vercel Function 로그에서 `[ai-draft] Claude call failed — class=X status=Y` 라인 확인 → 실제 어떤 에러가 일어났는지 파악 가능.
+
+---
+
 ## 2026-05-11 — Phase 36.1: AI 글쓰기 JSON 파싱 에러 + 미니멀 푸터 + 비용 절감 기본값
 
 ### 1. AI 글쓰기 `Unexpected token 'A', "An error o"...` 에러

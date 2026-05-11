@@ -333,34 +333,48 @@ export async function POST(request: Request) {
       },
     });
   } catch (err) {
-    // 사용자에게는 일반화된 메시지, 서버 로그에는 에러 클래스명만 (응답 본문 누설 방지)
+    // Anthropic SDK 는 APIError 의 subclass(BadRequestError / AuthenticationError /
+    // RateLimitError / InternalServerError / OverloadedError 등)로 throw 한다.
+    // constructor.name 은 subclass 이름이 와서 'APIError' 단순 비교로는 매칭이 안 됨.
+    // → status 필드를 직접 보고 분기.
     const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
-    const msg = err instanceof Error ? err.message : '';
-    console.error(`[ai-draft] Claude call failed: ${cls}`);
+    const msg = err instanceof Error ? err.message.slice(0, 300) : '';
+    const httpStatus = (err && typeof err === 'object' && 'status' in err)
+      ? (err as { status?: number }).status
+      : undefined;
 
-    // Anthropic SDK 에러 타입 별 사용자 메시지 분기
-    //   - APIConnectionTimeoutError / AbortError → timeout
-    //   - 529 (overload) → 일시 혼잡
-    //   - 401/403 → 운영자 설정 문제 (사용자 책임 X)
-    //   - 400 → 입력 문제
+    // Vercel 로그에서 한 줄로 빠르게 추적할 수 있게 상태 + 클래스 + 메시지 200자 기록.
+    // 사용자 응답엔 일반화된 메시지만 노출 (응답 본문 누설 방지).
+    console.error(`[ai-draft] Claude call failed — class=${cls} status=${httpStatus ?? 'none'} msg="${msg}"`);
+
     let status = 502;
     let userMsg = 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
 
-    if (cls === 'APIConnectionTimeoutError' || cls === 'AbortError' || /timeout/i.test(msg)) {
+    if (cls === 'APIConnectionTimeoutError' || cls === 'AbortError' || /timeout|aborted/i.test(msg)) {
       status = 504;
       userMsg = 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.';
-    } else if (cls === 'APIError' && err && typeof err === 'object' && 'status' in err) {
-      const httpStatus = (err as { status?: number }).status;
-      if (httpStatus === 529 || httpStatus === 503) {
-        status = 503;
-        userMsg = 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.';
-      } else if (httpStatus === 401 || httpStatus === 403) {
-        status = 503;
-        userMsg = 'AI 서버 인증에 문제가 있어요. 운영자에게 알려주세요.';
-      } else if (httpStatus === 400) {
-        status = 400;
-        userMsg = '프롬프트가 너무 길거나 형식이 맞지 않아요. 줄여서 다시 시도해주세요.';
-      }
+    } else if (httpStatus === 401 || httpStatus === 403) {
+      status = 503;
+      userMsg = 'AI 서버 인증에 문제가 있어요. 운영자에게 알려주세요.';
+    } else if (httpStatus === 404) {
+      // 모델 이름이 잘못된 경우 (예: deprecated 또는 오타)
+      status = 503;
+      userMsg = 'AI 모델 설정에 문제가 있어요. 운영자에게 알려주세요.';
+    } else if (httpStatus === 429) {
+      status = 429;
+      userMsg = 'AI 서버 호출량이 한도를 넘었어요. 잠시 후 다시 시도해주세요.';
+    } else if (httpStatus === 529 || httpStatus === 503) {
+      status = 503;
+      userMsg = 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.';
+    } else if (httpStatus === 400 || httpStatus === 422) {
+      status = 400;
+      userMsg = '프롬프트가 너무 길거나 형식이 맞지 않아요. 줄여서 다시 시도해주세요.';
+    } else if (httpStatus && httpStatus >= 500) {
+      status = 502;
+      userMsg = 'AI 서버에서 오류 응답을 받았어요. 잠시 후 다시 시도해주세요.';
+    } else if (cls === 'APIConnectionError' || /fetch|network|ECONNRESET|ECONNREFUSED|ENOTFOUND/i.test(msg)) {
+      status = 502;
+      userMsg = 'AI 서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.';
     }
 
     return NextResponse.json({ error: userMsg }, { status });
