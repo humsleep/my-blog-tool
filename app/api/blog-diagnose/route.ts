@@ -80,6 +80,44 @@ export async function POST(request: Request) {
     );
   }
 
+  // 2.6) Rate limit — 로그인 사용자는 12시간에 1회만 진단 가능.
+  //      외부 API 호출 비용·시간이 크므로 사전에 막아 무용한 호출 방지.
+  //      RLS 마이그레이션 0012 가 INSERT 단에서도 한 번 더 강제하지만 (서버 신뢰), 여기서
+  //      먼저 검사해 사용자에게 명확한 메시지 + 다음 가능 시각을 안내.
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const since = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+        const { data: recent } = await supabase
+          .from('diagnose_results')
+          .select('created_at')
+          .eq('user_id', user.id)
+          .gte('created_at', since)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        if (recent && recent.length > 0) {
+          const lastAt = new Date(recent[0].created_at as string).getTime();
+          const nextAt = lastAt + 12 * 60 * 60 * 1000;
+          const remainMs = Math.max(0, nextAt - Date.now());
+          const remainHours = Math.max(1, Math.ceil(remainMs / 3_600_000));
+          return NextResponse.json(
+            {
+              error: `진단은 12시간에 1번씩 할 수 있어요. 약 ${remainHours}시간 후에 다시 시도해주세요.`,
+              nextAvailableAt: new Date(nextAt).toISOString(),
+            },
+            { status: 429 },
+          );
+        }
+      }
+    } catch (err) {
+      // 검사 실패는 swallow — 진단 자체는 진행. RLS 가 INSERT 시점에 한번 더 강제.
+      const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
+      console.error(`[blog-diagnose] rate-limit probe failed: ${cls}`);
+    }
+  }
+
   // 3) RSS 가져오기 (활동성/품질 데이터 소스)
   const rss = await fetchRss(blogId);
   const { items, warnings } = summarizeRss(rss);
