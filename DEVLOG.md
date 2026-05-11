@@ -5,6 +5,47 @@
 
 ---
 
+## 2026-05-11 — Phase 37: contact-as-FAQ + visual podium + rich-text paste for Naver
+
+사용자 피드백 3건을 한 PR(#19)로 머지.
+
+### 1. FAQ → `/contact` 페이지로 분리
+- `app/page.tsx` 의 인라인 FAQ 섹션(49줄) 제거 — 메인은 도구 그리드·워크플로우·클로징만 남김
+- `app/contact/page.tsx` 전면 재작성 — outdated 콘텐츠(PostLab 옛 이름, "회원가입 없음", 회색 톤) 청산하고 **FAQ 우선 + 메일 보조** 구조로:
+  - FAQ 8개 (회원가입, 무료 정책, 진단 데이터, **네이버 서식 복사**, 키워드 데이터, 비공개 정책, 커뮤니티 규칙, 오류 신고)
+  - 하단 강조 카드: "여기서 답을 못 찾으셨나요?" + 메일 CTA (제목·본문 prefill 포함)
+- `app/components/Footer.tsx` 의 "문의" 링크가 `mailto:` → `/contact` 로 변경
+
+### 2. TOP 10 포디움 시각 강화
+- `app/components/dashboard/TrendingTicker.tsx` 전면 개편:
+  - 데스크탑에서 **2위 · 1위(가운데, 크게, 광채) · 3위** 시상대 배치 (`sm:order-*`)
+  - 1위 = 왕관 SVG, 2/3위 = 별 메달, 모두 ring + gradient 그림자
+  - 4~10위 행에 **검색량 비율 막대 그래프** 배경 추가 — 1위 대비 너비로 한 눈에 비교
+  - 모바일은 자연 세로 배치 유지
+
+### 3. AI 글쓰기 결과 — 미리보기 우선 + 서식 복사
+- `app/ai-writer/page.tsx`:
+  - `FormatTab` 타입 확장: `'preview' | 'html' | 'markdown' | 'plain'`, 기본 `preview`
+  - 미리보기 탭은 `dangerouslySetInnerHTML` 로 실제 렌더, 네이버 본문 톤 스타일 적용
+  - 미리보기 탭 메인 CTA: 신규 `RichCopyButton` — 큰 primary 버튼 "네이버에 붙여넣기 (서식 포함)"
+  - HTML/MD/일반 탭은 보조 코드 뷰로 유지, 탭별 사용처 안내(티스토리·Notion·메모장)
+- `app/components/ui/RichCopyButton.tsx` 신규:
+  - `ClipboardItem({'text/html', 'text/plain'})` 로 서식+텍스트 동시 클립보드 저장
+  - 네이버 에디터에 일반 Ctrl+V 만으로 제목·소제목·강조·인용·리스트 그대로 유지
+  - Fallback: `clipboard.writeText` → contenteditable + `execCommand('copy')`
+- `app/globals.css` 에 `.preview-naver` 클래스 추가 — 글자 16px / line-height 1.78 / h2 underline / em 형광펜 / blockquote 좌측 border 등 네이버 블로그 본문 톤
+
+### 검증
+- `IP_HASH_SALT=... npm run build` — 43 routes, 클린 빌드
+- TypeScript / ESLint 모두 통과 (Turbopack)
+
+### 다음 후보
+- contact 페이지 검색 박스(FAQ 항목 필터)
+- AI 글쓰기 결과 미리보기에 "이미지 자리표시자" 시각화
+- 포디움 카드에 sparkline (7일 변동) 추가
+
+---
+
 ## 2026-05-11 — Phase 36.6: README · CLAUDE.md 일괄 업데이트
 
 Phase 28~36.5 변경사항을 두 문서에 반영.
