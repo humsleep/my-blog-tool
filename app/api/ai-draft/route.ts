@@ -258,14 +258,14 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { prompt?: string; keyword?: string; options?: DraftOptions };
+  let body: { prompt?: string; keyword?: string; options?: DraftOptions; stream?: boolean };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: '잘못된 요청 형식입니다.' }, { status: 400 });
   }
 
-  const { prompt, keyword, options } = body;
+  const { prompt, keyword, options, stream: wantsStream } = body;
   if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
     return NextResponse.json({ error: '프롬프트가 비어있습니다.' }, { status: 400 });
   }
@@ -297,6 +297,97 @@ export async function POST(request: Request) {
   // 한도를 그에 맞춰 낮추면 P99 응답시간도 30~40s 이내로 안정.
   const maxTokens = safeOptions.titleMode === 'multi' ? 5000 : 3500;
 
+  // ── Streaming 분기 ─────────────────────────────────────────
+  // 출력 토큰이 많을 때(3,000+ tok) Vercel 60s 한도를 초과해 timeout 이 발생.
+  // 스트리밍으로 토큰을 즉시 흘려보내면:
+  //   1) Vercel 은 함수가 byte 를 내보내는 한 끊지 않음 → 60s 넘어도 OK
+  //   2) 사용자는 글이 만들어지는 걸 실시간으로 보고 timeout 체감 X
+  //   3) Anthropic 도 connection-level timeout 안 잡힘
+  if (wantsStream) {
+    const encoder = new TextEncoder();
+    const sendEvent = (controller: ReadableStreamDefaultController, data: object) => {
+      controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+    };
+
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        let fullText = '';
+        try {
+          const aiStream = anthropic.messages.stream({
+            model: MODEL,
+            max_tokens: maxTokens,
+            system: [
+              { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+            ],
+            messages: [{ role: 'user', content: prompt }],
+          });
+
+          aiStream.on('text', (text) => {
+            fullText += text;
+            sendEvent(controller, { type: 'chunk', text });
+          });
+
+          // 스트림 종료까지 대기 — 실패 시 throw 됨
+          await aiStream.finalMessage();
+
+          if (!fullText) {
+            sendEvent(controller, { type: 'error', error: 'AI가 빈 응답을 반환했습니다. 다시 시도해주세요.' });
+          } else {
+            // 사용량 누적
+            const newCount = (usage?.used ?? 0) + 1;
+            try {
+              if (user) await incrementAuthedUsage(user.id, newCount);
+              else if (ipHash) await incrementAnonUsage(ipHash, newCount);
+            } catch (e) {
+              console.error('[ai-draft stream] usage increment failed:', e instanceof Error ? e.constructor.name : 'Unknown');
+            }
+            sendEvent(controller, {
+              type: 'done',
+              keyword: keyword ?? null,
+              authenticated: usage?.authenticated ?? false,
+              usage: {
+                used: newCount,
+                limit: usage?.limit ?? LIMITS.anon,
+                remaining: Math.max(0, (usage?.limit ?? LIMITS.anon) - newCount),
+              },
+            });
+          }
+        } catch (err) {
+          const errObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : {};
+          const errName = typeof errObj.name === 'string' ? errObj.name : '';
+          const msg = err instanceof Error ? err.message.slice(0, 300) : '';
+          const httpStatus = typeof errObj.status === 'number' ? errObj.status : undefined;
+          console.error(`[ai-draft stream] failed — name=${errName} status=${httpStatus ?? 'none'} msg="${msg}"`);
+
+          let userMsg = 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+          if (errName === 'APIConnectionTimeoutError' || /time(?:d|out)|aborted|abort/i.test(msg)) {
+            userMsg = 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.';
+          } else if (httpStatus === 401 || httpStatus === 403) {
+            userMsg = 'AI 서버 인증에 문제가 있어요. 운영자에게 알려주세요.';
+          } else if (httpStatus === 429) {
+            userMsg = 'AI 서버 호출량이 한도를 넘었어요. 잠시 후 다시 시도해주세요.';
+          } else if (httpStatus === 529 || httpStatus === 503) {
+            userMsg = 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.';
+          }
+          sendEvent(controller, { type: 'error', error: userMsg });
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(readableStream, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+        'X-Accel-Buffering': 'no',
+      },
+    });
+  }
+
+  // ── 기존 non-streaming 경로 ────────────────────────────────
   try {
     const response = await anthropic.messages.create({
       model: MODEL,

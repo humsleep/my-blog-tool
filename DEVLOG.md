@@ -5,6 +5,38 @@
 
 ---
 
+## 2026-05-11 — Phase 36.4: AI 글쓰기 SSE 스트리밍 도입 (timeout 진짜 해결)
+
+**문제**: Phase 36.3 의 max_tokens 축소 + compact 기본값으로도 일부 사용자에게 timeout 지속.
+
+**원인 분석**:
+- 입력은 ~1,500~1,800 토큰으로 작음 (input 시간은 1~2초)
+- **출력이 ~2,500~3,300 토큰** × Sonnet 4.6 출력 속도 50~80 tok/s = 31~66초
+- Vercel maxDuration 60s 와 충돌 → 일부 케이스에서 timeout 불가피
+- 같은 함수 안에서 전체 응답을 받아 한 번에 반환하는 구조라 60s 한도가 절대 한계
+
+**해결 — SSE 스트리밍** (`app/api/ai-draft/route.ts`):
+- 요청 body 에 `stream: true` 시 `Content-Type: text/event-stream` 으로 응답.
+- `anthropic.messages.stream({...})` 사용, `text` 이벤트마다 SSE 프레임 발송:
+  - `data: {"type":"chunk","text":"..."}\n\n`
+  - 완료 시 `{"type":"done","usage":{...}}`
+  - 에러 시 `{"type":"error","error":"..."}`
+- 1차 byte 가 흐르는 한 Vercel 은 함수를 끊지 않음 → **timeout 사실상 사라짐**.
+
+**클라이언트** (`app/ai-writer/page.tsx`):
+- `fetch` 응답을 `getReader()` 로 읽고, `\n\n` 단위로 SSE 이벤트 파싱.
+- chunk 이벤트마다 `setDraft(acc)` → **사용자가 글이 만들어지는 걸 실시간으로 확인** (UX 대폭 개선).
+- error 이벤트 도착 시 부분 출력은 유지하고 에러 메시지만 표시 — 사용자가 부분 결과도 활용 가능.
+
+**`/start` 호환성**: stream 플래그 미전송 시 기존 JSON 응답 그대로 → /start 페이지는 변경 없음.
+
+### 검증
+- `npm run build` 클린 (43 페이지).
+- 단위 테스트 79/79.
+- 배포 후 기대: AI 글쓰기 timeout 메시지 발생률 ~0% + 출력이 한 자씩 흘러나오는 UX.
+
+---
+
 ## 2026-05-11 — Phase 36.3: AI 글쓰기 실제 timeout 완화 + minify-safe 에러 분류
 
 **Vercel 로그**:
