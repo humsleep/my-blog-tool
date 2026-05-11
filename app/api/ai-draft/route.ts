@@ -287,12 +287,15 @@ export async function POST(request: Request) {
   };
 
   const systemPrompt = buildSystemPrompt(safeOptions);
-  // Vercel maxDuration 60s 보다 짧게 잡아, 응답이 안 오면 함수가 강제 종료되어
-  // plain-text "An error occurred ..." 으로 떨어지지 않도록 우리가 먼저 abort.
-  const anthropic = new Anthropic({ apiKey, timeout: 55_000, maxRetries: 0 });
+  // Anthropic SDK 가 자체 타임아웃을 들고 있어 Vercel maxDuration(60s) 직전에 abort.
+  // 너무 짧게 잡으면 정상 응답도 끊김 → 58s 로 여유 확보.
+  const anthropic = new Anthropic({ apiKey, timeout: 58_000, maxRetries: 0 });
 
-  // 20개 제목·이미지 프롬프트·출처까지 포함하면 출력이 길어지므로 토큰 한도 상향
-  const maxTokens = (safeOptions.titleMode === 'multi' ? 6000 : 4500);
+  // 출력 토큰 한도 — 출력 시간 = 토큰 수에 거의 비례하므로 timeout 직결.
+  // Phase 36.1 이후 기본 옵션이 single titles + no image prompts 라
+  // 실제 평균 출력은 3,000~3,500 토큰 (본문 + 제목 1개 + 해시태그 + 자체검토).
+  // 한도를 그에 맞춰 낮추면 P99 응답시간도 30~40s 이내로 안정.
+  const maxTokens = safeOptions.titleMode === 'multi' ? 5000 : 3500;
 
   try {
     const response = await anthropic.messages.create({
@@ -334,30 +337,40 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     // Anthropic SDK 는 APIError 의 subclass(BadRequestError / AuthenticationError /
-    // RateLimitError / InternalServerError / OverloadedError 등)로 throw 한다.
-    // constructor.name 은 subclass 이름이 와서 'APIError' 단순 비교로는 매칭이 안 됨.
-    // → status 필드를 직접 보고 분기.
+    // RateLimitError / InternalServerError / OverloadedError / APIConnectionTimeoutError 등)로 throw.
+    // 다만 Vercel production minify 가 constructor.name 을 'eB' 같은 1~2자로 압축하므로
+    // class 이름에 의존하지 않고 status + err.name (명시적 설정값, minify-safe) + message 로만 분기.
+    const errObj = err && typeof err === 'object' ? (err as Record<string, unknown>) : {};
     const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
+    const errName = typeof errObj.name === 'string' ? errObj.name : '';
     const msg = err instanceof Error ? err.message.slice(0, 300) : '';
-    const httpStatus = (err && typeof err === 'object' && 'status' in err)
-      ? (err as { status?: number }).status
-      : undefined;
+    const httpStatus = typeof errObj.status === 'number' ? errObj.status : undefined;
 
-    // Vercel 로그에서 한 줄로 빠르게 추적할 수 있게 상태 + 클래스 + 메시지 200자 기록.
-    // 사용자 응답엔 일반화된 메시지만 노출 (응답 본문 누설 방지).
-    console.error(`[ai-draft] Claude call failed — class=${cls} status=${httpStatus ?? 'none'} msg="${msg}"`);
+    // Vercel 로그에서 한 줄로 추적할 수 있게 모두 기록 (사용자 응답엔 일반화된 메시지만).
+    console.error(`[ai-draft] Claude call failed — class=${cls} name=${errName} status=${httpStatus ?? 'none'} msg="${msg}"`);
+
+    // timeout 시그널: SDK 의 명시적 .name, message 패턴 ("Request timed out.", "timeout", "aborted"),
+    // err.code (AbortError) 모두 커버.
+    const isTimeout =
+      errName === 'APIConnectionTimeoutError' ||
+      errName === 'AbortError' ||
+      /time(?:d|out)|aborted|abort/i.test(msg);
+
+    // connection 시그널: SDK APIConnectionError + 흔한 network 키워드.
+    const isConnectionError =
+      errName === 'APIConnectionError' ||
+      /fetch failed|network|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN/i.test(msg);
 
     let status = 502;
     let userMsg = 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
 
-    if (cls === 'APIConnectionTimeoutError' || cls === 'AbortError' || /timeout|aborted/i.test(msg)) {
+    if (isTimeout) {
       status = 504;
-      userMsg = 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.';
+      userMsg = 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요. (글 길이를 줄이거나 옵션을 단순화하면 안정적입니다)';
     } else if (httpStatus === 401 || httpStatus === 403) {
       status = 503;
       userMsg = 'AI 서버 인증에 문제가 있어요. 운영자에게 알려주세요.';
     } else if (httpStatus === 404) {
-      // 모델 이름이 잘못된 경우 (예: deprecated 또는 오타)
       status = 503;
       userMsg = 'AI 모델 설정에 문제가 있어요. 운영자에게 알려주세요.';
     } else if (httpStatus === 429) {
@@ -372,7 +385,7 @@ export async function POST(request: Request) {
     } else if (httpStatus && httpStatus >= 500) {
       status = 502;
       userMsg = 'AI 서버에서 오류 응답을 받았어요. 잠시 후 다시 시도해주세요.';
-    } else if (cls === 'APIConnectionError' || /fetch|network|ECONNRESET|ECONNREFUSED|ENOTFOUND/i.test(msg)) {
+    } else if (isConnectionError) {
       status = 502;
       userMsg = 'AI 서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.';
     }

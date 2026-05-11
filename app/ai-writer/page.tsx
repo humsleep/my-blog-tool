@@ -33,12 +33,14 @@ interface DraftOptions {
   selfReview: boolean;
 }
 
-// Phase 36.1: 비용 절감 기본값 — 제목 1개 + 이미지 프롬프트 OFF.
-//   사용자는 옵션 패널에서 토글로 다시 켤 수 있다. (multi titles · imagePrompts)
-//   기본값을 줄여서 평균 1회 호출 비용 약 35% 감소.
+// Phase 36.3: 비용 + timeout 안전 기본값.
+//   - length='compact' (1,300~1,700자): standard(1,700~2,200자)는 출력 시간이 Vercel 60s
+//     한도에 너무 빡빡해서 timeout 빈발 → 안정성 우선.
+//   - titleMode='single' / imagePrompts=false: 출력 토큰 절감.
+//   모든 옵션은 패널에서 토글로 다시 켤 수 있음.
 const DEFAULT_OPTIONS: DraftOptions = {
   style: 'haeyo',
-  length: 'standard',
+  length: 'compact',
   titleMode: 'single',
   sectionCount: 5,
   accuracyTargets: '',
