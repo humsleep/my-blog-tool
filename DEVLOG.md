@@ -5,6 +5,35 @@
 
 ---
 
+## 2026-05-11 — Phase 36: 진단 12시간 1회 rate limit + Claude API 비용 분석
+
+### 1. 블로그 진단 12시간 1회 제한
+**배경**: 진단 1회당 외부 API 호출이 비싼 작업 — 네이버 검색 OpenAPI 30회 + PostView.naver 12회 + RSS 1회. 기존 RLS 는 24h/20건 cap 이었으나 너무 느슨함.
+
+- **마이그레이션 0012** (`supabase/migrations/0012_diagnose_rate_limit_12h.sql`): RLS INSERT 정책을 `not exists (... where created_at > now() - interval '12 hours')` 로 강화. 클라이언트 우회 불가.
+- **`/api/blog-diagnose` POST**: 외부 호출 전에 사전 체크 — 12h 내 진단 이력 있으면 `429 + nextAvailableAt` 응답. `약 N시간 후에 다시 시도해주세요.` 메시지로 사용자 친화 안내.
+- **결과 페이지**: "한 달 뒤에 다시" → "**12시간에 한 번씩** 할 수 있어요" 안내로 정정.
+- **MethodologyPanel "측정 한계"** 마지막 항목에 12h 정책 추가.
+
+### 2. Claude API 비용 분석 스크립트 (`scripts/qa-claude-cost-estimate.ts`)
+**측정 결과** (Sonnet 4.6, 환율 1,450원/$):
+- **1회 호출 비용**: cache miss `$0.08~0.11 (₩117~159)`, cache hit `$0.077~0.106 (₩112~153)`
+- **입력**: system prompt 1,344~1,434 tokens + user prompt 200~300 tokens
+- **출력**: 5,075~6,975 tokens (본문 1,700~2,200자 + 제목 20개 + 해시태그 + 이미지 프롬프트 + 자체 검토)
+- **월간 시나리오** (cache miss · 출력 중간):
+  - DAU 50 · 1회/일: 월 `$143 (~₩207k)`
+  - DAU 200 · 1회/일: 월 `$571 (~₩828k)`
+  - DAU 500 · 2회/일: 월 `$2,856 (~₩4.14M)`
+- 현재 한도(비로그인 1회/일 · 로그인 5회/일)로 사용자당 월 최대 30~150회 캡
+
+스크립트는 `messages.countTokens` SDK 호출 우선 사용하고, API 키 없으면 한국어 1.5 tok/char + 영문 0.25 tok/char 휴리스틱으로 fallback.
+
+### 검증
+- `npm run build` 클린 (43 페이지)
+- 단위 테스트 79/79 통과 (회귀 없음)
+
+---
+
 ## 2026-05-11 — Phase 35.2: favicon · 아이콘 브랜드 통일
 
 **문제**: 브랜드 아이덴티티가 세 곳에서 따로 놀고 있었음.

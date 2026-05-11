@@ -536,7 +536,7 @@ export default function BlogDiagnosePage() {
                 </button>
               </div>
               <p className="mt-3 text-xs text-ink-faint">
-                한 달 뒤에 다시 진단하면 변화 추이를 비교할 수 있어요. (이력 저장은 다음 업데이트에서 추가됩니다.)
+                진단은 12시간에 한 번씩 할 수 있어요. 한 달 단위로 다시 진단하면 점수 변동 추이를 그래프로 볼 수 있어요.
               </p>
             </section>
           </div>
@@ -703,6 +703,10 @@ function MethodologyPanel({ defaultOpen = false }: { defaultOpen?: boolean }) {
             <li className="flex gap-2">
               <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
               <span>점수 → 밴드(상위 5/15/35% 등) 매핑은 절대 백분위가 아니라 임계값 기준입니다. 카테고리 내 위치를 가늠하는 참고용으로 사용하세요.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span>외부 API 호출 비용·속도 문제로 로그인 사용자당 <strong className="text-ink">12시간에 1회</strong>만 진단할 수 있습니다.</span>
             </li>
           </ul>
         </div>
