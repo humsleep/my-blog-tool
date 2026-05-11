@@ -5,6 +5,31 @@
 
 ---
 
+## 2026-05-11 — Phase 36.6: README · CLAUDE.md 일괄 업데이트
+
+Phase 28~36.5 변경사항을 두 문서에 반영.
+
+### CLAUDE.md (슬림 자동 로드용)
+- `main 직접 push` → `PR + GitHub MCP merge` 흐름으로 정정 (직접 push 403)
+- AI 글쓰기 기본 옵션 (compact / single / no-images) + SSE 스트리밍 추가
+- 진단 12h rate limit (RLS 0012 + API 사전 체크) 추가
+- Vercel 운영 노트: `maxDuration=300`, per-request SDK timeout, 보안 헤더 5종
+- minify-safe 에러 분류 (constructor.name → err.name + status + regex) 주의사항
+- 마이그레이션 0012, scripts/ QA 4종 추가
+- 디버깅 항목 4건 신규 (12h rate limit, ai-draft 로그, JSON 파싱 에러)
+
+### README.md (사용자 안내용)
+- 홈 — TOP 10 포디움 + sparkline
+- 블로그 진단 — 결과 5개 섹션 + 12h rate limit 명시
+- AI 글쓰기 — SSE 스트리밍 + 기본 옵션 + 1회 비용
+- 마이그레이션 0012 추가
+- QA 스크립트 실행법 (`scripts/qa-*`)
+- 보안 항목 — SSRF 방어, safe-redirect, 보안 헤더, 12h rate limit
+- 디렉토리 — `dashboard/`, `charts/`, `diagnose/`, `scripts/`
+- 신규 "운영 현황" 섹션 (phase, 테스트 자동화 카운트, 비용 시나리오)
+
+---
+
 ## 2026-05-11 — Phase 36.5: maxDuration 60s → 300s + per-request SDK timeout
 
 **문제**: Phase 36.4 에서 스트리밍을 도입했음에도 timeout 메시지가 계속 발생.
