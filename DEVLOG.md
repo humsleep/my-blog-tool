@@ -5,6 +5,43 @@
 
 ---
 
+## 2026-05-11 — Phase 36.3: AI 글쓰기 실제 timeout 완화 + minify-safe 에러 분류
+
+**Vercel 로그**:
+```
+[ai-draft] Claude call failed — class=eB status=none msg="Request timed out."
+```
+
+**두 가지 원인** 모두 잡음:
+
+### 1. minify로 인한 class name 매칭 실패
+- Vercel production 빌드가 `constructor.name` 을 `'eB'` 같은 1~2자로 압축.
+- Phase 36.2 의 status 기반 분기는 OK 하지만 timeout 시 `status=none` 이므로 timeout 분기에 도달 못함.
+- 정규식 `/timeout|aborted/i` 가 실제 메시지 `"Request timed out."` (공백 들어간 "timed out") 을 못 잡음.
+
+**수정** (`route.ts` catch 블록):
+- `err.name` 명시값 우선 사용 (SDK 가 `this.name = 'APIConnectionTimeoutError'` 명시 시 minify 후에도 보존).
+- 정규식 확장: `/time(?:d|out)|aborted|abort/i` — "timed out", "timeout", "aborted", "abort" 전부 매칭.
+- 추가 키워드: `fetch failed`, `EAI_AGAIN`.
+- 로그에 `name` 필드도 노출 — Vercel 추적 더 쉬워짐.
+
+### 2. 실제 호출이 58s 안에 안 끝남
+Sonnet 4.6 출력 속도 ~50-80 tok/s. `max_tokens=4500` (단일 모드) 인 경우 50-90s 소요 → 우리 timeout 58s 초과.
+
+**수정**:
+- `max_tokens`: single `4500 → 3500`, multi `6000 → 5000`.
+- Anthropic SDK timeout: `55s → 58s` (Vercel 60s 한도 직전).
+- `DEFAULT_OPTIONS.length`: `'standard'(1,700~2,200자) → 'compact'(1,300~1,700자)`. compact 출력은 약 2,200 tokens → 30~40s 소요로 안정.
+- 사용자는 옵션 패널에서 standard 로 토글 가능 (UX 손실 없음).
+
+### timeout 사용자 메시지 개선
+"AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요. (글 길이를 줄이거나 옵션을 단순화하면 안정적입니다)" — 조치 가이드 포함.
+
+### 검증
+- `npm run build` 클린, 단위 테스트 79/79.
+
+---
+
 ## 2026-05-11 — Phase 36.2: `/api/ai-draft` 에러 분류 + 로그 보강
 
 **문제**: Phase 36.1 패치 후에도 사용자가 `AI 생성 중 일시적인 오류가 발생했어요` 메시지를 받고 있음. 이 카피는 fallback (status=502).
