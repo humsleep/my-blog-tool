@@ -10,6 +10,7 @@ import { Button, LinkButton } from '../components/ui/Button';
 import CopyButton from '../components/ui/CopyButton';
 import { useUser } from '../lib/supabase/useUser';
 import { markdownToHtml, markdownToPlain } from '../lib/format/article-formats';
+import { safeJson } from '../lib/clientFetch';
 
 type FormatTab = 'html' | 'markdown' | 'plain';
 
@@ -32,13 +33,16 @@ interface DraftOptions {
   selfReview: boolean;
 }
 
+// Phase 36.1: 비용 절감 기본값 — 제목 1개 + 이미지 프롬프트 OFF.
+//   사용자는 옵션 패널에서 토글로 다시 켤 수 있다. (multi titles · imagePrompts)
+//   기본값을 줄여서 평균 1회 호출 비용 약 35% 감소.
 const DEFAULT_OPTIONS: DraftOptions = {
   style: 'haeyo',
   length: 'standard',
-  titleMode: 'multi',
+  titleMode: 'single',
   sectionCount: 5,
   accuracyTargets: '',
-  imagePrompts: true,
+  imagePrompts: false,
   sources: false,
   selfReview: true,
 };
@@ -138,8 +142,11 @@ export default function AiWriterPage() {
 
   useEffect(() => {
     fetch('/api/ai-draft')
-      .then((r) => r.json())
-      .then((d: UsageState) => setUsage(d))
+      .then((r) => safeJson<UsageState>(r))
+      .then((d) => {
+        if (typeof d.limit === 'number') setUsage(d as UsageState);
+        else setUsage(null);
+      })
       .catch(() => setUsage(null));
   }, [user]);
 
@@ -158,9 +165,31 @@ export default function AiWriterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, keyword: keyword || null, options }),
       });
-      const data = await res.json();
+      // 비-JSON 응답(Vercel timeout / Anthropic overload / gateway HTML 등)도 안전 처리
+      const data = await safeJson<{
+        draft?: string;
+        error?: string;
+        used?: number;
+        limit?: number;
+        authenticated?: boolean;
+        usage?: { used: number; limit: number; remaining: number };
+      }>(res);
       if (!res.ok) {
-        setError(data.error || 'AI 생성 실패');
+        // 1) 우리가 만든 JSON 에러 → 그대로 노출
+        // 2) 비-JSON (timeout 등) → 상태코드로 사용자 친화 메시지 구성
+        let msg: string;
+        if (data.error) {
+          msg = data.error;
+        } else if (data._parseError) {
+          msg = res.status === 504 || res.status === 408
+            ? 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.'
+            : res.status >= 500
+              ? 'AI 서버가 일시적으로 응답하지 않아요. 잠시 후 다시 시도해주세요.'
+              : `요청 실패 (HTTP ${res.status})`;
+        } else {
+          msg = `요청 실패 (HTTP ${res.status})`;
+        }
+        setError(msg);
         if (typeof data.used === 'number' && typeof data.limit === 'number') {
           setUsage({
             authenticated: data.authenticated ?? false,
@@ -169,6 +198,11 @@ export default function AiWriterPage() {
             remaining: Math.max(0, data.limit - data.used),
           });
         }
+        return;
+      }
+      // res.ok 인데 비-JSON 이면(드물지만 가능) 안내
+      if (data._parseError || !data.draft) {
+        setError('AI 응답을 파싱하지 못했어요. 잠시 후 다시 시도해주세요.');
         return;
       }
       setDraft(data.draft);

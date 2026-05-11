@@ -5,6 +5,43 @@
 
 ---
 
+## 2026-05-11 — Phase 36.1: AI 글쓰기 JSON 파싱 에러 + 미니멀 푸터 + 비용 절감 기본값
+
+### 1. AI 글쓰기 `Unexpected token 'A', "An error o"...` 에러
+**근본 원인**: `/api/ai-draft` 가 Vercel maxDuration(60s) 초과 또는 Anthropic 일시 장애 시 plain text "An error occurred ..." 응답을 받음. 클라이언트(`/ai-writer`, `/start`)는 `await res.json()` 직접 호출 → SyntaxError 로 화면 깨짐.
+
+**3중 방어로 해결**:
+- **`safeJson()` 헬퍼** (`app/lib/clientFetch.ts`) — 응답을 text로 읽고 try-parse. 실패 시 `{ _parseError, _raw }` 객체 반환. 절대 throw 없음.
+- **`/ai-writer` + `/start`**: `safeJson` 으로 교체. 비-JSON / 빈 본문 / 504/408/5xx 마다 사용자 친화 메시지 분기.
+- **서버 측 timeout 가드**: `new Anthropic({ apiKey, timeout: 55_000, maxRetries: 0 })` — Vercel 60s 한도 5s 전에 우리가 먼저 abort → 항상 JSON 에러로 응답. catch 블록에서 `APIConnectionTimeoutError` / 529 overload / 401/403 / 400 각각 적절한 status + 메시지 분기.
+
+### 2. Footer 미니멀화
+- 4컬럼(소개·도구·커뮤니티·문의) + brand row + 약관 row → **한 줄 구성** (modern SaaS 트렌드).
+- 좌: 브랜드 마크 + © 텍스트, 우: 소개·이용약관·개인정보·문의(mailto) 4개 링크만.
+- 도구·커뮤니티 네비게이션은 Navbar / MobileBottomNav 가 담당하므로 footer 중복 제거.
+- py-12 → py-6 으로 footer 높이 절반 축소.
+
+### 3. AI 글쓰기 기본 옵션 — 비용 절감
+**변경** (`app/ai-writer/page.tsx` DEFAULT_OPTIONS):
+- `titleMode: 'multi'` → `'single'` (제목 20개 → 1개)
+- `imagePrompts: true` → `false` (이미지 프롬프트 5줄 제거)
+
+사용자는 옵션 패널 토글로 다시 켤 수 있다 — UX 손해 없이 기본 호출만 가벼움.
+
+**측정 결과** (cost estimate 재실행):
+| 항목 | 이전 (multi + img) | 신 기본값 (single + no-img) | 절감 |
+|---|---|---|---|
+| 1회 비용 (cache miss) | $0.08~0.11 | **$0.05~0.07** | -39% |
+| 월 비용 @ DAU 200 | $571 | **$346** | -39% |
+| 월 비용 @ DAU 500 | $2,856 | **$1,732** | -39% |
+| 출력 토큰 평균 | 6,025 | 3,540 | -41% |
+
+### 검증
+- `npm run build` 클린 (43 페이지)
+- 단위 테스트 79/79 통과
+
+---
+
 ## 2026-05-11 — Phase 36: 진단 12시간 1회 rate limit + Claude API 비용 분석
 
 ### 1. 블로그 진단 12시간 1회 제한
