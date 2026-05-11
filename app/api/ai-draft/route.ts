@@ -342,26 +342,59 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // fail-safe: 어떤 단계에서 환경변수 미설정 등으로 throw 되더라도
+  // 클라이언트가 깨지지 않도록 항상 valid JSON 반환.
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (user) {
-    const usage = await getAuthedUsage(user.id);
-    if (!usage) {
-      return NextResponse.json({ authenticated: true, used: 0, limit: LIMITS.authed, remaining: LIMITS.authed });
+    if (user) {
+      const usage = await getAuthedUsage(user.id);
+      if (!usage) {
+        return NextResponse.json({ authenticated: true, used: 0, limit: LIMITS.authed, remaining: LIMITS.authed });
+      }
+      return NextResponse.json({
+        authenticated: true,
+        used: usage.used,
+        limit: usage.limit,
+        remaining: Math.max(0, usage.limit - usage.used),
+      });
     }
+
+    let ipHash: string;
+    try {
+      ipHash = hashIp(getClientIp(request));
+    } catch {
+      return NextResponse.json({
+        authenticated: false,
+        used: 0,
+        limit: LIMITS.anon,
+        remaining: LIMITS.anon,
+        authedLimit: LIMITS.authed,
+      });
+    }
+    const usage = await getAnonUsage(ipHash);
+
+    if (!usage) {
+      return NextResponse.json({
+        authenticated: false,
+        used: 0,
+        limit: LIMITS.anon,
+        remaining: LIMITS.anon,
+        authedLimit: LIMITS.authed,
+      });
+    }
+
     return NextResponse.json({
-      authenticated: true,
+      authenticated: false,
       used: usage.used,
       limit: usage.limit,
       remaining: Math.max(0, usage.limit - usage.used),
+      authedLimit: LIMITS.authed,
     });
-  }
-
-  let ipHash: string;
-  try {
-    ipHash = hashIp(getClientIp(request));
-  } catch {
+  } catch (err) {
+    const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
+    console.error(`[ai-draft GET] usage probe failed: ${cls}`);
     return NextResponse.json({
       authenticated: false,
       used: 0,
@@ -370,23 +403,4 @@ export async function GET(request: Request) {
       authedLimit: LIMITS.authed,
     });
   }
-  const usage = await getAnonUsage(ipHash);
-
-  if (!usage) {
-    return NextResponse.json({
-      authenticated: false,
-      used: 0,
-      limit: LIMITS.anon,
-      remaining: LIMITS.anon,
-      authedLimit: LIMITS.authed,
-    });
-  }
-
-  return NextResponse.json({
-    authenticated: false,
-    used: usage.used,
-    limit: usage.limit,
-    remaining: Math.max(0, usage.limit - usage.used),
-    authedLimit: LIMITS.authed,
-  });
 }

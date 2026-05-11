@@ -42,14 +42,7 @@ async function runPool<T, R>(
 }
 
 export async function POST(request: Request) {
-  const naverIdSet = !!process.env.NAVER_CLIENT_ID && !!process.env.NAVER_CLIENT_SECRET;
-  if (!naverIdSet) {
-    return NextResponse.json(
-      { error: '네이버 검색 API가 설정되지 않았습니다. 운영자에게 문의해주세요.' },
-      { status: 503 },
-    );
-  }
-
+  // 1) 입력 검증 먼저 — 사용자 친화적인 에러 메시지가 환경설정 메시지에 가려지지 않도록.
   let body: DiagnoseRequest;
   try {
     body = await request.json();
@@ -57,7 +50,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '잘못된 요청 형식' }, { status: 400 });
   }
 
-  // 1) 입력 정규화
   const rawInput = (body.blogId || body.blogInput || '').trim();
   if (!rawInput) {
     return NextResponse.json({ error: '블로그 ID 또는 주소를 입력해주세요.' }, { status: 400 });
@@ -76,6 +68,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: '메인 카테고리를 선택해주세요.' },
       { status: 400 },
+    );
+  }
+
+  // 2.5) 환경설정 가드 — 입력 검증 통과 후, 외부 API 호출 직전에 검증.
+  const naverIdSet = !!process.env.NAVER_CLIENT_ID && !!process.env.NAVER_CLIENT_SECRET;
+  if (!naverIdSet) {
+    return NextResponse.json(
+      { error: '네이버 검색 API가 설정되지 않았습니다. 운영자에게 문의해주세요.' },
+      { status: 503 },
     );
   }
 
