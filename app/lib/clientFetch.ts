@@ -79,3 +79,41 @@ export async function clientFetchJson<T>(
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * 응답을 JSON으로 안전하게 파싱한다.
+ *  - response.json() 은 본문이 비-JSON 이면 SyntaxError 로 throw → 사용자 화면이 깨짐
+ *  - 본 함수는 항상 객체를 반환하고, 파싱 실패 / 비어있는 본문 시 _parseError 사유를 담음
+ *
+ *  운영에서 흔한 비-JSON 응답:
+ *    - Vercel maxDuration 초과 → "An error occurred ..." (plain text)
+ *    - Anthropic 529 (overload) → 짧은 텍스트 + HTML
+ *    - 게이트웨이 5xx → HTML 에러 페이지
+ */
+export type SafeJsonResult<T> = Partial<T> & { _parseError?: string; _raw?: string };
+
+export async function safeJson<T = Record<string, unknown>>(
+  response: Response,
+): Promise<SafeJsonResult<T>> {
+  let text = '';
+  try {
+    text = await response.text();
+  } catch (err) {
+    return {
+      _parseError: err instanceof Error ? err.message : 'response read failed',
+      _raw: '',
+    } as SafeJsonResult<T>;
+  }
+  const trimmed = text.trim();
+  if (!trimmed) {
+    return { _parseError: 'empty body', _raw: '' } as SafeJsonResult<T>;
+  }
+  try {
+    return JSON.parse(trimmed) as SafeJsonResult<T>;
+  } catch {
+    return {
+      _parseError: 'non-JSON response',
+      _raw: trimmed.slice(0, 200),
+    } as SafeJsonResult<T>;
+  }
+}

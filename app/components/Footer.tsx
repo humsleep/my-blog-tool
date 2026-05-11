@@ -1,106 +1,41 @@
 import Link from 'next/link';
 
-/** Modern SaaS Footer (Phase 27) — 매거진 colophon 제거. */
+/**
+ * 미니멀 Footer — 한 줄 구성.
+ *  좌: 브랜드 마크 + © · 우: 약관 · 개인정보 · 문의
+ *  도구·커뮤니티 네비게이션은 Navbar / MobileBottomNav 가 담당하므로
+ *  Footer에는 법무 + 연락처만 남긴다 (modern SaaS 트렌드).
+ */
 export default function Footer() {
   return (
     <footer className="bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Brand row */}
-        <div className="mb-10 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-md bg-orange-500 flex items-center justify-center">
-            <span className="text-white font-bold text-base leading-none">B</span>
-          </div>
-          <div>
-            <div className="font-semibold text-zinc-900 dark:text-zinc-100 text-base leading-tight">
-              Boheme<span className="text-orange-500 dark:text-orange-400 ml-1">BlogLab</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-xs leading-none">B</span>
             </div>
-            <div className="text-xs text-zinc-500 dark:text-zinc-500 leading-tight">한국 블로거를 위한 글쓰기 분석 도구</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 pt-8 border-t border-zinc-100 dark:border-zinc-900">
-          <div className="col-span-2 md:col-span-1">
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">소개</h3>
-            <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              네이버·티스토리 블로거가 키워드 리서치부터 이미지 편집까지 한 도구에서 끝낼 수 있도록 만들어졌습니다.
-            </p>
+            <span className="text-zinc-600 dark:text-zinc-400">
+              © 2026 <span className="font-semibold text-zinc-900 dark:text-zinc-100">Boheme BlogLab</span>
+            </span>
           </div>
 
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">도구</h3>
-            <ul className="space-y-2">
-              {[
-                { href: '/blog-diagnose', label: '블로그 진단' },
-                { href: '/keyword-analysis', label: '키워드 분석' },
-                { href: '/competitor-analysis', label: '경쟁 블로그 분석' },
-                { href: '/trending', label: '인기 검색어' },
-                { href: '/prompt-generator', label: '프롬프트 생성' },
-                { href: '/ai-writer', label: 'AI 글쓰기' },
-                { href: '/editor', label: '금칙어 검사기' },
-                { href: '/image-tools', label: '이미지 편집' },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">커뮤니티</h3>
-            <ul className="space-y-2">
-              {[
-                { href: '/community/swap',       label: '서이추 해요' },
-                { href: '/community/tips',       label: '정보 공유' },
-                { href: '/community/companions', label: '체험단 동행해요' },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-xs font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-3">문의</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/contact" className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
-                  문의하기
-                </Link>
-              </li>
-              <li>
+          <nav className="flex flex-wrap gap-x-5 gap-y-2">
+            {[
+              { href: '/about',                                             label: '소개' },
+              { href: '/terms',                                             label: '이용약관' },
+              { href: '/privacy',                                           label: '개인정보처리방침' },
+              { href: 'mailto:boheme88@naver.com?subject=사이트 개선 제안', label: '문의' },
+            ].map((item) => (
+              item.href.startsWith('mailto:') ? (
                 <a
-                  href="mailto:boheme88@naver.com?subject=사이트 개선 제안"
-                  className="text-orange-600 dark:text-orange-400 hover:underline font-medium"
+                  key={item.href}
+                  href={item.href}
+                  className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                 >
-                  boheme88@naver.com
+                  {item.label}
                 </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-10 pt-6 border-t border-zinc-100 dark:border-zinc-900">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-zinc-500 dark:text-zinc-500">
-            <p>© 2026 Boheme BlogLab. All rights reserved.</p>
-            <div className="flex gap-5">
-              {[
-                { href: '/about', label: '서비스 소개' },
-                { href: '/contact', label: '문의하기' },
-                { href: '/terms', label: '이용약관' },
-                { href: '/privacy', label: '개인정보처리방침' },
-              ].map((item) => (
+              ) : (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -108,9 +43,9 @@ export default function Footer() {
                 >
                   {item.label}
                 </Link>
-              ))}
-            </div>
-          </div>
+              )
+            ))}
+          </nav>
         </div>
       </div>
     </footer>

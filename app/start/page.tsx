@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { safeJson } from '../lib/clientFetch';
 
 /**
  * /start — "3분 만에 첫 글 1편" 미니 온보딩 플로우.
@@ -75,7 +76,10 @@ export default function StartPage() {
 
   // 사용량 미리 가져오기
   useEffect(() => {
-    fetch('/api/ai-draft').then((r) => r.json()).then(setUsage).catch(() => null);
+    fetch('/api/ai-draft')
+      .then((r) => safeJson<typeof usage>(r))
+      .then((d) => { if (d && typeof d?.limit === 'number') setUsage(d as typeof usage); })
+      .catch(() => null);
   }, []);
 
   // 생성 중일 때 progress 메시지 회전
@@ -119,13 +123,30 @@ export default function StartPage() {
           },
         }),
       });
-      const data = await res.json();
+      const data = await safeJson<{
+        draft?: string;
+        error?: string;
+        authenticated?: boolean;
+        usage?: { used: number; limit: number; remaining: number };
+      }>(res);
       if (!res.ok) {
-        setErrorMsg(data.error || 'AI 생성 실패');
+        const msg = data.error
+          ? data.error
+          : (res.status === 504 || res.status === 408)
+            ? 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.'
+            : res.status >= 500
+              ? 'AI 서버가 일시적으로 응답하지 않아요. 잠시 후 다시 시도해주세요.'
+              : `요청 실패 (HTTP ${res.status})`;
+        setErrorMsg(msg);
         setStep('error');
         return;
       }
-      setDraft(data.draft as string);
+      if (!data.draft) {
+        setErrorMsg('AI 응답을 파싱하지 못했어요. 잠시 후 다시 시도해주세요.');
+        setStep('error');
+        return;
+      }
+      setDraft(data.draft);
       if (data.usage) {
         setUsage({
           authenticated: data.authenticated ?? false,

@@ -287,7 +287,9 @@ export async function POST(request: Request) {
   };
 
   const systemPrompt = buildSystemPrompt(safeOptions);
-  const anthropic = new Anthropic({ apiKey });
+  // Vercel maxDuration 60s 보다 짧게 잡아, 응답이 안 오면 함수가 강제 종료되어
+  // plain-text "An error occurred ..." 으로 떨어지지 않도록 우리가 먼저 abort.
+  const anthropic = new Anthropic({ apiKey, timeout: 55_000, maxRetries: 0 });
 
   // 20개 제목·이미지 프롬프트·출처까지 포함하면 출력이 길어지므로 토큰 한도 상향
   const maxTokens = (safeOptions.titleMode === 'multi' ? 6000 : 4500);
@@ -333,11 +335,35 @@ export async function POST(request: Request) {
   } catch (err) {
     // 사용자에게는 일반화된 메시지, 서버 로그에는 에러 클래스명만 (응답 본문 누설 방지)
     const cls = err instanceof Error ? err.constructor.name : 'UnknownError';
+    const msg = err instanceof Error ? err.message : '';
     console.error(`[ai-draft] Claude call failed: ${cls}`);
-    return NextResponse.json(
-      { error: 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.' },
-      { status: 502 },
-    );
+
+    // Anthropic SDK 에러 타입 별 사용자 메시지 분기
+    //   - APIConnectionTimeoutError / AbortError → timeout
+    //   - 529 (overload) → 일시 혼잡
+    //   - 401/403 → 운영자 설정 문제 (사용자 책임 X)
+    //   - 400 → 입력 문제
+    let status = 502;
+    let userMsg = 'AI 생성 중 일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+
+    if (cls === 'APIConnectionTimeoutError' || cls === 'AbortError' || /timeout/i.test(msg)) {
+      status = 504;
+      userMsg = 'AI 응답이 시간 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.';
+    } else if (cls === 'APIError' && err && typeof err === 'object' && 'status' in err) {
+      const httpStatus = (err as { status?: number }).status;
+      if (httpStatus === 529 || httpStatus === 503) {
+        status = 503;
+        userMsg = 'AI 서버가 일시적으로 혼잡합니다. 잠시 후 다시 시도해주세요.';
+      } else if (httpStatus === 401 || httpStatus === 403) {
+        status = 503;
+        userMsg = 'AI 서버 인증에 문제가 있어요. 운영자에게 알려주세요.';
+      } else if (httpStatus === 400) {
+        status = 400;
+        userMsg = '프롬프트가 너무 길거나 형식이 맞지 않아요. 줄여서 다시 시도해주세요.';
+      }
+    }
+
+    return NextResponse.json({ error: userMsg }, { status });
   }
 }
 

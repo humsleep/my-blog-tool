@@ -22,13 +22,15 @@ interface DraftOptions {
   selfReview: boolean;
 }
 
+// Phase 36.1 부터 ai-writer 기본 옵션이 single + imagePrompts=false 로 변경됨.
+//  여기서는 "현행 기본값" 과 "비싼 옵션 모두 ON" 을 모두 표시.
 const DEFAULTS: DraftOptions = {
   style: 'haeyo',
   length: 'standard',
-  titleMode: 'multi',
+  titleMode: 'single',
   sectionCount: 5,
   accuracyTargets: '',
-  imagePrompts: true,
+  imagePrompts: false,
   sources: false,
   selfReview: true,
 };
@@ -175,18 +177,23 @@ const typicalUserPrompt = `다음 조건으로 네이버 블로그 글을 작성
   console.log(`  기본 옵션: ${inputTokDefault.toLocaleString()} ${exactDefault ? '(SDK countTokens)' : '(휴리스틱)'}`);
   console.log(`  full 옵션: ${inputTokFull.toLocaleString()} ${exactFull    ? '(SDK countTokens)' : '(휴리스틱)'}\n`);
 
-  // 출력 토큰 추정
-  //   max_tokens 6000 (multi-title) 까지 허용하지만 실제 평균:
-  //   본문 1700~2200자 + 제목 20개 + 해시태그 + 이미지 프롬프트 5줄 + 자체 검토 ≈ 3500~4500자
-  //   한국어 1.5 tok/char → 3500*1.5 ≈ 5,250 tokens
-  const outputCharsMin = 3500;
-  const outputCharsMax = 4500;
+  // 출력 토큰 추정 — 기본값(single + no-image-prompts) 기준
+  //   본문 1700~2200자 + 제목 1개 + 해시태그 + 자체 검토 ≈ 2000~2700자
+  //   한국어 1.5 tok/char → 2000*1.5 ≈ 3,000 tokens
+  const outputCharsMin = 2000;
+  const outputCharsMax = 2700;
   const outputTokMin = Math.round(outputCharsMin * 1.45);
   const outputTokMax = Math.round(outputCharsMax * 1.55);
 
-  console.log('── 출력 토큰 (output, 추정) ──');
-  console.log(`  본문(1700~2200자) + 제목 20개 + 해시태그 + 이미지 프롬프트 5줄 + 자체검토`);
+  console.log('── 출력 토큰 (output, 추정 — 기본값) ──');
+  console.log(`  본문(1700~2200자) + 제목 1개 + 해시태그 + 자체검토`);
   console.log(`  ≈ ${outputCharsMin.toLocaleString()}~${outputCharsMax.toLocaleString()}자 → ${outputTokMin.toLocaleString()}~${outputTokMax.toLocaleString()} tokens\n`);
+
+  // 비싼 옵션 모두 ON 시
+  const outputCharsHeavy = 4500;
+  const outputTokHeavy = Math.round(outputCharsHeavy * 1.55);
+  console.log(`── 비싼 옵션 모두 ON (multi titles + image prompts) ──`);
+  console.log(`  ≈ 출력 ${outputCharsHeavy.toLocaleString()}자 → ${outputTokHeavy.toLocaleString()} tokens\n`);
 
   // 가격 (Anthropic 공식 — Sonnet 4.6)
   const PRICE_INPUT_PER_M       = 3.00;   // $/M tokens
