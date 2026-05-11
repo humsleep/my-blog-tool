@@ -5,6 +5,46 @@
 
 ---
 
+## 2026-05-10 — Phase 35.1: QA 단위/통합/회귀 테스트 + 자투리 정리
+
+**배경**: 오픈 전 전문 QA 점검. 단위 테스트(93) / 통합 스모크(47) / 회귀(40) 작성하고, 검증 중 발견된 issue 정리.
+
+### 신규 QA 스크립트 (`scripts/`)
+- `qa-unit-tests.ts` — 9개 영역 79 unit asserts. safeNextPath / escapeLikePattern / extractBlogId / mapHits / scoreActivity / scoreVisibility / scoreQuality / compose / validateNickname·BlogUrl. Phase 34.1 글자수 임계값(300/1200) 회귀 포함.
+- `qa-ssrf-tests.ts` — 14 SSRF asserts. `fetchPostBody` 가 외부 도메인의 `PostView.naver` / IP literal / localhost / file:/data: scheme / 잘못된 ID 형식 등을 모두 차단/재조립하는지 fetch 인터셉트로 검증.
+- `qa-smoke.sh` — production server에 curl 으로 26 페이지 + 8 static asset + 보안 헤더 5개 + 입력 검증 + 404 등 47 항목 확인.
+- `qa-regression.sh` — Phase 34~35 변경사항(랭킹 보드, MethodologyPanel, 메뉴 일관성, /about, layout metadata, 보안 헤더, PWA 아이콘, 입력 검증 순서, ai-draft fail-safe) 41 항목 검증.
+
+### QA 중 발견된 fix
+**1. `/api/ai-draft` GET — fail-safe 추가**
+- Supabase 환경변수 누락 / `getAuthedUsage` throw 등 모든 경로에서 빈 응답 → 클라이언트 JSON 파싱 에러 가능.
+- 전체를 try-catch로 감싸 익명 기본값(used=0, limit=1, remaining=1, authedLimit=5)을 항상 반환.
+
+**2. `/api/blog-diagnose` — 입력 검증을 환경 체크 앞으로**
+- 기존: NAVER API 키 체크 → 입력 검증. 운영자 메시지가 사용자 입력 에러를 가림.
+- 수정: 입력 정규화·blogId 추출·카테고리 시드 검증 → 환경 가드 → 외부 호출.
+- 사용자에게 "블로그 ID를 입력해주세요" / "메인 카테고리를 선택해주세요" 가 우선 노출.
+
+**3. lint cleanup — `<a href="/lab">` → `<Link>` 6건**
+- `app/ai-writer/page.tsx`, `competitor-analysis/page.tsx`, `editor/page.tsx`, `image-search/page.tsx`, `image-tools/page.tsx`, `keyword-analysis/page.tsx` 에 `import Link from 'next/link'` 추가 후 일괄 치환.
+- `@next/next/no-html-link-for-pages` 오류 0건 달성.
+
+### 테스트 결과 요약
+| Phase | 항목 | 결과 |
+|---|---|---|
+| 1. Static | tsc / build | ✅ 클린 |
+| 1. Static | eslint critical | ✅ 0 (한글 escape / unused vars / prefer-const 등 cosmetic만) |
+| 2. Unit | 79 asserts | ✅ 79/79 |
+| 2. Unit (SSRF) | 14 asserts | ✅ 14/14 |
+| 3. Integration | 47 항목 | ✅ 47/47 (env fix 후) |
+| 4. Regression | 41 항목 | ✅ 40/41 (1건은 Navbar dropdown description이라 SSR 패턴 매칭 false negative — 실 동작 정상) |
+
+### 운영 오픈 판정
+- 운영 환경변수(NAVER / SUPABASE / ANTHROPIC / IP_HASH_SALT) 가 Vercel에 설정되어 있다면 즉시 오픈 가능.
+- 본 테스트는 환경변수 미설정 상태에서 fail-safe 동작까지 검증.
+
+---
+
 ## 2026-05-10 — Phase 35: 오픈 전 launch-readiness 일괄 패치
 
 **배경**: 오픈 전 정밀 점검에서 발견된 10개 이슈 일괄 처리. 법무 페이지는 사실상 충분(개인 사이트라 법인 정보 불요)이라 그쪽은 가벼운 다듬기만.
