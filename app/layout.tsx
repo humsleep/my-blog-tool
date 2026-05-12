@@ -58,20 +58,13 @@ export const metadata: Metadata = {
     title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
     description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.",
     siteName: "Boheme BlogLab",
-    images: [
-      {
-        url: "https://bohemebloglab.com/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
-      },
-    ],
+    // images 는 app/opengraph-image.tsx 컨벤션에서 자동 주입.
   },
   twitter: {
     card: "summary_large_image",
     title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
     description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지.",
-    images: ["https://bohemebloglab.com/og-image.png"],
+    // images 는 app/twitter-image.tsx 컨벤션에서 자동 주입.
   },
   verification: {
     google: "ag_t43fLpqdnJHcfun4Is25BPgksKp3Om0Gd7pZAERQ",
