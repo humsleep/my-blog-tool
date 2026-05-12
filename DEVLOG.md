@@ -5,6 +5,33 @@
 
 ---
 
+## 2026-05-12 — Phase 38: trending polish — chips·매핑·리더보드
+
+사용자 피드백 3건 — PR #21 머지.
+
+### 1. `/trending` 카테고리 칩 1줄 가로 스크롤
+- 항목 16개가 2줄로 깨지던 문제 → `overflow-x-auto scrollbar-hide` + `flex-shrink-0 whitespace-nowrap`
+- 모바일·데스크탑 동일하게 한 줄 가로 스와이프
+
+### 2. 프로필 카테고리 ↔ 트렌드 매칭 버그 수정 🐛
+- **버그**: `COMMUNITY_TO_TRENDING_CATEGORY` 의 키가 진단 카테고리 코드(`food-travel`, `info-howto`, `lifestyle`...) 8개로 작성돼 있었음. 그러나 `profile.category` 에는 `app/lib/community/categories.ts` 의 **한국어 라벨**(`'맛집'`, `'IT/기술'`, `'게임'`...)이 저장됨 → 100% 키 불일치 → `myCategoryLabel` 항상 `undefined` → "내 분야 트렌드" 가 늘 전체 트렌드로 폴백되고 있었음 (조용히)
+- **수정**: 매핑을 한국어 카테고리 키 16종 1:1 로 다시 작성. '맛집' → '요리/음식' 만 흡수. '일상' / '기타' 는 의도적 미매핑(→ 전체 폴백)
+
+### 3. `TrendingTicker` 시상대 비유 제거 → 통합 리더보드
+- 1~10위를 동일한 행 디자인으로 통일 — 배지 / 키워드(검색량 막대 배경) / 월 검색량 / 화살표
+- 1·2·3위만 행 배경 그라데이션 + 메달 배지(왕관·별) + ring + bolder weight 로 강조
+- 모바일·데스크탑 레이아웃 통일 (`sm:order` 트릭 제거)
+- 정보 위계 명확, 가독성·스캔성 우선
+
+### 검증
+- `npm run build` — 43 routes, 클린 (Turbopack)
+
+### 후속 후보
+- 카테고리 매핑 단위 테스트 추가 (`scripts/qa-unit-tests.ts`)
+- 리더보드 행 클릭 분석(어떤 위/카테고리에서 가장 많이 점프하는지)
+
+---
+
 ## 2026-05-11 — Phase 37: contact-as-FAQ + visual podium + rich-text paste for Naver
 
 사용자 피드백 3건을 한 PR(#19)로 머지.
