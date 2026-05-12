@@ -5,6 +5,58 @@
 
 ---
 
+## 2026-05-12 — Phase 39: 출시 전 안전망 5종 정비
+
+출시 전 4가지 페르소나 점검(QA·테스터·CEO·블로거) 결과 도출된 launch-blocker 5건을 한 PR(#23)로 처리.
+
+### 1. 에러 바운더리 3종 (전부 신규)
+- `app/error.tsx` — 라우트 세그먼트 에러 + `reset()` + digest 표시 + 홈/문의 CTA
+- `app/global-error.tsx` — root layout 자체가 죽었을 때 외부 컴포넌트·CSS 의존 없이 인라인 스타일로 표시되는 최후 방어선
+- `app/not-found.tsx` — 브랜드 톤 404 + 핵심 도구 4개 빠른 이동 카드
+
+이전에는 어떤 라우트에서든 런타임 에러 시 Next.js 기본 회색 페이지 노출 → 사용자 충격·브랜드 손상.
+
+### 2. AI 결과 안전 배지 + `/contact` AdSense FAQ
+- `/ai-writer` 결과 화면 최상단에 **amber callout** — 사실 확인 필수 / 본인 경험 추가 / 의료·금융·법률(YMYL) 주의 / AdSense 정책 4가지
+- `/contact` FAQ에 "AI 결과 그대로 발행 가능?" + "AdSense 차단 방지" 2개 항목 추가
+- Google "Scaled content abuse" 정책 리스크와 사용자 책임 명시 — 정식 출시 시 광고 자격 보호
+
+### 3. IP 기반 분당 rate limit (`app/lib/security/rate-limit.ts` 신규)
+- IP_HASH 키 기반 in-memory sliding window — bucket 분리, 5분마다 sweep, 인스턴스당 5k 키 상한
+- 비용 발생 외부 API 7개 라우트에 적용:
+  - `keywords` 20/분 · `trending` 30/분 · `competitor` 20/분 · `news` 30/분 · `document-count` 30/분 · `spellcheck` 20/분 · `wiki` 30/분
+- 429 응답에 `Retry-After` + `X-RateLimit-Remaining/Reset` 헤더
+- 봇 1마리가 분당 수백 회 두드려 네이버 API 일일 한도(25,000건)를 17분만에 소진하는 시나리오 차단
+
+### 4. 동의 흐름
+- **`/login` 약관·개인정보 동의 체크박스** (필수). 미체크 시 Google 로그인 버튼 비활성화. 동의 시각·버전을 `localStorage` 에 기록 (분쟁 시 입증)
+- **`CookieConsent.tsx` 신규** — 동의 전에는 AdSense + Vercel Analytics 마운트 자체 안 됨. "전체 동의" / "필수만 허용" 2가지. `layout.tsx` 에서 두 스크립트 직접 import 제거하고 CookieConsent 한 줄로 교체
+- GDPR / KISA 가이드 기본값(동의 전 비활성) 충족 — EEA 트래픽 노출 리스크 해소
+
+### 5. 네이버 호환 HTML 출력
+- `markdownToHtml` 의 `em` / `code` 출력을 모두 `strong` 으로 통일
+- 네이버 스마트에디터는 paste 시 `<em>` / `<code>` 서식이 사라지는 케이스가 있어 미리보기와 실제 결과의 차이가 발생할 위험 → strong 으로 보수적 변환
+- JSDoc 도 실제 화이트리스트(h2/h3/p/strong/ul/ol/li/blockquote/br) 로 업데이트
+
+### 검증
+- `npm run build` — 43 routes, 클린 (Turbopack)
+- `npx tsc --noEmit` — 클린
+- `npx tsx scripts/qa-unit-tests.ts` — 79/79 통과
+
+### 출시 권장도 변동
+- Phase 38 종료 시점: 5.5 / 10 (조건부 베타)
+- Phase 39 종료 시점: 7.5 / 10 (정식 출시 가능 수준)
+
+### 남은 후속 과제 (출시 후 1~3개월)
+- Sentry 또는 Vercel Error Reporting 연동 (중앙 에러 수집)
+- `.github/workflows` CI — push 시 build + tsc + unit tests 자동 실행
+- API 입력 검증 라이브러리(zod) 도입
+- Status page · 비용 알람 · 백업 정책 문서화
+- E2E 테스트(Playwright) — 네이버 paste 실측 자동화
+- About 페이지에 운영자 신뢰성 신호 보강
+
+---
+
 ## 2026-05-12 — Phase 38: trending polish — chips·매핑·리더보드
 
 사용자 피드백 3건 — PR #21 머지.
