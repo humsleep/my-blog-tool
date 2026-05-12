@@ -718,7 +718,7 @@ export default function AiWriterPage() {
                     <ResultSection
                       icon="🏷️"
                       title="해시태그"
-                      subtitle="전체 30개 + 핵심 추천 10개"
+                      subtitle="전체 30개"
                       content={sections.hashtags}
                     />
                   )}
@@ -770,7 +770,7 @@ export default function AiWriterPage() {
                   <li><strong className="text-zinc-900 dark:text-zinc-100">2.</strong> 제목 후보 1·20개</li>
                   <li><strong className="text-zinc-900 dark:text-zinc-100">3.</strong> 소제목 ▣ 5~7개</li>
                   <li><strong className="text-zinc-900 dark:text-zinc-100">4.</strong> 본문 (해요체/평서체)</li>
-                  <li><strong className="text-zinc-900 dark:text-zinc-100">5.</strong> 해시태그 30+10</li>
+                  <li><strong className="text-zinc-900 dark:text-zinc-100">5.</strong> 해시태그 30개</li>
                   <li><strong className="text-zinc-900 dark:text-zinc-100">6.</strong> 이미지 프롬프트 (영문)</li>
                 </ol>
                 <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
