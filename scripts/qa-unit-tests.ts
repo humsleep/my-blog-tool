@@ -12,6 +12,7 @@ import { safeNextPath, escapeLikePattern } from '../app/lib/security/safe-redire
 import { extractBlogId } from '../app/lib/diagnose/naver-blog';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits } from '../app/lib/diagnose/scoring';
 import { validateNickname, validateBlogUrl } from '../app/lib/community/profile';
+import { markdownToHtml, markdownToPlain } from '../app/lib/format/article-formats';
 
 let passed = 0;
 let failed = 0;
@@ -237,6 +238,71 @@ group('validateNickname / validateBlogUrl', () => {
   expect(validateBlogUrl('ftp://example.com'),                 'URL은 http(s)://로 시작해야 합니다.', 'ftp blocked');
   expect(validateBlogUrl('not a url'),                         '올바른 URL 형식이 아닙니다.',    'malformed');
   expect(validateBlogUrl('https://a.b/' + 'x'.repeat(300)),    'URL이 너무 깁니다.',             'too long');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('markdownToHtml — table 처리 (네이버/티스토리 paste 호환)', () => {
+  // 단순 표 → <table><thead><tbody> 구조
+  const simpleTable =
+    '| 항목 | 값 |\n' +
+    '|------|------|\n' +
+    '| 가 | 1 |\n' +
+    '| 나 | 2 |';
+  const html1 = markdownToHtml(simpleTable);
+  expect(
+    html1.includes('<table>') &&
+      html1.includes('<thead><tr><th>항목</th><th>값</th></tr></thead>') &&
+      html1.includes('<tbody><tr><td>가</td><td>1</td></tr><tr><td>나</td><td>2</td></tr></tbody>') &&
+      html1.includes('</table>'),
+    true,
+    'simple table → <table><thead><tbody>',
+  );
+
+  // align separator (`:---`, `---:`, `:---:`) 도 표로 인식
+  const aligned =
+    '| 좌 | 우 |\n' +
+    '| :--- | ---: |\n' +
+    '| a | b |';
+  expect(markdownToHtml(aligned).startsWith('<table>'), true, 'align separator → table');
+
+  // 표 안 **bold** 가 <strong>로 변환
+  const boldCell =
+    '| 키 | 설명 |\n' +
+    '|---|---|\n' +
+    '| **A** | text |';
+  expect(
+    markdownToHtml(boldCell).includes('<td><strong>A</strong></td>'),
+    true,
+    'inline **bold** inside cell',
+  );
+
+  // 표 다음 단락이 정상적으로 닫힘
+  const tableThenPara =
+    '| a | b |\n' +
+    '|---|---|\n' +
+    '| 1 | 2 |\n' +
+    '\n' +
+    '문단 텍스트';
+  const html2 = markdownToHtml(tableThenPara);
+  expect(
+    html2.includes('</table>') && html2.includes('<p>문단 텍스트</p>'),
+    true,
+    'table closes before paragraph',
+  );
+
+  // 표가 아닌 일반 파이프 텍스트는 표로 인식되지 않아야 함
+  const notTable = '이건 | 단순 | 텍스트';
+  expect(
+    markdownToHtml(notTable).includes('<table>'),
+    false,
+    'plain pipe text NOT promoted to table',
+  );
+
+  // markdownToPlain 에서 separator 라인 제거 + 파이프가 공백으로
+  const plain = markdownToPlain(simpleTable);
+  expect(plain.includes('|---|') || plain.includes('---'), false, 'plain: separator removed');
+  expect(plain.includes('항목') && plain.includes('값'), true, 'plain: headers kept');
+  expect(plain.includes('가') && plain.includes('1'), true, 'plain: body cells kept');
 });
 
 // ─────────────────────────────────────────────────────────────

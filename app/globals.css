@@ -592,5 +592,21 @@ a.link:hover, .link:hover {
   color: var(--accent);
 }
 .preview-naver a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.preview-naver table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0 1.2em;
+  font-size: 0.95em;
+  background: var(--bg-base);
+}
+.preview-naver thead { background: var(--bg-elevated); }
+.preview-naver th,
+.preview-naver td {
+  border: 1px solid var(--border-subtle);
+  padding: 0.55em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+.preview-naver th { font-weight: 700; color: var(--text-primary); }
 .preview-naver > *:first-child { margin-top: 0; }
 .preview-naver > *:last-child  { margin-bottom: 0; }
