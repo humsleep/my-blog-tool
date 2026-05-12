@@ -5,14 +5,27 @@ export const metadata: Metadata = {
   description: 'Boheme BlogLab의 개인정보처리방침입니다. 수집하는 개인정보 항목, 처리 목적, 제3자 제공, 정보주체의 권리 등을 안내합니다.',
 };
 
+/**
+ * 개인정보 보호책임자 실명 — PIPA 31조 및 시행령 32조에 따른 필수 기재 사항.
+ *  Vercel 환경변수 NEXT_PUBLIC_PRIVACY_OFFICER_NAME 에 실명을 입력하면 빌드 시 주입됩니다.
+ *  미설정 시 자리표시자가 노출돼 즉시 인지할 수 있게 합니다.
+ */
+const PRIVACY_OFFICER_NAME =
+  process.env.NEXT_PUBLIC_PRIVACY_OFFICER_NAME && process.env.NEXT_PUBLIC_PRIVACY_OFFICER_NAME.trim().length > 0
+    ? process.env.NEXT_PUBLIC_PRIVACY_OFFICER_NAME.trim()
+    : '[운영자 실명 미설정 — Vercel 환경변수 NEXT_PUBLIC_PRIVACY_OFFICER_NAME 설정 필요]';
+
 export default function PrivacyPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-zinc-800/80 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 sm:p-10">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">개인정보처리방침</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-10">
-            <strong>최종 수정일:</strong> 2026년 5월 2일 &middot; <strong>시행일:</strong> 2026년 5월 2일
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+            <strong>최종 수정일:</strong> 2026년 5월 12일 &middot; <strong>시행일:</strong> 2026년 5월 12일 &middot; <strong>버전:</strong> v1.1
+          </p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-10">
+            v1.1 변경 요지: Google AdSense 위탁 명시(§6·§7·§10), 만 14세 미만 이용 제한 조항 신설(§15), 보호책임자 표기 정비(§12).
           </p>
 
           <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-zinc-700 dark:text-zinc-300 space-y-10">
@@ -139,6 +152,11 @@ export default function PrivacyPage() {
                       <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">로그인 처리 완료 시까지</td>
                     </tr>
                     <tr>
+                      <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">Google LLC (AdSense)</td>
+                      <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">광고 게재 · 맞춤 광고 · 광고 성과 측정 (이용자 동의 시에만 활성화)</td>
+                      <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">Google AdSense 정책에 따름 (동의 철회 시 즉시 중단)</td>
+                    </tr>
+                    <tr>
                       <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">Supabase, Inc.</td>
                       <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">사용자 인증 세션 관리 및 데이터베이스 운영</td>
                       <td className="border border-zinc-200 dark:border-zinc-600 px-3 py-2">위탁 계약 종료 시 또는 회원 탈퇴 시까지</td>
@@ -190,6 +208,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc pl-6 space-y-1.5">
                 <li><strong>Google LLC:</strong> 미국 (OAuth 인증 처리)</li>
+                <li><strong>Google LLC (AdSense):</strong> 미국 (광고 게재 · 행태정보 기반 맞춤 광고 — 이용자 동의 시에만)</li>
                 <li><strong>Supabase, Inc.:</strong> 미국 등 (서비스 선택 리전에 따라 보관 위치 결정)</li>
                 <li><strong>Anthropic, PBC:</strong> 미국 (Claude API 처리)</li>
                 <li><strong>Vercel, Inc.:</strong> 글로벌 (Edge Network)</li>
@@ -236,11 +255,19 @@ export default function PrivacyPage() {
                 서비스는 이용자에게 최적화된 정보 제공 및 로그인 세션 유지를 위해 쿠키를 사용합니다.
               </p>
               <ul className="list-disc pl-6 space-y-1.5">
-                <li><strong>필수 쿠키:</strong> Supabase 인증 세션 쿠키 (로그인 유지)</li>
-                <li><strong>분석 쿠키:</strong> Vercel Analytics를 통한 익명 방문 통계</li>
+                <li><strong>필수 쿠키:</strong> Supabase 인증 세션 쿠키 (로그인 유지) — 동의 불필요</li>
+                <li><strong>분석 쿠키:</strong> Vercel Analytics를 통한 익명 방문 통계 — <em>이용자 동의 시에만 적재</em></li>
+                <li><strong>광고 쿠키:</strong> Google AdSense의 광고 게재 · 행태정보 수집 쿠키 — <em>이용자 동의 시에만 적재</em></li>
               </ul>
               <p className="mt-3 text-sm">
-                이용자는 브라우저 설정에서 쿠키 저장을 거부할 수 있으나, 이 경우 로그인 기반 기능(AI 초안 생성 등)의 이용이 제한될 수 있습니다.
+                서비스 첫 방문 시 표시되는 쿠키 동의 배너에서 &ldquo;전체 동의&rdquo; 를 선택한 경우에만 분석·광고 쿠키가 적재되며,
+                &ldquo;필수만 허용&rdquo; 을 선택한 이용자에게는 절대 적재되지 않습니다. 동의 후에도 브라우저의 쿠키 삭제·차단 기능으로 언제든 철회할 수 있습니다.
+                필수 쿠키를 거부할 경우 로그인 기반 기능(AI 초안 생성 등)의 이용이 제한될 수 있습니다.
+              </p>
+              <p className="mt-3 text-sm">
+                Google AdSense의 광고 개인화는 Google 계정 설정({' '}
+                <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-orange-500 dark:text-orange-400 hover:underline">adssettings.google.com</a>
+                )에서 별도로 거부할 수 있습니다.
               </p>
             </section>
 
@@ -257,8 +284,9 @@ export default function PrivacyPage() {
             <section>
               <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">12. 개인정보 보호책임자</h2>
               <div className="bg-zinc-50 dark:bg-zinc-700/40 border border-zinc-200 dark:border-zinc-600 rounded-lg p-5 space-y-1.5">
-                <p><strong>개인정보 보호책임자:</strong> Boheme BlogLab 운영자</p>
-                <p><strong>이메일:</strong> <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a></p>
+                <p><strong>성명:</strong> {PRIVACY_OFFICER_NAME}</p>
+                <p><strong>직책:</strong> Boheme BlogLab 운영자 (개인정보 보호책임자 겸임)</p>
+                <p><strong>연락처:</strong> <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a></p>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 pt-2">
                   이용자는 서비스를 이용하면서 발생한 개인정보 보호 관련 문의, 불만처리, 피해구제 등을 위 이메일로 요청할 수 있으며,
                   서비스는 이용자의 문의에 대해 지체 없이 답변 및 처리해드립니다.
@@ -283,6 +311,19 @@ export default function PrivacyPage() {
                 본 방침은 법령&middot;정책 또는 보안기술의 변경에 따라 내용의 추가&middot;삭제 및 수정이 있을 수 있으며,
                 변경 시 홈페이지 공지사항을 통해 사전에 고지합니다. 중대한 변경이 있는 경우 최소 7일 전에 공지합니다.
               </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">15. 만 14세 미만 아동의 개인정보 처리</h2>
+              <p className="mb-3">
+                서비스는 「개인정보 보호법」 제22조의2 및 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 제31조에 따라
+                <strong> 만 14세 미만 아동의 회원가입 및 서비스 이용을 허용하지 않습니다</strong>.
+              </p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>회원가입 시 &ldquo;만 14세 이상이며 이용약관 및 개인정보처리방침에 동의합니다&rdquo; 라는 필수 동의 절차를 통해 연령을 확인합니다.</li>
+                <li>만 14세 미만 아동이 허위로 가입한 사실이 확인되는 경우, 해당 계정을 즉시 삭제하고 수집된 모든 개인정보를 지체 없이 파기합니다.</li>
+                <li>법정대리인이 아동의 개인정보 처리 사실을 인지하고 삭제를 요청하는 경우, 위 §8 절차에 따라 즉시 처리합니다.</li>
+              </ul>
             </section>
 
           </div>
