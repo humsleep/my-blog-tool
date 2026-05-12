@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 interface PageviewsResponse {
   keyword: string;
@@ -39,6 +40,9 @@ async function resolveArticleTitle(keyword: string): Promise<string | null> {
 
 export async function GET(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 30, windowMs: 60_000, bucket: 'wiki' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl);
+
     const { searchParams } = new URL(request.url);
     const keyword = searchParams.get('keyword')?.trim();
     const days = Math.min(Math.max(parseInt(searchParams.get('days') || '30', 10) || 30, 7), 90);

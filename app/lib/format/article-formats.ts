@@ -1,7 +1,9 @@
 /**
  * AI 초안 출력 포맷 변환 유틸
  *
- * - markdownToHtml: 네이버 블로그 호환 안전 HTML (h2/h3/p/strong/em/ul/ol/li/blockquote/br)
+ * - markdownToHtml: 네이버 스마트에디터 호환 안전 HTML
+ *   허용 태그: h2 / h3 / p / strong / ul / ol / li / blockquote / br
+ *   (em·code 는 네이버 paste 시 서식이 손실되는 케이스가 있어 strong 으로 통일)
  * - markdownToPlain: 마크다운 기호 제거한 일반 텍스트
  * - escapeHtml: XSS 방어용 HTML 이스케이프
  */
@@ -27,11 +29,13 @@ export function sanitizeSearchHighlight(html: string): string {
 }
 
 function inlineMd(s: string): string {
-  // 이미 escapeHtml 처리된 문자열에 대해 인라인 마크다운만 변환
+  // 이미 escapeHtml 처리된 문자열에 대해 인라인 마크다운만 변환.
+  // 네이버 호환을 위해 em/code 도 모두 strong 으로 통일 — em 은 네이버에서
+  // 서식이 자주 사라지고, code 는 monospace 가 제거돼 의미 손실이 생긴다.
   return s
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/(^|[^*])\*([^*\n]+?)\*/g, '$1<em>$2</em>')
-    .replace(/`([^`\n]+?)`/g, '<code>$1</code>');
+    .replace(/(^|[^*])\*([^*\n]+?)\*/g, '$1<strong>$2</strong>')
+    .replace(/`([^`\n]+?)`/g, '<strong>$1</strong>');
 }
 
 /** 마크다운 → 네이버 호환 HTML */

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 import crypto from 'crypto';
 
 export interface SpellMatch {
@@ -36,6 +37,9 @@ interface LtMatch {
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 20, windowMs: 60_000, bucket: 'spellcheck' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl, '맞춤법 검사 요청이 너무 잦아요. 잠시 후 다시 시도해주세요.');
+
     const { text, language = 'ko-KR' } = await request.json();
 
     if (typeof text !== 'string' || text.trim().length === 0) {

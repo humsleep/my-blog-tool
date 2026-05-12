@@ -11,6 +11,7 @@ function LoginContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [agreed, setAgreed] = useState(false);
   const next = safeNextPath(searchParams.get('next'));
   const hasError = searchParams.get('error');
   const configured = isSupabaseConfigured();
@@ -33,9 +34,21 @@ function LoginContent() {
 
   const signInWithGoogle = async () => {
     if (!configured) return;
+    if (!agreed) {
+      setError('이용약관과 개인정보처리방침에 동의해주세요.');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
+      // 동의 시점 기록 — 로컬에 남겨 추후 분쟁 시 입증 자료로 활용
+      try {
+        localStorage.setItem(
+          'bbl_consent',
+          JSON.stringify({ termsV: 1, privacyV: 1, at: new Date().toISOString() }),
+        );
+      } catch {}
+
       const supabase = createClient();
       const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
       const { error } = await supabase.auth.signInWithOAuth({
@@ -63,7 +76,8 @@ function LoginContent() {
               Boheme BlogLab 로그인
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              로그인하고 AI 초안 생성 기능을<br />하루 2회 무료로 사용해보세요
+              로그인하면 AI 글쓰기를 하루 5회 사용할 수 있고,<br />
+              진단 점수·즐겨찾기 키워드가 자동 저장돼요
             </p>
           </div>
 
@@ -81,9 +95,31 @@ function LoginContent() {
               </div>
             )}
 
+            {/* 약관·개인정보 동의 체크박스 (PIPA 명시적 동의) */}
+            <label className="flex items-start gap-2.5 mb-4 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50/70 dark:bg-zinc-800/60 cursor-pointer hover:border-orange-300 dark:hover:border-orange-700 transition-colors">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 accent-orange-500 w-4 h-4 flex-shrink-0"
+                aria-label="약관 동의"
+              />
+              <span className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                만 14세 이상이며,{' '}
+                <Link href="/terms" target="_blank" className="text-orange-600 dark:text-orange-400 underline hover:no-underline font-medium">
+                  이용약관
+                </Link>
+                과{' '}
+                <Link href="/privacy" target="_blank" className="text-orange-600 dark:text-orange-400 underline hover:no-underline font-medium">
+                  개인정보처리방침
+                </Link>
+                에 동의합니다 (필수)
+              </span>
+            </label>
+
             <button
               onClick={signInWithGoogle}
-              disabled={loading || !configured}
+              disabled={loading || !configured || !agreed}
               className="w-full flex items-center justify-center gap-3 px-5 py-3 bg-white hover:bg-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 border border-zinc-300 dark:border-zinc-600 rounded-lg text-zinc-700 dark:text-zinc-200 font-medium text-sm transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">

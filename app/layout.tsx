@@ -2,11 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import AdSense from "./components/AdSense";
+import CookieConsent from "./components/CookieConsent";
 import ThemeProvider from "./components/ThemeProvider";
 import MobileBottomNav from "./components/MobileBottomNav";
 import ToastProvider from "./components/ui/Toast";
-import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -111,8 +110,8 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
             <MobileBottomNav />
-            <AdSense />
-            <Analytics />
+            {/* 쿠키 동의 — 동의 시점에만 AdSense / Vercel Analytics 마운트 */}
+            <CookieConsent />
           </ToastProvider>
         </ThemeProvider>
       </body>

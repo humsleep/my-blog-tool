@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 const cache = getCache<{ count: number }>('document-count', 10 * 60 * 1000);
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 30, windowMs: 60_000, bucket: 'document-count' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl);
+
     const { keyword } = await request.json();
 
     if (!keyword) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 export interface NewsItem {
   title: string;
@@ -21,6 +22,9 @@ const cache = getCache<NewsResponse>('news', 5 * 60 * 1000);
 
 export async function GET(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 30, windowMs: 60_000, bucket: 'news' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl);
+
     const { searchParams } = new URL(request.url);
     const keyword = searchParams.get('keyword')?.trim();
     const display = Math.min(parseInt(searchParams.get('display') || '10', 10) || 10, 50);

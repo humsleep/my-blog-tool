@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 export interface NaverKeywordToolItem {
   relKeyword: string;
@@ -29,6 +30,9 @@ function generateSignature(timestamp: string, method: string, uri: string, secre
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 20, windowMs: 60_000, bucket: 'keywords' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl, '키워드 분석 요청이 너무 잦아요. 잠시 후 다시 시도해주세요.');
+
     const { keyword } = await request.json();
 
     if (!keyword) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 interface BlogPost {
   title: string;
@@ -24,6 +25,9 @@ const cache = getCache<AnalysisResult>('competitor', 10 * 60 * 1000);
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 20, windowMs: 60_000, bucket: 'competitor' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl, '상위노출 분석 요청이 너무 잦아요. 잠시 후 다시 시도해주세요.');
+
     const { keyword, limit = 10 } = await request.json();
 
     if (!keyword) {
