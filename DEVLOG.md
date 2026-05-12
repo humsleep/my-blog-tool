@@ -5,6 +5,49 @@
 
 ---
 
+## 2026-05-12 — Phase 41: `/terms` v1.1 + `/about` Founder note + GitHub Actions CI
+
+출시 전 추가 점검에서 발견된 4건 중 3건 처리. 에러 추적은 운영자 결정으로 보류. PR #27 머지.
+
+### 1. `/terms` v1.1 동기화
+- 시행일/최종수정일 → 2026-05-12, v1.1, 한 줄 changelog
+- 제6조 회원가입: "자동 동의 간주" → Phase 39 명시적 체크박스 흐름 반영
+- 제8조 AI 콘텐츠: Google AdSense "Scaled content abuse" 정책 안내 + 광고 수익 손실 면책
+- 제16조 신설: 만 14세 미만 가입 제한 — `/privacy §15` 와 정합
+- 부칙 v1.0 → v1.1 개정 요지 명시
+
+### 2. `/about` Founder note 섹션
+- "이용 대상" 다음에 강조 박스로 신설
+- 3단락: 본인 블로거 경험 출발 / 실측 데이터 원칙 / AI 광고 정책 입장 / 운영 원칙
+- 운영자 본인 블로그 URL 은 `NEXT_PUBLIC_OPERATOR_BLOG_URL` 환경변수로 옵션화 — 미설정 시 칩만 숨김
+- Phase 38 점검에서 지적된 "운영자 신뢰 신호 부족" 보완
+
+### 3. GitHub Actions CI 게이트
+- `.github/workflows/ci.yml` 신규 — push to main + 모든 PR 에 자동 실행
+- 단계: `npm ci` → `tsc --noEmit` → `qa-unit-tests.ts` (79건) → `next build`
+- Node 20, npm cache, 10분 타임아웃, 동일 ref 새 커밋 시 이전 실행 자동 취소
+- `IP_HASH_SALT` 더미값 주입(빌드 통과용) — 실제 키는 Vercel env 유지
+- **1인 운영 안전망** — push 시 회귀 자동 차단
+
+### 검증
+- `npm run build` — 43 routes 클린
+- `npx tsc --noEmit` — 클린
+- `npx tsx scripts/qa-unit-tests.ts` — 79/79
+
+### 남은 후속 과제 (출시 후)
+- 에러 추적 도입 (Sentry 무료 또는 Vercel Error Reporting)
+- E2E 테스트 (Playwright) — 네이버 paste 자동 검증
+- API 입력 검증(zod)
+- AdSense 광고 단위(`<ins>` 태그) 실제 배치
+- Status page · 비용 알람
+- README/CLAUDE.md Phase 41 갱신
+
+### 출시 권장도 변동
+- Phase 40 종료: 7.5 / 10
+- Phase 41 종료: **8.0 / 10** (정식 출시 가능, 후속 6건은 운영하면서 보강)
+
+---
+
 ## 2026-05-12 — Phase 40: `/privacy` PIPA 30·31·22-2조 보강
 
 출시 전 개인정보처리방침 점검에서 발견된 4건 — PR #25 머지.
