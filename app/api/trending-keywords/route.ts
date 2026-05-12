@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { env } from '@/app/lib/env';
 import { getCache } from '@/app/lib/cache';
 import { fetchWithRetry } from '@/app/lib/fetchRetry';
+import { checkRateLimit, tooManyRequestsResponse } from '@/app/lib/security/rate-limit';
 
 interface TrendingKeywordItem {
   rank: number;
@@ -76,6 +77,9 @@ function getPeriodDays(period: string, startDate?: string, endDate?: string): nu
 
 export async function GET(request: NextRequest) {
   try {
+    const rl = checkRateLimit(request, { limit: 30, windowMs: 60_000, bucket: 'trending' });
+    if (!rl.allowed) return tooManyRequestsResponse(rl);
+
     const { searchParams } = new URL(request.url);
     const category  = searchParams.get('category')  || '전체';
     const period    = searchParams.get('period')     || 'daily';

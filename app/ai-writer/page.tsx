@@ -531,6 +531,33 @@ export default function AiWriterPage() {
               {/* 결과 — 섹션별 카드 */}
               {draft && sections && (
                 <>
+                  {/* ⚠️ AI 생성물 안내 — 발행 전 반드시 검수 */}
+                  <div className="rounded-lg border-2 border-amber-300 dark:border-amber-700/70 bg-gradient-to-br from-amber-50 to-orange-50/60 dark:from-amber-950/40 dark:to-orange-950/20 p-4 sm:p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="hidden sm:flex w-10 h-10 rounded-full bg-amber-500 items-center justify-center flex-shrink-0 shadow-sm">
+                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold tracking-wider uppercase">
+                            AI 생성물
+                          </span>
+                          <h3 className="text-sm sm:text-base font-bold text-amber-900 dark:text-amber-100">
+                            반드시 검수 후 발행해주세요
+                          </h3>
+                        </div>
+                        <ul className="mt-2 text-xs sm:text-sm text-amber-900/90 dark:text-amber-100/90 leading-relaxed space-y-1 list-disc pl-4">
+                          <li><strong>사실 확인 필수</strong> — 숫자·인용·고유명사·통계는 직접 검증해주세요. AI는 그럴듯한 거짓을 만들 수 있어요.</li>
+                          <li><strong>본인 경험·관점 추가</strong> — &quot;[나의 경험 삽입]&quot; 자리표시자를 그대로 두지 말고 채워주세요.</li>
+                          <li><strong>의료·금융·법률 주제 주의</strong> — 전문 분야는 자격 있는 전문가의 검토를 거치세요.</li>
+                          <li><strong>AdSense·검색엔진 정책</strong> — AI 글을 그대로 대량 발행하면 광고 게재가 제한될 수 있어요.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* 1. 참고 출처 */}
                   {sections.sources && (
                     <ResultSection
