@@ -5,6 +5,38 @@
 
 ---
 
+## 2026-05-12 — Phase 42: OG 카드 재디자인 (임팩트형, 동적 ImageResponse)
+
+링크 공유 시 카카오톡·디스코드·트위터 등에 보이는 미리보기 카드 재설계. 정적 PNG → Next.js App Router `opengraph-image` 컨벤션 + `ImageResponse` 로 전환. PR #29 머지.
+
+### 컨셉
+- **임팩트형** — 큰 카피 + 주황 그라데이션 + 미니멀, 정보보다 분위기/브랜드 어필
+- 카피: "블로그 운영의 / 모든 것을 한 곳에서"
+- 배경: `#fb923c → #f97316 → #ea580c → #c2410c` 135° gradient
+- 상단: 흰 박스 [B] 로고 + 브랜드명, 하단: 도메인 + 강조선
+- 데코: 부드러운 빛 구체 2개 + 48px 그리드 텍스처
+
+### 구현
+- `lib/og/render.tsx` (신규) — 공유 ImageResponse 렌더러
+  - Noto Sans KR 500/800 Google Fonts CSS2 API + `&text=` 필터로 사용 글리프만 다운 (수 KB)
+  - 카피 상수 4개(`BRAND`/`MAIN_LINE_1`/`MAIN_LINE_2`/`DOMAIN`)만 수정하면 다음 배포부터 자동 반영
+- `app/opengraph-image.tsx` / `app/twitter-image.tsx` (신규) — `runtime: edge` 컨벤션
+- `app/layout.tsx` — `openGraph.images` / `twitter.images` 항목 제거 (컨벤션 자동 주입)
+- `public/og-image.png` 삭제 (120KB)
+
+### 부가효과
+이 PR 머지가 Vercel 자동 재배포 트리거 → 최근 등록한 `NEXT_PUBLIC_OPERATOR_BLOG_URL` 환경변수도 함께 새 빌드에 박혀 `/about` Founder note 운영자 블로그 칩이 표시되기 시작.
+
+### 검증
+- `npm run build` — 43 routes + `/opengraph-image` `/twitter-image` 동적 라우트 클린
+- `npx tsc --noEmit` — 클린
+
+### 머지 후 후속
+- Facebook Sharing Debugger / KakaoTalk 디버거로 OG 캐시 갱신 (외부 캐시 무효화)
+- `https://bohemebloglab.com/opengraph-image` 직접 접속해 PNG 확인
+
+---
+
 ## 2026-05-12 — Phase 41: `/terms` v1.1 + `/about` Founder note + GitHub Actions CI
 
 출시 전 추가 점검에서 발견된 4건 중 3건 처리. 에러 추적은 운영자 결정으로 보류. PR #27 머지.
