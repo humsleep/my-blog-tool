@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-05-12 — Phase 43: 해시태그 30개 단순화 + 표 복붙 호환
+
+AI 글쓰기 결과 두 가지 사용성 개선. PR #31 머지.
+
+### 1. 해시태그 30개만 (추천 10개 제거)
+- `app/api/ai-draft/route.ts`: 5단계 프롬프트의 "추천 10개" 지시 제거, 출력 템플릿도 30개 한 줄로 단순화
+- `app/ai-writer/page.tsx`: 섹션 subtitle "전체 30개 + 핵심 추천 10개" → "전체 30개", 사이드바 6단계 안내도 "해시태그 30+10" → "해시태그 30개"
+
+### 2. 본문 미리보기 표 → 실제 표로 복붙
+**원인**: `markdownToHtml`에 table 분기가 없어서 AI가 만든 `| a | b |` 형태 markdown 표가 `<p>` 안에 텍스트로 들어가 있었음. 네이버·티스토리 에디터는 `<table>`만 진짜 표로 인식 → 우리가 그 마크업을 안 만들고 있었던 게 원인.
+
+**처리**:
+- `app/lib/format/article-formats.ts`
+  - `parseTableRow()` / `isTableSeparator()` 헬퍼 추가 (align separator·`\|` escape 지원)
+  - 메인 루프 `for...of` → 인덱스 `for` 로 변경 (다음 라인 lookahead 필요)
+  - 출력: `<table><thead><tr><th>...</th></tr></thead><tbody>...</tbody></table>` — 셀 내부 `**bold**` 보존
+  - `markdownToPlain()` — separator 제거 + 파이프 공백 변환 (일반 텍스트도 표 가독성 OK)
+- `app/globals.css` — `.preview-naver table` 보더·헤더 틴트 스타일 (복사되는 HTML 에는 미포함 → 네이버 자체 표 스타일이 자연스럽게 적용됨)
+
+`RichCopyButton` 이 이미 `text/html` + `text/plain` 동시 복사를 처리 중이라 컴포넌트 자체는 무변경. `markdownToHtml` 이 `<table>` 을 만들기만 하면 자동으로 네이버 에디터에서 실제 표로 인식됨.
+
+### 단위 테스트 +8건 → 87/87
+- `markdownToHtml` 표 그룹 신규: 단순 표 / align separator / 셀 내부 bold / 표 → 단락 전환 / false-positive 가드 / `markdownToPlain` separator 제거 + 본문 보존
+
+### 검증
+- `npx tsx scripts/qa-unit-tests.ts` — 87/87
+- `npm run build` — 43 routes 클린
+- `npx tsc --noEmit` — 클린
+
+---
+
 ## 2026-05-12 — Phase 42: OG 카드 재디자인 (임팩트형, 동적 ImageResponse)
 
 링크 공유 시 카카오톡·디스코드·트위터 등에 보이는 미리보기 카드 재설계. 정적 PNG → Next.js App Router `opengraph-image` 컨벤션 + `ImageResponse` 로 전환. PR #29 머지.
