@@ -6,6 +6,14 @@ export const metadata: Metadata = {
   description: 'Boheme BlogLab은 네이버·티스토리 블로거를 위한 데이터 기반 글쓰기 도구를 제공합니다.',
 };
 
+/**
+ * 운영자 본인 블로그 URL — 신뢰성 신호용 (선택).
+ *  설정되어 있으면 §운영자 노트에 링크 칩이 표시되고, 없으면 그 부분만 숨겨진다.
+ *  공개해도 무방한 운영자 본인의 네이버 블로그(또는 티스토리) 주소를
+ *  Vercel 환경변수 NEXT_PUBLIC_OPERATOR_BLOG_URL 에 입력.
+ */
+const OPERATOR_BLOG_URL = process.env.NEXT_PUBLIC_OPERATOR_BLOG_URL?.trim() || '';
+
 export default function AboutPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8 sm:py-12">
@@ -104,6 +112,57 @@ export default function AboutPage() {
                 <li>AI 글쓰기를 효율적으로 활용하고 싶은 사용자</li>
                 <li>같은 분야 블로거와 교류하고 싶은 분</li>
               </ul>
+            </section>
+
+            {/* ── 운영자 노트 — 신뢰성 신호 ─────────────────────── */}
+            <section className="rounded-lg border border-orange-200 dark:border-orange-900/50 bg-gradient-to-br from-orange-50/70 to-amber-50/40 dark:from-orange-950/30 dark:to-amber-950/15 p-5 sm:p-6">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 rounded-md bg-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <span className="text-white font-bold text-base leading-none">B</span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
+                    Founder note
+                  </span>
+                  <h2 className="text-lg sm:text-xl font-semibold text-zinc-900 dark:text-zinc-100">
+                    운영자도 블로거입니다
+                  </h2>
+                </div>
+              </div>
+
+              <div className="space-y-3 text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                <p>
+                  Boheme BlogLab은 <strong>1인 블로거가 직접 만드는 블로거용 도구</strong>입니다.
+                  키워드 분석 사이트 여러 개 띄워놓고, 검색량 캡쳐해서 엑셀에 옮기고, AI 글 결과를 다시 다듬느라
+                  발행 한 편에 두세 시간씩 쓰던 본인 경험에서 시작됐어요. &ldquo;이 흐름을 한 곳에서 끝낼 수 있다면&rdquo; 하는 생각으로 만들었습니다.
+                </p>
+                <p>
+                  네이버 검색광고·OpenAPI·블로그 RSS·PostView 본문 등 <strong>실제 데이터</strong>만 사용합니다.
+                  추정값으로 점수를 매기지 않고, AI에는 사실 검증 안내를 함께 띄워 무비판적인 발행을 막습니다.
+                  광고 정책에 위배되는 양산 발행은 사용자를 위해서도, 서비스를 위해서도 권장하지 않습니다.
+                </p>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  운영 원칙 · 도구는 무료로 유지, AI는 비용을 부담할 수 있는 만큼만 / 데이터·계정은 최소 수집·로컬 우선 /
+                  사용자 피드백은 한 주 안에 반영하려고 노력합니다.
+                </p>
+              </div>
+
+              {OPERATOR_BLOG_URL && (
+                <div className="mt-4 pt-4 border-t border-orange-200/60 dark:border-orange-900/40">
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-2">운영자 본인 블로그</p>
+                  <a
+                    href={OPERATOR_BLOG_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-700 dark:text-orange-300 hover:underline"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 015.656 0l3 3a4 4 0 01-5.656 5.656l-1.102-1.101m-.758-4.899a4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.1-1.1" />
+                    </svg>
+                    {OPERATOR_BLOG_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                  </a>
+                </div>
+              )}
             </section>
 
             <section>

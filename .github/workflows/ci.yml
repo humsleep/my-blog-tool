@@ -1,0 +1,50 @@
+name: CI
+
+# 모든 push / PR 에서 build · 타입체크 · 단위 테스트를 게이트로 통과시킨다.
+# 외부 시크릿(NAVER/ANTHROPIC/SUPABASE) 은 미설정 — 빌드는 환경변수 가드로 통과하고,
+# 단위 테스트는 외부 호출 없이 순수 함수만 검증한다.
+#
+# - main 브랜치 직접 push 는 정책상 차단되지만, 머지 후 main 에도 동일 게이트가 돈다.
+# - PR 에서는 머지 전에 실패 여부를 확인할 수 있어 1인 운영 안전망 역할.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 동일 브랜치/PR 에서 새 커밋이 들어오면 이전 워크플로우는 취소 — 비용/시간 절약
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build · Typecheck · Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Unit tests (qa-unit-tests.ts, 79건)
+        run: npx tsx scripts/qa-unit-tests.ts
+
+      - name: Next.js production build
+        # IP_HASH_SALT 는 런타임 가드용 더미값. 실제 production 키는 Vercel env 에서 주입.
+        env:
+          IP_HASH_SALT: ci-dummy-salt-1234567890ab
+        run: npm run build

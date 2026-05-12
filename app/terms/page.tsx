@@ -11,8 +11,11 @@ export default function TermsPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-zinc-800/80 rounded-xl shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 sm:p-10">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-3">서비스 이용약관</h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-10">
-            <strong>최종 수정일:</strong> 2026년 5월 2일 &middot; <strong>시행일:</strong> 2026년 5월 2일
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+            <strong>최종 수정일:</strong> 2026년 5월 12일 &middot; <strong>시행일:</strong> 2026년 5월 12일 &middot; <strong>버전:</strong> v1.1
+          </p>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-10">
+            v1.1 변경 요지: 회원가입 명시적 동의 절차 반영(제6조), AI 콘텐츠 발행 시 광고 정책 안내(제8조), 만 14세 미만 가입 제한 조항 신설(제16조).
           </p>
 
           <div className="prose prose-slate dark:prose-invert prose-sm max-w-none text-zinc-700 dark:text-zinc-300 space-y-10">
@@ -87,7 +90,10 @@ export default function TermsPage() {
               <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제6조 (회원가입 및 계정 관리)</h2>
               <p className="mb-3">
                 서비스는 Google 소셜 로그인만을 제공하며, 별도의 아이디/비밀번호는 수집하지 않습니다.
-                회원가입은 Google 계정으로 최초 로그인 시 자동으로 완료되며, 이때 본 약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.
+                회원가입 시 로그인 화면에서 본 약관 및{' '}
+                <a href="/privacy" className="text-orange-500 dark:text-orange-400 hover:underline">개인정보처리방침</a>
+                에 대한 명시적 동의 체크박스를 통해 동의해야 하며, 동의하지 않을 경우 회원가입이 진행되지 않습니다.
+                만 14세 미만은 가입할 수 없습니다(제16조 참조).
               </p>
               <p>
                 이용자는 자신의 Google 계정을 안전하게 관리할 책임이 있으며, 계정의 부정 사용으로 인한 책임은
@@ -129,6 +135,7 @@ export default function TermsPage() {
                 <li>서비스는 AI 생성 콘텐츠의 이용으로 인해 발생한 표절, 저작권 분쟁, 명예훼손, 사실 오류 등에 대한 책임을 지지 않습니다.</li>
                 <li>AI 글쓰기 기능은 비로그인 이용자 일일 <strong>1회</strong>, 로그인 이용자 일일 <strong>5회</strong>로 제한되며, 이 한도는 서비스 운영 상황에 따라 조정될 수 있습니다.</li>
                 <li>공공질서, 미풍양속에 반하거나 타인의 권리를 침해하는 프롬프트 입력은 금지됩니다.</li>
+                <li>AI 초안을 본인 블로그·웹사이트에 발행할 경우, Google AdSense의 &ldquo;Scaled content abuse&rdquo; 등 광고 플랫폼 정책에 따라 광고 게재가 제한될 수 있습니다. 이용자는 사실 검증·본인 경험 추가 등 충분한 편집을 거친 후 발행해야 하며, 이로 인한 광고 수익 손실에 대해 서비스는 책임지지 않습니다.</li>
               </ul>
             </section>
 
@@ -256,10 +263,28 @@ export default function TermsPage() {
               </div>
             </section>
 
+            <section>
+              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-4">제16조 (만 14세 미만 아동 이용 제한)</h2>
+              <p className="mb-3">
+                서비스는 「개인정보 보호법」 제22조의2 및 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 제31조에 따라
+                <strong> 만 14세 미만 아동의 회원가입 및 서비스 이용을 허용하지 않습니다</strong>.
+              </p>
+              <ul className="list-disc pl-6 space-y-1.5">
+                <li>회원가입 시 &ldquo;만 14세 이상이며 약관·개인정보처리방침에 동의합니다&rdquo; 라는 필수 동의 절차로 연령을 확인합니다.</li>
+                <li>만 14세 미만 아동이 허위로 가입한 사실이 확인되는 경우, 서비스는 해당 계정을 즉시 삭제하고 수집된 모든 정보를 지체 없이 파기합니다.</li>
+                <li>법정대리인의 삭제 요청은{' '}
+                  <a href="mailto:boheme88@naver.com" className="text-orange-500 dark:text-orange-400 hover:underline">boheme88@naver.com</a>
+                  으로 접수받아 즉시 처리합니다. 자세한 절차는{' '}
+                  <a href="/privacy" className="text-orange-500 dark:text-orange-400 hover:underline">개인정보처리방침</a>
+                  §15를 참조하세요.
+                </li>
+              </ul>
+            </section>
+
             <section className="pt-4 border-t border-zinc-200 dark:border-zinc-700">
               <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-2">부칙</h3>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                본 약관은 2026년 5월 2일부터 시행합니다. (2026년 4월 23일 시행 약관에 커뮤니티 운영 조항을 추가&middot;개정함)
+                본 약관(v1.1)은 2026년 5월 12일부터 시행합니다. (2026년 5월 2일 시행 v1.0 약관에 동의 절차·AI 광고 정책·만 14세 미만 조항을 추가&middot;개정함)
               </p>
             </section>
 
