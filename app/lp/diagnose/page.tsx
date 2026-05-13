@@ -90,7 +90,7 @@ export default function DiagnoseLandingPage() {
             </button>
           </div>
           <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-            네이버 블로그만 지원 · 결과는 누구나 볼 수 없는 본인만 확인 가능
+            네이버 블로그만 지원 · 다음 단계에서 분야 1번만 선택해주시면 끝
           </p>
         </form>
 

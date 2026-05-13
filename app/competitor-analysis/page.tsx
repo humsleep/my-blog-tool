@@ -9,6 +9,7 @@ import HorizontalBarList from '../components/charts/HorizontalBarList';
 import MonthlyDistribution from '../components/charts/MonthlyDistribution';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { sanitizeSearchHighlight } from '../lib/format/article-formats';
+import { useToast } from '../components/ui/Toast';
 
 interface BlogPost {
   title: string;
@@ -28,6 +29,7 @@ interface AnalysisResult {
 }
 
 function CompetitorAnalysisContent() {
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,7 @@ function CompetitorAnalysisContent() {
 
   const analyzeCompetitors = async () => {
     if (!keyword.trim()) {
-      alert('키워드를 입력해주세요.');
+      toast('키워드를 입력해주세요.', 'info');
       return;
     }
 

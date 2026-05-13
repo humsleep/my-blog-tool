@@ -40,7 +40,7 @@ export default function AiLandingPage() {
             ✓ 네이버 홈판 패턴 학습
           </span>
           <span className="px-2.5 py-1 rounded-full bg-white/80 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/40 text-xs font-medium text-orange-700 dark:text-orange-300">
-            ✓ 일 5회 무료
+            ✓ 로그인 5회·비로그인 1회 무료
           </span>
         </div>
 
@@ -51,8 +51,8 @@ export default function AiLandingPage() {
         </h1>
 
         <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed">
-          제목 후보 20개 · 본문 (해요체/평서체) · 해시태그 30개 · 이미지 프롬프트까지
-          <br className="hidden sm:block" /> <strong>6단계 통합 워크플로우</strong> 한 번에.
+          제목 · 본문 (해요체/평서체) · 해시태그 30개 · 자체 검토까지
+          <br className="hidden sm:block" /> <strong>한 번 실행으로 발행 가능한 초안</strong>을 만듭니다.
         </p>
 
         {/* AI 글쓰기는 프롬프트 생성이 선행되는 게 품질 ↑ */}
@@ -74,15 +74,15 @@ export default function AiLandingPage() {
         {/* AI 결과로 받는 것 */}
         <section className="mt-14 sm:mt-20">
           <p className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400 mb-4 text-center">
-            한 번 실행으로 받는 것
+            기본 옵션으로 받는 것
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
             {[
-              { icon: '✍️', label: '제목 후보 20개' },
+              { icon: '✍️', label: '베스트 제목 1개' },
               { icon: '📄', label: '본문 (5~7 소제목)' },
               { icon: '🏷️', label: '해시태그 30개' },
-              { icon: '🎨', label: '이미지 프롬프트' },
               { icon: '✅', label: '자체 검토 리포트' },
+              { icon: '📊', label: '표는 실제 표로' },
               { icon: '📝', label: '네이버 paste 호환' },
             ].map((c) => (
               <div
@@ -94,6 +94,9 @@ export default function AiLandingPage() {
               </div>
             ))}
           </div>
+          <p className="mt-3 text-center text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            제목 20개·이미지 프롬프트·참고 출처는 결과 페이지의 <strong>옵션 패널</strong>에서 추가 선택할 수 있어요.
+          </p>
         </section>
 
         {/* AdSense 정책 안내 — 우리 약관 §8 정합 */}

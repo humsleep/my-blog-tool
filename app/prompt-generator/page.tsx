@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import FlowNav from '../components/FlowNav';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
+import { useToast } from '../components/ui/Toast';
 
 const CATEGORIES = {
   '엔터테인먼트·예술': [
@@ -164,6 +165,7 @@ const CTA_TYPES = [
 ];
 
 function PromptGeneratorContent() {
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [mode, setMode] = useState<'beginner' | 'advanced'>('beginner');
@@ -330,15 +332,15 @@ function PromptGeneratorContent() {
 
   const generatePrompt = () => {
     if (!keyword.trim()) {
-      alert('키워드를 입력해주세요.');
+      toast('키워드를 입력해주세요.', 'info');
       return;
     }
     if (!selectedCategory) {
-      alert('분야를 선택해주세요.');
+      toast('분야를 선택해주세요.', 'info');
       return;
     }
     if (!tone) {
-      alert('어투를 선택해주세요.');
+      toast('어투를 선택해주세요.', 'info');
       return;
     }
 
@@ -667,7 +669,7 @@ function PromptGeneratorContent() {
   const copyToClipboard = () => {
     if (!generatedPrompt) return;
     navigator.clipboard.writeText(generatedPrompt);
-    alert('프롬프트가 클립보드에 복사되었습니다.');
+    toast('프롬프트가 클립보드에 복사되었습니다.', 'success');
   };
 
   const resetForm = () => {

@@ -7,6 +7,7 @@ import FlowNav from '../components/FlowNav';
 import SpellCheckPanel from '../components/SpellCheckPanel';
 import { markdownToHtml } from '../lib/format/article-formats';
 import { sanitizeQuillHtml } from '../lib/format/sanitize-html';
+import { useToast } from '../components/ui/Toast';
 import type { QuillEditorHandle } from './QuillEditor';
 
 // Quill을 직접 사용 (React 19 호환)
@@ -103,6 +104,7 @@ const SEO_GUIDE_CONTENT = `
 `;
 
 export default function EditorPage() {
+  const { toast } = useToast();
   const [content, setContentRaw] = useState('');
   const [replacements, setReplacements] = useState<Record<string, string>>({});
   const [isSeoGuideOpen, setIsSeoGuideOpen] = useState(false);
@@ -293,7 +295,7 @@ export default function EditorPage() {
   // 금칙어 대체 함수
   const handleReplace = useCallback((pos: { word: string; index: number; lineNumber: number; column: number }, replacementValue: string) => {
     if (!replacementValue.trim()) {
-      alert('대체 단어를 입력해주세요.');
+      toast('대체 단어를 입력해주세요.', 'info');
       return;
     }
     
@@ -405,7 +407,7 @@ export default function EditorPage() {
                         const text = quillEditorRef.current?.getText();
                         if (text) {
                           navigator.clipboard.writeText(text);
-                          alert('내용이 클립보드에 복사되었습니다.');
+                          toast('내용이 클립보드에 복사되었습니다.', 'success');
                         }
                       }
                     }}

@@ -18,13 +18,16 @@ export const runtime = 'edge';
 
 type Band = 'top5' | 'top15' | 'top35' | 'mid' | 'growing';
 
-// band 별 라벨 + 컬러
+// band 별 라벨 + 컬러.
+// 브랜드 컬러(주황) 통일성을 위해 모든 band 가 amber→orange 계열로 통일.
+// band 차이는 채도/명도 변화로만 표현 — top 일수록 깊은 주황, growing 일수록 밝은 amber.
+// 진단 페이지(BAND_LABELS) 와 시각적으로 같은 브랜드라는 인상을 주기 위함.
 const BAND_META: Record<Band, { label: string; bg: string; accent: string }> = {
-  top5:     { label: '상위 5%',  bg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)', accent: '#dcfce7' },
-  top15:    { label: '상위 15%', bg: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)', accent: '#dbeafe' },
-  top35:    { label: '상위 35%', bg: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)', accent: '#fed7aa' },
-  mid:      { label: '중위권',   bg: 'linear-gradient(135deg, #71717a 0%, #52525b 100%)', accent: '#e4e4e7' },
-  growing:  { label: '성장 중',  bg: 'linear-gradient(135deg, #f43f5e 0%, #be123c 100%)', accent: '#ffe4e6' },
+  top5:     { label: '상위 5%',  bg: 'linear-gradient(135deg, #fb923c 0%, #ea580c 50%, #9a3412 100%)', accent: '#7c2d12' },
+  top15:    { label: '상위 15%', bg: 'linear-gradient(135deg, #fdba74 0%, #f97316 50%, #c2410c 100%)', accent: '#9a3412' },
+  top35:    { label: '상위 35%', bg: 'linear-gradient(135deg, #fed7aa 0%, #fb923c 50%, #ea580c 100%)', accent: '#c2410c' },
+  mid:      { label: '중위권',   bg: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #d97706 100%)', accent: '#92400e' },
+  growing:  { label: '성장 중',  bg: 'linear-gradient(135deg, #fef9c3 0%, #fde047 40%, #f59e0b 100%)', accent: '#854d0e' },
 };
 
 function clamp(n: number, lo: number, hi: number): number {

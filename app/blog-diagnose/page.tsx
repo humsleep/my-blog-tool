@@ -171,10 +171,19 @@ export default function BlogDiagnosePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // running 단계에서 progress beat 회전
+  // running 단계에서 progress beat 회전. 마지막 beat 도달 시 interval 정리 (불필요한 re-render 방지).
   useEffect(() => {
     if (step !== 'running') return;
-    const t = setInterval(() => setProgressBeat((p) => Math.min(p + 1, PROGRESS_BEATS.length - 1)), 8000);
+    const t = setInterval(() => {
+      setProgressBeat((p) => {
+        const next = p + 1;
+        if (next >= PROGRESS_BEATS.length - 1) {
+          clearInterval(t);
+          return PROGRESS_BEATS.length - 1;
+        }
+        return next;
+      });
+    }, 8000);
     return () => clearInterval(t);
   }, [step]);
 
@@ -213,6 +222,9 @@ export default function BlogDiagnosePage() {
     setResult(null);
     setError('');
     setProgressBeat(0);
+    // prefillNotice 는 첫 마운트에서만 의미가 있는 1회성 안내라
+    // 진단 완료 후 다시 입력 폼으로 돌아갈 때 지운다.
+    setPrefillNotice(null);
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem(DIAGNOSE_STORAGE_KEY);
     }
