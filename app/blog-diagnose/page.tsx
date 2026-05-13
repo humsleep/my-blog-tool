@@ -100,6 +100,17 @@ export default function BlogDiagnosePage() {
 
   const { user } = useUser();
 
+  // /lp/diagnose 등 외부 랜딩에서 ?url=... 로 넘어왔을 때 입력란 자동 채움.
+  //   cache 가 있어 result/blogInput 가 이미 세팅된 경우엔 query 를 덮어쓰지 않음.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (blogInput) return; // 이미 채워져 있으면 손대지 않음
+    const qUrl = new URLSearchParams(window.location.search).get('url');
+    if (qUrl && qUrl.trim()) setBlogInput(qUrl.trim());
+    // 의존성 비움: 마운트 시 한 번만
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // 진단 결과를 sessionStorage에 보존 — 30~50초 작업 후 결과를 실수로 놓치지 않도록.
   //   running 중 새 탭/새로고침/뒤로가기 → 같은 입력값으로 자동 재제출
   //   result 단계 → 결과 자체를 캐시했다가 새로고침 시 즉시 복원
