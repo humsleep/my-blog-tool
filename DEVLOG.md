@@ -5,6 +5,56 @@
 
 ---
 
+## 2026-05-12 — Phase 44: SNS 유입 인프라 (랜딩 페이지 + 진단 공유 카드)
+
+인스타·쇼츠 유료/유기 트래픽을 받기 위한 두 가지 핵심 성장 인프라. PR #33, #34 머지.
+
+### 44a. 시나리오별 랜딩 페이지 3개 (PR #33)
+
+쇼츠/릴스 광고에서 약속한 가치를 사이트 도착 5초 안에 fulfill 하는 단일 CTA 랜딩.
+
+| LP | 영상 후킹 카피 | 단일 CTA |
+|---|---|---|
+| `/lp/diagnose` | "여러분 블로그는 몇 점일까요?" | URL 1개 → 30초 진단 |
+| `/lp/keyword`  | "여러분 키워드는 황금일까요, 쓰레기일까요?" | 키워드 1개 → 30초 분석 |
+| `/lp/ai`       | "여러분 글을 1분 만에 초안으로" | 프롬프트 생성기로 |
+
+UTM 자동 추적 (`utm_source/medium/campaign/content`). `useSearchParams` 대신 `window.location.search` 사용해 Suspense 회피.
+
+`/blog-diagnose` 페이지에 `?url=` 자동 채움 추가. `/keyword-analysis` 는 기존에 `?keyword=` 지원.
+
+### 44b. 진단 결과 공유 카드 (PR #34) ★ 핵심 성장 메커니즘
+
+**유기적 확산 루프**:
+1. 사용자가 진단 완료
+2. 점수 게이지 아래 "📤 인스타에 공유하기" 버튼 클릭
+3. 1080×1920 PNG (band별 그라데이션) 즉시 생성 → 모바일은 Web Share API → 인스타 스토리
+4. 친구·팔로워 호기심 ("내 점수는?") → 도메인 방문 → 또 진단 → 또 공유
+
+**구현**:
+- `lib/og/font.ts` (신규) — `loadGoogleFont` 헬퍼 분리 (OG 카드 + share card 공용)
+- `app/api/share-card/diagnose/route.tsx` (신규) — Edge runtime, ImageResponse 1080×1920
+  - band별 그라데이션: top5 초록 / top15 파랑 / top35 주황 / mid 회색 / growing 핑크
+  - 큰 점수 360px + 3축 가로 막대 + 브랜드 + 도메인 CTA
+  - 캐시: 브라우저 1h / Vercel CDN 24h
+- `app/components/diagnose/ShareCardButton.tsx` (신규) — Web Share API Level 2 + `<a download>` fallback
+- `app/blog-diagnose/page.tsx` — 점수 게이지 바로 아래 버튼 마운트 (사용자 시선 동선)
+
+### 검증
+- `npm run build` — 46 routes (43 → 46 LP + ƒ /api/share-card/diagnose) 클린
+- `npx tsc --noEmit` — 클린
+- `scripts/qa-unit-tests.ts` — 87/87
+
+### 머지 후 사용법
+홍보 영상 설명란에 LP 링크 + UTM 으로 추적:
+```
+https://bohemebloglab.com/lp/diagnose?utm_source=instagram&utm_campaign=diagnose_live
+https://bohemebloglab.com/lp/keyword?utm_source=youtube_shorts&utm_campaign=golden_kw
+https://bohemebloglab.com/lp/ai?utm_source=threads&utm_campaign=1min_draft
+```
+
+---
+
 ## 2026-05-12 — Phase 43: 해시태그 30개 단순화 + 표 복붙 호환
 
 AI 글쓰기 결과 두 가지 사용성 개선. PR #31 머지.
