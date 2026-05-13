@@ -9,6 +9,9 @@ export interface Profile {
   nickname_changed_at: string;
   created_at: string;
   updated_at: string;
+  // 0010 마이그레이션에서 추가된 컬럼들 — select('*') 시 함께 들어옴.
+  saved_keywords?: string[] | null;
+  prompt_preset?: Record<string, unknown> | null;
 }
 
 export const NICKNAME_RE = /^[A-Za-z0-9가-힣_-]{2,16}$/;

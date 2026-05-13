@@ -104,6 +104,7 @@ export default function Home() {
           searchKeyword={searchKeyword}
           setSearchKeyword={setSearchKeyword}
           onSubmit={handleSearch}
+          savedKeywords={profile?.saved_keywords ?? []}
         />
       ) : (
         <AnonHero
@@ -325,12 +326,14 @@ function LoggedInHero({
   searchKeyword,
   setSearchKeyword,
   onSubmit,
+  savedKeywords,
 }: {
   greetingName: string;
   myCategoryLabel: string | null;
   searchKeyword: string;
   setSearchKeyword: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  savedKeywords: string[];
 }) {
   const today = new Date();
   const dateLabel = `${today.getMonth() + 1}월 ${today.getDate()}일`;
@@ -353,18 +356,20 @@ function LoggedInHero({
           </p>
         </div>
 
-        {/* Dashboard grid: 진단 카드 (2/3) + 키워드 검색 (1/3).
+        {/* Dashboard grid: 키워드 검색 (좌 2/3) + 진단 카드 (우 1/3).
+            Phase 46 — 검색을 우선 노출하기 위해 좌우 위치 + 비중 swap.
             items-stretch (grid 기본값) + 자식의 h-full 로 두 카드 높이 동일. */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
           <div className="lg:col-span-2 h-full">
-            <LatestDiagnoseCard />
-          </div>
-          <div className="h-full">
             <LoggedInSearchCard
               searchKeyword={searchKeyword}
               setSearchKeyword={setSearchKeyword}
               onSubmit={onSubmit}
+              savedKeywords={savedKeywords}
             />
+          </div>
+          <div className="h-full">
+            <LatestDiagnoseCard />
           </div>
         </div>
       </div>
@@ -373,18 +378,25 @@ function LoggedInHero({
 }
 
 /**
- * 로그인 hero 의 1/3 칸에 들어가는 키워드 검색 카드.
- * Phase 45 에서 SavedKeywordsCard 를 대체. 입력 → 키워드 분석 페이지로 이동.
+ * 로그인 hero 좌측 키워드 검색 카드 — Phase 46 에서 즐겨찾기 칩 통합.
+ *
+ * 입력창 + "키워드 분석 시작" 버튼이 메인 행동.
+ * profile.saved_keywords (최대 10개) 가 있으면 칩으로 즉시 분석 진입.
+ * 즐겨찾기는 키워드 분석 결과 페이지에서 ⭐ 버튼으로 추가/삭제 가능.
  */
 function LoggedInSearchCard({
   searchKeyword,
   setSearchKeyword,
   onSubmit,
+  savedKeywords,
 }: {
   searchKeyword: string;
   setSearchKeyword: (v: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  savedKeywords: string[];
 }) {
+  const router = useRouter();
+
   return (
     <div className="h-full flex flex-col rounded-md border border-orange-200 dark:border-orange-900/40 ring-1 ring-orange-500/10 bg-gradient-to-br from-orange-50/80 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-900 p-5">
       <div className="flex items-center justify-between mb-3">
@@ -402,7 +414,7 @@ function LoggedInSearchCard({
         검색량 · 경쟁률 · 황금 키워드까지 한 표에 펼쳐드립니다.
       </p>
 
-      <form onSubmit={onSubmit} className="mt-auto space-y-2">
+      <form onSubmit={onSubmit} className="space-y-2">
         <div className="relative">
           <svg
             className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2"
@@ -426,6 +438,42 @@ function LoggedInSearchCard({
           키워드 분석 시작 →
         </button>
       </form>
+
+      {/* 즐겨찾기 키워드 — 칩 클릭 시 즉시 그 키워드로 분석 페이지 이동 */}
+      <div className="mt-auto pt-4">
+        {savedKeywords.length > 0 ? (
+          <>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500 dark:text-zinc-500">
+                ⭐ 즐겨찾기 키워드
+              </span>
+              <Link
+                href="/profile/setup"
+                className="text-[10px] text-zinc-500 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-orange-400 underline-offset-2 hover:underline"
+              >
+                관리
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {savedKeywords.map((kw) => (
+                <button
+                  key={kw}
+                  type="button"
+                  onClick={() => router.push(`/keyword-analysis?keyword=${encodeURIComponent(kw)}`)}
+                  className="px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                  aria-label={`'${kw}' 키워드 분석`}
+                >
+                  {kw}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            💡 키워드 분석 결과의 <strong>⭐ 버튼</strong>을 누르면 자주 쓰는 키워드를 여기에 저장할 수 있어요.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
