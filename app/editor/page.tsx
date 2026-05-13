@@ -261,66 +261,83 @@ export default function EditorPage() {
     return () => clearTimeout(timeoutId);
   }, [content]);
 
-  // 가독성 자동 최적화 함수
+  // 가독성 자동 최적화 — 마침표·쉼표 뒤에 줄바꿈 추가 + 연속 \n 정리.
+  //
+  // 🔴 핵심 변경 (QA P0 #5 / P1 #6, Phase 45c):
+  //   이전 구현은 `quill.getText()` 로 평문 추출 → 정규식 치환 → HTML 빌드 →
+  //   `clipboard.convert({ html })` → `setContents()` 로 처리했다.
+  //   이 흐름은 (a) 사용자가 설정한 모든 서식(bold·italic·헤더·리스트·링크 등)을
+  //   전면 파괴했고, (b) 사용자가 평문으로 입력한 `<`·`&` 가 HTML 태그로 잘못
+  //   해석되는 escape 버그가 있었다.
+  //
+  //   현재 구현은 Quill 의 `insertText` / `deleteText` 만 사용해 정확한 인덱스
+  //   위치만 surgical 하게 수정 — 주변 서식·attribute 가 그대로 보존되며
+  //   사용자 입력 문자도 평문으로 안전하게 처리된다.
+  //
+  //   인덱스 안정성을 위해 모든 변경은 뒤에서부터 진행한다 (앞에서 삽입하면
+  //   뒤쪽 인덱스가 밀려 다음 매치가 잘못된 위치를 가리킨다).
   const optimizeReadability = useCallback(() => {
     if (typeof window === 'undefined' || !quillEditorRef.current) return;
-    
+
     try {
       const quill = quillEditorRef.current?.getEditor();
       if (!quill || typeof quill.getText !== 'function') return;
-      
-      let text = quill.getText();
-      
-      // 마침표와 쉼표 뒤에 줄바꿈 추가 (이미 줄바꿈이 있으면 중복 방지)
-      text = text.replace(/([.,])(?!\s*\n)/g, '$1\n');
-      // 연속된 줄바꿈 정리 (3개 이상을 2개로)
-      text = text.replace(/\n{3,}/g, '\n\n');
-      
-      // Quill에 텍스트 설정
-      if (quill.clipboard && typeof quill.clipboard.convert === 'function') {
-        const delta = quill.clipboard.convert({ html: text.replace(/\n/g, '<br>') });
-        quill.setContents(delta, 'silent');
-        
-        // content state 업데이트
-        const html = quillEditorRef.current?.getHTML();
-        if (html) {
-          setContent(html);
-        }
+
+      // 1단계 — 마침표·쉼표 뒤에 \n 이 필요한 위치 수집 후 역순 삽입
+      const text = quill.getText();
+      const insertPoints: number[] = [];
+      const punctRe = /([.,])(?!\s*\n|$)/g;
+      let m: RegExpExecArray | null;
+      while ((m = punctRe.exec(text)) !== null) {
+        insertPoints.push(m.index + 1);
       }
+      for (let i = insertPoints.length - 1; i >= 0; i--) {
+        quill.insertText(insertPoints[i], '\n', 'silent');
+      }
+
+      // 2단계 — 연속된 \n 3개 이상을 2개로 압축 (역순 삭제)
+      const after1 = quill.getText();
+      const removals: { idx: number; len: number }[] = [];
+      const tripleRe = /\n{3,}/g;
+      let tm: RegExpExecArray | null;
+      while ((tm = tripleRe.exec(after1)) !== null) {
+        removals.push({ idx: tm.index + 2, len: tm[0].length - 2 });
+      }
+      for (let i = removals.length - 1; i >= 0; i--) {
+        quill.deleteText(removals[i].idx, removals[i].len, 'silent');
+      }
+
+      // 3단계 — content state 동기화
+      const html = quillEditorRef.current?.getHTML();
+      if (html) setContent(html);
     } catch (e) {
       console.error('가독성 최적화 오류:', e);
     }
   }, []);
 
-  // 금칙어 대체 함수
+  // 금칙어 대체 — `deleteText` + `insertText` 만 사용해 주변 서식 보존.
+  // 이전 구현이 전체 콘텐츠를 평문화 후 재구성하던 문제를 surgical 한 인덱스
+  // 수정으로 해결. 자세한 배경은 위 optimizeReadability 주석 참조.
   const handleReplace = useCallback((pos: { word: string; index: number; lineNumber: number; column: number }, replacementValue: string) => {
     if (!replacementValue.trim()) {
       toast('대체 단어를 입력해주세요.', 'info');
       return;
     }
-    
+
     if (typeof window === 'undefined' || !quillEditorRef.current) return;
-    
+
     try {
       const quill = quillEditorRef.current?.getEditor();
-      if (!quill || typeof quill.getText !== 'function') return;
-      
-      const text = quill.getText();
-      
-      const beforeText = text.substring(0, pos.index);
-      const afterText = text.substring(pos.index + pos.word.length);
-      const newText = beforeText + replacementValue + afterText;
-      
-      if (quill.clipboard && typeof quill.clipboard.convert === 'function') {
-        const delta = quill.clipboard.convert({ html: newText.replace(/\n/g, '<br>') });
-        quill.setContents(delta, 'silent');
-        
-        const html = quillEditorRef.current?.getHTML();
-        if (html) {
-          setContent(html);
-        }
-      }
-      
+      if (!quill || typeof quill.deleteText !== 'function') return;
+
+      // 그 위치의 단어만 정확히 교체 — 주변 서식·attribute 전부 그대로 유지
+      quill.deleteText(pos.index, pos.word.length, 'silent');
+      quill.insertText(pos.index, replacementValue, 'silent');
+
+      // content state 동기화
+      const html = quillEditorRef.current?.getHTML();
+      if (html) setContent(html);
+
       // 대체 입력 필드 초기화
       const replacementKey = `${pos.index}-${pos.word}`;
       setReplacements(prev => {
