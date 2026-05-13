@@ -36,7 +36,7 @@ export default function LatestDiagnoseCard() {
 
   if (loading) {
     return (
-      <section className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+      <section className="h-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
         <div className="h-4 w-24 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
         <div className="h-12 w-32 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
         <div className="h-3 w-48 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
@@ -46,7 +46,7 @@ export default function LatestDiagnoseCard() {
 
   if (!data?.latest) {
     return (
-      <section className="rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
+      <section className="h-full flex flex-col rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
         <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
             Diagnose
@@ -83,7 +83,7 @@ export default function LatestDiagnoseCard() {
   const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
 
   return (
-    <section className="rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
+    <section className="h-full rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
       <div className="flex items-start justify-between mb-3">
         <div>
           <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
