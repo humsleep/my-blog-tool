@@ -98,7 +98,6 @@ function TipsNewPage() {
         if (updErr) {
           console.error('tips update failed:', updErr);
           setError(updErr.message);
-          alert('수정 실패: ' + updErr.message);
           return;
         }
         // 수정은 상세로 이동 (본인이 방금 수정한 내용 확인 자연스러움)
@@ -125,13 +124,11 @@ function TipsNewPage() {
             msg = insErr.message || '작성에 실패했습니다.';
           }
           setError(msg);
-          alert('작성 실패: ' + msg);
           return;
         }
         if (!data) {
           const msg = '서버에서 글 ID를 반환하지 않았습니다. RLS 정책을 확인해주세요.';
           setError(msg);
-          alert(msg);
           return;
         }
         // 새 글 작성 — 목록으로 이동 (방금 등록한 글이 상단에 노출됨)

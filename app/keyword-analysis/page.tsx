@@ -9,6 +9,7 @@ import HorizontalBarList from '../components/charts/HorizontalBarList';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
 import { useToast } from '../components/ui/Toast';
+import ConfirmModal from '../components/community/ConfirmModal';
 
 interface KeywordData {
   keyword: string;
@@ -40,6 +41,7 @@ function KeywordAnalysisContent() {
   const [actionKeyword, setActionKeyword] = useState<string | null>(null);
 
   const [shouldAutoAnalyze, setShouldAutoAnalyze] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
   // 키워드 즐겨찾기 (로그인 사용자만)
   const [savedKeywords, setSavedKeywords] = useState<string[]>([]);
@@ -152,13 +154,15 @@ function KeywordAnalysisContent() {
 
   const analyzeKeywords = async () => {
     if (!inputKeywords.trim()) {
-      alert('키워드를 입력해주세요.');
+      toast('키워드를 입력해주세요.', 'info');
       return;
     }
 
+    // 100개 초과 시 즉시 차단 — 데이터 손실 위험이 있어 사용자가 명시적으로
+    // "전체 삭제" 버튼을 누른 뒤 다시 분석하도록 유도.
     if (keywordData.length >= 100) {
-      if (!confirm('분석 결과가 100개를 초과합니다. 전체 삭제 후 진행하시겠습니까?')) return;
-      setKeywordData([]);
+      toast('분석 결과가 100개를 초과했습니다. 하단의 "전체 삭제"를 누른 뒤 다시 시도해주세요.', 'error');
+      return;
     }
 
     setIsLoading(true);
@@ -169,7 +173,7 @@ function KeywordAnalysisContent() {
     const keywords = inputKeywords.split(',').map((k) => k.trim()).filter((k) => k);
 
     if (keywords.length > 10) {
-      alert('키워드는 최대 10개까지만 입력할 수 있습니다.');
+      toast('키워드는 최대 10개까지만 입력할 수 있습니다.', 'error');
       setIsLoading(false);
       setCurrentProgress('');
       return;
@@ -230,7 +234,7 @@ function KeywordAnalysisContent() {
         newResults.push(newResult);
 
         if (keywordData.length + newResults.length >= 100) {
-          alert('분석 결과가 100개를 초과합니다. 전체 삭제 후 진행해주세요.');
+          toast('분석 결과가 100개에 도달했습니다. 더 분석하려면 "전체 삭제" 후 다시 시도해주세요.', 'error');
           setIsLoading(false);
           setCurrentProgress('');
           return;
@@ -531,7 +535,7 @@ function KeywordAnalysisContent() {
                       CSV 다운로드
                     </button>
                     <button
-                      onClick={() => confirm('모든 분석 결과를 삭제하시겠습니까?') && setKeywordData([])}
+                      onClick={() => setClearConfirmOpen(true)}
                       className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors min-h-[36px]"
                     >
                       전체 삭제
@@ -841,6 +845,20 @@ function KeywordAnalysisContent() {
           </Link>
         </div>
       </div>
+
+      <ConfirmModal
+        open={clearConfirmOpen}
+        title="모든 분석 결과 삭제"
+        description="지금까지 분석한 키워드 결과를 모두 삭제할까요? 이 작업은 되돌릴 수 없습니다."
+        confirmLabel="삭제"
+        variant="danger"
+        onConfirm={() => {
+          setKeywordData([]);
+          setClearConfirmOpen(false);
+          toast('분석 결과를 모두 삭제했습니다.', 'success');
+        }}
+        onCancel={() => setClearConfirmOpen(false)}
+      />
     </div>
   );
 }

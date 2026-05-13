@@ -85,7 +85,9 @@ export async function GET(request: NextRequest) {
     const period    = searchParams.get('period')     || 'daily';
     const startDate = searchParams.get('startDate')  || undefined;
     const endDate   = searchParams.get('endDate')    || undefined;
-    const limit     = parseInt(searchParams.get('limit') || '20');
+    // limit 은 1~50 으로 clamp — 악성/실수로 들어오는 큰 값을 차단해 비용 보호.
+    const rawLimit  = parseInt(searchParams.get('limit') || '20');
+    const limit     = Math.min(50, Math.max(1, Number.isFinite(rawLimit) ? rawLimit : 20));
 
     // 기간 일수 → 월간 평균 데이터에 비례 적용 (30일 기준)
     const periodDays  = getPeriodDays(period, startDate, endDate);

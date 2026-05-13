@@ -139,7 +139,6 @@ function CompanionNewPage() {
         if (updErr) {
           console.error('companion update failed:', updErr);
           setError(updErr.message);
-          alert('수정 실패: ' + updErr.message);
           return;
         }
         router.refresh();
@@ -159,13 +158,11 @@ function CompanionNewPage() {
             msg = insErr.message || '작성에 실패했습니다.';
           }
           setError(msg);
-          alert('작성 실패: ' + msg);
           return;
         }
         if (!data) {
           const msg = '서버에서 글 ID를 반환하지 않았습니다. RLS 정책을 확인해주세요.';
           setError(msg);
-          alert(msg);
           return;
         }
         // 새 모집글 — 목록으로 이동 (방금 등록한 글이 임박순으로 노출)

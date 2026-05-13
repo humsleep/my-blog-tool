@@ -82,7 +82,7 @@ export default function KeywordLandingPage() {
             </button>
           </div>
           <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-            자동완성으로 연관 키워드 30개+ 자동 추출 · 검색량 / 경쟁률 / 황금 키워드 표시
+            검색량 · 경쟁률 · 황금 키워드를 한 표에 표시 · 분석한 키워드는 화면에 누적 저장됨
           </p>
         </form>
 

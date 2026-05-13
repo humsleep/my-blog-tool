@@ -77,7 +77,7 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
           console.error('swap update failed:', updateError);
           const msg = updateError.message || '수정에 실패했습니다.';
           setError(msg);
-          alert('수정 실패: ' + msg);
+          // inline error UI 가 이미 같은 메시지를 표시하므로 alert 중복 제거
           return;
         }
       } else {
@@ -101,7 +101,7 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
             msg = insertError.message || '작성에 실패했습니다.';
           }
           setError(msg);
-          alert('작성 실패: ' + msg);
+          // inline error UI 가 같은 메시지를 표시하므로 alert 중복 제거
           return;
         }
       }
