@@ -7,14 +7,13 @@ import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
 import TrendingTicker from '@/app/components/dashboard/TrendingTicker';
 import LatestDiagnoseCard from '@/app/components/dashboard/LatestDiagnoseCard';
-import SavedKeywordsCard from '@/app/components/dashboard/SavedKeywordsCard';
 import { COMMUNITY_TO_TRENDING_CATEGORY } from '@/app/lib/dashboard/types';
 
 /**
- * 홈 — 데일리 대시보드 (Phase 28).
+ * 홈 — 데일리 대시보드 (Phase 28, Phase 45 에서 즐겨찾기 → 키워드 검색 교체).
  *
  * 비로그인: Hero (검색 + 진단 CTA) + 전체 인기 키워드 + 도구 그리드 + 워크플로우 + 클로징
- * 로그인:   인사 + 마지막 진단 카드 + 즐겨찾기 카드 + 내 분야 인기 키워드 + 도구/워크플로우/클로징
+ * 로그인:   인사 + 마지막 진단 카드 + 키워드 검색 카드 + 내 분야 인기 키워드 + 도구/워크플로우/클로징
  *
  * FAQ는 /contact 페이지로 분리 (푸터 "문의" 클릭 → FAQ 우선, 메일은 보조).
  */
@@ -102,6 +101,9 @@ export default function Home() {
         <LoggedInHero
           greetingName={greetingName}
           myCategoryLabel={myCategoryLabel}
+          searchKeyword={searchKeyword}
+          setSearchKeyword={setSearchKeyword}
+          onSubmit={handleSearch}
         />
       ) : (
         <AnonHero
@@ -129,12 +131,14 @@ export default function Home() {
             <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">핵심 도구 4종</h2>
             <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">자주 쓰는 도구를 한 손에.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* items-stretch (grid 기본값) + h-full + flex flex-col + mt-auto 로
+              desc 길이가 달라도 카드 4개 높이가 동일하고 CTA 가 항상 같은 라인에 정렬됨. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-stretch">
             {features.map((f) => (
               <Link
                 key={f.href}
                 href={f.href}
-                className={`group block rounded-md border p-5 transition-colors ${
+                className={`group h-full flex flex-col rounded-md border p-5 transition-colors ${
                   f.emphasis
                     ? 'bg-white dark:bg-zinc-900 border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 hover:ring-orange-500/40'
                     : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
@@ -154,20 +158,23 @@ export default function Home() {
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-3">
                   {f.desc}
                 </p>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-700 dark:text-orange-300">
-                  {f.cta}
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
-                {'authNote' in f && f.authNote && (
-                  <span className="mt-2 inline-flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-500 font-medium">
-                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                {/* CTA 묶음을 mt-auto 로 하단 고정 */}
+                <div className="mt-auto">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-700 dark:text-orange-300">
+                    {f.cta}
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
-                    {f.authNote}
                   </span>
-                )}
+                  {'authNote' in f && f.authNote && (
+                    <span className="mt-2 flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-500 font-medium">
+                      <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                      {f.authNote}
+                    </span>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
@@ -183,12 +190,12 @@ export default function Home() {
               키워드 리서치부터 이미지 편집까지. 각 단계는 다음 단계로 자연스럽게 이어집니다.
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-stretch">
             {steps.map((s) => (
               <Link
                 key={s.href}
                 href={s.href}
-                className="group block rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
+                className="group h-full flex flex-col rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
               >
                 <div className="text-2xl font-semibold text-zinc-300 dark:text-zinc-700 group-hover:text-orange-300 dark:group-hover:text-orange-700 transition-colors mb-2 tabular">
                   {String(s.num).padStart(2, '0')}
@@ -315,9 +322,15 @@ function AnonHero({
 function LoggedInHero({
   greetingName,
   myCategoryLabel,
+  searchKeyword,
+  setSearchKeyword,
+  onSubmit,
 }: {
   greetingName: string;
   myCategoryLabel: string | null;
+  searchKeyword: string;
+  setSearchKeyword: (v: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
 }) {
   const today = new Date();
   const dateLabel = `${today.getMonth() + 1}월 ${today.getDate()}일`;
@@ -340,16 +353,79 @@ function LoggedInHero({
           </p>
         </div>
 
-        {/* Dashboard grid: 진단 카드 (2/3) + 즐겨찾기 (1/3) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
+        {/* Dashboard grid: 진단 카드 (2/3) + 키워드 검색 (1/3).
+            items-stretch (grid 기본값) + 자식의 h-full 로 두 카드 높이 동일. */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+          <div className="lg:col-span-2 h-full">
             <LatestDiagnoseCard />
           </div>
-          <div>
-            <SavedKeywordsCard />
+          <div className="h-full">
+            <LoggedInSearchCard
+              searchKeyword={searchKeyword}
+              setSearchKeyword={setSearchKeyword}
+              onSubmit={onSubmit}
+            />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * 로그인 hero 의 1/3 칸에 들어가는 키워드 검색 카드.
+ * Phase 45 에서 SavedKeywordsCard 를 대체. 입력 → 키워드 분석 페이지로 이동.
+ */
+function LoggedInSearchCard({
+  searchKeyword,
+  setSearchKeyword,
+  onSubmit,
+}: {
+  searchKeyword: string;
+  setSearchKeyword: (v: string) => void;
+  onSubmit: (e: React.FormEvent) => void;
+}) {
+  return (
+    <div className="h-full flex flex-col rounded-md border border-orange-200 dark:border-orange-900/40 ring-1 ring-orange-500/10 bg-gradient-to-br from-orange-50/80 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-900 p-5">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
+          Quick search
+        </span>
+        <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+          무료 무제한
+        </span>
+      </div>
+      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
+        키워드 바로 검색
+      </h3>
+      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+        검색량 · 경쟁률 · 황금 키워드까지 한 표에 펼쳐드립니다.
+      </p>
+
+      <form onSubmit={onSubmit} className="mt-auto space-y-2">
+        <div className="relative">
+          <svg
+            className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            placeholder="예: 수원 맛집"
+            className="w-full pl-9 pr-3 py-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            aria-label="분석할 키워드 입력"
+          />
+        </div>
+        <button type="submit" className="btn-base btn-primary btn-md w-full">
+          키워드 분석 시작 →
+        </button>
+      </form>
+    </div>
   );
 }
