@@ -5,6 +5,58 @@
 
 ---
 
+## 2026-05-12 — Phase 45: 홈 개선 + 사이트 전반 QA 감사 17건 처리
+
+운영 시작 직전 점검 + 수정 라운드. 총 4 PR (#36 / #37 / #38 + DEVLOG).
+
+### 45a. 홈 — 즐겨찾기 → 키워드 검색 + 카드 높이 통일 (PR #36)
+- `SavedKeywordsCard` 자리에 `LoggedInSearchCard` (1입력창 + 검색 버튼) — 행동 진입점으로 전환
+- 모든 카드 그리드 `items-stretch` + `h-full` + `flex flex-col` + CTA `mt-auto` 패턴으로 통일
+
+### 45b. QA 배치 1 — LP 정확성 + 브랜드 + alert 제거 (PR #37)
+
+사이트 전반 QA 감사(general-purpose 에이전트) 결과 31건 발견. 16건 일괄 처리:
+
+**P0 (5/5)** — LP 카피 정확성
+- `/lp/ai` "일 5회 무료" → 비로그인 실제 1회 (베이트앤스위치 수정)
+- `/lp/ai` "제목 후보 20개·이미지 프롬프트" → 기본 옵션 정확 반영 + 옵션 패널 안내
+- `/lp/diagnose` "30초" 약속 + 카테고리 선택 단계 명시
+- `/lp/diagnose` "본인만 확인 가능" 거짓 표기 제거
+- `/lp/keyword` "키워드 자동 추출" 실제와 다름 → 정확 설명
+
+**P1 (10/11)** — 브랜드 + UX
+- Share card BAND_META 컬러 (초록/파랑/회색/핑크) → 전 band amber→orange gradient 통일
+- `alert()` 16개 / `confirm()` 2개 전량 제거 → `useToast` + `ConfirmModal danger variant`
+
+**P2/P3 핵심**
+- 진단 페이지 `reset()` 이 `prefillNotice` 도 클리어, progress-beat interval 마지막 beat 도달 시 `clearInterval`
+- `/api/trending-keywords` `limit` 파라미터 1~50 clamp
+
+### 45c. 에디터 서식 보존 (PR #38) ★ 가장 큰 P0
+
+**원인**: `optimizeReadability` / `handleReplace` 두 함수가 `getText()` 평문화 → 정규식 → `clipboard.convert({html})` → `setContents` 흐름 사용. 결과 (a) 사용자 서식(bold·heading·list 등) 침묵 파괴, (b) 사용자 입력 `<` `&` 가 HTML 로 해석되는 escape 버그.
+
+**처리**: Quill 의 `insertText` / `deleteText` 만 사용해 정확한 인덱스 위치만 surgical 수정. 주변 서식 자동 보존 + escape 문제 자동 해결.
+- `optimizeReadability`: 마침표·쉼표 뒤 \n 삽입 위치 수집 → **뒤에서부터** 삽입 (인덱스 안정성)
+- `handleReplace`: `deleteText` + `insertText` 2줄로 단순화. 단어가 bold 안에 있었으면 교체 후에도 bold.
+
+### 검증
+- `npm run build` — 46 routes 클린
+- `npx tsc --noEmit` — 클린
+- `scripts/qa-unit-tests.ts` — 87/87
+
+### QA 31건 처리 현황
+| | 발견 | 처리 |
+|---|---|---|
+| P0 | 5 | **5 (100%)** |
+| P1 | 11 | 10 |
+| P2 | 8 | 2 |
+| P3 | 7 | 1 |
+
+미처리 14건은 모두 cosmetic doc / 로깅 일관성 / band 라벨 미세 차이 수준. 운영 시작에 문제 없음.
+
+---
+
 ## 2026-05-12 — Phase 44: SNS 유입 인프라 (랜딩 페이지 + 진단 공유 카드)
 
 인스타·쇼츠 유료/유기 트래픽을 받기 위한 두 가지 핵심 성장 인프라. PR #33, #34 머지.
