@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { loadGoogleFont } from './font';
 
 /**
  * Open Graph / Twitter 카드 이미지 동적 생성.
@@ -7,8 +8,7 @@ import { ImageResponse } from 'next/og';
  *  - 빌드 시 한 번 prerender 되어 정적 PNG 처럼 서빙됨 (Vercel CDN 캐시).
  *  - 카피를 바꾸려면 본 파일의 `MAIN_LINE_1` / `MAIN_LINE_2` / `BRAND` 만 수정.
  *
- *  한글 폰트는 Google Fonts CSS2 API 로 필요한 문자만 fetch 한다 (`&text=`).
- *  → 폰트 파일을 repo 에 commit 하지 않아도 되고, 다운로드 용량은 수 KB 수준.
+ *  한글 폰트는 lib/og/font.ts 의 loadGoogleFont 헬퍼 사용 — 필요한 글리프만 fetch.
  */
 
 export const size = { width: 1200, height: 630 } as const;
@@ -19,37 +19,6 @@ const BRAND = 'Boheme BlogLab';
 const MAIN_LINE_1 = '블로그 운영의';
 const MAIN_LINE_2 = '모든 것을 한 곳에서';
 const DOMAIN = 'bohemebloglab.com';
-
-/**
- * Google Fonts CSS2 → 실제 TTF/OTF URL 파싱 → 폰트 바이너리 fetch.
- *
- * `&text=` 파라미터로 사용하는 글리프만 받아오면 폰트 페이로드가 폭증하지 않음.
- *  Vercel 의 satori 가 OTF/TTF 만 지원하므로 woff2 가 아닌 url 을 골라야 한다.
- */
-async function loadGoogleFont(
-  family: string,
-  weight: number,
-  text: string,
-): Promise<ArrayBuffer> {
-  const url =
-    `https://fonts.googleapis.com/css2` +
-    `?family=${family}:wght@${weight}` +
-    `&text=${encodeURIComponent(text)}`;
-
-  // User-Agent 가 모던 브라우저여야 Google 이 ttf 가 아니라 woff2 만 줄 수도 있어서 명시.
-  const css = await fetch(url, {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    },
-  }).then((r) => r.text());
-
-  const match = css.match(/src:\s*url\((https:[^)]+?)\)\s*format\('(opentype|truetype)'\)/);
-  if (!match) throw new Error(`Google Font fetch failed: ${family} ${weight}`);
-
-  const fontData = await fetch(match[1]).then((r) => r.arrayBuffer());
-  return fontData;
-}
 
 export async function renderOgImage() {
   // 사용 글리프 합집합 — 한 번에 모두 받아 한 번만 호출

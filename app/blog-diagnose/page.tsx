@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { CATEGORY_SEEDS } from '@/app/lib/diagnose/category-seeds';
 import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
+import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 
@@ -420,6 +421,17 @@ export default function BlogDiagnosePage() {
                   <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                     {result.categoryLabel} · {result.keywordCount}개 키워드 분석
                   </p>
+                  {/* SNS 공유 카드 다운로드 — 인스타 스토리 1080×1920 PNG */}
+                  <div className="mt-5">
+                    <ShareCardButton
+                      total={result.score.total}
+                      band={result.score.band}
+                      activity={result.score.activity.score}
+                      visibility={result.score.visibility.score}
+                      quality={result.score.quality.score}
+                      category={result.categoryLabel}
+                    />
+                  </div>
                 </div>
                 {/* 3축 레이더 + 미니바 */}
                 <div className="space-y-4">
