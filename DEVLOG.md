@@ -5,6 +5,21 @@
 
 ---
 
+## 2026-05-12 — Phase 46: 홈 좌우 swap + 즐겨찾기 키워드 칩 통합
+
+LoggedInHero 두 가지 사용자 요청 처리. PR #40 머지.
+
+### 변경
+- **좌우 swap + 비중 swap**: `LatestDiagnoseCard` (2/3 좌) + `LoggedInSearchCard` (1/3 우) → `LoggedInSearchCard` (2/3 좌) + `LatestDiagnoseCard` (1/3 우). 검색이 메인 행동 + 즐겨찾기 칩 공간 확보.
+- **즐겨찾기 키워드 통합**: `profile.saved_keywords` (최대 10개) 를 검색 카드 안에 칩으로 노출. 칩 클릭 → `/keyword-analysis?keyword=<kw>` 즉시 분석. "관리" 링크는 `/profile/setup`. 0개일 땐 어떻게 저장하는지 안내.
+- **타입**: `Profile` 인터페이스에 `saved_keywords` / `prompt_preset` 컬럼 추가 (`select('*')` 가 이미 반환하던 컬럼 — 타입만 따라잡음).
+
+### 검증
+- `npm run build` — 46 routes 클린
+- `npx tsc --noEmit` — 클린
+
+---
+
 ## 2026-05-12 — Phase 45: 홈 개선 + 사이트 전반 QA 감사 17건 처리
 
 운영 시작 직전 점검 + 수정 라운드. 총 4 PR (#36 / #37 / #38 + DEVLOG).
