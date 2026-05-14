@@ -543,7 +543,83 @@ function KeywordAnalysisContent() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                {/* 모바일 카드 레이아웃 — sm 미만 */}
+                <ul className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-700/50">
+                  {sortedKeywords.map((item) => {
+                    const comp = competitionConfig(item.competitionRatio);
+                    const wiki = wikiViews[item.keyword];
+                    return (
+                      <li key={item.id} className="p-4">
+                        <div className="flex items-start justify-between gap-2 mb-3">
+                          <button
+                            className="font-semibold text-base text-zinc-900 dark:text-zinc-100 hover:text-orange-500 dark:hover:text-orange-400 text-left break-words min-w-0 flex-1"
+                            onClick={() => setActionKeyword(item.keyword)}
+                          >
+                            {item.keyword}
+                          </button>
+                          <button
+                            onClick={() => deleteKeyword(item.id)}
+                            className="flex-shrink-0 text-zinc-400 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                            title="삭제"
+                            aria-label={`${item.keyword} 삭제`}
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {/* 핵심 지표 그리드 */}
+                        <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                          <div className="rounded-lg bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/40 px-3 py-2">
+                            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">총 검색량</div>
+                            <div className="font-bold text-orange-600 dark:text-orange-400 text-sm tabular-nums">
+                              {formatNumber(item.totalSearchVolume)}
+                            </div>
+                          </div>
+                          <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-700/60 px-3 py-2">
+                            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">경쟁률</div>
+                            <div className={`font-semibold text-sm tabular-nums ${comp.color}`}>
+                              {comp.icon} {item.competitionRatio.toFixed(2)}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 보조 지표 */}
+                        <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-zinc-500 dark:text-zinc-400 mb-3">
+                          <div className="flex justify-between">
+                            <dt>PC</dt>
+                            <dd className="tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(item.pcSearchVolume)}</dd>
+                          </div>
+                          <div className="flex justify-between">
+                            <dt>모바일</dt>
+                            <dd className="tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(item.mobileSearchVolume)}</dd>
+                          </div>
+                          <div className="flex justify-between">
+                            <dt>문서수</dt>
+                            <dd className="tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(item.documentCount)}</dd>
+                          </div>
+                          <div className="flex justify-between">
+                            <dt>위키(일)</dt>
+                            <dd className="tabular-nums text-amber-600 dark:text-amber-400">
+                              {wiki === undefined ? '…' : wiki === null ? '—' : formatNumber(wiki)}
+                            </dd>
+                          </div>
+                        </dl>
+
+                        <button
+                          onClick={() => setNewsKeyword(item.keyword)}
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-orange-600 dark:text-orange-300 bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-950/70 border border-orange-200 dark:border-orange-700 transition-all min-h-[36px]"
+                        >
+                          📰 최신 뉴스 보기
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {/* 데스크탑 테이블 — sm 이상 */}
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="min-w-full">
                     <thead className="bg-zinc-50 dark:bg-zinc-900/50">
                       <tr>
@@ -764,23 +840,30 @@ function KeywordAnalysisContent() {
           </div>
         )}
 
-        {/* 뉴스 모달 */}
+        {/* 뉴스 모달 — 모바일은 하단 시트, 데스크탑은 센터 모달 */}
         {newsKeyword && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 sm:px-4"
             onClick={() => setNewsKeyword(null)}
+            role="dialog"
+            aria-modal="true"
           >
             <div
-              className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col"
+              className="bg-white dark:bg-zinc-800 rounded-t-2xl sm:rounded-xl shadow-2xl w-full sm:max-w-2xl max-h-[92vh] sm:max-h-[85vh] overflow-hidden flex flex-col safe-bottom"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200 dark:border-zinc-700">
-                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
-                  &ldquo;{newsKeyword}&rdquo; 관련 최신 뉴스
+              {/* 모바일 드래그 핸들 */}
+              <div className="sm:hidden flex justify-center pt-2 pb-1">
+                <div className="w-10 h-1 rounded-full bg-zinc-300 dark:bg-zinc-600" aria-hidden />
+              </div>
+              <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 sm:py-4 border-b border-zinc-200 dark:border-zinc-700">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base min-w-0 truncate">
+                  <span className="text-base sm:text-lg mr-1">📰</span>
+                  &ldquo;{newsKeyword}&rdquo; 관련 뉴스
                 </h3>
                 <button
                   onClick={() => setNewsKeyword(null)}
-                  className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1 rounded"
+                  className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-1.5 -mr-1.5 rounded flex-shrink-0"
                   aria-label="닫기"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -788,7 +871,7 @@ function KeywordAnalysisContent() {
                   </svg>
                 </button>
               </div>
-              <div className="overflow-y-auto px-5 py-4">
+              <div className="overflow-y-auto flex-1 px-4 sm:px-5 py-3 sm:py-4">
                 <NewsPanel
                   keyword={newsKeyword}
                   variant="modal"

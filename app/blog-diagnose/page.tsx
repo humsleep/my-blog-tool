@@ -528,9 +528,9 @@ export default function BlogDiagnosePage() {
                 <div className="ed-eyebrow mb-4">키워드별 진입 순위</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 border-y border-rule py-4">
                   {result.score.visibility.hits.map((h) => (
-                    <div key={h.keyword} className="flex justify-between items-baseline py-1.5 border-b border-rule-soft last:border-b-0">
-                      <span className="text-sm text-ink-muted truncate pr-3">{h.keyword}</span>
-                      <span className={`text-sm tabular-nums flex-shrink-0 ${
+                    <div key={h.keyword} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
+                      <span className="text-sm text-ink-muted min-w-0 flex-1 break-words">{h.keyword}</span>
+                      <span className={`text-sm tabular-nums flex-shrink-0 whitespace-nowrap ${
                         h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
                       }`}>
                         {h.rank === null ? '—' : `${h.rank}위`}

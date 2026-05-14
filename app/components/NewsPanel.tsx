@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
+import { formatRelativeKr } from '../lib/format/relative-time';
 
 export interface NewsItem {
   title: string;
@@ -39,13 +40,17 @@ function stripHtml(input: string): string {
     .replace(/&nbsp;/g, ' ');
 }
 
-function formatPubDate(raw: string): string {
-  const d = new Date(raw);
-  if (Number.isNaN(d.getTime())) return raw;
-  return d.toLocaleString('ko-KR', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit',
-  });
+/**
+ * 뉴스 원문 URL에서 도메인만 추출 — 예: "https://www.chosun.com/foo" → "chosun.com"
+ * 모바일 카드에서 출처 배지로 표시.
+ */
+function extractSourceDomain(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
 }
 
 /**
@@ -79,6 +84,28 @@ function scoreItem(item: NewsItem, keyword: string): number {
     if (daysAgo <= 7) score += 2;
   }
   return score;
+}
+
+/**
+ * 제목/설명의 키워드 토큰을 <mark>로 감싸기.
+ * stripHtml 통과한 안전한 plain text 가 입력이므로 XSS 위험 없음.
+ */
+function highlightTokens(plain: string, keyword: string): string {
+  const tokens = keyword
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length); // 긴 토큰 먼저 매칭
+  if (tokens.length === 0) return plain;
+  const escaped = plain.replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c] as string));
+  let out = escaped;
+  for (const t of tokens) {
+    const re = new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    out = out.replace(re, '<mark class="bg-orange-100 dark:bg-orange-500/30 text-orange-700 dark:text-orange-300 rounded px-0.5 font-semibold">$1</mark>');
+  }
+  return out;
 }
 
 const MAX_SELECT = 3;
@@ -165,14 +192,15 @@ export default function NewsPanel({
   };
 
   return (
-    <div className={compact ? '' : 'bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm'}>
+    <div className={compact ? '' : 'bg-white dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 sm:p-5 shadow-sm'}>
       {!compact && (
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100">
-            &ldquo;{keyword}&rdquo; 관련 최신 뉴스
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base min-w-0 break-words">
+            <span className="text-orange-600 dark:text-orange-400">&ldquo;{keyword}&rdquo;</span>
+            <span className="ml-1">관련 최신 뉴스</span>
           </h3>
           {data && (
-            <span className="text-xs text-zinc-400 dark:text-zinc-500">
+            <span className="text-[11px] sm:text-xs text-zinc-400 dark:text-zinc-500 whitespace-nowrap">
               총 {data.total.toLocaleString()}건
             </span>
           )}
@@ -181,7 +209,7 @@ export default function NewsPanel({
 
       {/* 정렬 / 필터 컨트롤 */}
       {!loading && !error && (
-        <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-zinc-100 dark:border-zinc-700/60">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 mb-3 pb-3 border-b border-zinc-100 dark:border-zinc-700/60">
           <div className="inline-flex rounded-lg bg-zinc-100 dark:bg-zinc-700/40 p-0.5 text-xs">
             <button
               type="button"
@@ -206,7 +234,7 @@ export default function NewsPanel({
               최신순
             </button>
           </div>
-          <label className="inline-flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 cursor-pointer select-none">
+          <label className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={strict}
@@ -219,17 +247,25 @@ export default function NewsPanel({
       )}
 
       {loading && (
-        <div className="py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          <svg className="animate-spin h-4 w-4 inline-block mr-2" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          뉴스 불러오는 중...
+        <div className="space-y-3 py-2" aria-busy="true" aria-label="뉴스 불러오는 중">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse rounded-lg border border-zinc-100 dark:border-zinc-700/60 p-3 sm:p-4 space-y-2"
+            >
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-16 rounded bg-zinc-200 dark:bg-zinc-700" />
+                <div className="h-3 w-12 rounded bg-zinc-200 dark:bg-zinc-700" />
+              </div>
+              <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-700" />
+              <div className="h-3 w-5/6 rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+          ))}
         </div>
       )}
 
       {error && !loading && (
-        <div className="py-4 px-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg">
+        <div className="py-4 px-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg break-words">
           {error}
         </div>
       )}
@@ -241,42 +277,76 @@ export default function NewsPanel({
       )}
 
       {!loading && !error && visibleItems.length > 0 && (
-        <ul className="divide-y divide-zinc-100 dark:divide-zinc-700/50">
+        <ul className="space-y-2 sm:space-y-2.5">
           {visibleItems.map((item, i) => {
             const checked = isSelected(item);
             const disabled = !checked && selected.length >= MAX_SELECT;
             const cleanTitle = stripHtml(item.title);
             const cleanDesc = stripHtml(item.description);
+            const source = extractSourceDomain(item.originalLink || item.link);
+            const relative = formatRelativeKr(item.pubDate);
             return (
-              <li key={`${item.link}-${i}`} className="py-3 first:pt-0 last:pb-0">
-                <div className="flex items-start gap-3">
-                  {selectable && (
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={disabled}
-                      onChange={() => toggleSelect(item)}
-                      className="mt-1 w-4 h-4 rounded text-orange-500 focus:ring-orange-500 disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
-                      aria-label={`${cleanTitle} 선택`}
-                    />
-                  )}
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block flex-1 min-w-0 group"
-                  >
-                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 group-hover:text-orange-500 dark:group-hover:text-orange-400 line-clamp-2">
-                      {cleanTitle}
-                    </p>
-                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2">
-                      {cleanDesc}
-                    </p>
-                    <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">
-                      {formatPubDate(item.pubDate)}
-                    </p>
-                  </a>
-                </div>
+              <li key={`${item.link}-${i}`}>
+                <label
+                  className={`group relative block rounded-lg border transition-all ${
+                    checked
+                      ? 'border-orange-300 dark:border-orange-600/70 bg-orange-50/60 dark:bg-orange-950/20 shadow-sm'
+                      : 'border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-900/40 hover:border-orange-200 dark:hover:border-orange-700/60 hover:bg-orange-50/30 dark:hover:bg-orange-950/10'
+                  } ${disabled ? 'opacity-50' : ''} ${selectable ? 'cursor-pointer' : ''}`}
+                >
+                  <div className="flex items-start gap-2.5 sm:gap-3 p-3 sm:p-3.5">
+                    {selectable && (
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={disabled}
+                        onChange={() => toggleSelect(item)}
+                        className="mt-0.5 w-4 h-4 rounded text-orange-500 focus:ring-orange-500 disabled:cursor-not-allowed flex-shrink-0"
+                        aria-label={`${cleanTitle} 선택`}
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      {/* 메타 — 출처 + 시간 */}
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-1.5 text-[11px] sm:text-xs">
+                        {source && (
+                          <span className="inline-flex items-center gap-1 font-medium text-zinc-600 dark:text-zinc-300 truncate max-w-[60%]">
+                            <svg className="w-3 h-3 flex-shrink-0 text-zinc-400" fill="currentColor" viewBox="0 0 20 20" aria-hidden>
+                              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14.5a6.5 6.5 0 110-13 6.5 6.5 0 010 13zm-.75-9.25a.75.75 0 011.5 0v3.04l2.13 1.23a.75.75 0 11-.76 1.3l-2.5-1.45a.75.75 0 01-.37-.65v-3.47z" />
+                            </svg>
+                            <span className="truncate">{source}</span>
+                          </span>
+                        )}
+                        <span className="text-zinc-300 dark:text-zinc-600" aria-hidden>·</span>
+                        <span className="text-zinc-500 dark:text-zinc-400 tabular-nums whitespace-nowrap">
+                          {relative}
+                        </span>
+                      </div>
+                      {/* 제목 — 키워드 하이라이트 */}
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="block group/title"
+                      >
+                        <p
+                          className="text-sm sm:text-[15px] font-semibold leading-snug text-zinc-900 dark:text-zinc-100 group-hover/title:text-orange-600 dark:group-hover/title:text-orange-400 transition-colors line-clamp-2 break-words"
+                          dangerouslySetInnerHTML={{ __html: highlightTokens(cleanTitle, keyword) }}
+                        />
+                        <p
+                          className="mt-1 text-xs sm:text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400 line-clamp-2 break-words"
+                          dangerouslySetInnerHTML={{ __html: highlightTokens(cleanDesc, keyword) }}
+                        />
+                        <span className="mt-1.5 inline-flex items-center gap-0.5 text-[11px] font-medium text-orange-600/80 dark:text-orange-400/80 group-hover/title:text-orange-600 dark:group-hover/title:text-orange-400 transition-colors">
+                          원문 보기
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                          </svg>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </label>
               </li>
             );
           })}
@@ -285,23 +355,23 @@ export default function NewsPanel({
 
       {/* 하단 CTA — selectable일 때만 */}
       {selectable && !loading && !error && (
-        <div className="sticky bottom-0 -mx-5 -mb-4 mt-4 px-5 py-3 bg-white/95 dark:bg-zinc-800/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-700">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="sticky bottom-0 -mx-4 sm:-mx-5 -mb-4 sm:-mb-5 mt-4 px-4 sm:px-5 py-3 bg-white/95 dark:bg-zinc-800/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-700">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400">
               {selected.length === 0
-                ? `최대 ${MAX_SELECT}건까지 선택 가능`
+                ? `최대 ${MAX_SELECT}건 선택 가능`
                 : `${selected.length}건 선택됨${selected.length >= MAX_SELECT ? ' (최대)' : ''}`}
             </span>
             <button
               type="button"
               onClick={handleCreatePrompt}
               disabled={selected.length === 0 || !onCreatePrompt}
-              className="btn-base btn-primary btn-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="btn-base btn-primary btn-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none whitespace-nowrap"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
-              선택한 뉴스로 프롬프트 만들기
+              <span className="hidden sm:inline">선택한 뉴스로 </span>프롬프트 만들기
             </button>
           </div>
         </div>

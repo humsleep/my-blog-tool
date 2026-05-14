@@ -234,10 +234,10 @@ function CompetitorAnalysisContent() {
               </div>
               <div className="divide-y divide-zinc-100 dark:divide-zinc-700/50">
                 {data.topPosts.map((post, idx) => (
-                  <div key={idx} className="p-5 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
-                    <div className="flex items-start gap-4">
+                  <div key={idx} className="p-4 sm:p-5 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
+                    <div className="flex items-start gap-3 sm:gap-4">
                       <div className="flex-shrink-0">
-                        <span className={`inline-flex items-center justify-center w-9 h-9 rounded-full text-xs font-bold ${
+                        <span className={`inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full text-xs font-bold ${
                           idx < 3
                             ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300'
                             : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
@@ -246,7 +246,7 @@ function CompetitorAnalysisContent() {
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1 text-sm">
+                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1 text-sm break-words">
                           <a
                             href={post.link}
                             target="_blank"
@@ -255,12 +255,18 @@ function CompetitorAnalysisContent() {
                             dangerouslySetInnerHTML={{ __html: sanitizeSearchHighlight(post.title) }}
                           />
                         </h3>
-                        <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-2 line-clamp-2">
+                        <p className="text-zinc-500 dark:text-zinc-400 text-xs mb-2 line-clamp-2 break-words">
                           {post.description.replace(/<[^>]*>/g, '')}
                         </p>
-                        <div className="flex items-center gap-4 text-xs text-zinc-400 dark:text-zinc-500">
-                          <span>👤 {post.bloggername}</span>
-                          <span>📅 {formatDate(post.postdate)}</span>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-400 dark:text-zinc-500">
+                          <span className="inline-flex items-center gap-1 min-w-0 max-w-full">
+                            <span aria-hidden>👤</span>
+                            <span className="truncate">{post.bloggername}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                            <span aria-hidden>📅</span>
+                            <span className="tabular-nums">{formatDate(post.postdate)}</span>
+                          </span>
                         </div>
                       </div>
                     </div>

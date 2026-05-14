@@ -5,6 +5,59 @@
 
 ---
 
+## 2026-05-14 — Phase 47: 모바일 UI 짤림 일제 정비 + 키워드 분석 뉴스 UI 재디자인
+
+사용자 리포트 2건:
+1. "모바일로 볼때 UI가 짤리는 경우가 많아요" → 전 페이지 일제 점검
+2. "키워드 분석에서 분석 결과가 나왔을때 뉴스가 보기 어렵게" → NewsPanel 재디자인
+
+브랜치 `claude/fix-mobile-ui-layout-OVqwc`.
+
+### 변경
+
+**키워드 분석 결과 테이블 → 모바일 카드 레이아웃** (`app/keyword-analysis/page.tsx`)
+- `sm:hidden` 카드 리스트 + `hidden sm:block` 테이블 듀얼 렌더
+- 카드: 키워드 (탭하면 액션 선택), 핵심 지표 2개(총검색량/경쟁률) + 보조 4개(PC/모바일/문서수/위키), 풀폭 "📰 뉴스 보기" CTA
+- 데스크탑 테이블은 그대로 유지
+
+**뉴스 모달 → 모바일 바텀시트** (`app/keyword-analysis/page.tsx`)
+- 모바일: 화면 하단에서 올라오는 시트(`items-end` + `rounded-t-2xl` + 드래그 핸들) + 92vh + safe-bottom
+- 데스크탑: 기존 센터 모달 그대로
+
+**NewsPanel 카드 재디자인** (`app/components/NewsPanel.tsx`)
+- 행 → 카드: border + hover/selected 강조, padding 통일
+- 메타 (출처 도메인 + "n시간 전" 상대시각) 를 제목 위에 명확히
+- 제목·설명에 키워드 토큰 `<mark>` 하이라이트 (XSS-safe escape 후)
+- "원문 보기 →" 보조 CTA + 로딩 스켈레톤 4건
+- 선택 상태시 카드 자체가 오렌지 톤으로 강조 (체크박스 안 봐도 됨)
+- 모바일: 안내 텍스트 "선택한 뉴스로 " 부분만 숨김
+
+**인기검색어(/trending) 테이블 → 모바일 카드** (`app/trending/page.tsx`)
+- `sm:hidden` 카드: 순위 배지 + 키워드 + (PC/모바일/총 3분할 그리드) + 분석하기 풀폭 버튼
+- 데스크탑 테이블 그대로
+
+**상위노출 분석 메타 wrap** (`app/competitor-analysis/page.tsx`)
+- 블로거명/날짜 메타: `flex-wrap` + 블로거명 `truncate` + 날짜 `whitespace-nowrap` — 좁은 화면에서도 두 줄로 안전
+
+**TrendingTicker 메타 압축** (`app/components/dashboard/TrendingTicker.tsx`)
+- 모바일에서 검색량은 K/M 축약 ("23K", "1.2M"), 데스크탑은 풀 포맷 ("월 23,456")
+- 키워드 영역에 `flex-shrink-0` 누락 보강 (메타 우측)
+
+**블로그 진단 키워드 진입 순위** (`app/blog-diagnose/page.tsx`)
+- 행 `min-w-0 flex-1` + 순위 `whitespace-nowrap` — 긴 키워드도 두 줄로 줄바꿈
+
+**에디터 맞춤법 단어 칩** (`app/editor/page.tsx`)
+- 긴 오타 단어 `whitespace-nowrap` → `break-all`, 부모 `flex-wrap`/`min-w-0` 보강
+
+**전역 가드** (`app/globals.css`)
+- `body { overflow-x: hidden }` — 의도치 않은 가로 스크롤 차단
+- `p, li, h1~h6 { overflow-wrap: break-word }` — 긴 URL/영문 토큰 안전망
+
+### 검증
+- `npm run build` (IP_HASH_SALT 지정) — 46 routes 클린, TypeScript 경고 없음
+
+---
+
 ## 2026-05-12 — Phase 46: 홈 좌우 swap + 즐겨찾기 키워드 칩 통합
 
 LoggedInHero 두 가지 사용자 요청 처리. PR #40 머지.

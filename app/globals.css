@@ -542,6 +542,20 @@ a.link:hover, .link:hover {
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 }
 
+/* ── 가로 overflow 가드 (모바일 우선) ──
+ *  의도치 않게 화면 밖으로 비어져 나간 자식 요소(긴 URL, 고정 width 등)가
+ *  뷰포트 전체를 흔드는 가로 스크롤을 만들지 않도록 차단. body가 막더라도
+ *  html은 자연스럽게 폼/네이티브 다이얼로그 등 viewport-units 와 잘 어울리도록 둠.
+ */
+body { overflow-x: hidden; }
+
+/* ── 긴 단어 / URL 줄바꿈 안전망 ──
+ *  특히 모바일에서 한 줄짜리 URL이나 영문 토큰이 컨테이너를 밀어내는 케이스.
+ *  break-word 는 단어 단위로 끊을 수 있을 때만 끊으므로 일반 한국어 문장은 영향 없음.
+ *  truncate / whitespace-nowrap 클래스가 적용된 곳은 자체 규칙이 우선.
+ */
+p, li, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+
 /* ── PWA: 모바일 앱 느낌 ── */
 @media (display-mode: standalone), (max-width: 767px) {
   html { overscroll-behavior-y: contain; }
