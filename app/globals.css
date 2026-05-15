@@ -550,6 +550,40 @@ a.link:hover, .link:hover {
  */
 body { overflow-x: hidden; }
 
+/* ── prefers-reduced-motion ──
+ *  전정 장애·모션 감도 사용자가 OS 설정으로 모션 감소를 선택하면 모든 트랜지션·
+ *  애니메이션을 0.01ms 로 축소. (완전 제거는 일부 컴포넌트가 transition 종료
+ *  이벤트에 의존하므로 위험.)
+ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Skip to content (a11y) ──
+ *  Tab 키를 처음 누르면 화면 좌상단에 "본문 바로가기" 링크가 나타난다.
+ *  Navbar/메가패널을 건너뛰고 main 으로 점프.
+ */
+.skip-to-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--accent);
+  border-radius: 0 0 var(--radius-md) 0;
+  transform: translateY(-110%);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+.skip-to-content:focus { transform: translateY(0); }
+
 /* ── 긴 단어 / URL 줄바꿈 안전망 ──
  *  특히 모바일에서 한 줄짜리 URL이나 영문 토큰이 컨테이너를 밀어내는 케이스.
  *  break-word 는 단어 단위로 끊을 수 있을 때만 끊으므로 일반 한국어 문장은 영향 없음.

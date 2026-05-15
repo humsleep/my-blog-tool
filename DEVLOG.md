@@ -5,6 +5,54 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R3: 접근성 + 디자인 토큰 일관성 (5R 사이클 R3)
+
+R3 — a11y + 토큰. Audit 28건 중 WCAG AA 직접 영향 + 안전한 일관성 개선만.
+
+### 변경
+
+**P0 a11y — 모달 시맨틱 3곳**
+- `ConfirmModal`, `ReportModal`, `SwapModal`: `role="dialog"`, `aria-modal="true"`, `aria-labelledby` 추가. 제목 `h3`에 id 부여. 스크린리더가 대화창으로 인식.
+
+**P0 a11y — SwapModal 에러 메시지 연결**
+- 폼에 `aria-describedby={error ? 'swap-modal-error' : undefined}`.
+- 에러 div에 `id="swap-modal-error"`, `role="alert"` — 즉시 announce.
+- textarea에 `aria-required="true"`.
+- 필수 표기 별표(`*`)에 `aria-hidden` (스크린리더가 "별표" 읽지 않도록).
+
+**P1 a11y — prefers-reduced-motion 글로벌 처리**
+- `globals.css` 전역 미디어 쿼리: 모든 animation/transition을 0.01ms로 축소(완전 제거는 transitionend 의존 컴포넌트에 위험).
+
+**P1 a11y — Skip-to-content 링크**
+- `layout.tsx` 최상단에 `<a href="#main-content" class="skip-to-content sr-only focus:not-sr-only">본문 바로가기</a>`.
+- `<main>`에 `id="main-content"`.
+- CSS는 `globals.css` `.skip-to-content` (포커스 시 translateY(0)로 슬라이드 인).
+
+**P1 a11y — companions/new Field 헬프 텍스트 `aria-live="polite"`**
+- 글자수 카운터 ("1234/2000자") 가 변경될 때 스크린리더 announce.
+- 정적 help 텍스트는 영향 없음(변경 안 되면 announce 없음).
+- 별표(`*`)는 `aria-hidden`으로 시각용 표시만.
+
+**P1 a11y/UX — SwapModal `fieldCls` iOS 줌인 방지**
+- `text-sm` → `text-base sm:text-sm` (R1 패턴 통일). 모달 내 input/select/textarea 동시 적용.
+
+**P1 a11y — SwapModal 글자수 카운터 `aria-live="polite"`**
+- 200자 한도 카운터의 변경을 스크린리더가 안내.
+
+### Audit 채택 안 한 항목
+
+- **placeholder 대비 부족**: zinc-500(#71717a) on #fafaf9 ≈ 4.6:1, WCAG AA 통과. placeholder는 WCAG에서 강제 아님.
+- **`bg-red-600` 토큰 위반**: `--danger`=`#dc2626`=Tailwind `red-600`. 의미상 동일, 시각 결과 동일.
+- **Navbar `role="menu"` + `role="menuitem"`**: 추가 가치 미미. 영향 측정 어려움.
+- **modal focus trap**: ESC + 외부 click 닫기 모두 동작. 다음 라운드 polish 후보.
+- **shadow/radius 일관성**: modal > card > input 의 의도된 hierarchy.
+- **금지 색(indigo/violet) 잔재**: 0건 확인 ✓ (Phase 31에서 깨끗하게 마이그레이션 됨).
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+---
+
 ## 2026-05-15 — Phase 47-R2: 성능 (5R 사이클 R2)
 
 5라운드 사이클 R2 — 성능. Audit(Explore) 27건 중 검증 통과한 핵심만 처리.

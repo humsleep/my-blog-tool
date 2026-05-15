@@ -97,10 +97,13 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
+        <a href="#main-content" className="skip-to-content sr-only focus:not-sr-only">
+          본문 바로가기
+        </a>
         <ThemeProvider>
           <ToastProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">{children}</main>
             <Footer />
             <MobileBottomNav />
             {/* 쿠키 동의 — 동의 시점에만 AdSense / Vercel Analytics 마운트 */}

@@ -45,10 +45,13 @@ export default function ConfirmModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onCancel}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-modal-title"
         className="bg-white dark:bg-zinc-800 rounded-xl p-6 max-w-sm w-full shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+        <h3 id="confirm-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
         {description && (
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
         )}
