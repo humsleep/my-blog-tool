@@ -141,8 +141,13 @@ export default function StartPage() {
         setStep('error');
         return;
       }
+      if (data._parseError) {
+        setErrorMsg('서버 응답 형식이 올바르지 않아요. 네트워크 상태를 확인하고 다시 시도해주세요.');
+        setStep('error');
+        return;
+      }
       if (!data.draft) {
-        setErrorMsg('AI 응답을 파싱하지 못했어요. 잠시 후 다시 시도해주세요.');
+        setErrorMsg('AI가 빈 응답을 반환했어요. 잠시 후 다시 시도해주세요.');
         setStep('error');
         return;
       }

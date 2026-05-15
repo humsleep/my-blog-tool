@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import FlowNav from '../components/FlowNav';
+import { useToast } from '../components/ui/Toast';
 
 interface ImageItem {
   id: string;
@@ -37,6 +38,7 @@ export default function ImageSearchPage() {
   const [error, setError] = useState<string | null>(null);
   const [sourceStatus, setSourceStatus] = useState<SearchResponse['errors']>({});
   const [transferring, setTransferring] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const search = async () => {
     const q = query.trim();
@@ -90,7 +92,7 @@ export default function ImageSearchPage() {
       );
       router.push('/image-tools');
     } catch (err) {
-      alert(err instanceof Error ? err.message : '편집기 전송 실패');
+      toast(err instanceof Error ? err.message : '편집기 전송 실패', 'error');
     } finally {
       setTransferring(null);
     }
@@ -100,6 +102,13 @@ export default function ImageSearchPage() {
     try {
       const proxied = `/api/images/proxy?url=${encodeURIComponent(item.downloadUrl)}`;
       const res = await fetch(proxied);
+      if (!res.ok) {
+        throw new Error(
+          res.status === 403
+            ? '이미지 접근이 거부되었습니다. 다른 이미지를 선택해주세요.'
+            : `다운로드 실패 (HTTP ${res.status})`
+        );
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -109,8 +118,9 @@ export default function ImageSearchPage() {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-    } catch {
-      alert('다운로드 실패');
+      toast('이미지를 다운로드했어요.', 'success');
+    } catch (err) {
+      toast(err instanceof Error ? err.message : '다운로드 실패', 'error');
     }
   };
 

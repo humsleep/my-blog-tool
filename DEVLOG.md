@@ -5,6 +5,40 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R4: 에러 견고성 (5R 사이클 R4)
+
+R4 — 에러 견고성. Audit 14건 중 검증 통과한 4건. CLAUDE.md 섹션 6의 회귀 패턴(`SyntaxError: Unexpected token`) 차단이 핵심.
+
+### 변경
+
+**P0 — `/blog-diagnose` submit `res.json()` → `safeJson`**
+- `blog-diagnose/page.tsx:198-225` — 비-JSON 응답(Vercel 504, HTML 에러 페이지 등) 시 SyntaxError로 진단 화면이 깨지던 회귀 패턴 차단.
+- 4xx/5xx 별 사용자 메시지 분기 (504/408 → "시간 안에 끝나지 않았어요", 5xx → "서버 응답 안 함").
+- `_parseError` 명시 분기 → "서버 응답을 처리할 수 없습니다".
+
+**P1 — `/image-search` 다운로드 견고성 + alert 제거**
+- `downloadDirect` `res.ok` 체크 누락 보강 → 403/404 등에서 빈 blob 다운로드 차단.
+- 403 케이스에 "이미지 접근이 거부되었습니다" 명시 메시지.
+- 성공 시 `toast('이미지를 다운로드했어요.', 'success')`.
+- 모든 `alert()` 호출을 `useToast`로 교체 (CLAUDE.md 표준).
+
+**P1 — `/start` `_parseError` 명시 구분**
+- 기존 "AI 응답을 파싱하지 못했어요" (한 문구) → 두 케이스 분리:
+  - `_parseError`: "서버 응답 형식이 올바르지 않아요. 네트워크 상태를 확인…"
+  - `!data.draft`: "AI가 빈 응답을 반환했어요. 잠시 후 다시…"
+
+### Audit 채택 안 한 항목 (검증 결과 audit 오독)
+
+- **ai-writer 사용량 useEffect `_parseError` 누락 (P0-2)**: 실제 코드는 `safeJson` 사용 + `typeof d.limit === 'number'` 체크. `_parseError` 케이스도 `limit` undefined → `setUsage(null)`로 정상 처리됨.
+- **skeleton → error 깜빡임**: 일반적 UX 패턴, 영향 미미.
+- **댓글/좋아요 RLS 메시지 친절화**: 큰 작업, 다음 polish 라운드 후보.
+- **`beforeunload` 페이지 이탈 경고**: AI 호출은 서버에서 계속되므로 의미 약함.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+---
+
 ## 2026-05-15 — Phase 47-R3: 접근성 + 디자인 토큰 일관성 (5R 사이클 R3)
 
 R3 — a11y + 토큰. Audit 28건 중 WCAG AA 직접 영향 + 안전한 일관성 개선만.

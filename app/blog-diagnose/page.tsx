@@ -8,6 +8,7 @@ import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
+import { safeJson } from '@/app/lib/clientFetch';
 
 /**
  * 프로필 분야(한국어) → 진단 카테고리 시드(영문) 매핑.
@@ -200,9 +201,19 @@ export default function BlogDiagnosePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ blogInput: blogInput.trim(), category }),
       });
-      const data = await res.json();
+      const data = await safeJson<DiagnoseResponse & { error?: string }>(res);
       if (!res.ok) {
-        setError(data.error || '진단 실패');
+        const fallback = (res.status === 504 || res.status === 408)
+          ? '진단이 시간 안에 끝나지 않았어요. 잠시 후 다시 시도해주세요.'
+          : res.status >= 500
+            ? '서버가 일시적으로 응답하지 않아요. 잠시 후 다시 시도해주세요.'
+            : `진단 실패 (HTTP ${res.status})`;
+        setError(data.error || fallback);
+        setStep('error');
+        return;
+      }
+      if (data._parseError) {
+        setError('서버 응답을 처리할 수 없습니다. 잠시 후 다시 시도해주세요.');
         setStep('error');
         return;
       }
