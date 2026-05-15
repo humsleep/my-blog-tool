@@ -95,8 +95,11 @@ export async function GET(request: NextRequest) {
 
     const cacheKey = JSON.stringify({ category, period, startDate, endDate, limit });
     const cached = cache.get(cacheKey);
+    /* CDN(Vercel) edge 캐시: 5분 fresh, 10분 stale-while-revalidate.
+     * 인기 검색어는 카테고리·기간 조합이 한정적이라 캐시 hit율이 높다. */
+    const cdnCache = 'public, s-maxage=300, stale-while-revalidate=600';
     if (cached) {
-      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT', 'Cache-Control': cdnCache } });
     }
 
     const hints = CATEGORY_HINTS[category] || CATEGORY_HINTS['전체'];
@@ -200,7 +203,7 @@ export async function GET(request: NextRequest) {
       total: sortedKeywords.length,
     };
     cache.set(cacheKey, payload);
-    return NextResponse.json(payload, { headers: { 'x-cache': 'MISS' } });
+    return NextResponse.json(payload, { headers: { 'x-cache': 'MISS', 'Cache-Control': cdnCache } });
   } catch (error) {
     console.error('인기 검색어 조회 오류:', error);
     const message = error instanceof Error ? error.message : '인기 검색어 조회 중 오류가 발생했습니다.';

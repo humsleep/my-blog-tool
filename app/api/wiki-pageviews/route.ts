@@ -53,15 +53,17 @@ export async function GET(request: NextRequest) {
 
     const cacheKey = `${keyword.toLowerCase()}::${days}`;
     const cached = cache.get(cacheKey);
+    /* 위키 페이지뷰는 일 단위 데이터라 1시간 fresh + 2시간 SWR 로도 충분. */
+    const cdnCache = 'public, s-maxage=3600, stale-while-revalidate=7200';
     if (cached) {
-      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT' } });
+      return NextResponse.json(cached, { headers: { 'x-cache': 'HIT', 'Cache-Control': cdnCache } });
     }
 
     const article = await resolveArticleTitle(keyword);
     if (!article) {
       const empty: PageviewsResponse = { keyword, article: null, totalViews: 0, dailyAverage: 0, days, found: false };
       cache.set(cacheKey, empty);
-      return NextResponse.json(empty, { headers: { 'x-cache': 'MISS' } });
+      return NextResponse.json(empty, { headers: { 'x-cache': 'MISS', 'Cache-Control': cdnCache } });
     }
 
     // 위키미디어 pageviews API는 "오늘" 기준 데이터가 부족할 수 있어 2일 전까지만 조회
@@ -80,7 +82,7 @@ export async function GET(request: NextRequest) {
     if (res.status === 404) {
       const empty: PageviewsResponse = { keyword, article, totalViews: 0, dailyAverage: 0, days, found: false };
       cache.set(cacheKey, empty);
-      return NextResponse.json(empty, { headers: { 'x-cache': 'MISS' } });
+      return NextResponse.json(empty, { headers: { 'x-cache': 'MISS', 'Cache-Control': cdnCache } });
     }
     if (!res.ok) {
       return NextResponse.json({ error: '위키 조회수 조회 실패' }, { status: res.status });
@@ -95,7 +97,7 @@ export async function GET(request: NextRequest) {
       keyword, article, totalViews, dailyAverage, days, found: totalViews > 0,
     };
     cache.set(cacheKey, payload);
-    return NextResponse.json(payload, { headers: { 'x-cache': 'MISS' } });
+    return NextResponse.json(payload, { headers: { 'x-cache': 'MISS', 'Cache-Control': cdnCache } });
   } catch (error) {
     console.error('위키 조회수 오류:', error);
     const message = error instanceof Error ? error.message : '위키 조회수 조회 중 오류가 발생했습니다.';

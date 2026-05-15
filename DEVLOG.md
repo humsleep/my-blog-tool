@@ -5,6 +5,40 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R2: 성능 (5R 사이클 R2)
+
+5라운드 사이클 R2 — 성능. Audit(Explore) 27건 중 검증 통과한 핵심만 처리.
+
+### 변경
+
+**P0 — `/posts/images/` PNG → WebP (14.17MB → 0.6MB, 96% 절감)**
+- `scripts/convert-post-images-to-webp.ts` 신설. sharp(quality 82, effort 5)로 일괄 변환.
+- 10개 PNG (각 1.3~1.9MB) → WebP (각 30~90KB).
+- `app/lab/page.tsx` 의 `PostImage` src `.png` → `.webp`.
+- PNG 원본 삭제 (디스크 + git tracked size 정리).
+
+**P0 — `next.config.ts` 이미지 최적화 설정**
+- `formats: ['image/avif', 'image/webp']` — AVIF 우선 서빙(추가 절감), 미지원 시 WebP fallback.
+- `minimumCacheTTL: 31일` — Vercel CDN 캐시 보존 강화.
+
+**P1 — 공개 API CDN 캐싱 헤더**
+- `/api/trending-keywords`: `Cache-Control: public, s-maxage=300, stale-while-revalidate=600` (5분 fresh + 10분 SWR). 카테고리·기간 조합이 한정적 → 캐시 hit율 높음.
+- `/api/wiki-pageviews`: `s-maxage=3600, stale-while-revalidate=7200` (1h fresh + 2h SWR). 일 단위 데이터.
+- HIT/MISS/404 응답 모두에 적용. 4xx/5xx에는 미적용.
+
+### Audit 채택 안 한 항목 (부정확/위험)
+- **RSC 경계 (page.tsx/Navbar/ThemeProvider `'use client'`)**: "use client → SSR 손실"은 부정확. Client component도 SSR된다. 의미 있는 분리는 큰 리팩터인데 임팩트 측정도 어려워 보류.
+- **`/api/trending-keywords` 직렬 fetch + setTimeout(200ms)**: Naver Search Ad API rate limit 회피용 의도. 병렬화하면 401/429 위험.
+- **Quill CSS import**: 이미 `dynamic({ssr:false})` 라우트 chunk로 분리됨.
+- **Navbar useReducer 통합**: 영향 미미.
+- **금칙어 검사 web worker**: 복잡도 증가 vs 영향 측정 안 됨.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+- public/ 사이즈: 15M → 824K (-94%).
+
+---
+
 ## 2026-05-15 — Phase 47-R1: 모바일 UX 심화 (5R 사이클 R1)
 
 5라운드 멀티 에이전트 최적화 사이클 R1. Audit(Explore) → Plan(메인) → Implement → Verify(build) → Polish 흐름.
