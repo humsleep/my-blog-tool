@@ -5,6 +5,56 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R5: SEO / 메타 (5R 사이클 R5 — 마지막)
+
+R5 — SEO. Audit 15건 중 검색 인덱싱·공유 미리보기에 직접 영향 주는 항목.
+
+### 변경
+
+**P0 — `/public/sitemap.xml` 삭제**
+- 2026-01-27 고정 날짜의 stale 파일. `app/sitemap.ts` 가 동적으로 작동 중이라 중복·충돌. `app/sitemap.ts` 만 유지.
+
+**P0 — `app/layout.tsx` title template + default canonical + Organization JSON-LD**
+- `title.template: '%s - Boheme BlogLab'` — 자식 페이지가 title 만 주면 자동 suffix.
+- `alternates.canonical: '/'` default — 자식이 override.
+- `<script type="application/ld+json">` Organization schema — Google Knowledge Graph 진입용. 운영자/언어/지역 명시.
+
+**P0 — 'use client' 페이지 19개에 `layout.tsx` 신설 (메타데이터 가능하게)**
+- 도구 (11): `ai-writer`, `blog-diagnose`, `keyword-analysis`, `trending`, `editor`, `image-search`, `image-tools`, `prompt-generator`, `competitor-analysis`, `start`, `login`
+- 커뮤니티 (4): `community`(허브), `swap`, `tips`(noindex), `companions`
+- LP (3): `lp/ai`, `lp/diagnose`, `lp/keyword`
+- 개인 (1): `profile/setup`(noindex)
+- 각 layout: title + description(50~120자 한국어 검색 최적화) + keywords + canonical + openGraph. `login`/`tips`/`profile/setup` 은 `robots: { index: false }`.
+- 검색 파라미터 있는 페이지(`keyword-analysis` 등)의 canonical 은 base path 만 — 중복 인덱싱 방지.
+
+### Audit 채택 안 한 항목 (별도 라운드로 분리)
+
+- **동적 og:image 생성 (per /lab/[slug], /community/tips/[id] 등)**: `/api/og-image/...` 라우트 신설 + 동적 디자인 필요. 별도 폴리시 라운드.
+- **BlogPosting / BreadcrumbList JSON-LD**: lab/[slug] 단위. 별도.
+- **FAQPage 스키마 (`/contact`)**: 별도.
+- **manifest.ts categories**: 추가 가능하지만 우선순위 낮음.
+- **`/community/tips/*` robots disallow 정합성**: 의도된 비활성화 상태 (sitemap.ts에서도 보류 명시).
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+- /public/sitemap.xml 제거 — Vercel 자동 배포 시 `app/sitemap.ts` 동적 생성 활성.
+
+---
+
+## R 5라운드 사이클 종합 (Phase 47-R1 ~ R5)
+
+| R | 주제 | 커밋 | 핵심 결과 |
+|---|---|---|---|
+| R1 | 모바일 UX 심화 | 5a4d851 | iOS 줌 방지, scroll-lock, 44px 터치, 키보드 최적화 |
+| R2 | 성능 | c2ee020 | 이미지 14.8MB → 0.6MB(96%), AVIF formats, CDN 캐시 헤더 |
+| R3 | a11y + 토큰 | ef87333 | dialog 시맨틱, skip-link, prefers-reduced-motion |
+| R4 | 에러 견고성 | 7140f8f | blog-diagnose safeJson, image-search toast/검증 |
+| R5 | SEO | (이번) | 19개 layout.tsx, canonical, Organization JSON-LD |
+
+각 라운드 [Audit(Explore) → Plan(메인 검증·필터) → Implement → Verify(build) → Polish] 사이클로 진행. Audit 결과 중 추정·과대평가는 일관되게 제외, 검증 통과한 것만 채택.
+
+---
+
 ## 2026-05-15 — Phase 47-R4: 에러 견고성 (5R 사이클 R4)
 
 R4 — 에러 견고성. Audit 14건 중 검증 통과한 4건. CLAUDE.md 섹션 6의 회귀 패턴(`SyntaxError: Unexpected token`) 차단이 핵심.
