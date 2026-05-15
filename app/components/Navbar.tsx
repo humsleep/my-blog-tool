@@ -393,7 +393,7 @@ export default function Navbar() {
             <button
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? '라이트모드로 전환' : '다크모드로 전환'}
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+              className="w-11 h-11 md:w-9 md:h-9 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
             >
               {theme === 'dark' ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -408,8 +408,9 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
-              aria-label="메뉴 열기"
+              className="md:hidden w-11 h-11 flex items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+              aria-label={isMobileOpen ? '메뉴 닫기' : '메뉴 열기'}
+              aria-expanded={isMobileOpen}
             >
               {!isMobileOpen ? (
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -427,8 +428,8 @@ export default function Navbar() {
 
       {/* Mobile Menu — 8단계 워크플로우 평면 노출 */}
       {isMobileOpen && (
-        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 max-h-[calc(100vh-56px)] overflow-y-auto">
-          <div className="px-3 py-3 space-y-4">
+        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 max-h-[calc(100vh-56px-64px)] overflow-y-auto">
+          <div className="px-3 py-3 pb-6 space-y-4">
             {/* Auth on mobile */}
             {configured && (
               user ? (

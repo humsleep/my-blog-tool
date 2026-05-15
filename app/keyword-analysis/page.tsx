@@ -10,6 +10,7 @@ import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
 import { useToast } from '../components/ui/Toast';
 import ConfirmModal from '../components/community/ConfirmModal';
+import { useBodyScrollLock } from '../lib/useBodyScrollLock';
 
 interface KeywordData {
   keyword: string;
@@ -118,6 +119,9 @@ function KeywordAnalysisContent() {
     const dismissed = sessionStorage.getItem('newsHintDismissed') === '1';
     setNewsHintDismissed(dismissed);
   }, []);
+
+  // 모달이 열려 있는 동안 body 스크롤 잠금
+  useBodyScrollLock(newsKeyword !== null || actionKeyword !== null);
 
   const dismissNewsHint = () => {
     setNewsHintDismissed(true);
@@ -345,14 +349,18 @@ function KeywordAnalysisContent() {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     id="keywords-input"
-                    type="text"
+                    type="search"
+                    inputMode="search"
+                    enterKeyHint="search"
+                    autoComplete="off"
+                    autoCapitalize="none"
                     value={inputKeywords}
                     onChange={(e) => setInputKeywords(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !isLoading && inputKeywords.trim()) analyzeKeywords();
                     }}
                     placeholder="예: 꽃배달, flower, 화환"
-                    className="flex-1 px-4 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                    className="flex-1 px-4 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                     disabled={isLoading}
                   />
                   <button

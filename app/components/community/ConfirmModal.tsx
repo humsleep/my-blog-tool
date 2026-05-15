@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useBodyScrollLock } from '../../lib/useBodyScrollLock';
 
 interface ConfirmModalProps {
   open: boolean;
@@ -31,6 +32,8 @@ export default function ConfirmModal({
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [open, onCancel]);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 

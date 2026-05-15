@@ -5,6 +5,43 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R1: 모바일 UX 심화 (5R 사이클 R1)
+
+5라운드 멀티 에이전트 최적화 사이클 R1. Audit(Explore) → Plan(메인) → Implement → Verify(build) → Polish 흐름.
+
+### 변경
+
+**P0 — iOS 입력 줌인 방지**
+- `globals.css:354` `.input-base { font-size: 0.875rem → 1rem }` — Safari가 input 클릭 시 자동 줌인하는 16px 임계값을 만족.
+
+**P0 — 모달 body scroll-lock**
+- `app/lib/useBodyScrollLock.ts` 신설. 중첩 모달 안전한 카운트 기반 훅.
+- 적용: `ConfirmModal`, `ReportModal`, 키워드분석의 액션/뉴스 모달.
+
+**P1 — Navbar 터치 타깃**
+- 다크모드 토글 `w-9 h-9 → w-11 h-11 md:w-9 md:h-9` (모바일만 44px, 데스크탑 유지)
+- 햄버거 메뉴 `w-9 h-9 → w-11 h-11` + `aria-expanded`, `aria-label` 동적
+- 모바일 메뉴 `max-h-[calc(100vh-56px)] → max-h-[calc(100vh-56px-64px)]` + `pb-6` — 하단 탭바(64px) 가림 해소
+
+**P1 — NewsPanel selectable 체크박스**
+- `w-4 h-4 → w-5 h-5` (16→20px). 카드 전체가 label이라 실제 탭은 더 크지만 시각 인지도 향상.
+
+**P1 — 검색 입력 모바일 키보드 최적화 (3곳)**
+- `/` 두 곳(`AnonHero`, `LoggedInSearchCard`), `/start`, `/keyword-analysis` 메인 입력
+- `type="search"`, `inputMode="search"`, `enterKeyHint="search"`, `autoComplete="off"`, `autoCapitalize="none"`
+- 기본 font-size 를 `text-base sm:text-sm` 으로 — 모바일은 16px(줌인 방지), 데스크탑은 14px 유지
+
+### Audit 시 채택 안 한 항목
+- `/start` draft `<pre>` 가로 짤림 — 이미 `whitespace-pre-wrap` 적용되어 안전
+- ConfirmModal `max-w-sm` 360px 짤림 — `w-full` 동반으로 안전
+- btn-md 일괄 44px 상향 — 영향 범위 큼, 케이스별 처리
+- manifest 다크 theme_color — `layout.tsx`의 themeColor media query가 이미 처리
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린, 신규 경고 0건
+
+---
+
 ## 2026-05-14 — Phase 47: 모바일 UI 짤림 일제 정비 + 키워드 분석 뉴스 UI 재디자인
 
 사용자 리포트 2건:

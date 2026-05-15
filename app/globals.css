@@ -357,7 +357,8 @@ p, li {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 0.625rem 0.875rem;
-  font-size: 0.875rem;
+  /* 16px — iOS Safari가 input 클릭 시 자동 줌인하지 않도록 최소 16px 유지. */
+  font-size: 1rem;
   min-height: 40px;
   width: 100%;
   outline: none;

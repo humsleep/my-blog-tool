@@ -301,7 +301,7 @@ export default function NewsPanel({
                         checked={checked}
                         disabled={disabled}
                         onChange={() => toggleSelect(item)}
-                        className="mt-0.5 w-4 h-4 rounded text-orange-500 focus:ring-orange-500 disabled:cursor-not-allowed flex-shrink-0"
+                        className="mt-0.5 w-5 h-5 rounded text-orange-500 focus:ring-orange-500 disabled:cursor-not-allowed flex-shrink-0"
                         aria-label={`${cleanTitle} 선택`}
                       />
                     )}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/app/lib/supabase/client';
 import { useToast } from '@/app/components/ui/Toast';
+import { useBodyScrollLock } from '@/app/lib/useBodyScrollLock';
 import {
   REPORT_REASONS,
   type ReportTarget,
@@ -37,6 +38,8 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [open, onClose]);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 
