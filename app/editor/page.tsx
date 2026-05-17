@@ -462,9 +462,9 @@ export default function EditorPage() {
                       
                       return (
                         <div key={idx} className="p-3 bg-white dark:bg-zinc-800 rounded-lg border border-red-200 dark:border-red-800/50">
-                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-                            <div className="flex gap-2 items-center">
-                              <span className="font-semibold text-red-600 dark:text-red-400 text-sm whitespace-nowrap">{pos.word}</span>
+                          <div className="flex flex-col sm:flex-row gap-2 sm:items-center min-w-0">
+                            <div className="flex gap-2 items-center flex-wrap min-w-0">
+                              <span className="font-semibold text-red-600 dark:text-red-400 text-sm break-all">{pos.word}</span>
                               <span className="text-xs text-zinc-400 dark:text-zinc-500 whitespace-nowrap">{pos.lineNumber}줄 {pos.column}번째</span>
                             </div>
                             <div className="flex-1 flex gap-2 items-center">

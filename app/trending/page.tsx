@@ -317,7 +317,62 @@ export default function TrendingPage() {
               </p>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* 모바일 카드 레이아웃 — sm 미만 */}
+            <ul className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-700/50">
+              {data.keywords.map((item) => {
+                const periodSuffix = period === 'daily' ? '일' : period === 'weekly' ? '주' : period === 'custom' ? '기간' : '월';
+                return (
+                  <li key={item.rank} className="p-4 hover:bg-zinc-50 dark:hover:bg-zinc-700/30 transition-colors">
+                    <div className="flex items-start gap-3 mb-3">
+                      <span className={`flex-shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${
+                        item.rank <= 3
+                          ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300'
+                          : item.rank <= 10
+                          ? 'bg-orange-100 dark:bg-orange-800/50 text-orange-700 dark:text-orange-300'
+                          : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
+                      }`}>
+                        {item.rank}
+                      </span>
+                      <button
+                        onClick={() => handleKeywordClick(item.keyword)}
+                        className="flex-1 min-w-0 text-left font-semibold text-sm text-zinc-900 dark:text-zinc-100 hover:text-orange-500 dark:hover:text-orange-400 break-words"
+                      >
+                        {item.keyword}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-[11px] mb-3">
+                      <div className="rounded-md bg-zinc-50 dark:bg-zinc-900/40 px-2 py-1.5">
+                        <div className="text-[10px] text-zinc-500 dark:text-zinc-400">PC ({periodSuffix})</div>
+                        <div className="font-medium tabular-nums text-zinc-700 dark:text-zinc-300">
+                          {item.monthlyPcQcCnt.toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="rounded-md bg-zinc-50 dark:bg-zinc-900/40 px-2 py-1.5">
+                        <div className="text-[10px] text-zinc-500 dark:text-zinc-400">모바일 ({periodSuffix})</div>
+                        <div className="font-medium tabular-nums text-zinc-700 dark:text-zinc-300">
+                          {item.monthlyMobileQcCnt.toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/40 px-2 py-1.5">
+                        <div className="text-[10px] text-orange-700/80 dark:text-orange-400/80">총 ({periodSuffix})</div>
+                        <div className="font-bold tabular-nums text-orange-600 dark:text-orange-400">
+                          {item.totalCount.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                    <Link
+                      href={`/keyword-analysis?keyword=${encodeURIComponent(item.keyword)}`}
+                      className="w-full inline-flex items-center justify-center px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-colors min-h-[36px]"
+                    >
+                      분석하기 →
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* 데스크탑 테이블 — sm 이상 */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-zinc-50 dark:bg-zinc-900/30">
                   <tr>

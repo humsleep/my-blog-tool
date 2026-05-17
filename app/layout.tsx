@@ -20,12 +20,22 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bohemebloglab.com"),
-  title: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
+  title: {
+    /* 자식 페이지가 title 만 지정해도 자동으로 " - Boheme BlogLab" 이 붙는다.
+     * 자식이 title 안 주면 default 가 적용. */
+    default: "Boheme BlogLab - 네이버·티스토리 블로거 올인원 도구",
+    template: "%s - Boheme BlogLab",
+  },
   description: "블로그 진단, 키워드 분석, AI 글쓰기, 금칙어·맞춤법, 이미지 검색·편집까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.",
   keywords: ["블로그", "블로그 진단", "키워드 분석", "AI 글쓰기", "네이버 블로그", "티스토리", "블로그 도구", "포스팅", "금칙어", "이미지 편집"],
   authors: [{ name: "Boheme BlogLab" }],
   creator: "Boheme BlogLab",
   publisher: "Boheme BlogLab",
+  alternates: {
+    /* 자식 페이지가 자체 canonical 을 주면 override. searchParams 가 있는
+     * 페이지는 자식 layout 에서 base path 만 canonical 로 지정한다. */
+    canonical: "/",
+  },
   icons: {
     icon: [
       // SVG는 modern 브라우저 우선 (벡터 — 어떤 사이즈로도 선명).
@@ -97,10 +107,32 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased flex flex-col min-h-screen" suppressHydrationWarning>
+        {/* Organization 구조화 데이터 — Google Knowledge Graph 진입용. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'Boheme BlogLab',
+              alternateName: '보헴블로그랩',
+              url: 'https://bohemebloglab.com',
+              logo: 'https://bohemebloglab.com/icon-512.png',
+              description:
+                '네이버·티스토리 블로거를 위한 올인원 도구. 블로그 진단, 키워드 분석, AI 글쓰기, 금칙어 검사, 이미지 편집을 한 곳에서.',
+              foundingDate: '2026',
+              areaServed: { '@type': 'Country', name: 'KR' },
+              knowsLanguage: 'ko',
+            }),
+          }}
+        />
+        <a href="#main-content" className="skip-to-content sr-only focus:not-sr-only">
+          본문 바로가기
+        </a>
         <ThemeProvider>
           <ToastProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">{children}</main>
             <Footer />
             <MobileBottomNav />
             {/* 쿠키 동의 — 동의 시점에만 AdSense / Vercel Analytics 마운트 */}

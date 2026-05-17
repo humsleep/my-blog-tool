@@ -328,10 +328,14 @@ function Field({
     <div>
       <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="text-red-500 ml-0.5" aria-hidden>*</span>}
       </label>
       {children}
-      {help && <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{help}</p>}
+      {help && (
+        <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400" aria-live="polite">
+          {help}
+        </p>
+      )}
     </div>
   );
 }

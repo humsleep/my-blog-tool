@@ -22,6 +22,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
+    /* AVIF 우선, 미지원 시 WebP. 두 포맷 모두 PNG/JPG 대비 큰 폭 절감.
+     * Next/Image는 Accept 헤더에 맞춰 자동 선택. */
+    formats: ['image/avif', 'image/webp'],
+    /* 외부 이미지 변환 결과를 31일 동안 CDN 캐시. */
+    minimumCacheTTL: 60 * 60 * 24 * 31,
     remotePatterns: [
       { protocol: 'https', hostname: 'images.pexels.com' },
       { protocol: 'https', hostname: 'images.unsplash.com' },

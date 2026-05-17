@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/app/lib/supabase/client';
 import { useToast } from '@/app/components/ui/Toast';
+import { useBodyScrollLock } from '@/app/lib/useBodyScrollLock';
 import {
   REPORT_REASONS,
   type ReportTarget,
@@ -37,6 +38,8 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [open, onClose]);
+
+  useBodyScrollLock(open);
 
   if (!open) return null;
 
@@ -84,12 +87,15 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
       <form
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-modal-title"
         onSubmit={onSubmit}
         className="bg-white dark:bg-zinc-800 rounded-xl p-6 max-w-md w-full shadow-xl space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div>
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">게시글 신고</h3>
+          <h3 id="report-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">게시글 신고</h3>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
             신고 5건 누적 시 자동 숨김 처리되며, 운영자가 검토 후 추가 조치합니다.
           </p>

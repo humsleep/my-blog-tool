@@ -115,11 +115,15 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
       <form
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="swap-modal-title"
+        aria-describedby={error ? 'swap-modal-error' : undefined}
         onSubmit={onSubmit}
         className="bg-white dark:bg-zinc-800 rounded-xl p-6 max-w-md w-full shadow-xl space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <h3 id="swap-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           {isEdit ? '서이추 글 수정' : '서이추 글 작성'}
         </h3>
         {!isEdit && (
@@ -173,8 +177,10 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
 
         <div>
           <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">
-            한마디 <span className="text-red-500">*</span>
-            <span className="ml-2 text-[11px] font-normal text-zinc-500">{message.length}/200</span>
+            한마디 <span className="text-red-500" aria-hidden>*</span>
+            <span aria-live="polite" className="ml-2 text-[11px] font-normal text-zinc-500">
+              {message.length}/200
+            </span>
           </label>
           <textarea
             value={message}
@@ -183,12 +189,17 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
             rows={4}
             placeholder="어떤 분과 서이추하고 싶으신가요? 자유롭게 적어주세요."
             className={fieldCls}
+            aria-required="true"
             required
           />
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+          <div
+            id="swap-modal-error"
+            role="alert"
+            className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
+          >
             {error}
           </div>
         )}
@@ -215,4 +226,4 @@ export default function SwapModal({ open, profile, initial, onClose, onSaved }: 
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full px-3 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

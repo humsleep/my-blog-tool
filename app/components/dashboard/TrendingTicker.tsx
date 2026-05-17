@@ -64,6 +64,13 @@ export default function TrendingTicker({
   }, [category, limit]);
 
   const fmt = Intl.NumberFormat('ko-KR');
+  /** 모바일에서 자릿수가 많을 때 짧게 표시 — 12,345 → 12K, 1,234,567 → 1.2M */
+  const fmtCompact = (n: number): string => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 10_000) return `${Math.round(n / 1000)}K`;
+    if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+    return fmt.format(n);
+  };
   const maxCount = items[0]?.totalCount ?? 0;
 
   return (
@@ -102,7 +109,7 @@ export default function TrendingTicker({
         ) : (
           <ol className="space-y-1">
             {items.slice(0, 10).map((it) => (
-              <RankRow key={`${it.rank}-${it.keyword}`} item={it} maxCount={maxCount} fmt={fmt} />
+              <RankRow key={`${it.rank}-${it.keyword}`} item={it} maxCount={maxCount} fmt={fmt} fmtCompact={fmtCompact} />
             ))}
           </ol>
         )}
@@ -116,10 +123,12 @@ function RankRow({
   item,
   maxCount,
   fmt,
+  fmtCompact,
 }: {
   item: TrendingItem;
   maxCount: number;
   fmt: Intl.NumberFormat;
+  fmtCompact: (n: number) => string;
 }) {
   const isTop3 = item.rank <= 3;
   const tone = isTop3 ? MEDAL_TONES[item.rank as 1 | 2 | 3] : null;
@@ -169,13 +178,17 @@ function RankRow({
           {item.keyword}
         </span>
 
-        {/* 월 검색량 */}
+        {/* 월 검색량 — 모바일은 K/M 축약, 데스크탑은 풀 포맷 */}
         {item.totalCount > 0 && (
-          <span className="relative text-[11px] sm:text-xs tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap flex items-center gap-1">
-            <svg className="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <span
+            className="relative flex-shrink-0 text-[11px] sm:text-xs tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap flex items-center gap-1"
+            title={`월 ${fmt.format(item.totalCount)}회 검색`}
+          >
+            <svg className="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
-            월 {fmt.format(item.totalCount)}
+            <span className="sm:hidden">{fmtCompact(item.totalCount)}</span>
+            <span className="hidden sm:inline">월 {fmt.format(item.totalCount)}</span>
           </span>
         )}
 

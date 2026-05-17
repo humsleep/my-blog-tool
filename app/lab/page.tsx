@@ -80,7 +80,7 @@ export default async function LabPage() {
                 className="group block mb-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start border-b border-rule pb-16"
               >
                 <div className="lg:col-span-7 relative w-full aspect-[3/2] bg-paper-deep border border-rule-soft overflow-hidden">
-                  <PostImage src={`/posts/images/${coverPost.slug}.png`} alt={coverPost.title} />
+                  <PostImage src={`/posts/images/${coverPost.slug}.webp`} alt={coverPost.title} />
                 </div>
                 <div className="lg:col-span-5">
                   <div className="ed-eyebrow mb-4">Cover Story</div>
@@ -122,7 +122,7 @@ export default async function LabPage() {
                 >
                   {/* image as a thin top accent */}
                   <div className="relative w-full aspect-[16/9] bg-paper-deep border border-rule-soft overflow-hidden mb-5">
-                    <PostImage src={`/posts/images/${post.slug}.png`} alt={post.title} />
+                    <PostImage src={`/posts/images/${post.slug}.webp`} alt={post.title} />
                   </div>
                   <h2 className="text-xl sm:text-[1.375rem] font-semibold leading-[1.25] tracking-tight text-ink mb-3 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                     {post.title}

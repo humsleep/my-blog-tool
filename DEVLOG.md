@@ -5,6 +5,262 @@
 
 ---
 
+## 2026-05-15 — Phase 47-R5: SEO / 메타 (5R 사이클 R5 — 마지막)
+
+R5 — SEO. Audit 15건 중 검색 인덱싱·공유 미리보기에 직접 영향 주는 항목.
+
+### 변경
+
+**P0 — `/public/sitemap.xml` 삭제**
+- 2026-01-27 고정 날짜의 stale 파일. `app/sitemap.ts` 가 동적으로 작동 중이라 중복·충돌. `app/sitemap.ts` 만 유지.
+
+**P0 — `app/layout.tsx` title template + default canonical + Organization JSON-LD**
+- `title.template: '%s - Boheme BlogLab'` — 자식 페이지가 title 만 주면 자동 suffix.
+- `alternates.canonical: '/'` default — 자식이 override.
+- `<script type="application/ld+json">` Organization schema — Google Knowledge Graph 진입용. 운영자/언어/지역 명시.
+
+**P0 — 'use client' 페이지 19개에 `layout.tsx` 신설 (메타데이터 가능하게)**
+- 도구 (11): `ai-writer`, `blog-diagnose`, `keyword-analysis`, `trending`, `editor`, `image-search`, `image-tools`, `prompt-generator`, `competitor-analysis`, `start`, `login`
+- 커뮤니티 (4): `community`(허브), `swap`, `tips`(noindex), `companions`
+- LP (3): `lp/ai`, `lp/diagnose`, `lp/keyword`
+- 개인 (1): `profile/setup`(noindex)
+- 각 layout: title + description(50~120자 한국어 검색 최적화) + keywords + canonical + openGraph. `login`/`tips`/`profile/setup` 은 `robots: { index: false }`.
+- 검색 파라미터 있는 페이지(`keyword-analysis` 등)의 canonical 은 base path 만 — 중복 인덱싱 방지.
+
+### Audit 채택 안 한 항목 (별도 라운드로 분리)
+
+- **동적 og:image 생성 (per /lab/[slug], /community/tips/[id] 등)**: `/api/og-image/...` 라우트 신설 + 동적 디자인 필요. 별도 폴리시 라운드.
+- **BlogPosting / BreadcrumbList JSON-LD**: lab/[slug] 단위. 별도.
+- **FAQPage 스키마 (`/contact`)**: 별도.
+- **manifest.ts categories**: 추가 가능하지만 우선순위 낮음.
+- **`/community/tips/*` robots disallow 정합성**: 의도된 비활성화 상태 (sitemap.ts에서도 보류 명시).
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+- /public/sitemap.xml 제거 — Vercel 자동 배포 시 `app/sitemap.ts` 동적 생성 활성.
+
+---
+
+## R 5라운드 사이클 종합 (Phase 47-R1 ~ R5)
+
+| R | 주제 | 커밋 | 핵심 결과 |
+|---|---|---|---|
+| R1 | 모바일 UX 심화 | 5a4d851 | iOS 줌 방지, scroll-lock, 44px 터치, 키보드 최적화 |
+| R2 | 성능 | c2ee020 | 이미지 14.8MB → 0.6MB(96%), AVIF formats, CDN 캐시 헤더 |
+| R3 | a11y + 토큰 | ef87333 | dialog 시맨틱, skip-link, prefers-reduced-motion |
+| R4 | 에러 견고성 | 7140f8f | blog-diagnose safeJson, image-search toast/검증 |
+| R5 | SEO | (이번) | 19개 layout.tsx, canonical, Organization JSON-LD |
+
+각 라운드 [Audit(Explore) → Plan(메인 검증·필터) → Implement → Verify(build) → Polish] 사이클로 진행. Audit 결과 중 추정·과대평가는 일관되게 제외, 검증 통과한 것만 채택.
+
+---
+
+## 2026-05-15 — Phase 47-R4: 에러 견고성 (5R 사이클 R4)
+
+R4 — 에러 견고성. Audit 14건 중 검증 통과한 4건. CLAUDE.md 섹션 6의 회귀 패턴(`SyntaxError: Unexpected token`) 차단이 핵심.
+
+### 변경
+
+**P0 — `/blog-diagnose` submit `res.json()` → `safeJson`**
+- `blog-diagnose/page.tsx:198-225` — 비-JSON 응답(Vercel 504, HTML 에러 페이지 등) 시 SyntaxError로 진단 화면이 깨지던 회귀 패턴 차단.
+- 4xx/5xx 별 사용자 메시지 분기 (504/408 → "시간 안에 끝나지 않았어요", 5xx → "서버 응답 안 함").
+- `_parseError` 명시 분기 → "서버 응답을 처리할 수 없습니다".
+
+**P1 — `/image-search` 다운로드 견고성 + alert 제거**
+- `downloadDirect` `res.ok` 체크 누락 보강 → 403/404 등에서 빈 blob 다운로드 차단.
+- 403 케이스에 "이미지 접근이 거부되었습니다" 명시 메시지.
+- 성공 시 `toast('이미지를 다운로드했어요.', 'success')`.
+- 모든 `alert()` 호출을 `useToast`로 교체 (CLAUDE.md 표준).
+
+**P1 — `/start` `_parseError` 명시 구분**
+- 기존 "AI 응답을 파싱하지 못했어요" (한 문구) → 두 케이스 분리:
+  - `_parseError`: "서버 응답 형식이 올바르지 않아요. 네트워크 상태를 확인…"
+  - `!data.draft`: "AI가 빈 응답을 반환했어요. 잠시 후 다시…"
+
+### Audit 채택 안 한 항목 (검증 결과 audit 오독)
+
+- **ai-writer 사용량 useEffect `_parseError` 누락 (P0-2)**: 실제 코드는 `safeJson` 사용 + `typeof d.limit === 'number'` 체크. `_parseError` 케이스도 `limit` undefined → `setUsage(null)`로 정상 처리됨.
+- **skeleton → error 깜빡임**: 일반적 UX 패턴, 영향 미미.
+- **댓글/좋아요 RLS 메시지 친절화**: 큰 작업, 다음 polish 라운드 후보.
+- **`beforeunload` 페이지 이탈 경고**: AI 호출은 서버에서 계속되므로 의미 약함.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+---
+
+## 2026-05-15 — Phase 47-R3: 접근성 + 디자인 토큰 일관성 (5R 사이클 R3)
+
+R3 — a11y + 토큰. Audit 28건 중 WCAG AA 직접 영향 + 안전한 일관성 개선만.
+
+### 변경
+
+**P0 a11y — 모달 시맨틱 3곳**
+- `ConfirmModal`, `ReportModal`, `SwapModal`: `role="dialog"`, `aria-modal="true"`, `aria-labelledby` 추가. 제목 `h3`에 id 부여. 스크린리더가 대화창으로 인식.
+
+**P0 a11y — SwapModal 에러 메시지 연결**
+- 폼에 `aria-describedby={error ? 'swap-modal-error' : undefined}`.
+- 에러 div에 `id="swap-modal-error"`, `role="alert"` — 즉시 announce.
+- textarea에 `aria-required="true"`.
+- 필수 표기 별표(`*`)에 `aria-hidden` (스크린리더가 "별표" 읽지 않도록).
+
+**P1 a11y — prefers-reduced-motion 글로벌 처리**
+- `globals.css` 전역 미디어 쿼리: 모든 animation/transition을 0.01ms로 축소(완전 제거는 transitionend 의존 컴포넌트에 위험).
+
+**P1 a11y — Skip-to-content 링크**
+- `layout.tsx` 최상단에 `<a href="#main-content" class="skip-to-content sr-only focus:not-sr-only">본문 바로가기</a>`.
+- `<main>`에 `id="main-content"`.
+- CSS는 `globals.css` `.skip-to-content` (포커스 시 translateY(0)로 슬라이드 인).
+
+**P1 a11y — companions/new Field 헬프 텍스트 `aria-live="polite"`**
+- 글자수 카운터 ("1234/2000자") 가 변경될 때 스크린리더 announce.
+- 정적 help 텍스트는 영향 없음(변경 안 되면 announce 없음).
+- 별표(`*`)는 `aria-hidden`으로 시각용 표시만.
+
+**P1 a11y/UX — SwapModal `fieldCls` iOS 줌인 방지**
+- `text-sm` → `text-base sm:text-sm` (R1 패턴 통일). 모달 내 input/select/textarea 동시 적용.
+
+**P1 a11y — SwapModal 글자수 카운터 `aria-live="polite"`**
+- 200자 한도 카운터의 변경을 스크린리더가 안내.
+
+### Audit 채택 안 한 항목
+
+- **placeholder 대비 부족**: zinc-500(#71717a) on #fafaf9 ≈ 4.6:1, WCAG AA 통과. placeholder는 WCAG에서 강제 아님.
+- **`bg-red-600` 토큰 위반**: `--danger`=`#dc2626`=Tailwind `red-600`. 의미상 동일, 시각 결과 동일.
+- **Navbar `role="menu"` + `role="menuitem"`**: 추가 가치 미미. 영향 측정 어려움.
+- **modal focus trap**: ESC + 외부 click 닫기 모두 동작. 다음 라운드 polish 후보.
+- **shadow/radius 일관성**: modal > card > input 의 의도된 hierarchy.
+- **금지 색(indigo/violet) 잔재**: 0건 확인 ✓ (Phase 31에서 깨끗하게 마이그레이션 됨).
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+---
+
+## 2026-05-15 — Phase 47-R2: 성능 (5R 사이클 R2)
+
+5라운드 사이클 R2 — 성능. Audit(Explore) 27건 중 검증 통과한 핵심만 처리.
+
+### 변경
+
+**P0 — `/posts/images/` PNG → WebP (14.17MB → 0.6MB, 96% 절감)**
+- `scripts/convert-post-images-to-webp.ts` 신설. sharp(quality 82, effort 5)로 일괄 변환.
+- 10개 PNG (각 1.3~1.9MB) → WebP (각 30~90KB).
+- `app/lab/page.tsx` 의 `PostImage` src `.png` → `.webp`.
+- PNG 원본 삭제 (디스크 + git tracked size 정리).
+
+**P0 — `next.config.ts` 이미지 최적화 설정**
+- `formats: ['image/avif', 'image/webp']` — AVIF 우선 서빙(추가 절감), 미지원 시 WebP fallback.
+- `minimumCacheTTL: 31일` — Vercel CDN 캐시 보존 강화.
+
+**P1 — 공개 API CDN 캐싱 헤더**
+- `/api/trending-keywords`: `Cache-Control: public, s-maxage=300, stale-while-revalidate=600` (5분 fresh + 10분 SWR). 카테고리·기간 조합이 한정적 → 캐시 hit율 높음.
+- `/api/wiki-pageviews`: `s-maxage=3600, stale-while-revalidate=7200` (1h fresh + 2h SWR). 일 단위 데이터.
+- HIT/MISS/404 응답 모두에 적용. 4xx/5xx에는 미적용.
+
+### Audit 채택 안 한 항목 (부정확/위험)
+- **RSC 경계 (page.tsx/Navbar/ThemeProvider `'use client'`)**: "use client → SSR 손실"은 부정확. Client component도 SSR된다. 의미 있는 분리는 큰 리팩터인데 임팩트 측정도 어려워 보류.
+- **`/api/trending-keywords` 직렬 fetch + setTimeout(200ms)**: Naver Search Ad API rate limit 회피용 의도. 병렬화하면 401/429 위험.
+- **Quill CSS import**: 이미 `dynamic({ssr:false})` 라우트 chunk로 분리됨.
+- **Navbar useReducer 통합**: 영향 미미.
+- **금칙어 검사 web worker**: 복잡도 증가 vs 영향 측정 안 됨.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+- public/ 사이즈: 15M → 824K (-94%).
+
+---
+
+## 2026-05-15 — Phase 47-R1: 모바일 UX 심화 (5R 사이클 R1)
+
+5라운드 멀티 에이전트 최적화 사이클 R1. Audit(Explore) → Plan(메인) → Implement → Verify(build) → Polish 흐름.
+
+### 변경
+
+**P0 — iOS 입력 줌인 방지**
+- `globals.css:354` `.input-base { font-size: 0.875rem → 1rem }` — Safari가 input 클릭 시 자동 줌인하는 16px 임계값을 만족.
+
+**P0 — 모달 body scroll-lock**
+- `app/lib/useBodyScrollLock.ts` 신설. 중첩 모달 안전한 카운트 기반 훅.
+- 적용: `ConfirmModal`, `ReportModal`, 키워드분석의 액션/뉴스 모달.
+
+**P1 — Navbar 터치 타깃**
+- 다크모드 토글 `w-9 h-9 → w-11 h-11 md:w-9 md:h-9` (모바일만 44px, 데스크탑 유지)
+- 햄버거 메뉴 `w-9 h-9 → w-11 h-11` + `aria-expanded`, `aria-label` 동적
+- 모바일 메뉴 `max-h-[calc(100vh-56px)] → max-h-[calc(100vh-56px-64px)]` + `pb-6` — 하단 탭바(64px) 가림 해소
+
+**P1 — NewsPanel selectable 체크박스**
+- `w-4 h-4 → w-5 h-5` (16→20px). 카드 전체가 label이라 실제 탭은 더 크지만 시각 인지도 향상.
+
+**P1 — 검색 입력 모바일 키보드 최적화 (3곳)**
+- `/` 두 곳(`AnonHero`, `LoggedInSearchCard`), `/start`, `/keyword-analysis` 메인 입력
+- `type="search"`, `inputMode="search"`, `enterKeyHint="search"`, `autoComplete="off"`, `autoCapitalize="none"`
+- 기본 font-size 를 `text-base sm:text-sm` 으로 — 모바일은 16px(줌인 방지), 데스크탑은 14px 유지
+
+### Audit 시 채택 안 한 항목
+- `/start` draft `<pre>` 가로 짤림 — 이미 `whitespace-pre-wrap` 적용되어 안전
+- ConfirmModal `max-w-sm` 360px 짤림 — `w-full` 동반으로 안전
+- btn-md 일괄 44px 상향 — 영향 범위 큼, 케이스별 처리
+- manifest 다크 theme_color — `layout.tsx`의 themeColor media query가 이미 처리
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린, 신규 경고 0건
+
+---
+
+## 2026-05-14 — Phase 47: 모바일 UI 짤림 일제 정비 + 키워드 분석 뉴스 UI 재디자인
+
+사용자 리포트 2건:
+1. "모바일로 볼때 UI가 짤리는 경우가 많아요" → 전 페이지 일제 점검
+2. "키워드 분석에서 분석 결과가 나왔을때 뉴스가 보기 어렵게" → NewsPanel 재디자인
+
+브랜치 `claude/fix-mobile-ui-layout-OVqwc`.
+
+### 변경
+
+**키워드 분석 결과 테이블 → 모바일 카드 레이아웃** (`app/keyword-analysis/page.tsx`)
+- `sm:hidden` 카드 리스트 + `hidden sm:block` 테이블 듀얼 렌더
+- 카드: 키워드 (탭하면 액션 선택), 핵심 지표 2개(총검색량/경쟁률) + 보조 4개(PC/모바일/문서수/위키), 풀폭 "📰 뉴스 보기" CTA
+- 데스크탑 테이블은 그대로 유지
+
+**뉴스 모달 → 모바일 바텀시트** (`app/keyword-analysis/page.tsx`)
+- 모바일: 화면 하단에서 올라오는 시트(`items-end` + `rounded-t-2xl` + 드래그 핸들) + 92vh + safe-bottom
+- 데스크탑: 기존 센터 모달 그대로
+
+**NewsPanel 카드 재디자인** (`app/components/NewsPanel.tsx`)
+- 행 → 카드: border + hover/selected 강조, padding 통일
+- 메타 (출처 도메인 + "n시간 전" 상대시각) 를 제목 위에 명확히
+- 제목·설명에 키워드 토큰 `<mark>` 하이라이트 (XSS-safe escape 후)
+- "원문 보기 →" 보조 CTA + 로딩 스켈레톤 4건
+- 선택 상태시 카드 자체가 오렌지 톤으로 강조 (체크박스 안 봐도 됨)
+- 모바일: 안내 텍스트 "선택한 뉴스로 " 부분만 숨김
+
+**인기검색어(/trending) 테이블 → 모바일 카드** (`app/trending/page.tsx`)
+- `sm:hidden` 카드: 순위 배지 + 키워드 + (PC/모바일/총 3분할 그리드) + 분석하기 풀폭 버튼
+- 데스크탑 테이블 그대로
+
+**상위노출 분석 메타 wrap** (`app/competitor-analysis/page.tsx`)
+- 블로거명/날짜 메타: `flex-wrap` + 블로거명 `truncate` + 날짜 `whitespace-nowrap` — 좁은 화면에서도 두 줄로 안전
+
+**TrendingTicker 메타 압축** (`app/components/dashboard/TrendingTicker.tsx`)
+- 모바일에서 검색량은 K/M 축약 ("23K", "1.2M"), 데스크탑은 풀 포맷 ("월 23,456")
+- 키워드 영역에 `flex-shrink-0` 누락 보강 (메타 우측)
+
+**블로그 진단 키워드 진입 순위** (`app/blog-diagnose/page.tsx`)
+- 행 `min-w-0 flex-1` + 순위 `whitespace-nowrap` — 긴 키워드도 두 줄로 줄바꿈
+
+**에디터 맞춤법 단어 칩** (`app/editor/page.tsx`)
+- 긴 오타 단어 `whitespace-nowrap` → `break-all`, 부모 `flex-wrap`/`min-w-0` 보강
+
+**전역 가드** (`app/globals.css`)
+- `body { overflow-x: hidden }` — 의도치 않은 가로 스크롤 차단
+- `p, li, h1~h6 { overflow-wrap: break-word }` — 긴 URL/영문 토큰 안전망
+
+### 검증
+- `npm run build` (IP_HASH_SALT 지정) — 46 routes 클린, TypeScript 경고 없음
+
+---
+
 ## 2026-05-12 — Phase 46: 홈 좌우 swap + 즐겨찾기 키워드 칩 통합
 
 LoggedInHero 두 가지 사용자 요청 처리. PR #40 머지.

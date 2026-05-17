@@ -141,8 +141,13 @@ export default function StartPage() {
         setStep('error');
         return;
       }
+      if (data._parseError) {
+        setErrorMsg('서버 응답 형식이 올바르지 않아요. 네트워크 상태를 확인하고 다시 시도해주세요.');
+        setStep('error');
+        return;
+      }
       if (!data.draft) {
-        setErrorMsg('AI 응답을 파싱하지 못했어요. 잠시 후 다시 시도해주세요.');
+        setErrorMsg('AI가 빈 응답을 반환했어요. 잠시 후 다시 시도해주세요.');
         setStep('error');
         return;
       }
@@ -208,12 +213,17 @@ export default function StartPage() {
 
             <div className="mb-6">
               <input
-                type="text"
+                type="search"
+                inputMode="search"
+                enterKeyHint="next"
+                autoComplete="off"
+                autoCapitalize="none"
                 autoFocus
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && keyword.trim()) setStep('choose'); }}
                 placeholder="예: 수원 맛집 추천"
+                aria-label="주제 또는 키워드"
                 className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-rule text-ink text-2xl sm:text-3xl placeholder-ink-faint focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 transition-colors"
               />
             </div>
