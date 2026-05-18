@@ -5,6 +5,49 @@
 
 ---
 
+## 2026-05-16 — Phase 48-P2: 글쓰기 마법사 통합 (step bar)
+
+UX 로드맵 P2. 키워드분석 → 프롬프트 → AI 글쓰기 → 에디터 4페이지를 시각적으로 하나의 마법사로 묶음. 라우트·로직은 그대로(위험 최소화).
+
+### 변경
+
+**`app/components/WizardStepBar.tsx` 신설**
+- 4단계 sticky 상단 진행 표시. `sticky top-14` (navbar 56px 아래).
+- 각 단계: 번호 배지 + 라벨. 완료 단계는 체크 아이콘 + 오렌지 톤, 현재 단계는 강조, 미진입 단계는 회색.
+- 모든 단계 클릭 가능(자유 이동). sessionStorage 핸드오프 그대로 사용.
+- 모바일에서는 현재 단계 라벨만 표시, 데스크탑은 모든 라벨 노출.
+
+**`app/components/FlowNav.tsx` — `mode` prop**
+- `mode='full'` (default): 기존 8단계 라벨 + `hidden md:block` (변경 없음, 다른 페이지 안전).
+- `mode='writing'`: 글쓰기 4단계 라벨 `['키워드분석', '프롬프트 생성', 'AI 글쓰기', '에디터']` + `block` (모바일/데스크탑 모두 표시).
+
+**글쓰기 4페이지 통합**
+- `/keyword-analysis` (1/4): WizardStepBar + FlowNav `mode='writing'`. CTA 순서 swap — "프롬프트 생성"이 primary, "상위노출 분석"은 secondary(선택).
+- `/prompt-generator` (2/4): WizardStepBar + FlowNav `mode='writing'`. CTA: "AI 글쓰기"(primary) / "에디터 직접"(건너뛰기).
+- `/ai-writer` (3/4): WizardStepBar + 기존 PageHeader 유지. FlowNav `mode='writing'`.
+- `/editor` (4/4): WizardStepBar + FlowNav `mode='writing'` (마지막 단계, "이미지 찾기"만).
+
+### 영향 / 위험
+
+- **다른 페이지 영향 없음**: `/competitor-analysis`, `/trending`, `/image-search`, `/image-tools` 등은 FlowNav `mode='full'` 그대로 사용. 변경 0.
+- **/start 흐름**: 자체 진행(`keyword → choose → generating → result`) 그대로. 결과 후 `/ai-writer` 또는 `/editor` 진입 시점에 WizardStepBar 자연스럽게 등장.
+- **모바일에서 FlowNav 노출**: `mode='writing'` 일 때만 `hidden md:block` 해제 → 글쓰기 4페이지 모바일에서도 "다음 단계" 카드 보임.
+
+### 의도
+
+- 사용자 mental model: "키워드분석/프롬프트/AI 글쓰기/에디터는 같은 글쓰기 흐름" — 페이지를 합치지 않고도 시각적 연속성으로 인지.
+- 모든 단계 자유 이동 가능: 진단·키워드부터 시작하든, 바로 에디터로 가든 자연스럽게.
+- CTA 텍스트 정리: "다음 단계 — XXX", "(선택)", "(건너뛰기)" 명시.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+### 다음
+- **P3** — Navbar 7개 → 4개 재구성 ("글쓰기 / 진단 / 커뮤니티 / 더보기")
+- **P4** — 첫 진입 온보딩 (3슬라이드 투어)
+
+---
+
 ## 2026-05-16 — Phase 48-P1: 홈 의도(intent) 진입 카드
 
 UX 고도화 4단계 로드맵(P1~P4) 의 P1. 도구가 많아져 첫 진입이 복잡해 보이는 문제를 "의도 우선" 진입로로 단순화.

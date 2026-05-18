@@ -15,9 +15,14 @@ interface FlowNavProps {
   stepLabel: string;
   actions: FlowAction[];
   note?: string;
+  /**
+   * 'full'    — 기존 8단계 워크플로우 라벨 (default). 데스크탑만 표시.
+   * 'writing' — 글쓰기 4단계 마법사 라벨. 모바일/데스크탑 모두 표시.
+   */
+  mode?: 'full' | 'writing';
 }
 
-const STEP_LABELS = [
+const STEP_LABELS_FULL = [
   '인기검색어',
   '키워드분석',
   '상위노출 분석',
@@ -28,9 +33,18 @@ const STEP_LABELS = [
   '이미지 편집',
 ];
 
-export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, note }: FlowNavProps) {
+const STEP_LABELS_WRITING = [
+  '키워드분석',
+  '프롬프트 생성',
+  'AI 글쓰기',
+  '에디터',
+];
+
+export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, note, mode = 'full' }: FlowNavProps) {
+  const labels = mode === 'writing' ? STEP_LABELS_WRITING : STEP_LABELS_FULL;
+  const visibility = mode === 'writing' ? 'block' : 'hidden md:block';
   return (
-    <div className="hidden md:block mt-8 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5 sm:p-6">
+    <div className={`${visibility} mt-8 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-700 rounded-xl p-5 sm:p-6`}>
       {/* Progress */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
@@ -50,7 +64,7 @@ export default function FlowNav({ currentStep, totalSteps, stepLabel, actions, n
                   ? 'bg-orange-500 dark:bg-orange-400'
                   : 'bg-zinc-200 dark:bg-zinc-700'
               }`}
-              title={STEP_LABELS[i]}
+              title={labels[i]}
             />
           ))}
         </div>
