@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import FlowNav from '../components/FlowNav';
+import { useToast } from '../components/ui/Toast';
 
 interface MosaicRegion {
   x: number;
@@ -22,6 +23,7 @@ interface CropRegion {
 }
 
 export default function ImageToolsPage() {
+  const { toast } = useToast();
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [editMode, setEditMode] = useState<EditMode>('crop');
@@ -801,6 +803,37 @@ export default function ImageToolsPage() {
     link.click();
   };
 
+  /**
+   * 편집한 이미지를 클립보드에 복사 — 네이버 블로그 등 글쓰기 창에 바로 붙여넣기.
+   *  - 크롬/엣지/사파리(최신): ClipboardItem image/png 지원.
+   *  - 지원 안 되면 안내 toast (다운로드 권장).
+   */
+  const handleCopyToClipboard = () => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+
+    if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) {
+      toast('이 브라우저는 이미지 복사를 지원하지 않아요. 다운로드 후 첨부해주세요.', 'info');
+      return;
+    }
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        toast('이미지를 만들 수 없습니다.', 'error');
+        return;
+      }
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob }),
+        ]);
+        toast('복사 완료! 네이버 블로그 글쓰기 창에 붙여넣기(Ctrl+V) 하세요.', 'success');
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : '복사 실패';
+        toast(`복사 실패: ${msg}. 다운로드 후 첨부해주세요.`, 'error');
+      }
+    }, 'image/png');
+  };
+
   const resetImageEffects = () => {
     setBrightness(100);
     setContrast(100);
@@ -1195,9 +1228,21 @@ export default function ImageToolsPage() {
               <span className="sm:hidden">취소</span>
             </button>
             <button
-              onClick={handleDownload}
+              onClick={handleCopyToClipboard}
               disabled={!image}
               className="px-4 py-3 sm:py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 active:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
+              title="이미지를 복사해서 네이버 블로그에 붙여넣기 (Ctrl+V)"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span className="hidden sm:inline">복사 (블로그 붙여넣기)</span>
+              <span className="sm:hidden">복사</span>
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={!image}
+              className="px-4 py-3 sm:py-2 bg-white text-zinc-700 rounded-lg font-medium hover:bg-zinc-50 active:bg-zinc-100 transition-colors border border-zinc-300 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[44px] touch-manipulation text-sm sm:text-base"
               title="다운로드"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -617,7 +617,12 @@ function KeywordAnalysisContent() {
                             <dd className="tabular-nums text-zinc-700 dark:text-zinc-300">{formatNumber(item.documentCount)}</dd>
                           </div>
                           <div className="flex justify-between">
-                            <dt>위키(일)</dt>
+                            <dt
+                              className="cursor-help"
+                              title="위키 페이지뷰 (일평균) — 한국어 위키백과 같은 이름 문서의 최근 30일 일평균 페이지뷰. 키워드의 대중 인지도 지표."
+                            >
+                              위키(일)
+                            </dt>
                             <dd className="tabular-nums text-amber-600 dark:text-amber-400">
                               {wiki === undefined ? '…' : wiki === null ? '—' : formatNumber(wiki)}
                             </dd>
@@ -640,9 +645,34 @@ function KeywordAnalysisContent() {
                   <table className="min-w-full">
                     <thead className="bg-zinc-50 dark:bg-zinc-900/50">
                       <tr>
-                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율', '위키(일평균)', '관련 뉴스', '액션'].map((h, i) => (
+                        {['키워드', 'PC', '모바일', '총검색량', '문서수', '경쟁율'].map((h) => (
                           <th
-                            key={i}
+                            key={h}
+                            className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            {h}
+                          </th>
+                        ))}
+                        {/* 위키(일평균) — hover popover 로 측정 기준 설명 */}
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider whitespace-nowrap">
+                          <span className="group/wiki relative inline-flex items-center gap-1 cursor-help">
+                            위키(일평균)
+                            <svg className="w-3.5 h-3.5 text-zinc-400 group-hover/wiki:text-orange-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span
+                              role="tooltip"
+                              className="invisible group-hover/wiki:visible opacity-0 group-hover/wiki:opacity-100 absolute top-full left-0 mt-2 z-20 w-64 p-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[11px] normal-case font-normal tracking-normal rounded-lg shadow-lg leading-relaxed transition-opacity pointer-events-none"
+                            >
+                              <strong className="block mb-1 text-orange-300 dark:text-orange-600">위키 페이지뷰 (일평균)</strong>
+                              한국어 위키백과에서 같은 이름의 문서가 최근 30일 동안 받은 페이지뷰의 하루 평균값이에요. 키워드가 일반 대중에게 얼마나 인지되어 있는지(검색 의도의 깊이)를 가늠하는 지표입니다.
+                              <span className="block mt-1.5 text-zinc-400 dark:text-zinc-500">예: 1,000+ = 일반인이 자주 검색하는 주제 · — = 위키에 문서 없음</span>
+                            </span>
+                          </span>
+                        </th>
+                        {['관련 뉴스', '액션'].map((h) => (
+                          <th
+                            key={h}
                             className="px-4 py-3 text-left text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider whitespace-nowrap"
                           >
                             {h}
@@ -816,15 +846,36 @@ function KeywordAnalysisContent() {
                 </p>
               </div>
               <div className="p-4 space-y-2">
+                {/* 최신 뉴스로 프롬프트 — 추천 진입로. 최신 뉴스 기반 글은 정보성·시의성 ↑ */}
+                <button
+                  onClick={() => {
+                    const kw = actionKeyword;
+                    setActionKeyword(null);
+                    setNewsKeyword(kw);
+                  }}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                >
+                  <div className="text-left min-w-0">
+                    <div className="font-semibold text-sm flex items-center gap-1.5">
+                      <span aria-hidden>📰</span>
+                      최신 뉴스로 프롬프트 만들기
+                      <span className="text-[10px] font-bold bg-white/25 text-white px-1.5 py-0.5 rounded uppercase tracking-wide">추천</span>
+                    </div>
+                    <div className="text-xs text-orange-100 mt-0.5">관련 뉴스를 골라 AI 프롬프트에 함께 전달</div>
+                  </div>
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </button>
                 <button
                   onClick={() => {
                     router.push(`/competitor-analysis?keyword=${encodeURIComponent(actionKeyword)}`);
                   }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-zinc-700 border border-zinc-200 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 rounded-lg transition-colors"
                 >
                   <div className="text-left">
                     <div className="font-semibold text-sm">상위노출 분석</div>
-                    <div className="text-xs text-orange-100 mt-0.5">상위 블로그 포스트 패턴 파악</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">상위 블로그 포스트 패턴 파악</div>
                   </div>
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

@@ -5,6 +5,45 @@
 
 ---
 
+## 2026-05-17 — Phase 51: UX 일괄 보정 (이미지·위키·뉴스 진입·바로 글쓰기)
+
+사용자 리포트 5건 일괄 처리.
+
+### 변경
+
+**1. 이미지 검색 카드 — 클릭 시 편집기로 (다운로드는 우상단 아이콘)**
+- `app/image-search/page.tsx`
+- 카드를 `role="button"` + `tabIndex` + onClick/onKeyDown(Enter/Space)으로 만들고, 기본 동작이 `sendToEditor`. 다운로드는 우상단 9×9 아이콘 버튼으로 분리 (stopPropagation).
+- hover 시 카드 중앙 하단에 "편집기로 →" 시각 시그널 + 오렌지 오버레이.
+- 안내 문구 강조: "카드를 클릭하면 이미지 편집기로 전송됩니다. 다운로드만 받으려면 우상단 ↓ 버튼".
+- 사진작가 / 소스 링크는 `e.stopPropagation()` 로 우발적 전송 방지.
+
+**2. 이미지 편집기 — 클립보드 복사 버튼**
+- `app/image-tools/page.tsx`
+- `handleCopyToClipboard()` 신설: `canvas.toBlob('image/png')` → `navigator.clipboard.write([new ClipboardItem({...})])`. 성공 시 "복사 완료! 네이버 블로그 글쓰기 창에 붙여넣기(Ctrl+V) 하세요." 토스트.
+- ClipboardItem 미지원 브라우저는 "다운로드 후 첨부" 안내.
+- 공통 기능 버튼 영역에 "복사 (블로그 붙여넣기)" 가 primary, "다운로드" 가 secondary 로 자리 변경.
+- `useToast` import 추가.
+
+**3. 키워드 분석 — "위키(일평균)" 컬럼 hover 설명 추가**
+- 데스크탑 테이블 헤더 "위키(일평균)" 옆에 ⓘ 아이콘 + group-hover popover. 검은 배경 + 흰 텍스트, 너비 256px, 측정 기준·예시까지 안내.
+  > **위키 페이지뷰 (일평균)** — 한국어 위키백과에서 같은 이름의 문서가 최근 30일 동안 받은 페이지뷰의 하루 평균값. 키워드의 대중 인지도(검색 의도의 깊이) 지표.
+- 모바일 카드 dt "위키(일)" 에는 `title` 속성으로 동일 설명 (브라우저 기본 툴팁).
+
+**4. 키워드 클릭 모달 — "최신 뉴스로 프롬프트 만들기" 옵션 추가 (primary)**
+- 기존 2개 옵션 위에 새 primary CTA. 클릭 시 `setActionKeyword(null)` + `setNewsKeyword(kw)` → NewsPanel 모달(`selectable`)이 열리고 사용자가 뉴스 3건 선택 → 프롬프트 생성기로 자동 이동(기존 흐름 재사용).
+- "추천" 배지 시각 강조. 사용자 의도: "최신 뉴스 기반 글쓰기가 가장 좋은 기능".
+
+**5. 프롬프트 생성 — "AI 글쓰기로 바로" 버튼 추가**
+- `autoGoToWriter` state + `useEffect` 로 generatePrompt 완료 후 자동 sendToAiWriter.
+- 3개 버튼: "프롬프트만 생성"(secondary, 미리보기·복사 용도) / **"AI 글쓰기로 바로 →"** (primary) / "초기화".
+- 사용자 의도: "굳이 글쓰고 싶다면 프롬프트는 볼 필요 없음".
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린
+
+---
+
 ## 2026-05-17 — Phase 50: 홈 대시보드 가독성 정비 (1:1 카드 + 큰 폰트 + 즐겨찾기 자동 분석)
 
 사용자 리포트 3건:

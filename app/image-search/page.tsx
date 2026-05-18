@@ -193,14 +193,24 @@ export default function ImageSearchPage() {
 
         {!loading && items.length > 0 && (
           <>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
-              총 {items.length}장 · 클릭 시 이미지 편집기로 바로 전송됩니다
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+              총 {items.length}장 · <strong className="text-zinc-900 dark:text-zinc-100">카드를 클릭하면 이미지 편집기로 전송됩니다.</strong> 다운로드만 받으려면 우상단 ↓ 버튼을 누르세요.
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="group relative rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { if (transferring !== item.id) void sendToEditor(item); }}
+                  onKeyDown={(e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && transferring !== item.id) {
+                      e.preventDefault();
+                      void sendToEditor(item);
+                    }
+                  }}
+                  aria-label={`${item.alt || '이미지'} — 편집기로 보내기`}
+                  className="group relative rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 cursor-pointer hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 >
                   <div className="relative w-full h-48">
                     <Image
@@ -212,28 +222,32 @@ export default function ImageSearchPage() {
                       loading="lazy"
                     />
                   </div>
-                  <div className="absolute top-2 left-2 px-2 py-0.5 text-[11px] font-semibold bg-black/70 text-white rounded uppercase">
+                  {/* 좌상단 소스 배지 */}
+                  <div className="absolute top-2 left-2 px-2 py-0.5 text-[11px] font-semibold bg-black/70 text-white rounded uppercase pointer-events-none">
                     {item.source}
                   </div>
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                    <button
-                      onClick={() => sendToEditor(item)}
-                      disabled={transferring === item.id}
-                      className="px-3 py-1.5 text-xs font-semibold bg-orange-500 hover:bg-orange-600 text-white rounded disabled:opacity-60"
-                    >
-                      {transferring === item.id ? '전송 중...' : '편집기로 보내기'}
-                    </button>
-                    <button
-                      onClick={() => downloadDirect(item)}
-                      className="px-3 py-1.5 text-xs font-semibold bg-white/90 hover:bg-white text-zinc-900 rounded"
-                    >
-                      다운로드
-                    </button>
+                  {/* 우상단 다운로드 — 작은 아이콘 버튼 (카드 click 과 분리) */}
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); void downloadDirect(item); }}
+                    className="absolute top-2 right-2 w-9 h-9 rounded-full bg-white/95 hover:bg-white dark:bg-zinc-900/95 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-200 shadow-sm flex items-center justify-center transition-colors"
+                    aria-label="다운로드"
+                    title="이미지 다운로드"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                  {/* hover overlay — "편집기로 전송" 시각 시그널 */}
+                  <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/20 dark:group-hover:bg-orange-500/30 transition-colors flex items-end justify-center pb-12 pointer-events-none">
+                    <span className="px-3 py-1.5 text-xs font-bold bg-orange-500 text-white rounded shadow opacity-0 group-hover:opacity-100 transition-opacity">
+                      {transferring === item.id ? '전송 중...' : '편집기로 →'}
+                    </span>
                   </div>
                   <div className="px-2 py-1.5 text-[11px] text-zinc-600 dark:text-zinc-400 bg-white/90 dark:bg-zinc-800/90 truncate">
-                    © <a href={item.photographerUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{item.photographer}</a>
+                    © <a onClick={(e) => e.stopPropagation()} href={item.photographerUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">{item.photographer}</a>
                     {' · '}
-                    <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    <a onClick={(e) => e.stopPropagation()} href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
                       {item.source === 'pexels' ? 'Pexels' : 'Unsplash'}
                     </a>
                   </div>
