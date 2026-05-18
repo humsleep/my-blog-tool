@@ -5,6 +5,58 @@
 
 ---
 
+## 2026-05-17 — Phase 50: 홈 대시보드 가독성 정비 (1:1 카드 + 큰 폰트 + 즐겨찾기 자동 분석)
+
+사용자 리포트 3건:
+1. 즐겨찾기 키워드 클릭 시 자동 분석되어야 함
+2. 키워드 검색 카드 vs 마지막 진단 카드를 1:1 비율로
+3. 전체 폰트가 너무 작음 — 더 크고 보기 좋게
+
+### 변경
+
+**즐겨찾기 칩 자동 분석 보강**
+- `app/keyword-analysis/page.tsx`: searchParams 처리에 `autoAnalyze` 파라미터 명시 인지. `autoAnalyze !== '0'` 일 때 자동 분석(기존 동작 유지 + 명시화).
+- `app/page.tsx` LoggedInSearchCard 칩 onClick: URL에 `&autoAnalyze=1` 추가, `aria-label="자동 분석"`, `title` 툴팁으로 사용자에게 자동 동작 알림.
+
+**1:1 비율 dashboard**
+- `app/page.tsx` LoggedInHero dashboard grid: `lg:grid-cols-3` + `lg:col-span-2` → `lg:grid-cols-2` (양쪽 1:1).
+
+**폰트 크기 / 시각 위계 강화**
+
+`app/page.tsx` LoggedInHero greeting:
+- 부제 라벨 `text-[10px]` → `text-xs`
+- 헤딩 `text-2xl sm:text-3xl font-semibold` → `text-3xl sm:text-4xl font-bold`
+- 본문 `text-sm` → `text-base sm:text-lg` + leading-relaxed
+
+`app/page.tsx` LoggedInSearchCard:
+- 카드: `rounded-md p-5` → `rounded-xl p-5 sm:p-6`
+- 라벨 `text-[10px]` → `text-xs`
+- 헤딩 `text-base font-semibold` → `text-xl sm:text-2xl font-bold`
+- 본문 `text-xs` → `text-sm sm:text-base`
+- 검색 입력 아이콘 16px → 20px, padding `py-2.5` → `py-3`, font `text-base sm:text-sm` → `text-base` 일관
+- 버튼 `btn-md` → `btn-lg text-base`
+- 즐겨찾기 라벨 `text-[10px]` → `text-xs`, 칩 `text-xs px-2.5 py-1` → `text-sm px-3 py-1.5` (탭 영역 ↑)
+- 빈 상태 안내 `text-[11px]` → `text-sm`
+
+`app/components/dashboard/LatestDiagnoseCard.tsx`:
+- 카드: `rounded-md p-5` → `rounded-xl p-5 sm:p-6`
+- 빈 상태 헤딩 `text-base` → `text-xl sm:text-2xl font-bold`, 본문 `text-xs` → `text-sm sm:text-base`, 버튼 `btn-sm` → `btn-lg text-base`
+- 진단 결과 메타 `text-xs` → `text-sm`, band 라벨 `text-base font-semibold` → `text-lg sm:text-xl font-bold`, delta `text-xs` → `text-sm`
+- "다시 진단" 링크 `text-xs` → `text-sm`
+- sparkline 캡션 `text-[10px]` → `text-xs`
+
+### 효과
+
+- 검색 카드 ↔ 진단 카드 1:1 비율로 시각 균형
+- 헤딩 폰트 2 단계 ↑ (`base/lg` → `xl/2xl`), 본문 1 단계 ↑ (`xs/sm` → `sm/base`)
+- 즐겨찾기 칩 클릭 시 자동 분석 (URL `&autoAnalyze=1` 명시 + a11y label/title)
+- 카드 모서리 통일 (rounded-xl) + padding 강화 (p-5 sm:p-6)
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린
+
+---
+
 ## 2026-05-17 — Phase 49: TrendingTicker 재디자인 (1~10위 + 월 검색량 가독성)
 
 사용자 리포트: "메인 화면의 내 분야 트렌드 TOP 10 — 1~10위가 명확하게 눈에 잘 들어와야 하고 월 검색량도 잘 보여야". 직전 Phase 38 디자인은 1·2·3위만 메달로 강조하고 4~10위는 작은 회색 숫자 + 월 검색량은 11px 작은 텍스트로 묻혀 있었음.

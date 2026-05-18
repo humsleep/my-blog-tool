@@ -131,9 +131,16 @@ function KeywordAnalysisContent() {
 
   useEffect(() => {
     const keyword = searchParams.get('keyword');
+    const autoAnalyze = searchParams.get('autoAnalyze');
     if (keyword) {
       setInputKeywords(keyword);
-      setShouldAutoAnalyze(true);
+      /* keyword 가 URL 로 들어온 경우 = 외부 진입(홈 즐겨찾기 칩, 결과 카드 등).
+       *   autoAnalyze=1 명시 또는 keyword 단독 진입 모두 자동 분석.
+       *   사용자가 직접 input 을 수정한 경우는 이 effect 가 트리거되지 않음
+       *   (deps: [searchParams]). */
+      if (autoAnalyze !== '0') {
+        setShouldAutoAnalyze(true);
+      }
     }
   }, [searchParams]);
 
