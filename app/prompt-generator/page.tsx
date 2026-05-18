@@ -198,6 +198,10 @@ function PromptGeneratorContent() {
   } | null>(null);
   const [presetLoaded, setPresetLoaded] = useState(false);
   const [presetUserId, setPresetUserId] = useState<string | null>(null);
+  /** "AI 글쓰기로 바로" 버튼 — 프롬프트 미리보기 없이 바로 ai-writer 진입.
+   *  generatePrompt() 가 동기적으로 setGeneratedPrompt 호출 → useEffect 가
+   *  플래그를 보고 sendToAiWriter() 호출. */
+  const [autoGoToWriter, setAutoGoToWriter] = useState(false);
 
   const sendToAiWriter = () => {
     if (!generatedPrompt) return;
@@ -205,6 +209,15 @@ function PromptGeneratorContent() {
     if (keyword) sessionStorage.setItem('aiWriterKeyword', keyword);
     router.push('/ai-writer');
   };
+
+  /** generatePrompt 가 generatedPrompt 를 set 한 직후 자동 진입 트리거 */
+  useEffect(() => {
+    if (autoGoToWriter && generatedPrompt) {
+      setAutoGoToWriter(false);
+      sendToAiWriter();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoGoToWriter, generatedPrompt]);
 
   // URL 쿼리 파라미터에서 키워드 가져오기
   useEffect(() => {
@@ -1359,13 +1372,25 @@ function PromptGeneratorContent() {
                   <button
                     onClick={generatePrompt}
                     disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm"
+                    className="flex-1 bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px] text-sm"
+                    title="프롬프트만 만들어서 직접 확인·복사하기"
                   >
-                    {isGenerating ? '생성 중...' : '프롬프트 생성'}
+                    {isGenerating && !autoGoToWriter ? '생성 중...' : '프롬프트만 생성'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAutoGoToWriter(true);
+                      generatePrompt();
+                    }}
+                    disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm inline-flex items-center justify-center gap-2"
+                    title="프롬프트를 만들고 AI 글쓰기로 바로 이동"
+                  >
+                    {autoGoToWriter ? '준비 중...' : 'AI 글쓰기로 바로 →'}
                   </button>
                   <button
                     onClick={resetForm}
-                    className="px-6 py-3 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg font-semibold hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors min-h-[44px] text-sm"
+                    className="px-6 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg font-semibold hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors min-h-[44px] text-sm sm:w-auto"
                   >
                     초기화
                   </button>
