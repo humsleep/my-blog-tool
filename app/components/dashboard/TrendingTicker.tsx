@@ -21,14 +21,13 @@ interface Props {
 }
 
 /**
- * 데일리 대시보드 — 인기 키워드 랭킹 보드 (Phase 38 재디자인).
+ * 데일리 대시보드 — 인기 키워드 랭킹 보드 (Phase 49 재디자인).
  *
- *  포디움(시상대) 비유 제거. 1~10위를 동일한 행 디자인으로 통일하되
- *  1·2·3위만 메달 색 + 진한 배경으로 강조 → 정보 위계가 명확하고
- *  스캔/비교가 빠른 "리더보드" 스타일.
+ *  각 행을 3-컬럼 grid 로 명확화:
+ *    [01~10 순위 박스]  [키워드 + 검색량 비율 progress bar]  [월 검색량 큰 숫자]
  *
- *  각 행:
- *   [순위 배지 + 메달 아이콘 / 번호] [키워드 (검색량 비율 막대 배경)] [월 검색량]
+ *  1·2·3위는 강한 색 배지 + 행 배경 그라데이션으로 시각 우세 부여.
+ *  4~10위도 동일한 박스 배지(회색)로 1~10위가 한눈에 비교됨.
  *
  *  클릭 시 /keyword-analysis?keyword=... 로 즉시 점프.
  */
@@ -74,13 +73,13 @@ export default function TrendingTicker({
   const maxCount = items[0]?.totalCount ?? 0;
 
   return (
-    <section className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
-      <header className="flex items-center justify-between p-4 sm:p-5 border-b border-zinc-100 dark:border-zinc-800">
-        <div>
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
+    <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
+      <header className="flex items-start justify-between gap-3 p-4 sm:p-5 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="min-w-0">
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
             {label}
           </span>
-          <h3 className="mt-1 text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          <h3 className="mt-1 text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 truncate">
             {category === '전체' ? '실시간 인기 검색어 TOP 10' : `${category} 분야 인기 키워드 TOP 10`}
           </h3>
           <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
@@ -89,7 +88,7 @@ export default function TrendingTicker({
         </div>
         <Link
           href="/trending"
-          className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline whitespace-nowrap"
+          className="text-xs font-medium text-orange-600 dark:text-orange-400 hover:underline whitespace-nowrap flex-shrink-0 mt-1"
         >
           전체 보기 →
         </Link>
@@ -107,7 +106,7 @@ export default function TrendingTicker({
             지금은 가져올 키워드가 없어요. 잠시 후 다시 시도해주세요.
           </div>
         ) : (
-          <ol className="space-y-1">
+          <ol className="space-y-1.5">
             {items.slice(0, 10).map((it) => (
               <RankRow key={`${it.rank}-${it.keyword}`} item={it} maxCount={maxCount} fmt={fmt} fmtCompact={fmtCompact} />
             ))}
@@ -132,142 +131,127 @@ function RankRow({
 }) {
   const isTop3 = item.rank <= 3;
   const tone = isTop3 ? MEDAL_TONES[item.rank as 1 | 2 | 3] : null;
-  const ratio = maxCount > 0 ? Math.max(6, (item.totalCount / maxCount) * 100) : 0;
+  const ratio = maxCount > 0 ? (item.totalCount / maxCount) * 100 : 0;
 
   return (
     <li>
       <Link
         href={`/keyword-analysis?keyword=${encodeURIComponent(item.keyword)}`}
-        className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-lg border transition-all hover:-translate-y-0.5 hover:shadow-sm ${
+        className={`group grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-4 px-2.5 sm:px-3 py-2.5 sm:py-3 rounded-lg border transition-all hover:-translate-y-px hover:shadow-sm ${
           isTop3
             ? `${tone!.rowBorder} ${tone!.rowBg}`
-            : 'border-transparent hover:bg-orange-50/60 dark:hover:bg-orange-950/20'
+            : 'border-zinc-100 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 hover:border-orange-200 dark:hover:border-orange-900/40 hover:bg-orange-50/30 dark:hover:bg-orange-950/10'
         }`}
       >
-        {/* 검색량 비율 막대 — 행 배경에 깔리는 옅은 색 */}
+        {/* 순위 박스 — 01~10 모두 같은 형태. 1·2·3위는 강한 색, 4~10위는 회색. */}
         <span
-          aria-hidden
-          className={`absolute inset-y-1 left-1 rounded-md transition-all ${
+          className={`flex-shrink-0 inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-lg shadow-sm ${
             isTop3
-              ? `${tone!.barFill} opacity-60`
-              : 'bg-gradient-to-r from-orange-100/50 to-transparent dark:from-orange-950/30 dark:to-transparent'
-          }`}
-          style={{ width: `calc(${ratio}% - 8px)` }}
-        />
-
-        {/* 순위 배지 */}
-        <span
-          className={`relative flex items-center justify-center flex-shrink-0 ${
-            isTop3
-              ? `w-8 h-8 rounded-full ${tone!.medalBg} ${tone!.medalRing} shadow-sm`
-              : 'w-8 h-8 rounded-md text-xs font-bold tabular-nums text-zinc-400 dark:text-zinc-500 group-hover:text-orange-500'
-          }`}
+              ? `${tone!.rankBg} text-white`
+              : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-orange-100 group-hover:text-orange-600 dark:group-hover:bg-orange-950/50 dark:group-hover:text-orange-400'
+          } transition-colors`}
           aria-label={`${item.rank}위`}
         >
-          {isTop3 ? <MedalIcon rank={item.rank} /> : item.rank}
+          <span className="text-base sm:text-lg font-extrabold tabular-nums leading-none">
+            {String(item.rank).padStart(2, '0')}
+          </span>
         </span>
 
-        {/* 키워드 */}
-        <span
-          className={`relative flex-1 min-w-0 truncate ${
-            isTop3
-              ? 'text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-50'
-              : 'text-sm font-medium text-zinc-800 dark:text-zinc-200'
-          } group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors`}
-        >
-          {item.keyword}
-        </span>
+        {/* 키워드 + 검색량 비율 progress bar */}
+        <div className="min-w-0">
+          <div
+            className={`truncate transition-colors ${
+              isTop3
+                ? 'text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-50'
+                : 'text-sm sm:text-[15px] font-semibold text-zinc-800 dark:text-zinc-100'
+            } group-hover:text-orange-700 dark:group-hover:text-orange-300`}
+          >
+            {item.keyword}
+          </div>
+          <div className="mt-1.5 h-1 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all ${
+                isTop3
+                  ? tone!.barFill
+                  : 'bg-gradient-to-r from-orange-300 to-orange-400 dark:from-orange-700 dark:to-orange-500'
+              }`}
+              style={{ width: `${Math.max(4, ratio)}%` }}
+              aria-hidden
+            />
+          </div>
+        </div>
 
-        {/* 월 검색량 — 모바일은 K/M 축약, 데스크탑은 풀 포맷 */}
-        {item.totalCount > 0 && (
-          <span
-            className="relative flex-shrink-0 text-[11px] sm:text-xs tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap flex items-center gap-1"
+        {/* 월 검색량 — 큰 굵은 숫자 + 작은 "월 검색" 라벨 */}
+        {item.totalCount > 0 ? (
+          <div
+            className="flex-shrink-0 text-right pl-1"
             title={`월 ${fmt.format(item.totalCount)}회 검색`}
           >
-            <svg className="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-            <span className="sm:hidden">{fmtCompact(item.totalCount)}</span>
-            <span className="hidden sm:inline">월 {fmt.format(item.totalCount)}</span>
-          </span>
+            <div
+              className={`text-base sm:text-lg font-bold tabular-nums leading-tight ${
+                isTop3
+                  ? 'text-orange-600 dark:text-orange-400'
+                  : 'text-zinc-900 dark:text-zinc-100 group-hover:text-orange-600 dark:group-hover:text-orange-400'
+              } transition-colors`}
+            >
+              <span className="sm:hidden">{fmtCompact(item.totalCount)}</span>
+              <span className="hidden sm:inline">{fmt.format(item.totalCount)}</span>
+            </div>
+            <div className="mt-0.5 text-[10px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
+              월 검색
+            </div>
+          </div>
+        ) : (
+          <div className="flex-shrink-0 text-right text-[10px] text-zinc-400 dark:text-zinc-500">
+            —
+          </div>
         )}
-
-        {/* 화살표 */}
-        <svg
-          className="relative w-3.5 h-3.5 flex-shrink-0 text-zinc-300 dark:text-zinc-600 group-hover:text-orange-500 group-hover:translate-x-0.5 transition-all"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
       </Link>
     </li>
-  );
-}
-
-/* ── 메달 아이콘 (1·2·3위 전용) ───────────────────────────────── */
-function MedalIcon({ rank }: { rank: number }) {
-  if (rank === 1) {
-    return (
-      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-        <path d="M5 16h14l1.5-9-5 3.5L12 4 8.5 10.5 3.5 7 5 16zm0 2h14v2H5v-2z" />
-      </svg>
-    );
-  }
-  return (
-    <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z" />
-    </svg>
   );
 }
 
 /* ── 로딩 스켈레톤 — 10행 ──────────────────────────────────────── */
 function Skeleton() {
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       {Array.from({ length: 10 }).map((_, i) => (
         <div
           key={i}
-          className="h-11 rounded-lg bg-zinc-100 dark:bg-zinc-800 animate-pulse"
+          className="h-[58px] sm:h-[64px] rounded-lg bg-zinc-100 dark:bg-zinc-800 animate-pulse"
         />
       ))}
     </div>
   );
 }
 
-/* ── 메달 톤 (1·2·3위만 사용) ──────────────────────────────────
- *  rowBg/rowBorder: 행 전체 배경·테두리 (강조)
- *  barFill: 검색량 막대 배경색
- *  medalBg/medalRing: 메달 배지
+/* ── 메달 톤 (1·2·3위 강조) ──────────────────────────────────────
+ *  rankBg: 순위 박스 배경 (강한 색)
+ *  barFill: 검색량 비율 막대 색
+ *  rowBg / rowBorder: 행 전체 배경 그라데이션
  */
 const MEDAL_TONES: Record<1 | 2 | 3, {
+  rankBg: string;
+  barFill: string;
   rowBg: string;
   rowBorder: string;
-  barFill: string;
-  medalBg: string;
-  medalRing: string;
 }> = {
   1: {
-    rowBg: 'bg-gradient-to-r from-orange-50 via-amber-50/70 to-transparent dark:from-orange-950/40 dark:via-amber-950/20 dark:to-transparent',
+    rankBg: 'bg-gradient-to-br from-orange-500 to-amber-600 shadow-orange-500/30',
+    barFill: 'bg-gradient-to-r from-orange-500 to-amber-500 dark:from-orange-400 dark:to-amber-400',
+    rowBg: 'bg-gradient-to-r from-orange-50 via-amber-50/60 to-transparent dark:from-orange-950/40 dark:via-amber-950/20 dark:to-transparent',
     rowBorder: 'border-orange-200 dark:border-orange-900/60',
-    barFill: 'bg-gradient-to-r from-orange-200/70 to-orange-100/30 dark:from-orange-900/40 dark:to-orange-950/10',
-    medalBg: 'bg-gradient-to-br from-orange-400 to-amber-500',
-    medalRing: 'ring-2 ring-orange-200/80 dark:ring-orange-800/60',
   },
   2: {
-    rowBg: 'bg-gradient-to-r from-zinc-100 to-transparent dark:from-zinc-800/60 dark:to-transparent',
+    rankBg: 'bg-gradient-to-br from-zinc-400 to-zinc-500 dark:from-zinc-300 dark:to-zinc-400 shadow-zinc-400/20',
+    barFill: 'bg-gradient-to-r from-zinc-400 to-zinc-500 dark:from-zinc-300 dark:to-zinc-400',
+    rowBg: 'bg-gradient-to-r from-zinc-50 to-transparent dark:from-zinc-800/40 dark:to-transparent',
     rowBorder: 'border-zinc-200 dark:border-zinc-700',
-    barFill: 'bg-gradient-to-r from-zinc-200/70 to-transparent dark:from-zinc-700/40 dark:to-transparent',
-    medalBg: 'bg-gradient-to-br from-zinc-300 to-zinc-400 dark:from-zinc-400 dark:to-zinc-500',
-    medalRing: 'ring-2 ring-zinc-200/80 dark:ring-zinc-700/60',
   },
   3: {
-    rowBg: 'bg-gradient-to-r from-amber-50/80 to-transparent dark:from-amber-950/30 dark:to-transparent',
+    rankBg: 'bg-gradient-to-br from-amber-700 to-orange-800 dark:from-amber-600 dark:to-orange-700 shadow-amber-700/20',
+    barFill: 'bg-gradient-to-r from-amber-600 to-orange-700 dark:from-amber-500 dark:to-orange-600',
+    rowBg: 'bg-gradient-to-r from-amber-50/70 to-transparent dark:from-amber-950/25 dark:to-transparent',
     rowBorder: 'border-amber-200/80 dark:border-amber-900/50',
-    barFill: 'bg-gradient-to-r from-amber-200/60 to-transparent dark:from-amber-900/30 dark:to-transparent',
-    medalBg: 'bg-gradient-to-br from-amber-500 to-orange-600',
-    medalRing: 'ring-2 ring-amber-200/70 dark:ring-amber-800/50',
   },
 };
