@@ -5,6 +5,61 @@
 
 ---
 
+## 2026-05-16 — Phase 48-P3: Navbar 4개 슬롯 재구성
+
+UX 로드맵 P3. 데스크탑 Navbar 7개 메뉴 → 4개 슬롯으로 압축. 입문자 인지 부하 낮추고 파워 유저 한 클릭 접근 보존.
+
+### 변경 — `app/components/Navbar.tsx`
+
+**메뉴 상수 재정의**
+- `CORE_TOOLS` (7개 평면) → 삭제
+- `WRITING_MENU` (신규): 글쓰기 4개 (`/start`, `/keyword-analysis`, `/ai-writer`, `/editor`) — P2 마법사 진입로
+- `MORE_MENU` (신규, `WORKFLOW` 대체): 3그룹 메가패널
+  - 키워드 리서치: 인기검색어, 상위노출 분석
+  - 글쓰기 보조: 프롬프트 생성
+  - 이미지·기타: 이미지 검색, 이미지 편집, 연구실
+- `COMMUNITY_MENU` (유지): 서이추, 정보공유, 체험단 동행
+- `WRITING_PATHS` / `MORE_PATHS` 활성 강조용 set
+
+**데스크탑 메뉴 (4 슬롯)**
+```
+글쓰기 ▼ | 진단 | 커뮤니티 ▼ | 더보기 ▼
+```
+
+- 글쓰기 ▼: 4항목 단순 드롭다운 (w-72)
+- 진단: 평면 단일 (차별화 포인트 강조)
+- 커뮤니티 ▼: 기존 그대로
+- 더보기 ▼: 680px 메가패널, 3컬럼 그룹 (STEP 번호 제거 — 더 깔끔)
+
+**활성 강조 로직**
+- `isWritingActive` / `isMoreActive` / `isDiagnoseActive` / `isCommunityActive` — 드롭다운 안 항목 진입 시 부모 메뉴 강조
+- `pathname === href || pathname.startsWith(href + '/')` 패턴
+
+**호버/클릭 핸들러 정리**
+- `makeOpen` / `makeScheduleClose` 헬퍼 함수로 3개 드롭다운 (writing/more/community) 공통화
+- 150ms 닫기 타이머 패턴 일관
+
+**모바일 햄버거 메뉴 (정합)**
+- 평면 구조 유지 (audit 옵션 B — 최소 변경)
+- 그룹 라벨 재정렬: 분석 → 글쓰기(WRITING_MENU) → 커뮤니티 → 더보기(MORE_MENU 그룹별)
+- STEP 번호 제거, "워크플로우" 그룹 라벨 제거 (의도가 명확해진 그룹명)
+
+### 라우트 영향 — **0개 변경**
+
+모든 라우트 보존: `/blog-diagnose`, `/keyword-analysis`, `/competitor-analysis`, `/prompt-generator`, `/ai-writer`, `/editor`, `/image-search`, `/image-tools`, `/lab`, `/community/*`, `/start`, `/trending`. SEO·즐겨찾기·외부 링크 모두 안전.
+
+### MobileBottomNav 정합
+
+이번 P3에서는 변경 없음 (옵션 B). MobileBottomNav 4탭 (홈/도구/커뮤니티/연구실) 그대로. 데스크탑(글쓰기/진단/커뮤니티/더보기)과 슬롯 의미가 다르지만 모바일은 입문자 시각의 평면이 더 친화적. 통합은 P4 또는 후속 라운드에서.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+### 다음
+- **P4** — 첫 진입 온보딩 (3슬라이드 투어, sessionStorage 1회 표시)
+
+---
+
 ## 2026-05-16 — Phase 48-P2: 글쓰기 마법사 통합 (step bar)
 
 UX 로드맵 P2. 키워드분석 → 프롬프트 → AI 글쓰기 → 에디터 4페이지를 시각적으로 하나의 마법사로 묶음. 라우트·로직은 그대로(위험 최소화).
