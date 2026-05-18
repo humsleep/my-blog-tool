@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import FlowNav from '../components/FlowNav';
 import PageHeader from '../components/ui/PageHeader';
+import WizardStepBar from '../components/WizardStepBar';
 import Card from '../components/ui/Card';
 import { Button, LinkButton } from '../components/ui/Button';
 import CopyButton from '../components/ui/CopyButton';
@@ -278,6 +279,8 @@ export default function AiWriterPage() {
     <>
       <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <WizardStepBar current={3} />
+          <div className="mt-4" />
           <PageHeader
             title="AI 글쓰기"
             subtitle="네이버 블로그 홈판 노출에 최적화된 6단계 통합 워크플로우 — 제목 후보 20개·본문·해시태그·이미지 프롬프트까지 한 번에."
@@ -808,16 +811,17 @@ export default function AiWriterPage() {
             </aside>
           </div>
 
-          {/* 다음 단계 */}
+          {/* 다음 단계 — 글쓰기 마법사 3/4 */}
           {draft && (
             <FlowNav
-              currentStep={5}
-              totalSteps={8}
+              mode="writing"
+              currentStep={3}
+              totalSteps={4}
               stepLabel="AI 글쓰기"
               note="생성한 글은 에디터에서 금칙어·맞춤법을 점검한 뒤, 이미지 프롬프트로 만든 이미지를 추가해 마무리하세요."
               actions={[
-                { href: '/editor', label: '에디터로 다듬기', description: '금칙어·맞춤법 검사' },
-                { href: '/image-search', label: '이미지 찾기', description: '무료 저작권 이미지', variant: 'secondary' },
+                { href: '/editor', label: '에디터로 다듬기', description: '다음 단계 — 금칙어·맞춤법 검사' },
+                { href: '/image-search', label: '이미지 찾기', description: '무료 저작권 이미지 (선택)', variant: 'secondary' },
               ]}
             />
           )}

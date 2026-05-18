@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import FlowNav from '../components/FlowNav';
+import WizardStepBar from '../components/WizardStepBar';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
 import { useToast } from '../components/ui/Toast';
 
@@ -698,7 +699,8 @@ function PromptGeneratorContent() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <WizardStepBar current={2} />
+        <div className="mt-4 mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">프롬프트 생성</h1>
             <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
@@ -1467,23 +1469,24 @@ function PromptGeneratorContent() {
           </div>
         </div>
 
-        {/* 다음 단계 */}
+        {/* 다음 단계 — 글쓰기 마법사 2/4 */}
         {generatedPrompt && (
           <FlowNav
-            currentStep={4}
-            totalSteps={8}
+            mode="writing"
+            currentStep={2}
+            totalSteps={4}
             stepLabel="프롬프트 생성"
             note="이 프롬프트로 AI에게 글을 받거나, 직접 ChatGPT 등에 붙여넣어 사용하세요."
             actions={[
               {
                 href: '/ai-writer',
                 label: 'AI 글쓰기로 이동',
-                description: 'Claude AI가 자동으로 글 작성',
+                description: '다음 단계 — Claude AI가 자동으로 글 작성',
               },
               {
                 href: '/editor',
                 label: '에디터로 직접 이동',
-                description: '이미 글이 있는 경우',
+                description: '이미 글이 있는 경우 (건너뛰기)',
                 variant: 'secondary',
               },
             ]}

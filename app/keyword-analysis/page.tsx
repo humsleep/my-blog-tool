@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import NewsPanel, { type NewsItem } from '../components/NewsPanel';
 import FlowNav from '../components/FlowNav';
+import WizardStepBar from '../components/WizardStepBar';
 import HorizontalBarList from '../components/charts/HorizontalBarList';
 import { clientFetchJson, ApiError } from '../lib/clientFetch';
 import { createClient, isSupabaseConfigured } from '../lib/supabase/client';
@@ -326,9 +327,10 @@ function KeywordAnalysisContent() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-6 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <WizardStepBar current={1} />
 
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 mt-4">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">키워드 분석</h1>
           <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
             네이버 검색광고 API를 사용하여 키워드 검색량과 경쟁률을 분석합니다
@@ -900,23 +902,24 @@ function KeywordAnalysisContent() {
           </div>
         )}
 
-        {/* 다음 단계 */}
+        {/* 다음 단계 — 글쓰기 마법사 1/4 */}
         {keywordData.length > 0 && (
           <FlowNav
-            currentStep={2}
-            totalSteps={8}
+            mode="writing"
+            currentStep={1}
+            totalSteps={4}
             stepLabel="키워드분석"
             note={`"${sortedKeywords[0].keyword}" 키워드로 이어서 진행할 수 있습니다.`}
             actions={[
               {
-                href: `/competitor-analysis?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
-                label: '상위노출 분석',
-                description: '상위 블로그 포스트 분석',
+                href: `/prompt-generator?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
+                label: '프롬프트 생성',
+                description: '다음 단계 — AI 글쓰기 준비',
               },
               {
-                href: `/prompt-generator?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
-                label: '프롬프트 바로 생성',
-                description: '경쟁 분석 건너뛰고 글쓰기',
+                href: `/competitor-analysis?keyword=${encodeURIComponent(sortedKeywords[0].keyword)}`,
+                label: '상위노출 먼저 살펴보기',
+                description: '경쟁 블로그 패턴 확인 (선택)',
                 variant: 'secondary',
               },
             ]}

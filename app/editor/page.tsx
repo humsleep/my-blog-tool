@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import FlowNav from '../components/FlowNav';
+import WizardStepBar from '../components/WizardStepBar';
 import SpellCheckPanel from '../components/SpellCheckPanel';
 import { markdownToHtml } from '../lib/format/article-formats';
 import { sanitizeQuillHtml } from '../lib/format/sanitize-html';
@@ -353,7 +354,8 @@ export default function EditorPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4 sm:mb-6">
+        <WizardStepBar current={4} />
+        <div className="mt-4 mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">포스팅 에디터</h1>
           <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">실시간 금칙어 검사와 맞춤법 교정을 지원합니다</p>
         </div>
@@ -588,13 +590,14 @@ export default function EditorPage() {
         </div>
       </div>
 
-      {/* 다음 단계 */}
+      {/* 다음 단계 — 글쓰기 마법사 4/4 (마지막) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <FlowNav
-          currentStep={6}
-          totalSteps={8}
-          stepLabel="금칙어·맞춤법"
-          note="글을 다듬었다면 이제 블로그에 어울리는 이미지를 찾아볼 차례입니다."
+          mode="writing"
+          currentStep={4}
+          totalSteps={4}
+          stepLabel="에디터"
+          note="발행 전 점검 끝! 어울리는 이미지를 찾아 글을 마무리하세요."
           actions={[
             {
               href: '/image-search',
