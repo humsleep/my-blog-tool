@@ -301,24 +301,23 @@ function LoggedInHero({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         {/* Greeting line */}
         <div className="mb-6 sm:mb-8">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
+          <span className="text-xs font-semibold tracking-[0.12em] uppercase text-zinc-500">
             {dateLabel} · 오늘의 작업대
           </span>
-          <h1 className="mt-1.5 text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             {greetingName}님, 오늘도 데이터로 시작해볼까요?
           </h1>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-2 text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
             {myCategoryLabel
               ? `${myCategoryLabel} 분야 인기 키워드와 마지막 진단 점수를 한눈에 확인하세요.`
               : '프로필에서 분야를 등록하면 내 분야 맞춤 키워드를 보여드려요.'}
           </p>
         </div>
 
-        {/* Dashboard grid: 키워드 검색 (좌 2/3) + 진단 카드 (우 1/3).
-            Phase 46 — 검색을 우선 노출하기 위해 좌우 위치 + 비중 swap.
+        {/* Dashboard grid: 키워드 검색 ↔ 진단 카드 — Phase 50 에서 1:1 비율로.
             items-stretch (grid 기본값) + 자식의 h-full 로 두 카드 높이 동일. */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
-          <div className="lg:col-span-2 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+          <div className="h-full">
             <LoggedInSearchCard
               searchKeyword={searchKeyword}
               setSearchKeyword={setSearchKeyword}
@@ -362,26 +361,26 @@ function LoggedInSearchCard({
   const router = useRouter();
 
   return (
-    <div className="h-full flex flex-col rounded-md border border-orange-200 dark:border-orange-900/40 ring-1 ring-orange-500/10 bg-gradient-to-br from-orange-50/80 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-900 p-5">
+    <div className="h-full flex flex-col rounded-xl border border-orange-200 dark:border-orange-900/40 ring-1 ring-orange-500/10 bg-gradient-to-br from-orange-50/80 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-900 p-5 sm:p-6">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
+        <span className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
           Quick search
         </span>
-        <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
           무료 무제한
         </span>
       </div>
-      <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
+      <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
         키워드 바로 검색
       </h3>
-      <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+      <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5">
         검색량 · 경쟁률 · 황금 키워드까지 한 표에 펼쳐드립니다.
       </p>
 
-      <form onSubmit={onSubmit} className="space-y-2">
+      <form onSubmit={onSubmit} className="space-y-2.5">
         <div className="relative">
           <svg
-            className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2"
+            className="w-5 h-5 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -398,38 +397,43 @@ function LoggedInSearchCard({
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             placeholder="예: 수원 맛집"
-            className="w-full pl-9 pr-3 py-2.5 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            className="w-full pl-11 pr-3 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-base focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             aria-label="분석할 키워드 입력"
           />
         </div>
-        <button type="submit" className="btn-base btn-primary btn-md w-full">
+        <button type="submit" className="btn-base btn-primary btn-lg w-full text-base">
           키워드 분석 시작 →
         </button>
       </form>
 
-      {/* 즐겨찾기 키워드 — 칩 클릭 시 즉시 그 키워드로 분석 페이지 이동 */}
-      <div className="mt-auto pt-4">
+      {/* 즐겨찾기 키워드 — 칩 클릭 시 즉시 그 키워드로 자동 분석 (autoAnalyze=1 명시) */}
+      <div className="mt-auto pt-5">
         {savedKeywords.length > 0 ? (
           <>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500 dark:text-zinc-500">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold tracking-[0.12em] uppercase text-zinc-600 dark:text-zinc-400">
                 ⭐ 즐겨찾기 키워드
               </span>
               <Link
                 href="/profile/setup"
-                className="text-[10px] text-zinc-500 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-orange-400 underline-offset-2 hover:underline"
+                className="text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-orange-400 underline-offset-2 hover:underline"
               >
                 관리
               </Link>
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2">
               {savedKeywords.map((kw) => (
                 <button
                   key={kw}
                   type="button"
-                  onClick={() => router.push(`/keyword-analysis?keyword=${encodeURIComponent(kw)}`)}
-                  className="px-2.5 py-1 rounded-full text-xs font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
-                  aria-label={`'${kw}' 키워드 분석`}
+                  onClick={() =>
+                    router.push(
+                      `/keyword-analysis?keyword=${encodeURIComponent(kw)}&autoAnalyze=1`,
+                    )
+                  }
+                  className="px-3 py-1.5 rounded-full text-sm font-medium bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-colors"
+                  aria-label={`'${kw}' 키워드 자동 분석`}
+                  title={`'${kw}' 클릭 시 자동으로 분석을 시작합니다`}
                 >
                   {kw}
                 </button>
@@ -437,8 +441,8 @@ function LoggedInSearchCard({
             </div>
           </>
         ) : (
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            💡 키워드 분석 결과의 <strong>⭐ 버튼</strong>을 누르면 자주 쓰는 키워드를 여기에 저장할 수 있어요.
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            💡 키워드 분석 결과의 <strong className="text-zinc-900 dark:text-zinc-100">⭐ 버튼</strong>을 누르면 자주 쓰는 키워드를 여기에 저장할 수 있어요.
           </p>
         )}
       </div>

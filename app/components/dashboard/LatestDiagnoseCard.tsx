@@ -36,7 +36,7 @@ export default function LatestDiagnoseCard() {
 
   if (loading) {
     return (
-      <section className="h-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+      <section className="h-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 sm:p-6">
         <div className="h-4 w-24 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
         <div className="h-12 w-32 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse mb-3" />
         <div className="h-3 w-48 bg-zinc-100 dark:bg-zinc-800 rounded animate-pulse" />
@@ -46,22 +46,22 @@ export default function LatestDiagnoseCard() {
 
   if (!data?.latest) {
     return (
-      <section className="h-full flex flex-col rounded-md border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5">
+      <section className="h-full flex flex-col rounded-xl border border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 bg-white dark:bg-zinc-900 p-5 sm:p-6">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
+          <span className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-600 dark:text-orange-400">
             Diagnose
           </span>
-          <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
+          <span className="text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
         </div>
-        <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
+        <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
           내 블로그는 카테고리 안에서 어디쯤일까요?
         </h3>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+        <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5">
           카테고리 핵심 키워드 30개로 활동성 · 노출 · 품질을 한 번에 진단합니다. 1분 안에 점수가 나와요.
         </p>
-        <Link href="/blog-diagnose" className="btn-base btn-primary btn-sm">
+        <Link href="/blog-diagnose" className="btn-base btn-primary btn-lg text-base">
           내 블로그 진단하기
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </Link>
@@ -83,13 +83,13 @@ export default function LatestDiagnoseCard() {
   const deltaLabel = delta === null ? '첫 진단' : delta === 0 ? '변동 없음' : `${deltaPrefix}${delta} vs 직전`;
 
   return (
-    <section className="h-full rounded-md border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5">
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500">
+    <section className="h-full rounded-xl border border-zinc-200 dark:border-[#27272a] bg-white dark:bg-[#161618] p-5 sm:p-6">
+      <div className="flex items-start justify-between mb-4 gap-3">
+        <div className="min-w-0">
+          <span className="text-xs font-semibold tracking-[0.12em] uppercase text-zinc-500">
             마지막 진단
           </span>
-          <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <div className="mt-1 text-sm text-zinc-600 dark:text-zinc-400 truncate">
             {latest.blog_title ?? latest.blog_id}
             <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">·</span>
             {latest.category_label ?? latest.category}
@@ -97,7 +97,7 @@ export default function LatestDiagnoseCard() {
             {formatRelativeKr(latest.created_at)}
           </div>
         </div>
-        <Link href="/blog-diagnose" className="text-xs font-medium text-orange-700 dark:text-orange-300 hover:underline whitespace-nowrap">
+        <Link href="/blog-diagnose" className="text-sm font-medium text-orange-700 dark:text-orange-300 hover:underline whitespace-nowrap flex-shrink-0">
           다시 진단 →
         </Link>
       </div>
@@ -107,16 +107,16 @@ export default function LatestDiagnoseCard() {
           <ScoreGauge value={latest.total_score} size={120} caption="/ 100" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          <div className="flex items-baseline gap-2 mb-1.5">
+            <span className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100">
               {BAND_LABEL[latest.band]}
             </span>
-            <span className={`text-xs font-semibold ${deltaColor}`}>{deltaLabel}</span>
+            <span className={`text-sm font-semibold ${deltaColor}`}>{deltaLabel}</span>
           </div>
-          <div className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
-            키워드 <span className="tabular font-semibold">{latest.hit_count ?? 0}</span>개 1페이지 노출
+          <div className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+            키워드 <span className="tabular font-semibold text-zinc-900 dark:text-zinc-100">{latest.hit_count ?? 0}</span>개 1페이지 노출
             <span className="mx-1.5 text-zinc-300 dark:text-zinc-600">·</span>
-            TOP10 <span className="tabular font-semibold">{latest.top_ten_count ?? 0}</span>
+            TOP10 <span className="tabular font-semibold text-zinc-900 dark:text-zinc-100">{latest.top_ten_count ?? 0}</span>
           </div>
           <div className="space-y-2">
             <ScoreMiniBar label="활동성" value={latest.activity_score} />
@@ -130,7 +130,7 @@ export default function LatestDiagnoseCard() {
       {sparkPoints.length >= 2 && (
         <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-[#2e2723] flex items-center justify-between gap-3">
           <ScoreSparkline points={sparkPoints} label="점수 추이" width={220} height={48} />
-          <span className="text-[10px] text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
             최근 {sparkPoints.length}회 진단
           </span>
         </div>
