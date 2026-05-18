@@ -162,8 +162,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Menu — Phase 48 P3: 4개 슬롯 (글쓰기 / 진단 / 커뮤니티 / 더보기). */}
-          <div className="hidden md:flex md:items-center md:gap-1">
+          {/* Desktop Menu — Phase 48 P3: 4개 슬롯 (글쓰기 / 진단 / 커뮤니티 / 더보기).
+              Phase 52: 간격 gap-1 → gap-2 / lg:gap-3 + 메뉴 항목 px-3 → px-4 로 보기 좋게. */}
+          <div className="hidden md:flex md:items-center md:gap-2 lg:gap-3">
             {/* 글쓰기 ▼ — 드롭다운 (P2 마법사 4단계 진입로 + /start) */}
             <div
               className="relative"
@@ -176,7 +177,7 @@ export default function Navbar() {
                 onClick={() => setWritingOpen((v) => !v)}
                 aria-expanded={writingOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   isWritingActive
                     ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                     : writingOpen
@@ -222,7 +223,7 @@ export default function Navbar() {
             {/* 진단 — 평면 단일 메뉴 (차별화 포인트, 클릭률 높임) */}
             <Link
               href="/blog-diagnose"
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isDiagnoseActive
                   ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                   : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
@@ -243,7 +244,7 @@ export default function Navbar() {
                 onClick={() => setCommunityOpen((v) => !v)}
                 aria-expanded={communityOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   isCommunityActive
                     ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                     : communityOpen
@@ -298,7 +299,7 @@ export default function Navbar() {
                 onClick={() => setMoreOpen((v) => !v)}
                 aria-expanded={moreOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   isMoreActive
                     ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
                     : moreOpen
