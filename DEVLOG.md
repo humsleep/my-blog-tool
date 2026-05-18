@@ -5,6 +5,41 @@
 
 ---
 
+## 2026-05-16 — Phase 48-P1: 홈 의도(intent) 진입 카드
+
+UX 고도화 4단계 로드맵(P1~P4) 의 P1. 도구가 많아져 첫 진입이 복잡해 보이는 문제를 "의도 우선" 진입로로 단순화.
+
+### 변경
+
+**`app/components/home/IntentCards.tsx` 신설**
+- 4개 의도: 진단(emphasis) / 글쓰기(/start) / 키워드 찾기 / 블로거 만나기
+- `variant: 'full' | 'compact'`
+  - full: 비로그인 hero 아래 2×2 큰 카드 (emoji + 제목 + 설명 + meta + CTA, 강조 카드는 오렌지 그라데이션 + 링)
+  - compact: 로그인 dashboard 카드 아래 1×4 행 (emoji + 제목 + meta + 화살표)
+
+**`app/page.tsx` 정리**
+- 기존 `features` 4 KPI 카드 섹션 **제거** → IntentCards 로 흡수.
+- 비로그인: hero 바로 아래 IntentCards (full) 섹션 신설.
+- 로그인(LoggedInHero): 검색카드 + 진단카드 dashboard 아래에 IntentCards (compact) 추가.
+- 기존 8단계 워크플로우 그리드 → `<details>` 로 접어 보존 ("전체 도구 보기" 펼침). 입문자 시야에선 헤더만, 파워 유저는 한 클릭으로 진입.
+- 클로징 CTA 그대로.
+
+### 의도
+
+- "도구 카탈로그" → "할 일 진입로" 로 mental model 전환.
+- 8단계 워크플로우 학습 부담 제거 + 기능 발견성은 보존(접힘).
+- 라우트/컴포넌트 구조는 보존(SEO·즐겨찾기 안전).
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+### 다음
+- **P2** — 글쓰기 마법사 통합(키워드→프롬프트→AI 글쓰기→에디터 step bar)
+- **P3** — Navbar 7개 → 4개 재구성
+- **P4** — 첫 진입 온보딩 (3슬라이드 투어)
+
+---
+
 ## 2026-05-15 — Phase 47-R5: SEO / 메타 (5R 사이클 R5 — 마지막)
 
 R5 — SEO. Audit 15건 중 검색 인덱싱·공유 미리보기에 직접 영향 주는 항목.
