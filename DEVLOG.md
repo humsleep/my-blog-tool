@@ -5,6 +5,67 @@
 
 ---
 
+## 2026-05-16 — Phase 48-P4: 첫 진입 온보딩 (3슬라이드 투어) — 로드맵 완료
+
+UX 로드맵 P4(마지막). 비로그인 첫 방문자에게 3장의 슬라이드로 사이트 가치를 보여주고 P1 의도 카드 / P2 마법사로 자연 진입.
+
+### 변경
+
+**`app/components/onboarding/OnboardingTour.tsx` 신설**
+- 3슬라이드: 진단 / 글쓰기 / 커뮤니티. 각 슬라이드에 emoji + eyebrow + title + body + CTA.
+- 모바일은 바텀시트(드래그 핸들 + safe-bottom), 데스크탑은 센터 모달(max-w-lg).
+- 표시 조건:
+  - `useUser()` 비로그인 (user === null)
+  - sessionStorage `onboardingSeen` 없음
+  - 홈(/)에서만 — 호출 위치로 보장
+  - mount 후에만 결정 → SSR/CSR hydration 불일치 방지
+- 닫기 (모두 sessionStorage 기록):
+  - X / 백드롭 클릭 / ESC / "건너뛰기" 링크 / 마지막 슬라이드 CTA 클릭
+- 네비:
+  - dot indicator 클릭 → 해당 슬라이드
+  - ← → 키 + 좌우 화살표 버튼
+  - 첫 슬라이드 ← 비활성
+- a11y:
+  - `role="dialog"`, `aria-modal`, `aria-labelledby="onboarding-title"`
+  - dot 에 `aria-current="true"` (현재 슬라이드)
+  - `useBodyScrollLock` 적용 (R1 패턴)
+
+**`app/page.tsx`**
+- `<OnboardingTour />` 를 페이지 최상단(다른 hero 위)에 삽입. 첫 진입 시에만 마운트.
+
+### 의도
+
+- 사이트가 무엇을 해주는지 첫 진입에 7초 안에 전달.
+- "글쓰기 · 진단 · 커뮤니티" 3축이 메뉴 구조(P3)와 일치 — 닫은 후에도 mental model 유지.
+- 한 번 보면 다시 안 나옴(같은 세션) — 재방문에 부담 0.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린.
+
+---
+
+## Phase 48 UX 로드맵 — 완료
+
+| P | 주제 | PR | 핵심 |
+|---|---|---|---|
+| P1 | 홈 의도 카드 | #43 | IntentCards (full/compact), 8단계 그리드 details 접기 |
+| P2 | 글쓰기 마법사 step bar | #44 | WizardStepBar + FlowNav `mode='writing'`, 4페이지 통합 |
+| P3 | Navbar 7개 → 4개 | #45 | 글쓰기/진단/커뮤니티/더보기, 활성 강조 자동 |
+| P4 | 첫 진입 온보딩 | (이번) | OnboardingTour 3슬라이드 |
+
+각 Phase 독립 PR, 빌드 클린, 라우트 0개 변경. P1·P2·P3는 squash 머지 완료, P4 PR 진행 중.
+
+### 핵심 효과
+
+- **첫 진입 직관성**: "도구 카탈로그" → "할 일 진입로" 전환 (P1 + P4)
+- **흐름 시각화**: 4페이지가 분리되어 있으되 하나의 마법사로 인지 (P2)
+- **메뉴 인지 부하**: 7개 → 4개 슬롯, 고급 도구는 한 클릭 (P3)
+- **온보딩**: 첫 7초 안에 사이트 가치 전달 (P4)
+
+라우트·DB 변경 0, SEO·즐겨찾기 안전. 모든 기존 기능 보존 + 사용자 흐름 재정렬.
+
+---
+
 ## 2026-05-16 — Phase 48-P3: Navbar 4개 슬롯 재구성
 
 UX 로드맵 P3. 데스크탑 Navbar 7개 메뉴 → 4개 슬롯으로 압축. 입문자 인지 부하 낮추고 파워 유저 한 클릭 접근 보존.

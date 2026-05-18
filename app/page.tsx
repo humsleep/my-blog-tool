@@ -8,6 +8,7 @@ import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
 import TrendingTicker from '@/app/components/dashboard/TrendingTicker';
 import LatestDiagnoseCard from '@/app/components/dashboard/LatestDiagnoseCard';
 import IntentCards from '@/app/components/home/IntentCards';
+import OnboardingTour from '@/app/components/onboarding/OnboardingTour';
 import { COMMUNITY_TO_TRENDING_CATEGORY } from '@/app/lib/dashboard/types';
 
 /**
@@ -67,6 +68,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+      {/* 첫 진입 온보딩 (Phase 48 P4) — 비로그인 첫 방문자만, sessionStorage 1회 표시. */}
+      <OnboardingTour />
+
       {/* ── Hero — 분기 ──────────────────────────────────────────── */}
       {userLoading ? (
         <HeroSkeleton />
