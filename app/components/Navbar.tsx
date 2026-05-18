@@ -8,7 +8,6 @@ import { useTheme } from './ThemeProvider';
 import { useUser, signOut } from '../lib/supabase/useUser';
 
 interface ToolItem {
-  step: number;
   href: string;
   label: string;
   description: string;
@@ -16,74 +15,79 @@ interface ToolItem {
 
 interface ToolGroup {
   groupLabel: string;
-  range: string;
+  range?: string;
   items: ToolItem[];
 }
 
-/** 핵심 도구 — 평면 노출 (가장 자주 쓰는 노드). 블로그 진단을 맨 앞에. */
-const CORE_TOOLS: { href: string; label: string }[] = [
-  { href: '/blog-diagnose', label: '블로그 진단' },
-  { href: '/keyword-analysis', label: '키워드분석' },
-  { href: '/ai-writer', label: 'AI 글쓰기' },
-  { href: '/editor', label: '에디터' },
+/** 글쓰기 — 드롭다운. P2 마법사 4단계 진입로 + /start 빠른 시작. */
+const WRITING_MENU: ToolItem[] = [
+  { href: '/start',             label: '빠른 시작',    description: '키워드 한 단어로 1분 만에' },
+  { href: '/keyword-analysis',  label: '키워드부터',   description: '검색량·경쟁률 분석 후 시작' },
+  { href: '/ai-writer',         label: 'AI 글쓰기',    description: 'Claude 가 자동으로 초안 작성' },
+  { href: '/editor',            label: '에디터 (발행)', description: '금칙어·맞춤법 마지막 점검' },
 ];
 
-/** 커뮤니티 — 메뉴 (드롭다운). */
-const COMMUNITY_MENU: { href: string; label: string; description: string }[] = [
+/** 커뮤니티 — 드롭다운. */
+const COMMUNITY_MENU: ToolItem[] = [
   { href: '/community/swap',       label: '서이추 해요',     description: '같은 분야 블로거 매칭' },
   { href: '/community/tips',       label: '정보 공유',        description: '운영 노하우·질문 게시판' },
   { href: '/community/companions', label: '체험단 동행해요', description: '체험단 동행자 모집' },
 ];
 
-/** 8단계 워크플로우 — "모든 도구" 메가패널에 워크플로우 순서로 노출 */
-const WORKFLOW: ToolGroup[] = [
+/** 더보기 — 메가패널. 고급 도구 + 보조 + 연구실. 글쓰기 4단계와 진단은 메인 메뉴에 있어 제외. */
+const MORE_MENU: ToolGroup[] = [
   {
     groupLabel: '키워드 리서치',
-    range: '1~3',
     items: [
-      { step: 1, href: '/trending', label: '인기검색어', description: '네이버 실시간 인기 키워드' },
-      { step: 2, href: '/keyword-analysis', label: '키워드분석', description: '검색량·경쟁률 분석' },
-      { step: 3, href: '/competitor-analysis', label: '상위노출 분석', description: '상위 블로그 패턴 분석' },
+      { href: '/trending',             label: '인기검색어',     description: '네이버 실시간 인기 키워드' },
+      { href: '/competitor-analysis',  label: '상위노출 분석',  description: '상위 블로그 패턴 분석' },
     ],
   },
   {
-    groupLabel: '글쓰기',
-    range: '4~6',
+    groupLabel: '글쓰기 보조',
     items: [
-      { step: 4, href: '/prompt-generator', label: '프롬프트 생성', description: '무료 무제한 (AI 호출 없음)' },
-      { step: 5, href: '/ai-writer', label: 'AI 글쓰기', description: 'Claude AI 자동 작성' },
-      { step: 6, href: '/editor', label: '금칙어·맞춤법', description: '포스팅 에디터' },
+      { href: '/prompt-generator',     label: '프롬프트 생성',  description: '무료 무제한 (AI 호출 없음)' },
     ],
   },
   {
-    groupLabel: '이미지',
-    range: '7~8',
+    groupLabel: '이미지 · 기타',
     items: [
-      { step: 7, href: '/image-search', label: '이미지 검색', description: '무료 저작권 이미지' },
-      { step: 8, href: '/image-tools', label: '이미지 편집', description: '크롭·모자이크·필터' },
+      { href: '/image-search',         label: '이미지 검색',    description: '무료 저작권 이미지' },
+      { href: '/image-tools',          label: '이미지 편집',    description: '크롭·모자이크·필터' },
+      { href: '/lab',                  label: '연구실',         description: '에디토리얼 가이드·실험' },
     ],
   },
 ];
 
+/** 활성 강조 — 드롭다운 안 어느 항목에 들어와 있으면 부모 메뉴를 활성 톤으로. */
+const WRITING_PATHS = WRITING_MENU.map((m) => m.href);
+const MORE_PATHS = MORE_MENU.flatMap((g) => g.items.map((it) => it.href));
+
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [megaOpen, setMegaOpen] = useState(false);
+  const [writingOpen, setWritingOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, configured } = useUser();
-  const megaRef = useRef<HTMLDivElement>(null);
+  const writingRef = useRef<HTMLDivElement>(null);
+  const moreRef = useRef<HTMLDivElement>(null);
   const communityRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const writingCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moreCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const communityCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (megaRef.current && !megaRef.current.contains(e.target as Node)) {
-        setMegaOpen(false);
+      if (writingRef.current && !writingRef.current.contains(e.target as Node)) {
+        setWritingOpen(false);
+      }
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
       }
       if (communityRef.current && !communityRef.current.contains(e.target as Node)) {
         setCommunityOpen(false);
@@ -98,39 +102,43 @@ export default function Navbar() {
 
   // 페이지 이동 시 모든 메뉴 닫기
   useEffect(() => {
-    setMegaOpen(false);
+    setWritingOpen(false);
+    setMoreOpen(false);
     setCommunityOpen(false);
     setIsMobileOpen(false);
     setUserMenuOpen(false);
   }, [pathname]);
 
-  const openMega = () => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
+  /** 150ms 호버 종료 시 닫기 — 마우스가 잠깐 벗어나도 안 닫히게. */
+  const makeOpen = (
+    timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+    setOpen: (v: boolean) => void,
+  ) => () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
-    setMegaOpen(true);
+    setOpen(true);
+  };
+  const makeScheduleClose = (
+    timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+    setOpen: (v: boolean) => void,
+  ) => () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setOpen(false), 150);
   };
 
-  const scheduleCloseMega = () => {
-    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
-    closeTimerRef.current = setTimeout(() => setMegaOpen(false), 150);
-  };
+  const openWriting = makeOpen(writingCloseTimerRef, setWritingOpen);
+  const scheduleCloseWriting = makeScheduleClose(writingCloseTimerRef, setWritingOpen);
+  const openMore = makeOpen(moreCloseTimerRef, setMoreOpen);
+  const scheduleCloseMore = makeScheduleClose(moreCloseTimerRef, setMoreOpen);
+  const openCommunity = makeOpen(communityCloseTimerRef, setCommunityOpen);
+  const scheduleCloseCommunity = makeScheduleClose(communityCloseTimerRef, setCommunityOpen);
 
-  const openCommunity = () => {
-    if (communityCloseTimerRef.current) {
-      clearTimeout(communityCloseTimerRef.current);
-      communityCloseTimerRef.current = null;
-    }
-    setCommunityOpen(true);
-  };
-
-  const scheduleCloseCommunity = () => {
-    if (communityCloseTimerRef.current) clearTimeout(communityCloseTimerRef.current);
-    communityCloseTimerRef.current = setTimeout(() => setCommunityOpen(false), 150);
-  };
-
+  const isDiagnoseActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
   const isCommunityActive = pathname.startsWith('/community');
+  const isWritingActive = WRITING_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
+  const isMoreActive = MORE_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
   const displayName =
     user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '';
@@ -154,106 +162,76 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Menu */}
+          {/* Desktop Menu — Phase 48 P3: 4개 슬롯 (글쓰기 / 진단 / 커뮤니티 / 더보기). */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {/* 핵심 도구 평면 — SaaS: pill 호버 + 액티브 시 액센트 배경 */}
-            {CORE_TOOLS.map((t) => {
-              const isActive = pathname === t.href;
-              return (
-                <Link
-                  key={t.href}
-                  href={t.href}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
-                  }`}
-                >
-                  {t.label}
-                </Link>
-              );
-            })}
-
-            {/* 모든 도구 — 호버 / 클릭 메가패널 */}
+            {/* 글쓰기 ▼ — 드롭다운 (P2 마법사 4단계 진입로 + /start) */}
             <div
               className="relative"
-              ref={megaRef}
-              onMouseEnter={openMega}
-              onMouseLeave={scheduleCloseMega}
+              ref={writingRef}
+              onMouseEnter={openWriting}
+              onMouseLeave={scheduleCloseWriting}
             >
               <button
                 type="button"
-                onClick={() => setMegaOpen((v) => !v)}
-                aria-expanded={megaOpen}
+                onClick={() => setWritingOpen((v) => !v)}
+                aria-expanded={writingOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-150 ${
-                  megaOpen
-                    ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100'
-                    : 'text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  isWritingActive
+                    ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                    : writingOpen
+                      ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
                 }`}
               >
-                모든 도구
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform ${megaOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                글쓰기
+                <svg className={`w-3.5 h-3.5 transition-transform ${writingOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              {megaOpen && (
+              {writingOpen && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[680px] max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
+                  className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
                 >
-                  <div className="grid grid-cols-3 divide-x divide-zinc-100 dark:divide-zinc-700/60">
-                    {WORKFLOW.map((group) => (
-                      <div key={group.groupLabel} className="p-3">
-                        <div className="px-2 mb-2 flex items-center gap-1.5">
-                          <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
-                            STEP {group.range}
-                          </span>
-                          <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-200">
-                            {group.groupLabel}
-                          </span>
+                  {WRITING_MENU.map((it) => {
+                    const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                    return (
+                      <Link
+                        key={it.href}
+                        href={it.href}
+                        onClick={() => setWritingOpen(false)}
+                        className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                          isActive
+                            ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50'
+                        }`}
+                      >
+                        <div className="font-medium">{it.label}</div>
+                        <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                          {it.description}
                         </div>
-                        <div className="space-y-0.5">
-                          {group.items.map((it) => {
-                            const isActive = pathname === it.href;
-                            return (
-                              <Link
-                                key={it.href}
-                                href={it.href}
-                                onClick={() => setMegaOpen(false)}
-                                className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
-                                  isActive
-                                    ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
-                                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50'
-                                }`}
-                              >
-                                <div className="flex items-baseline gap-1.5">
-                                  <span className={`text-[11px] font-bold ${isActive ? 'text-orange-500 dark:text-orange-400' : 'text-zinc-400 dark:text-zinc-500'}`}>
-                                    {it.step}
-                                  </span>
-                                  <span className="font-medium">{it.label}</span>
-                                </div>
-                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-zinc-500 dark:text-zinc-400'}`}>
-                                  {it.description}
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* 커뮤니티 — 호버 / 클릭 드롭다운 */}
+            {/* 진단 — 평면 단일 메뉴 (차별화 포인트, 클릭률 높임) */}
+            <Link
+              href="/blog-diagnose"
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                isDiagnoseActive
+                  ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              진단
+            </Link>
+
+            {/* 커뮤니티 ▼ — 호버 / 클릭 드롭다운 */}
             <div
               className="relative"
               ref={communityRef}
@@ -274,19 +252,14 @@ export default function Navbar() {
                 }`}
               >
                 커뮤니티
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform ${communityOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
+                <svg className={`w-3.5 h-3.5 transition-transform ${communityOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {communityOpen && (
                 <div
-                  className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
+                  className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
                 >
                   {COMMUNITY_MENU.map((it) => {
@@ -313,22 +286,73 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 연구실 */}
-            {(() => {
-              const isActive = pathname === '/lab' || pathname.startsWith('/lab/');
-              return (
-                <Link
-                  href="/lab"
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+            {/* 더보기 ▼ — 메가패널. 고급 도구 + 보조 + 연구실 */}
+            <div
+              className="relative"
+              ref={moreRef}
+              onMouseEnter={openMore}
+              onMouseLeave={scheduleCloseMore}
+            >
+              <button
+                type="button"
+                onClick={() => setMoreOpen((v) => !v)}
+                aria-expanded={moreOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  isMoreActive
+                    ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                    : moreOpen
+                      ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
                       : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
-                  }`}
+                }`}
+              >
+                더보기
+                <svg className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {moreOpen && (
+                <div
+                  className="absolute top-full right-0 mt-1 w-[680px] max-w-[calc(100vw-2rem)] bg-white dark:bg-zinc-800 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
+                  role="menu"
                 >
-                  연구실
-                </Link>
-              );
-            })()}
+                  <div className="grid grid-cols-3 divide-x divide-zinc-100 dark:divide-zinc-700/60">
+                    {MORE_MENU.map((group) => (
+                      <div key={group.groupLabel} className="p-3">
+                        <div className="px-2 mb-2">
+                          <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            {group.groupLabel}
+                          </span>
+                        </div>
+                        <div className="space-y-0.5">
+                          {group.items.map((it) => {
+                            const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                            return (
+                              <Link
+                                key={it.href}
+                                href={it.href}
+                                onClick={() => setMoreOpen(false)}
+                                className={`block px-2 py-2 rounded-lg text-sm transition-colors ${
+                                  isActive
+                                    ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
+                                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700/50'
+                                }`}
+                              >
+                                <div className="font-medium">{it.label}</div>
+                                <div className={`text-[11px] mt-0.5 ${isActive ? 'text-orange-500/80 dark:text-orange-400/80' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                                  {it.description}
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right side: Auth + Dark toggle + Mobile hamburger */}
@@ -510,43 +534,34 @@ export default function Navbar() {
               })()}
             </div>
 
-            {WORKFLOW.map((group) => (
-              <div key={group.groupLabel} className="space-y-1">
-                <div className="px-4 flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-orange-500 dark:text-orange-400 uppercase tracking-wider">
-                    STEP {group.range}
-                  </span>
-                  <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                    {group.groupLabel}
-                  </span>
-                </div>
-                {group.items.map((it) => {
-                  const isActive = pathname === it.href;
-                  return (
-                    <Link
-                      key={it.href}
-                      href={it.href}
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
-                        isActive
-                          ? 'bg-orange-500 text-white'
-                          : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                      }`}
-                    >
-                      <span className={`text-xs font-bold mt-0.5 flex-shrink-0 ${isActive ? 'text-orange-100' : 'text-zinc-400 dark:text-zinc-500'}`}>
-                        {it.step}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium">{it.label}</div>
-                        <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
-                          {it.description}
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+            {/* 글쓰기 — P2 마법사 진입로 4개. 데스크탑 "글쓰기 ▼" 와 정합. */}
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700 space-y-1">
+              <div className="px-4">
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">글쓰기</span>
               </div>
-            ))}
+              {WRITING_MENU.map((it) => {
+                const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                return (
+                  <Link
+                    key={it.href}
+                    href={it.href}
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                      isActive
+                        ? 'bg-orange-500 text-white'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium">{it.label}</div>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                        {it.description}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
 
             {/* 커뮤니티 */}
             <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700 space-y-1">
@@ -577,19 +592,42 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* 연구실 */}
-            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700">
-              <Link
-                href="/lab"
-                onClick={() => setIsMobileOpen(false)}
-                className={`flex items-center px-4 py-2.5 rounded-lg text-sm font-medium min-h-[44px] ${
-                  pathname === '/lab' || pathname.startsWith('/lab/')
-                    ? 'bg-orange-500 text-white'
-                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-                }`}
-              >
-                연구실
-              </Link>
+            {/* 더보기 — 고급 도구 + 보조 + 연구실. 데스크탑 "더보기 ▼" 와 정합. */}
+            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700 space-y-3">
+              <div className="px-4">
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">더보기</span>
+              </div>
+              {MORE_MENU.map((group) => (
+                <div key={group.groupLabel} className="space-y-1">
+                  <div className="px-4">
+                    <span className="text-[11px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+                      {group.groupLabel}
+                    </span>
+                  </div>
+                  {group.items.map((it) => {
+                    const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
+                    return (
+                      <Link
+                        key={it.href}
+                        href={it.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                          isActive
+                            ? 'bg-orange-500 text-white'
+                            : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium">{it.label}</div>
+                          <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                            {it.description}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </div>
         </div>
