@@ -7,15 +7,21 @@ import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
 import TrendingTicker from '@/app/components/dashboard/TrendingTicker';
 import LatestDiagnoseCard from '@/app/components/dashboard/LatestDiagnoseCard';
+import IntentCards from '@/app/components/home/IntentCards';
 import { COMMUNITY_TO_TRENDING_CATEGORY } from '@/app/lib/dashboard/types';
 
 /**
- * 홈 — 데일리 대시보드 (Phase 28, Phase 45 에서 즐겨찾기 → 키워드 검색 교체).
+ * 홈 — 데일리 대시보드 (Phase 28 → 46 → 48).
  *
- * 비로그인: Hero (검색 + 진단 CTA) + 전체 인기 키워드 + 도구 그리드 + 워크플로우 + 클로징
- * 로그인:   인사 + 마지막 진단 카드 + 키워드 검색 카드 + 내 분야 인기 키워드 + 도구/워크플로우/클로징
+ * Phase 48 (P1 UX 재정비):
+ *   "도구 카탈로그" 대신 "사용자의 의도(intent)" 4개로 첫 진입을 단순화.
+ *   기존 features(4 KPI) 섹션은 IntentCards 로 흡수, 8단계 그리드는 details
+ *   로 접어 입문자 시야를 깨끗하게.
  *
- * FAQ는 /contact 페이지로 분리 (푸터 "문의" 클릭 → FAQ 우선, 메일은 보조).
+ * 비로그인: Hero(검색+진단 CTA) + IntentCards(full) + TrendingTicker
+ *           + (접힌) 8단계 + 클로징
+ * 로그인:   인사 + (검색 + 진단 카드 dashboard) + IntentCards(compact)
+ *           + TrendingTicker(내 분야) + (접힌) 8단계 + 클로징
  */
 export default function Home() {
   const router = useRouter();
@@ -46,41 +52,8 @@ export default function Home() {
   const greetingName =
     profile?.nickname ?? (user?.email ? user.email.split('@')[0] : '블로거');
 
-  /** 핵심 도구 4개 — KPI 카드 */
-  const features = [
-    {
-      label: 'Diagnose',
-      title: '블로그 진단',
-      desc: '카테고리 핵심 키워드 30개로 1페이지 진입율을 측정해 활동성·노출·품질 3축으로 점수를 매깁니다.',
-      href: '/blog-diagnose',
-      cta: '내 블로그 진단',
-      emphasis: true,
-    },
-    {
-      label: 'Research',
-      title: '키워드 분석',
-      desc: '네이버 검색광고 API로 검색량·경쟁률·문서 수를 한 표에 펼치고 황금 키워드를 골라냅니다.',
-      href: '/keyword-analysis',
-      cta: '키워드 분석',
-    },
-    {
-      label: 'Writing',
-      title: 'AI 글쓰기',
-      desc: 'Claude Sonnet 4.6이 6단계로 제목·본문·해시태그·이미지 프롬프트까지 한 번에 만듭니다.',
-      href: '/ai-writer',
-      cta: 'AI 글쓰기',
-      authNote: '비로그인 1회/일 · 로그인 5회/일',
-    },
-    {
-      label: 'Trends',
-      title: '인기 검색어',
-      desc: '네이버 실시간 인기 키워드로 지금 뜨는 주제를 가장 먼저 잡으세요.',
-      href: '/trending',
-      cta: '트렌드 보기',
-    },
-  ];
-
-  /** 8단계 워크플로우 */
+  /** 8단계 워크플로우 — Phase 48 에서 details 로 접어 부담 ↓.
+   *  파워 유저가 "전체 도구 보기" 클릭 시 펼쳐서 빠른 진입. */
   const steps = [
     { num: 1, title: '인기 검색어',  desc: '실시간 트렌드 키워드',         href: '/trending' },
     { num: 2, title: '키워드 분석',  desc: '검색량 · 경쟁률 분석',         href: '/keyword-analysis' },
@@ -114,6 +87,19 @@ export default function Home() {
         />
       )}
 
+      {/* ── Intent cards — 비로그인 한정 (로그인은 hero 아래 compact). ── */}
+      {!userLoading && !user && (
+        <section className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <IntentCards
+              variant="full"
+              heading="오늘 뭘 할까요?"
+              subheading="네 개의 진입로. 하나만 누르면 흐름이 자동으로 이어집니다."
+            />
+          </div>
+        </section>
+      )}
+
       {/* ── 인기 키워드 티커 (모두 표시, 카테고리만 분기) ────────── */}
       <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -125,89 +111,52 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Feature grid (4 KPI-style cards) ─────────────────────── */}
-      <section className="border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="mb-8">
-            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">핵심 도구 4종</h2>
-            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">자주 쓰는 도구를 한 손에.</p>
-          </div>
-          {/* items-stretch (grid 기본값) + h-full + flex flex-col + mt-auto 로
-              desc 길이가 달라도 카드 4개 높이가 동일하고 CTA 가 항상 같은 라인에 정렬됨. */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-stretch">
-            {features.map((f) => (
-              <Link
-                key={f.href}
-                href={f.href}
-                className={`group h-full flex flex-col rounded-md border p-5 transition-colors ${
-                  f.emphasis
-                    ? 'bg-white dark:bg-zinc-900 border-orange-200 dark:border-orange-900/50 ring-1 ring-orange-500/20 hover:ring-orange-500/40'
-                    : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-zinc-500 dark:text-zinc-500">
-                    {f.label}
-                  </span>
-                  {f.emphasis && (
-                    <span className="text-[10px] font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">New</span>
-                  )}
-                </div>
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {f.title}
-                </h3>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-3">
-                  {f.desc}
-                </p>
-                {/* CTA 묶음을 mt-auto 로 하단 고정 */}
-                <div className="mt-auto">
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-orange-700 dark:text-orange-300">
-                    {f.cta}
-                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                  {'authNote' in f && f.authNote && (
-                    <span className="mt-2 flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-500 font-medium">
-                      <svg className="w-2.5 h-2.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                      {f.authNote}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 8-step workflow ──────────────────────────────────────── */}
+      {/* ── 전체 도구 (8-step) — 기본 접힘, 펼치면 8단계 그리드 ─────
+       *  파워 유저용. 입문자 시야에선 헤더만 보임.
+       *  CSS: globals.css 의 .group-open 변형 없이 details/summary 기본 동작. */}
       <section className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="mb-8 max-w-2xl">
-            <h2 className="text-xl sm:text-2xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">8단계 워크플로우</h2>
-            <p className="mt-1.5 text-sm text-zinc-600 dark:text-zinc-400">
-              키워드 리서치부터 이미지 편집까지. 각 단계는 다음 단계로 자연스럽게 이어집니다.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-stretch">
-            {steps.map((s) => (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="group h-full flex flex-col rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
-              >
-                <div className="text-2xl font-semibold text-zinc-300 dark:text-zinc-700 group-hover:text-orange-300 dark:group-hover:text-orange-700 transition-colors mb-2 tabular">
-                  {String(s.num).padStart(2, '0')}
-                </div>
-                <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-0.5 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                  {s.title}
-                </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">{s.desc}</div>
-              </Link>
-            ))}
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <details className="group">
+            <summary className="list-none cursor-pointer flex items-center justify-between gap-3 py-2 select-none">
+              <div>
+                <h2 className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                  전체 도구 보기 (8단계)
+                </h2>
+                <p className="mt-0.5 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+                  키워드 리서치부터 이미지 편집까지 — 단계별 도구를 직접 고를 수 있어요.
+                </p>
+              </div>
+              <span className="flex-shrink-0 inline-flex items-center gap-1 text-xs font-medium text-orange-600 dark:text-orange-400 group-open:hidden">
+                펼치기
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </span>
+              <span className="flex-shrink-0 hidden group-open:inline-flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                접기
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                </svg>
+              </span>
+            </summary>
+            <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 items-stretch">
+              {steps.map((s) => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="group/step h-full flex flex-col rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
+                >
+                  <div className="text-2xl font-semibold text-zinc-300 dark:text-zinc-700 group-hover/step:text-orange-300 dark:group-hover/step:text-orange-700 transition-colors mb-2 tabular">
+                    {String(s.num).padStart(2, '0')}
+                  </div>
+                  <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 mb-0.5 group-hover/step:text-orange-600 dark:group-hover/step:text-orange-400 transition-colors">
+                    {s.title}
+                  </div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400">{s.desc}</div>
+                </Link>
+              ))}
+            </div>
+          </details>
         </div>
       </section>
 
@@ -376,6 +325,12 @@ function LoggedInHero({
           <div className="h-full">
             <LatestDiagnoseCard />
           </div>
+        </div>
+
+        {/* Phase 48 — IntentCards compact: dashboard 카드 아래 4 의도 진입.
+            기존 메뉴를 거치지 않고 자주 쓰는 행동 4개를 한 줄에. */}
+        <div className="mt-6 sm:mt-8">
+          <IntentCards variant="compact" heading="다른 작업도 시작해보세요" />
         </div>
       </div>
     </section>
