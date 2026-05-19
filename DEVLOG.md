@@ -5,6 +5,62 @@
 
 ---
 
+## 2026-05-17 — Phase 54: 진단 v2.1 — 휴리스틱 코치 (AI API 0)
+
+v2.0 (외부 비교) 와 짝이 되는 **내부 자가 진단**. 사용자 최근 글 12편의 RSS 메타 + contentSnippet 을 키워드 패턴·정규식으로 분석해 글 스타일·약점·Quick Wins 추출. AI 호출 0.
+
+### 변경
+
+**`app/lib/diagnose/heuristic-coach.ts` (신규)**
+- `analyzeCoach(items, categoryKeywords)` → `CoachReport`
+- **글 스타일 분류** (정보형/후기형/일상형/기타) — 각 스타일별 키워드 사전(13~17개 단어) 매칭. 제목+snippet 합쳐서 빈도 카운트, 최다 = dominant.
+- **약한 시그널** 6개 검사 (12편 중 N편 발견):
+  - 제목 첫 12자에 카테고리 키워드 없음
+  - 본문 도입부에 카테고리 키워드 없음
+  - 이미지 없는 글
+  - 본문 800자 미만 짧은 글
+  - 제목에 숫자 거의 안 씀 (>70%)
+  - 제목 15자 미만 짧은 글 (>50%)
+- severity (high/mid/low) + affectedCount 로 정렬
+- **Quick Wins** — 가장 임팩트 큰 약점을 즉시 실행 액션으로 4개 이내 변환
+- 가장 약점 많은 글 1편을 예시로 제공
+
+**`app/api/diagnose-coach/route.ts` (신규)**
+- `GET ?blogId&category` — 사용자 RSS 1회 fetch + analyzeCoach
+- 5min fresh + 10min SWR CDN 캐시
+- maxDuration 15s
+
+**`app/components/diagnose/HeuristicCoachCard.tsx` (신규)**
+- 진단 결과 페이지 lazy fetch
+- 3 섹션:
+  1. 스타일 분포 — 가로 막대 4분할 (info/review/daily/other)
+  2. 약한 시그널 — severity 배지 + N/12 + 처방
+  3. Quick Wins — 번호 매긴 즉시 실행 액션
+
+**`app/blog-diagnose/page.tsx`**
+- ActionPlan 다음 → **HeuristicCoachCard (내부 자가 진단)** → CompetitorPatternsCard (외부 비교) 순서
+- 사용자 mental flow: "내 글 약점 → 상위 블로거는 어떻게 하는지"
+
+### 차별화 + 완성도
+
+| | 다른 도구 | Boheme v2.1 |
+|---|---|---|
+| 글 스타일 분류 | ✗ 또는 AI | **휴리스틱 — 재현 가능** |
+| 약점 우선순위 | ✗ | severity + affectedCount 정렬 |
+| Quick Wins | 일반 조언 | **약점 기반 자동 생성** |
+| 비용 | $$ | 0 (사용자 RSS 1회만) |
+| 일관성 | AI 출력 편차 | 같은 글 = 같은 결과 |
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린, +1 신규 라우트(`/api/diagnose-coach`).
+
+### 후속 (v2.2+)
+- 커뮤니티 percentile (diagnose_results 누적 데이터 — 표본 50+ 시 자동 활성)
+- v2.0 카드의 HTML 파싱 확장 (헤딩 / 외부 링크 / alt)
+- DataLab 트렌드 통합
+
+---
+
 ## 2026-05-17 — Phase 53: 진단 v2.0 — 상위 블로거 패턴 비교 (AI API 0)
 
 블로그 진단의 근본적 차별화. SEMrush / 네이버 자체 통계가 못 하는 것 = **같은 카테고리 상위 블로거의 실제 패턴**을 자동 수집해 사용자와 직접 비교. **AI API 사용 0**, 휴리스틱·통계만.
