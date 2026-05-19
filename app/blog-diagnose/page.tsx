@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CATEGORY_SEEDS } from '@/app/lib/diagnose/category-seeds';
+import { CATEGORY_SEEDS, type DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
 import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
+import CompetitorPatternsCard from '@/app/components/diagnose/CompetitorPatternsCard';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
@@ -481,6 +482,12 @@ export default function BlogDiagnosePage() {
 
             {/* ── 30일 액션 플랜 — 가장 약한 축 기반 weekly 추천 ── */}
             <ActionPlan score={result.score} categoryLabel={result.categoryLabel} />
+
+            {/* ── 상위 블로거 vs 나 — 패턴 비교 (Phase 53 v2.0, AI 없음, 휴리스틱) ── */}
+            <CompetitorPatternsCard
+              category={result.category as DiagnoseCategory}
+              blogId={result.blogId}
+            />
 
             {/* 3축 점수 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-rule-soft border border-rule-soft mb-12">

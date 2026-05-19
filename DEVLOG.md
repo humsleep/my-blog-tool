@@ -5,6 +5,62 @@
 
 ---
 
+## 2026-05-17 — Phase 53: 진단 v2.0 — 상위 블로거 패턴 비교 (AI API 0)
+
+블로그 진단의 근본적 차별화. SEMrush / 네이버 자체 통계가 못 하는 것 = **같은 카테고리 상위 블로거의 실제 패턴**을 자동 수집해 사용자와 직접 비교. **AI API 사용 0**, 휴리스틱·통계만.
+
+### 변경
+
+**`app/lib/diagnose/competitor-patterns.ts` (신규)**
+- `fetchCompetitorPatterns(category)` — 카테고리 시드 키워드 5개 균등 샘플 → 네이버 블로그 검색 OpenAPI → bloggerlink 에서 blogId 추출 → 빈도 카운트 상위 5명 선정 → 각 RSS 최근 5편 → 휴리스틱 추출. **24h 메모리 캐시** (`competitor-patterns:<category>`).
+- `extractFeatures(item, keywords)` — 글 한 편 → `PostFeatures` (titleLength, titleHasNumber, titleStartsWithKeyword, charCount, imageCount, publishHour, publishDow KST).
+- `compareToPatterns(patterns, userFeatures)` — 사용자 글과 차이 계산. ±25% 임계로 short/long/ok, ratio 는 ±20%p 임계로 under/over/ok.
+- 통계 헬퍼: numStats (avg/median/min/max), ratio, histogram, mode.
+
+**`app/api/competitor-patterns/route.ts` (신규)**
+- `GET ?category=<cat>&blogId=<id>` — 패턴 + (blogId 있으면) 비교 결과 반환.
+- 진단 본 API 와 분리 → 진단 결과 즉시 표시 후 카드만 lazy load.
+- Cache-Control 1h fresh + 2h SWR (CDN 캐시).
+- maxDuration 30s.
+
+**`app/components/diagnose/CompetitorPatternsCard.tsx` (신규)**
+- 진단 결과 페이지 lazy fetch. 분석 중 skeleton.
+- 비교 표 6행: 본문 글자수 / 이미지/글 / 제목 글자수 / 제목 숫자 비율 / 제목 첫 12자 키워드 / 발행 시간대.
+- 각 행에 진단 라벨: `부족 ⚠` / `많음` / `적정 ✓` / `낮음 ⚠` / `높음` / 정보.
+- **개선 우선순위 인사이트** — 휴리스틱 기반 자연어 조언 (AI 없음).
+- 분석 대상 5명 블로거 ID 투명하게 노출 (사용자 검증 가능).
+
+**`app/blog-diagnose/page.tsx`**
+- 30일 액션 플랜 다음에 `<CompetitorPatternsCard category={...} blogId={...} />` 삽입.
+- import 추가.
+
+### 차별화 포인트
+
+| 항목 | 다른 SEO 도구 | Boheme v2.0 |
+|---|---|---|
+| 비교 대상 | "이상적 점수" 추상 | **실제 상위 블로거 5명의 글 25편** |
+| 분석 방식 | 점수 / 등급 | 글자수·이미지·제목 패턴 직접 비교 |
+| 한국 블로그 특화 | ✗ | ✓ |
+| 비용 | 유료 | 무료 (네이버 OpenAPI + RSS 만) |
+| AI 의존 | 일부 ✓ | **0** (재현 가능, 일관성 ↑) |
+
+### 운영 비용 / 한계
+
+- 네이버 OpenAPI 호출: 카테고리 1개당 검색 5 + RSS 5 = 10회. 24h 캐시로 같은 카테고리 사용자 100명 = 1번 측정.
+- RSS contentLength 는 추정치 (RSS 가 본문을 잘라줄 수 있음). PostView.naver 본문 측정은 후속 PR.
+- 카테고리당 sampleSize 5명 × 5편 = 25편 — 표본 작음. 분기별로 늘리거나 사용자 피드백 받으며 조정.
+
+### 검증
+- `npm run build` (IP_HASH_SALT) — 46 routes 클린, +1 신규 라우트(`/api/competitor-patterns`).
+
+### 후속 (v2.1+)
+- 본문 HTML 직접 파싱으로 헤딩 / 외부 링크 / alt 비율 추가 (PostView.naver)
+- 휴리스틱 코치 리포트 (글 스타일 분류, 가독성)
+- 커뮤니티 percentile (`diagnose_results` 누적 데이터)
+- Naver DataLab 검색어 추이 통합
+
+---
+
 ## 2026-05-17 — Phase 51: UX 일괄 보정 (이미지·위키·뉴스 진입·바로 글쓰기)
 
 사용자 리포트 5건 일괄 처리.
