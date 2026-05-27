@@ -375,6 +375,16 @@ p, li {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-ring);
 }
+/* 에러 상태 — aria-invalid 또는 .input-error 클래스로 활성화. 색+링 이중 신호. */
+.input-base.input-error,
+.input-base[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+.input-base.input-error:focus,
+.input-base[aria-invalid='true']:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
 
 /* ── Buttons ── */
 .btn-base {
@@ -406,6 +416,18 @@ p, li {
 .btn-base:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--accent-ring);
+}
+.btn-base[aria-busy='true'] {
+  cursor: progress;
+}
+
+/* 버튼 로딩 스피너 — Button.tsx <Spinner/> 와 짝. */
+.btn-spinner {
+  animation: btn-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
 }
 
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }

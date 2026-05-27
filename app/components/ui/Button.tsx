@@ -16,7 +16,26 @@ interface CommonProps {
   className?: string;
 }
 
-type ButtonProps = CommonProps & ButtonHTMLAttributes<HTMLButtonElement>;
+type ButtonProps = CommonProps & {
+  /** 작업 진행 중: 스피너 표시 + 클릭 비활성화 + aria-busy. */
+  loading?: boolean;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
+function Spinner() {
+  return (
+    <svg
+      className="btn-spinner"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" strokeOpacity="0.25" />
+      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 interface LinkButtonProps extends CommonProps {
   href: string;
@@ -37,14 +56,20 @@ function getClasses(variant: Variant = 'primary', size: Size = 'md', fullWidth?:
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', fullWidth, leftIcon, rightIcon, className, children, ...rest },
+  { variant = 'primary', size = 'md', fullWidth, leftIcon, rightIcon, className, children, loading, disabled, ...rest },
   ref
 ) {
   return (
-    <button ref={ref} className={getClasses(variant, size, fullWidth, className)} {...rest}>
-      {leftIcon}
+    <button
+      ref={ref}
+      className={getClasses(variant, size, fullWidth, className)}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...rest}
+    >
+      {loading ? <Spinner /> : leftIcon}
       <span>{children}</span>
-      {rightIcon}
+      {!loading && rightIcon}
     </button>
   );
 });

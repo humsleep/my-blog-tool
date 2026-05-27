@@ -433,16 +433,17 @@ export default function BlogDiagnosePage() {
             </div>
 
             {/* Total — gauge + radar 시각화 */}
-            <section className="border-y border-rule py-10 mb-12">
+            <section className="relative overflow-hidden rounded-2xl border border-orange-200/70 dark:border-orange-900/40 bg-gradient-to-br from-orange-50/70 via-amber-50/30 to-white dark:from-orange-950/25 dark:via-amber-950/10 dark:to-zinc-900 p-6 sm:p-8 md:p-10 mb-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
                 {/* 게이지 + 밴드 + 미니바 */}
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                   <span className="ed-byline mb-3">총점</span>
                   <ScoreGauge value={result.score.total} size={200} caption="/ 100" />
-                  <div className={`mt-2 text-lg sm:text-xl font-semibold ${BAND_LABELS[result.score.band].tone}`}>
+                  <div className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/50 text-sm sm:text-base font-semibold ${BAND_LABELS[result.score.band].tone}`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 dark:bg-orange-400" />
                     {BAND_LABELS[result.score.band].label}
                   </div>
-                  <p className="mt-1 text-sm text-ink-muted max-w-xs">{BAND_LABELS[result.score.band].desc}</p>
+                  <p className="mt-2 text-sm text-ink-muted max-w-xs">{BAND_LABELS[result.score.band].desc}</p>
                   <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                     {result.categoryLabel} · {result.keywordCount}개 키워드 분석
                   </p>
