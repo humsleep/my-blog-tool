@@ -5,6 +5,27 @@
 
 ---
 
+## 2026-06-04 — Lab 콘텐츠 추가: 네이버 메이트 3편 + GEO 가이드 1편
+
+### 변경
+
+**새 글 4편 (`public/posts/`)**
+- `post_17` — 네이버 메이트란? 블로거가 반드시 알아야 할 핵심 변화 5가지
+- `post_18` — 네이버 메이트 시대, 블로그 검색 노출 전략이 달라진다
+- `post_19` — 네이버 메이트에 내 블로그가 인용되려면? 콘텐츠 구조 설계법
+- `post_20` — GEO(생성형 엔진 최적화) 완벽 가이드 — AI가 내 글을 추천하게 만드는 법
+
+**썸네일 (`public/posts/images/`)**
+- post_17~20.webp — sharp로 SVG→WebP 변환 생성 (각각 고유 컬러 테마)
+- `scripts/generate-thumbnails.mjs` 스크립트 추가
+
+**`public/posts/posts.json`** — 4편 메타데이터 추가 (날짜·설명 포함)
+
+### 배포
+- PR #53 → main squash merge → Vercel 자동 배포
+
+---
+
 ## 2026-05-17 — Phase 54: 진단 v2.1 — 휴리스틱 코치 (AI API 0)
 
 v2.0 (외부 비교) 와 짝이 되는 **내부 자가 진단**. 사용자 최근 글 12편의 RSS 메타 + contentSnippet 을 키워드 패턴·정규식으로 분석해 글 스타일·약점·Quick Wins 추출. AI 호출 0.
