@@ -5,6 +5,36 @@
 
 ---
 
+## 2026-06-04 — 블로그 진단: 네이버 메이트 인용 준비도 추가
+
+### 변경
+
+**`app/lib/diagnose/mate-readiness.ts` (신규)**
+- `analyzeMateReadiness(items, categoryKeywords)` → `MateReadinessReport`
+- 5개 체크 항목 (AI API 0, 휴리스틱만):
+  1. 구조화된 소제목 (번호·기호·볼드 마커 감지)
+  2. 도입부 팩트 배치 (첫 200자에 키워드+숫자 동시 존재)
+  3. 숫자·데이터 포함 (단위 포함 수치, 비교 패턴 등)
+  4. 질문형 제목 ("어떻게", "차이", "추천", "?" 등)
+  5. 충분한 글 길이 (1,200자 이상)
+- 가중 합산 → 0~100 점수 + 4단계 등급 (excellent/good/needs-work/low)
+
+**`app/api/diagnose-mate/route.ts` (신규)**
+- `GET ?blogId&category` — RSS 12편 fetch + analyzeMateReadiness
+- 5min fresh + 10min SWR CDN 캐시
+
+**`app/components/diagnose/MateReadinessCard.tsx` (신규)**
+- 원형 점수 링 + 등급 라벨 + 항목별 프로그레스 바 + 개선 팁
+- good/warn/bad 상태 아이콘 + 색상 분류
+
+**`app/blog-diagnose/page.tsx`**
+- 액션 플랜 아래, 코치 리포트 위에 MateReadinessCard 삽입
+
+### 배포
+- PR #55 → main squash merge → Vercel 자동 배포
+
+---
+
 ## 2026-06-04 — Lab 누락 썸네일 보완: post_11~16
 
 ### 변경
