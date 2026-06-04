@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-06-04 — Lab 누락 썸네일 보완: post_11~16
+
+### 변경
+- `post_11~16.webp` 6개 생성 — 각 글 주제에 맞는 고유 그래픽 (계단 차트, 벤 다이어그램, 폰, 방패, 뉴럴넷, 채팅 버블)
+- `scripts/generate-missing-thumbnails.mjs` 추가
+
+### 배포
+- PR #54 → main squash merge → Vercel 자동 배포
+
+---
+
 ## 2026-06-04 — Lab 콘텐츠 추가: 네이버 메이트 3편 + GEO 가이드 1편
 
 ### 변경
