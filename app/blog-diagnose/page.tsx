@@ -8,6 +8,7 @@ import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import CompetitorPatternsCard from '@/app/components/diagnose/CompetitorPatternsCard';
 import HeuristicCoachCard from '@/app/components/diagnose/HeuristicCoachCard';
+import MateReadinessCard from '@/app/components/diagnose/MateReadinessCard';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
@@ -483,6 +484,12 @@ export default function BlogDiagnosePage() {
 
             {/* ── 30일 액션 플랜 — 가장 약한 축 기반 weekly 추천 ── */}
             <ActionPlan score={result.score} categoryLabel={result.categoryLabel} />
+
+            {/* ── 메이트 인용 준비도 — AI 검색 최적화 체크 ── */}
+            <MateReadinessCard
+              blogId={result.blogId}
+              category={result.category as DiagnoseCategory}
+            />
 
             {/* ── 코치 리포트 — 내 글의 자가 진단 (Phase 54 v2.1, 휴리스틱) ── */}
             <HeuristicCoachCard
