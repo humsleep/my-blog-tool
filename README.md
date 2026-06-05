@@ -1,66 +1,105 @@
-# Boheme BlogLab
+<div align="center">
 
-**네이버·티스토리 블로거를 위한 올인원 포스팅 도구 + 블로거 커뮤니티**
+# 🍊 Boheme BlogLab
 
-[bohemebloglab.com](https://bohemebloglab.com)
+**한국 블로거를 위한 데이터 기반 글쓰기 워크플로우**
+
+키워드 분석 · 블로그 진단 · AI 글쓰기 · 커뮤니티를 한 곳에서.<br/>
+"감"이 아니라 **점수**로 블로그를 운영하세요.
+
+[![Next.js](https://img.shields.io/badge/Next.js-16.1-000?logo=next.js&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind](https://img.shields.io/badge/Tailwind-v4-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20RLS-3ecf8e?logo=supabase&logoColor=white)](https://supabase.com)
+[![Claude](https://img.shields.io/badge/Claude-Sonnet%204.6-d97757?logo=anthropic&logoColor=white)](https://www.anthropic.com)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-000?logo=vercel&logoColor=white)](https://bohemebloglab.com)
+[![PWA](https://img.shields.io/badge/PWA-ready-5a0fc8)](https://web.dev/progressive-web-apps/)
+
+### **[🌐 bohemebloglab.com](https://bohemebloglab.com)**
+
+<br/>
+
+<sub><i>※ 스크린샷 자리 — `docs/screenshots/` 추가 예정 (홈 대시보드 · 진단 결과 · AI 글쓰기 SSE)</i></sub>
+
+</div>
 
 ---
 
-## ✨ 주요 기능
+## 📑 목차
 
-### 🏠 데일리 대시보드 홈
+- [이게 뭔가요](#-이게-뭔가요)
+- [핵심 기능](#-핵심-기능)
+- [시작하기](#-시작하기)
+- [기술 스택](#️-기술-스택)
+- [아키텍처](#-아키텍처)
+- [보안](#-보안)
+- [상태](#-상태)
 
-들어오자마자 **오늘의 작업이 보이는 화면**.
+---
 
-- **로그인 사용자**: "{닉네임}님, 오늘도 데이터로 시작해볼까요?" 인사 + 마지막 진단 점수 카드(직전 진단 대비 ±delta + sparkline) + 즐겨찾기 키워드 칩 + 내 분야 인기 키워드 TOP 10
-- **비로그인 사용자**: 검색창 + 진단 CTA + 전체 인기 검색어 **TOP 10 포디움**(1·2·3위 메달 카드 + 4~10위 리스트)
-- 진단 점수는 누적 저장(`diagnose_results` 테이블)되어 다시 진단할 때마다 변동을 보여줍니다.
+## 🎯 이게 뭔가요
+
+운영 중인 네이버·티스토리 블로그를 "막연한 느낌"이 아니라 **측정 가능한 숫자**로 봅니다. 카테고리 키워드 30개로 1페이지 진입율을 재고, 최근 12편 본문을 직접 호출해 글자수·이미지 수까지 계산합니다.
+
+| 블로거의 흔한 고민 | 이 도구의 답 |
+|---|---|
+| "내 블로그 점수가 막연해요" | 카테고리 키워드 30개 1페이지 진입율 → **0~100점 + 5단계 밴드** |
+| "AI 글쓰기 도구는 비싸요" | 무료 프롬프트 생성 + 로그인 시 **Claude Sonnet 4.6 하루 5회 무료** |
+| "키워드 도구는 표만 보여줘요" | 네이버 검색광고 API 직접 호출, **CSV 다운로드**, 황금 키워드 자동 추출 |
+| "혼자 운영하면 막혀요" | 같은 분야 블로거 매칭 · 정보 공유 · 체험단 동행 **3개 게시판** |
+
+---
+
+## ✨ 핵심 기능
 
 ### 🩺 블로그 진단
 
-네이버 블로그 RSS + 카테고리 핵심 키워드 30개로 1페이지 진입율을 측정하고, **최근 12편 본문은 PostView.naver를 직접 호출해 글자수·이미지 수를 정확 측정**합니다. **활동성 25% / 노출 50% / 품질 25%** 가중평균으로 0~100점 산출. band: top5 / top15 / top35 / mid / growing.
+> 카테고리 키워드 30개 + 최근 본문 12편을 측정해 **0~100점**으로 평가합니다.
 
-결과 페이지 구성:
-1. **총점 게이지 + 3축 레이더** — 한눈에 보는 강약점
-2. **노출 분포 스택바** — 30개 키워드를 1~10 / 11~20 / 21~30 / 미진입 4구간으로
-3. **블로그 건강 체크 (8개 항목)** — 주 2회 발행, 7일 이내 최신 글, 1페이지 진입 30%+, 글당 800자+, 이미지 2장+ 등 통과/미통과
-4. **30일 액션 플랜** — 가장 약한 축에 맞춘 4주 weekly 추천 (미진입 키워드 자동 인용)
-5. **MethodologyPanel** — 3축 가중치 · 8개 통과 기준 · 데이터 소스 · 측정 한계 투명 공개
+- **3축 가중평균**: 활동성 25% · 노출 50% · 품질 25%
+- **5단계 밴드**: top5 / top15 / top35 / mid / growing
+- **결과 5섹션**: 총점 게이지 + 3축 레이더 · 노출 분포 스택바 · 건강 체크 8항목 · 30일 액션 플랜 · MethodologyPanel(투명 공개)
+- **이력 추적**: 로그인 시 자동 저장, 직전 진단 대비 ±delta + sparkline
+- **남용 방지**: 12시간 1회 (RLS + API 사전 체크 이중 방어)
 
-로그인 시 진단 이력 자동 저장 + 점수 변동 sparkline. **12시간에 1회 rate limit** (외부 API 호출 비용 보호).
+### 🛠️ 8단계 글쓰기 워크플로우
 
-### 🛠️ 도구 (8단계 워크플로우)
+```
+1.인기검색어 → 2.키워드분석 → 3.상위노출 분석
+→ 4.프롬프트 생성(무료) → 5.AI 글쓰기(Claude Sonnet 4.6, SSE 스트리밍)
+→ 6.금칙어·맞춤법 → 7.이미지 검색 → 8.이미지 편집
+```
 
-| 단계 | 메뉴 | 설명 |
-|---|---|---|
-| 1 | 인기검색어 | 네이버 검색광고 API 기반 카테고리별 인기 키워드 |
-| 2 | 키워드분석 | 월간 검색량·경쟁률 분석 + CSV 다운로드 |
-| 3 | 상위노출 분석 | 네이버 블로그 상위 게시글 패턴 분석 |
-| 4 | 프롬프트 생성 | AI 글쓰기용 프롬프트 (무료 무제한, AI 호출 없음) |
-| 5 | AI 글쓰기 | Claude Sonnet 4.6 + **SSE 스트리밍**(글이 실시간으로 흘러나옴) |
-| 6 | 금칙어·맞춤법 | Quill 에디터 + 31개 금칙어 + LanguageTool |
-| 7 | 이미지 검색 | Pexels + Unsplash 무료 저작권 이미지 |
-| 8 | 이미지 편집 | 자르기·모자이크·필터 (Canvas) |
+| # | 도구 | 특이점 |
+|:-:|---|---|
+| 1 | 인기검색어 | 네이버 검색광고 API 카테고리별 키워드 |
+| 2 | 키워드분석 | 월간 검색량·경쟁률 + CSV 다운로드 |
+| 3 | 상위노출 분석 | 네이버 1페이지 게시글 패턴 |
+| 4 | 프롬프트 생성 | **무료 무제한** (AI API 미사용) |
+| 5 | AI 글쓰기 | **SSE 스트리밍** + 로그인 5회/일 |
+| 6 | 금칙어·맞춤법 | Quill 2.x + 31개 금칙어 + LanguageTool |
+| 7 | 이미지 검색 | Pexels + Unsplash 통합 |
+| 8 | 이미지 편집 | Canvas 기반 자르기·모자이크·필터 |
 
-**AI 한도**: 비로그인 1회/일 (IP 해시 기반), 로그인 5회/일.
-**기본 옵션** (비용·timeout 안전): 본문 1,300~1,700자 / 제목 1개 / 이미지 프롬프트 OFF / 자체 검토 ON. 사용자가 옵션 패널에서 토글로 더 풍부한 설정으로 변경 가능.
-**1회 평균 비용**: ~$0.05~0.07 (Sonnet 4.6, compact + single).
+**AI 한도**: 비로그인 1회/일 (IP 해시) · 로그인 5회/일<br/>
+**1회 호출 비용**: ~$0.05~0.07 (Sonnet 4.6, compact + single)
 
 ### 👥 커뮤니티
 
-| 메뉴 | 설명 |
+| 메뉴 | 정책 |
 |---|---|
-| 🤝 서이추 해요 | 같은 분야 블로거 매칭 — 분야 필터 + 닉네임 검색 (1일 1글) |
-| 💡 정보 공유 | 운영 노하우 게시판 — 6개 카테고리, 댓글, 좋아요, 조회수 |
-| 🚶‍♂️ 체험단 동행해요 | 동행자 모집 — 시·도 + 시·군·구 2단계 지역 + 방문일 + 상태 관리 |
+| 🤝 **서이추 해요** | 같은 분야 블로거 매칭 · 1일 1글 (RLS 강제) |
+| 💡 **정보 공유** | 6개 카테고리 · 댓글 · 좋아요 · 조회수 |
+| 🚶 **체험단 동행해요** | 시·도 + 시·군·구 2단계 지역 · 방문일 · 상태 관리 |
 
-**정책**: 읽기는 누구나, 쓰기·댓글·좋아요는 로그인 + 닉네임 등록 필요. 닉네임 24시간 1회 변경.
+**공통 정책**: 읽기는 누구나 · 쓰기/댓글/좋아요는 로그인 + 닉네임 등록 · 닉네임 24h 1회 변경.
 
-### 📱 모바일
+### 📱 모바일·PWA
 
-- PWA 지원 (홈 화면 추가 → standalone)
-- 하단 탭 바 (홈 / 도구 / 커뮤니티 / 연구실)
-- safe-area-inset 대응 (노치·홈바)
+- 홈 화면 추가 시 standalone 앱처럼 동작
+- 하단 탭바 (홈 / 도구 / 커뮤니티 / 연구실)
+- safe-area-inset 대응 (노치 · 홈바)
 - 다크모드 자동/수동 전환
 
 ---
@@ -69,13 +108,12 @@
 
 ### 요구사항
 
-- Node.js 20+
-- npm
-- Supabase 프로젝트 (인증·DB)
-- Anthropic API 키 (AI 글쓰기)
-- 네이버 검색광고/오픈 API 키 (키워드·블로그·뉴스)
+- **Node.js 20+** / npm
+- **Supabase** 프로젝트 (인증 · DB)
+- **Anthropic API 키** (AI 글쓰기)
+- **네이버 검색광고 / 오픈 API 키** (키워드 · 블로그 · 뉴스)
 
-### 1. 클론 + 설치
+### 1️⃣ 클론 · 설치
 
 ```bash
 git clone https://github.com/humsleep/my-blog-tool.git
@@ -83,85 +121,47 @@ cd my-blog-tool
 npm install
 ```
 
-### 2. 환경변수 설정
-
-`.env.example`을 `.env.local`로 복사한 뒤 키를 입력합니다.
+### 2️⃣ 환경변수
 
 ```bash
 cp .env.example .env.local
 ```
 
-필수 키:
-- `NAVER_SEARCH_AD_API_KEY` / `NAVER_SEARCH_AD_SECRET_KEY` / `NAVER_SEARCH_AD_CUSTOMER_ID`
-- `NAVER_CLIENT_ID` / `NAVER_CLIENT_SECRET` (네이버 OpenAPI)
-- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `ANTHROPIC_API_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY` (비로그인 AI 한도 추적용)
-- `IP_HASH_SALT` (32자 이상 랜덤, `openssl rand -hex 16`로 생성 권장)
+| 변수 | 용도 |
+|---|---|
+| `NAVER_SEARCH_AD_API_KEY` / `SECRET_KEY` / `CUSTOMER_ID` | 검색량·경쟁률 |
+| `NAVER_CLIENT_ID` / `CLIENT_SECRET` | 블로그·뉴스 검색 |
+| `NEXT_PUBLIC_SUPABASE_URL` / `ANON_KEY` | 클라이언트용 |
+| `SUPABASE_SERVICE_ROLE_KEY` | 비로그인 한도 추적 (서버 전용) |
+| `ANTHROPIC_API_KEY` | Claude Sonnet 4.6 |
+| `IP_HASH_SALT` | 32자 이상 — `openssl rand -hex 16` |
+| `PEXELS_API_KEY` / `UNSPLASH_ACCESS_KEY` | (선택) 이미지 검색 |
 
-선택 키 (이미지 검색):
-- `PEXELS_API_KEY`
-- `UNSPLASH_ACCESS_KEY`
+자세한 가이드는 [`SETUP.md`](./SETUP.md) 참조.
 
-자세한 설정 가이드는 [`SETUP.md`](./SETUP.md) 참조.
+### 3️⃣ Supabase 마이그레이션
 
-### 3. Supabase 마이그레이션
+대시보드 → SQL Editor 에서 `supabase/migrations/0001 → 0012` 순서대로 실행.<br/>
+12개 마이그레이션 = 사용량 2 · 커뮤니티 6 · 신고 1 · 사용자 프리셋 1 · 진단 2 테이블.
 
-Supabase 대시보드 → SQL Editor 에서 순서대로 실행:
+문제 발생 시: `supabase/diagnose_community.sql` 헬퍼로 정책·테이블 점검.
 
-```
-supabase/migrations/
-├── 0001_ai_draft_usage.sql              # 로그인 AI 한도
-├── 0002_anon_draft_usage.sql            # 비로그인 AI 한도 (IP 해시)
-├── 0003_profiles.sql                    # 닉네임/블로그URL/분야 + 24h cooldown
-├── 0004_swap_posts.sql                  # 서이추 + 1일 1글 RLS
-├── 0005_tips.sql                        # 정보 공유 + 댓글 + 좋아요
-├── 0006_companions.sql                  # 체험단 동행
-├── 0007_companion_region_city.sql       # 시·군·구 컬럼
-├── 0008_rate_limits.sql                 # 커뮤니티 작성 rate-limit 강화
-├── 0009_reports_and_moderation.sql      # 신고·자동 숨김
-├── 0010_user_presets.sql                # prompt_preset + saved_keywords
-├── 0011_diagnose_results.sql            # 블로그 진단 결과 누적 저장
-└── 0012_diagnose_rate_limit_12h.sql     # 진단 12시간 1회 RLS 강화
-```
-
-문제 발생 시 `supabase/diagnose_community.sql`로 정책·테이블 점검.
-
-### 4. 개발 서버
+### 4️⃣ 개발 / 빌드
 
 ```bash
-npm run dev
+npm run dev                                              # http://localhost:3000
+IP_HASH_SALT=test-salt-1234567890ab npm run build        # 프로덕션 빌드 검증
+npx tsc --noEmit                                          # 타입체크
 ```
 
-[http://localhost:3000](http://localhost:3000) 접속.
-
-### 5. 빌드 검증
+### 5️⃣ QA (선택)
 
 ```bash
-IP_HASH_SALT=test-salt-1234567890ab npm run build
-npx tsc --noEmit
-```
-
-### 6. QA 테스트 (선택)
-
-오픈 전 정밀 점검용 4종 스크립트가 `scripts/` 에 있습니다.
-
-```bash
-# 단위 테스트 (pure function, 79건)
-npx tsx scripts/qa-unit-tests.ts
-
-# SSRF 방어 테스트 (fetchPostBody, 14건)
-npx tsx scripts/qa-ssrf-tests.ts
-
-# 통합 스모크 테스트 (production server, 47건)
-npm run start &  # 별도 터미널에서
-bash scripts/qa-smoke.sh
-
-# 회귀 테스트 (최근 변경사항, 41건)
-bash scripts/qa-regression.sh
-
-# Claude API 1회 호출 비용 추정
-npx tsx scripts/qa-claude-cost-estimate.ts
+npx tsx scripts/qa-unit-tests.ts          # 단위 79건
+npx tsx scripts/qa-ssrf-tests.ts          # SSRF 방어 14건
+bash scripts/qa-smoke.sh                   # 통합 47건 (production server 필요)
+bash scripts/qa-regression.sh              # 회귀 41건
+npx tsx scripts/qa-claude-cost-estimate.ts # 1회 호출 비용 추정
 ```
 
 ---
@@ -170,98 +170,104 @@ npx tsx scripts/qa-claude-cost-estimate.ts
 
 | 영역 | 도구 |
 |---|---|
-| 프레임워크 | Next.js 16.1.6 (App Router, React 19, Turbopack) |
-| 스타일 | Tailwind CSS v4 (CSS 토큰 기반) |
-| 에디터 | Quill 2.x |
-| 인증 | Supabase Auth (Google OAuth) |
-| DB | Supabase Postgres + RLS (사용량 2 + 커뮤니티 6 + 리포트 1 + 진단 1 = 10개 테이블) |
-| AI | Anthropic Claude Sonnet 4.6 + **SSE 스트리밍** (`messages.stream()`, `Anthropic({ maxRetries: 0 })`, per-request timeout) |
-| 호스팅 | Vercel + Vercel Analytics, `maxDuration: 300s` (`/api/ai-draft`), 보안 헤더 5종(HSTS/X-Frame/CT-Options/Referrer/Permissions) |
-| PWA | manifest.ts + 하단 탭바 + safe-area + favicon "B" 통일 (svg/png 192·512, apple-touch-icon 180) |
+| **프레임워크** | Next.js 16.1.6 (App Router · React 19 · Turbopack) |
+| **스타일** | Tailwind CSS v4 (CSS 토큰 기반 디자인 시스템) |
+| **에디터** | Quill 2.x (dynamic import, SSR 비활성) |
+| **인증** | Supabase Auth (Google OAuth) |
+| **DB** | Supabase Postgres + RLS (10개 테이블) |
+| **AI** | Anthropic Claude Sonnet 4.6 · **SSE 스트리밍** · prompt caching · per-request timeout |
+| **호스팅** | Vercel + Analytics · `maxDuration: 300s` · 보안 헤더 5종 |
+| **PWA** | manifest.ts + 하단 탭바 + safe-area + "B" 브랜드 아이콘 |
 
 ### 외부 API
 
-- 네이버 검색광고 API (HMAC-SHA256 서명)
-- 네이버 OpenAPI (블로그·뉴스 검색)
-- LanguageTool.org (한국어 맞춤법)
-- Wikipedia Pageviews (키워드 인기도)
-- Pexels / Unsplash (이미지)
+`네이버 검색광고 (HMAC-SHA256)` · `네이버 OpenAPI` · `Wikipedia Pageviews` · `LanguageTool.org` · `Pexels` · `Unsplash`
 
 ### 디자인 시스템
 
-- **컨셉컬러**: 주황 `#f97316` (light) / `#fdba74` (dark)
-- **공통 컴포넌트**: `Button`, `Card`, `PageHeader`, `Toast`, `Pagination`, `BoardSkeleton`, `EmptyState`, `CategoryChips`, `ConfirmModal`, `MobileBottomNav`
-- **대시보드 위젯**: `TrendingTicker` (TOP 10 포디움), `LatestDiagnoseCard` (sparkline), `SavedKeywordsCard` (`app/components/dashboard/`)
-- **차트 컴포넌트**: `ScoreGauge` (반원 게이지), `DiagnoseRadar` (Recharts 3축 레이더), `ScoreSparkline`, `MonthlyDistribution`, `HorizontalBarList` (`app/components/charts/`)
-- **공통 유틸**: `formatRelativeKr`, `markdownToHtml`, `fetchMyProfile`, `safeJson` (`app/lib/clientFetch.ts` — 비-JSON 응답 안전 파싱)
+- **컨셉컬러**: 주황 `#ea580c` (Hermès orange) / 다크 `#fb923c` (orange-400)
+- **공통 UI**: `Button(loading)` · `Toast` · `Card` · `Pagination` · `BoardSkeleton` · `EmptyState` · `MobileBottomNav`
+- **대시보드 위젯**: `TrendingTicker` · `LatestDiagnoseCard` · `SavedKeywordsCard`
+- **차트**: `ScoreGauge` · `DiagnoseRadar` · `ScoreSparkline` · `MonthlyDistribution`
+- **유틸**: `formatRelativeKr` · `markdownToHtml` · `safeJson` (비-JSON 응답 안전 파싱)
 
 ---
 
-## 📁 디렉토리 구조
+## 🗂️ 아키텍처
 
 ```
 app/
-├── api/                       # API 라우트 (Next.js App Router)
-│   ├── ai-draft/              # POST(SSE 스트리밍 지원) + GET(사용량)
-│   ├── blog-diagnose/         # POST(진단 + 12h rate limit) + GET(이력 + sparkline)
-│   └── (나머지 9개 라우트)
+├── api/                     # Next.js Route Handlers
+│   ├── ai-draft/            # POST(SSE 스트리밍) + GET(사용량)
+│   ├── blog-diagnose/       # POST(진단 + 12h rate limit) + GET(이력 + sparkline)
+│   └── …
 ├── components/
-│   ├── ui/                    # 디자인 시스템 (Button, Toast, Card, ...)
-│   ├── community/             # 커뮤니티 전용 (Pagination, EmptyState, ...)
-│   ├── dashboard/             # 홈 대시보드 위젯 (TrendingTicker, LatestDiagnoseCard, ...)
-│   └── charts/                # 시각화 (ScoreGauge, DiagnoseRadar, ScoreSparkline, ...)
+│   ├── ui/                  # 디자인 시스템 (Button, Toast, …)
+│   ├── community/           # Pagination, EmptyState, …
+│   ├── dashboard/           # TrendingTicker, LatestDiagnoseCard, …
+│   └── charts/              # ScoreGauge, DiagnoseRadar, …
 ├── lib/
-│   ├── supabase/              # 클라이언트·서버·admin·useUser
-│   ├── community/             # categories, regions, profile, tips
-│   ├── diagnose/              # category-seeds, naver-blog(SSRF 방어), scoring
-│   ├── dashboard/             # 대시보드 타입·매핑
-│   ├── format/                # 마크다운, 시간 포맷
-│   ├── security/              # IP 해시, safe-redirect
-│   └── clientFetch.ts         # safeJson() — 비-JSON 응답 안전 파싱
-├── community/                 # 커뮤니티 3개 메뉴
-├── profile/setup/             # 닉네임 등록·수정
-├── blog-diagnose/             # 진단 페이지 (입력 → running → 결과 5개 섹션)
-├── about / contact / privacy / terms   # 법무
+│   ├── supabase/            # client · server · admin · useUser
+│   ├── diagnose/            # category-seeds · naver-blog(SSRF guard) · scoring
+│   ├── security/            # IP 해시 · safe-redirect
+│   └── clientFetch.ts       # safeJson()
+├── blog-diagnose/           # 진단 (입력 → running → 5섹션 결과)
+├── community/               # 서이추 · 정보공유 · 체험단
 └── (도구 8개 페이지)
 
-supabase/migrations/           # SQL 마이그레이션 (0001~0012)
-scripts/                       # QA 테스트 + 비용 추정
-public/                        # 정적 자산 (icon.svg + 192/512 png, favicon.ico, og-image.png)
-next.config.ts                 # 보안 헤더 + 이미지 remotePatterns
+supabase/migrations/         # 0001 ~ 0012 (12개 마이그레이션)
+scripts/                     # QA 테스트 4종 + 비용 추정
 ```
+
+전체 디렉토리·파일 단위 매핑은 [`CLAUDE.md`](./CLAUDE.md) 참조.
 
 ---
 
 ## 🔐 보안
 
-- **IP 평문 저장 금지** — `IP_HASH_SALT`로 SHA-256 해시
-- **Service role 키** — 서버 라우트에서만 사용 (`app/lib/supabase/admin.ts`)
-- **RLS 활성화** — 모든 사용자 테이블에 row-level-security
-- **이미지 프록시 화이트리스트** — Pexels·Unsplash·Google 도메인만 허용 (SSRF 방지)
-- **fetchPostBody SSRF 방어** — 입력 URL에서 blogId/logNo만 추출 후 항상 `blog.naver.com` 호스트로 재조립 (`app/lib/diagnose/naver-blog.ts`)
-- **safeNextPath** — `?next=` 파라미터 디코딩 + protocol-relative / javascript: / data: 차단
-- **닉네임 24h cooldown** — DB 트리거로 강제
-- **진단 12h rate limit** — RLS INSERT 정책 + API 사전 체크 이중 방어
-- **보안 헤더** (`next.config.ts`) — HSTS / X-Frame-Options=SAMEORIGIN / X-Content-Type-Options=nosniff / Referrer-Policy=strict-origin-when-cross-origin / Permissions-Policy
+| 영역 | 정책 |
+|---|---|
+| **IP 보호** | 평문 저장 금지 · `SHA-256(IP_HASH_SALT + IP)` · salt 미설정 시 503 |
+| **Service role 키** | 서버 라우트 전용 (`app/lib/supabase/admin.ts`) · 클라이언트 import 차단 |
+| **RLS** | 모든 사용자 테이블 row-level-security 활성 |
+| **SSRF 방어** | `fetchPostBody` — 입력 URL에서 blogId/logNo만 추출, 호스트는 항상 `blog.naver.com` |
+| **이미지 프록시** | Pexels · Unsplash · Google 도메인만 화이트리스트 |
+| **redirect 검증** | `safeNextPath` — protocol-relative · `javascript:` · `data:` 차단 |
+| **닉네임 변경** | DB 트리거로 24시간 1회 강제 |
+| **진단 rate limit** | RLS INSERT 정책 + API 사전 체크 (12h 1회) |
+| **HTTP 헤더** | HSTS · X-Frame-Options · X-Content-Type · Referrer-Policy · Permissions-Policy |
 
 ---
 
-## 📊 운영 현황
+## 📊 상태
 
-- **개발 phase**: 36.5 (2026-05-11 기준)
-- **테스트 자동화**: 단위 79 + SSRF 14 + 통합 47 + 회귀 41 = 181 assertion (`scripts/qa-*`)
-- **AI 비용 1회**: ~$0.05~0.07 (Sonnet 4.6, 기본 옵션 compact + single)
-- **AI 비용 월간 추정** (cache miss 기준):
-  - DAU 50 · 1회/일 → ~$87 (~₩126k)
-  - DAU 200 · 1회/일 → ~$346 (~₩502k)
-  - DAU 500 · 2회/일 → ~$1,732 (~₩2.5M)
+- **현재 phase**: 36.5+
+- **테스트 자동화**: 단위 79 · SSRF 14 · 통합 47 · 회귀 41 = **181 assertion**
+- **AI 1회 호출 비용**: ~$0.05~0.07 (Sonnet 4.6, compact + single)
+- **월간 비용 모델** (cache miss 기준):
 
-상세 진행 일지는 [`DEVLOG.md`](./DEVLOG.md) 참조.
+  | 규모 | 일일 호출 | 월 추정 |
+  |---|---|---|
+  | DAU 50 | 1회/일 | ~$87 (~₩126k) |
+  | DAU 200 | 1회/일 | ~$346 (~₩502k) |
+  | DAU 500 | 2회/일 | ~$1,732 (~₩2.5M) |
+
+상세 진행 일지: [`DEVLOG.md`](./DEVLOG.md)
 
 ---
 
-## 📄 라이선스
+## 📄 라이선스 · 문의
 
-본 저장소는 운영자 개인 프로젝트입니다.
+본 저장소는 **개인 운영 프로젝트**입니다. 코드는 학습 · 참고 목적으로 열어두지만 별도 라이선스를 부여하지는 않습니다.
 
-문의: boheme88@naver.com
+- 운영자: **humsleep**
+- 문의: <boheme88@naver.com>
+- 도메인: [bohemebloglab.com](https://bohemebloglab.com)
+
+<div align="center">
+
+<br/>
+
+<sub>Made with 🍊 in Korea · Powered by Next.js · Supabase · Anthropic Claude</sub>
+
+</div>
