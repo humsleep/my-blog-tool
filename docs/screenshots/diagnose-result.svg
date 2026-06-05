@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" role="img" aria-label="블로그 진단 결과 — 총점 게이지 + 3축 레이더 + 분포 + 액션 플랜">
+  <defs>
+    <linearGradient id="dbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#fafaf9"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="totalCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#fff7ed" stop-opacity="0.7"/>
+      <stop offset="50%"  stop-color="#fffbeb" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="gauge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <filter id="cardS" x="-2%" y="-5%" width="104%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="url(#dbg)"/>
+
+  <!-- Navbar (simplified) -->
+  <rect x="0" y="0" width="1280" height="56" fill="#ffffff"/>
+  <rect x="0" y="55" width="1280" height="1" fill="#e4e4e7"/>
+  <rect x="64" y="18" width="20" height="20" rx="5" fill="#ea580c"/>
+  <text x="92" y="34" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">Boheme BlogLab</text>
+
+  <!-- Page header -->
+  <text x="64" y="108" font-family="system-ui,sans-serif" font-weight="600" font-size="11" fill="#71717a" letter-spacing="1.5">진단 결과</text>
+  <text x="64" y="140" font-family="system-ui,sans-serif" font-weight="700" font-size="28" fill="#09090b" letter-spacing="-0.5">보헴블로그랩의 데일리 노트</text>
+  <text x="1216" y="140" text-anchor="end" font-family="system-ui,sans-serif" font-size="11" fill="#71717a">blog.naver.com/boheme88 ↗</text>
+
+  <!-- TOTAL SCORE — gradient hero card (변경된 임팩트 적용) -->
+  <g filter="url(#cardS)">
+    <rect x="64" y="168" width="1152" height="380" rx="20" fill="url(#totalCard)" stroke="#fed7aa"/>
+  </g>
+
+  <!-- Left: gauge + band -->
+  <g transform="translate(140,210)">
+    <text font-family="system-ui,sans-serif" font-weight="500" font-size="11" fill="#71717a" letter-spacing="2">총점</text>
+
+    <!-- Semicircle gauge -->
+    <g transform="translate(0,30)">
+      <path d="M 20 180 A 160 160 0 0 1 340 180" fill="none" stroke="#fed7aa" stroke-width="22" stroke-linecap="round" opacity="0.5"/>
+      <path d="M 20 180 A 160 160 0 0 1 290 88"  fill="none" stroke="url(#gauge)" stroke-width="22" stroke-linecap="round"/>
+      <text x="180" y="160" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="84" fill="#09090b" letter-spacing="-3">78</text>
+      <text x="180" y="190" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#71717a">/ 100</text>
+    </g>
+
+    <!-- Band pill -->
+    <g transform="translate(60,260)">
+      <rect x="0" y="0" width="240" height="36" rx="18" fill="#ffffff" stroke="#fed7aa"/>
+      <circle cx="20" cy="18" r="3" fill="#ea580c"/>
+      <text x="34" y="23" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#c2410c">카테고리 상위 15%</text>
+    </g>
+    <text x="180" y="318" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" fill="#52525b">안정적인 운영. 한 단계 더 가는 데 약점 보완이 핵심.</text>
+    <text x="180" y="342" text-anchor="middle" font-family="system-ui,sans-serif" font-size="10" fill="#a1a1aa" letter-spacing="2">일상 · 30개 키워드 분석</text>
+  </g>
+
+  <!-- Right: radar + minibars -->
+  <g transform="translate(700,210)">
+    <!-- Radar background -->
+    <g transform="translate(220,140)">
+      <polygon points="0,-120 104,-60 104,60 0,120 -104,60 -104,-60" fill="none" stroke="#e4e4e7"/>
+      <polygon points="0,-90 78,-45 78,45 0,90 -78,45 -78,-45" fill="none" stroke="#e4e4e7"/>
+      <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none" stroke="#e4e4e7"/>
+      <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="none" stroke="#e4e4e7"/>
+      <!-- Actual values: activity 88, visibility 72, quality 82 -->
+      <polygon points="0,-105 90,52 0,99" fill="#ea580c" fill-opacity="0.18" stroke="#ea580c" stroke-width="2"/>
+      <circle cx="0"  cy="-105" r="4" fill="#ea580c"/>
+      <circle cx="90" cy="52"   r="4" fill="#ea580c"/>
+      <circle cx="0"  cy="99"   r="4" fill="#ea580c"/>
+      <!-- axis labels -->
+      <text x="0" y="-138" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#3f3f46">활동성</text>
+      <text x="130" y="76"  font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#3f3f46">노출</text>
+      <text x="-130" y="76" text-anchor="end" font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#3f3f46">품질</text>
+    </g>
+
+    <!-- Mini bars -->
+    <g transform="translate(0,310)" font-family="system-ui,sans-serif">
+      <g>
+        <text x="0" y="0" font-size="11" fill="#71717a">활동성</text>
+        <text x="120" y="0" text-anchor="end" font-weight="700" font-size="13" fill="#09090b">88</text>
+        <rect x="0" y="8" width="120" height="6" rx="3" fill="#fed7aa"/>
+        <rect x="0" y="8" width="105" height="6" rx="3" fill="#ea580c"/>
+      </g>
+      <g transform="translate(150,0)">
+        <text x="0" y="0" font-size="11" fill="#71717a">노출</text>
+        <text x="120" y="0" text-anchor="end" font-weight="700" font-size="13" fill="#09090b">72</text>
+        <rect x="0" y="8" width="120" height="6" rx="3" fill="#fed7aa"/>
+        <rect x="0" y="8" width="86"  height="6" rx="3" fill="#ea580c"/>
+      </g>
+      <g transform="translate(300,0)">
+        <text x="0" y="0" font-size="11" fill="#71717a">품질</text>
+        <text x="120" y="0" text-anchor="end" font-weight="700" font-size="13" fill="#09090b">82</text>
+        <rect x="0" y="8" width="120" height="6" rx="3" fill="#fed7aa"/>
+        <rect x="0" y="8" width="98"  height="6" rx="3" fill="#ea580c"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 노출 분포 스택바 -->
+  <text x="64" y="612" font-family="system-ui,sans-serif" font-weight="600" font-size="11" fill="#71717a" letter-spacing="1.5">노출 분포</text>
+  <text x="64" y="640" font-family="system-ui,sans-serif" font-weight="700" font-size="18" fill="#09090b">30개 키워드 중 12개가 1페이지 진입했어요</text>
+  <g transform="translate(64,664)">
+    <rect x="0"   y="0" width="160" height="36" rx="6" fill="#ea580c"/>
+    <text x="80"  y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="13" fill="#ffffff">1~10위 · 7</text>
+    <rect x="164" y="0" width="120" height="36" rx="6" fill="#fb923c"/>
+    <text x="224" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="13" fill="#ffffff">11~20위 · 5</text>
+    <rect x="288" y="0" width="240" height="36" rx="6" fill="#fed7aa"/>
+    <text x="408" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="13" fill="#9a3412">21~30위 · 8</text>
+    <rect x="532" y="0" width="380" height="36" rx="6" fill="#f4f4f5"/>
+    <text x="722" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="13" fill="#71717a">미진입 · 10</text>
+  </g>
+
+  <!-- 건강 체크 hint chips -->
+  <g transform="translate(64,728)" font-family="system-ui,sans-serif" font-size="12">
+    <g>
+      <rect x="0" y="0" width="140" height="30" rx="15" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="14" y="20" fill="#15803d">✓ 주 2회 발행</text>
+    </g>
+    <g transform="translate(150,0)">
+      <rect x="0" y="0" width="156" height="30" rx="15" fill="#f0fdf4" stroke="#bbf7d0"/>
+      <text x="14" y="20" fill="#15803d">✓ 글당 800자 이상</text>
+    </g>
+    <g transform="translate(316,0)">
+      <rect x="0" y="0" width="172" height="30" rx="15" fill="#fef2f2" stroke="#fecaca"/>
+      <text x="14" y="20" fill="#b91c1c">✗ 이미지 2장 미달</text>
+    </g>
+    <g transform="translate(498,0)">
+      <rect x="0" y="0" width="160" height="30" rx="15" fill="#fefce8" stroke="#fef08a"/>
+      <text x="14" y="20" fill="#854d0e">△ 카테고리 집중도</text>
+    </g>
+  </g>
+</svg>

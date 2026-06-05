@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" role="img" aria-label="AI 글쓰기 — SSE 스트리밍 실시간 출력">
+  <defs>
+    <linearGradient id="abg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#fafaf9"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <filter id="acard" x="-2%" y="-5%" width="104%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="url(#abg)"/>
+
+  <!-- Navbar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#ffffff"/>
+  <rect x="0" y="55" width="1280" height="1" fill="#e4e4e7"/>
+  <rect x="64" y="18" width="20" height="20" rx="5" fill="#ea580c"/>
+  <text x="92" y="34" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">Boheme BlogLab</text>
+
+  <!-- Header -->
+  <text x="64" y="108" font-family="system-ui,sans-serif" font-weight="600" font-size="11" fill="#71717a" letter-spacing="1.5">5단계 · AI 글쓰기</text>
+  <text x="64" y="140" font-family="system-ui,sans-serif" font-weight="700" font-size="28" fill="#09090b" letter-spacing="-0.5">Claude 가 실시간으로 글을 써요</text>
+
+  <!-- Usage chip -->
+  <rect x="1100" y="116" width="116" height="32" rx="16" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="1158" y="137" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#c2410c">2 / 5 회 남음</text>
+
+  <!-- Two-column layout: left = options, right = streaming output -->
+
+  <!-- LEFT: Options panel -->
+  <g filter="url(#acard)">
+    <rect x="64" y="172" width="380" height="568" rx="12" fill="#ffffff" stroke="#e4e4e7"/>
+  </g>
+  <text x="88" y="206" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">생성 옵션</text>
+
+  <!-- Topic field -->
+  <text x="88" y="240" font-family="system-ui,sans-serif" font-weight="500" font-size="11" fill="#52525b">주제</text>
+  <rect x="88" y="248" width="332" height="40" rx="8" fill="#fafaf9" stroke="#e4e4e7"/>
+  <text x="100" y="273" font-family="system-ui,sans-serif" font-size="13" fill="#09090b">수원 행궁동 가볼만한 카페 5곳</text>
+
+  <!-- Length -->
+  <text x="88" y="312" font-family="system-ui,sans-serif" font-weight="500" font-size="11" fill="#52525b">분량</text>
+  <g transform="translate(88,322)">
+    <rect x="0" y="0" width="100" height="32" rx="6" fill="#ea580c"/>
+    <text x="50" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#ffffff">compact</text>
+    <rect x="108" y="0" width="100" height="32" rx="6" fill="#ffffff" stroke="#e4e4e7"/>
+    <text x="158" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#52525b">standard</text>
+    <rect x="216" y="0" width="100" height="32" rx="6" fill="#ffffff" stroke="#e4e4e7"/>
+    <text x="266" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#52525b">rich</text>
+  </g>
+
+  <!-- Toggles -->
+  <g transform="translate(88,378)" font-family="system-ui,sans-serif" font-size="12">
+    <g>
+      <text x="0" y="14" font-weight="500" fill="#09090b">제목 한 개만</text>
+      <rect x="298" y="0" width="34" height="20" rx="10" fill="#ea580c"/>
+      <circle cx="322" cy="10" r="7" fill="#ffffff"/>
+    </g>
+    <g transform="translate(0,36)">
+      <text x="0" y="14" font-weight="500" fill="#09090b">이미지 프롬프트</text>
+      <rect x="298" y="0" width="34" height="20" rx="10" fill="#e4e4e7"/>
+      <circle cx="310" cy="10" r="7" fill="#ffffff"/>
+    </g>
+    <g transform="translate(0,72)">
+      <text x="0" y="14" font-weight="500" fill="#09090b">자체 검토</text>
+      <rect x="298" y="0" width="34" height="20" rx="10" fill="#ea580c"/>
+      <circle cx="322" cy="10" r="7" fill="#ffffff"/>
+    </g>
+    <g transform="translate(0,108)">
+      <text x="0" y="14" font-weight="500" fill="#09090b">출처 포함</text>
+      <rect x="298" y="0" width="34" height="20" rx="10" fill="#e4e4e7"/>
+      <circle cx="310" cy="10" r="7" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- Generate button -->
+  <rect x="88" y="520" width="332" height="48" rx="8" fill="#ea580c"/>
+  <text x="254" y="551" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="14" fill="#ffffff">생성 중…</text>
+  <!-- Spinner -->
+  <circle cx="142" cy="544" r="8" fill="none" stroke="#ffffff" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M 150 544 A 8 8 0 0 0 142 536" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Estimate -->
+  <text x="88" y="592" font-family="system-ui,sans-serif" font-size="11" fill="#71717a">평균 비용: ~$0.06 · Sonnet 4.6</text>
+  <text x="88" y="608" font-family="system-ui,sans-serif" font-size="11" fill="#71717a">예상 소요: 18~25초 (스트리밍)</text>
+
+  <!-- Streaming pill -->
+  <g transform="translate(88,628)">
+    <rect x="0" y="0" width="120" height="26" rx="13" fill="#fff7ed" stroke="#fed7aa"/>
+    <circle cx="14" cy="13" r="4" fill="#ea580c"/>
+    <text x="26" y="17" font-family="system-ui,sans-serif" font-weight="600" font-size="11" fill="#c2410c">SSE 스트리밍 중</text>
+  </g>
+
+  <!-- RIGHT: Streaming output -->
+  <g filter="url(#acard)">
+    <rect x="464" y="172" width="752" height="568" rx="12" fill="#ffffff" stroke="#e4e4e7"/>
+  </g>
+
+  <!-- Tab bar -->
+  <g transform="translate(464,172)">
+    <rect x="0" y="0" width="752" height="44" fill="#fafaf9" stroke="#e4e4e7"/>
+    <rect x="0" y="0" width="120" height="44" fill="#ffffff"/>
+    <line x1="0" y1="43" x2="120" y2="43" stroke="#ea580c" stroke-width="2"/>
+    <text x="60"  y="28" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="13" fill="#09090b">미리보기</text>
+    <text x="180" y="28" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="13" fill="#71717a">마크다운</text>
+    <text x="300" y="28" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="13" fill="#71717a">제목 후보</text>
+
+    <!-- Token counter on right -->
+    <text x="730" y="28" text-anchor="end" font-family="system-ui,sans-serif" font-size="11" fill="#71717a">tabular · 1,247 tokens · 14.2s</text>
+  </g>
+
+  <!-- Content body -->
+  <g font-family="system-ui,sans-serif">
+    <!-- Title -->
+    <text x="496" y="262" font-weight="700" font-size="22" fill="#09090b" letter-spacing="-0.5">수원 행궁동 가볼만한 카페 5곳 ☕</text>
+
+    <!-- Intro paragraph -->
+    <text x="496" y="304" font-size="14" fill="#3f3f46">행궁동을 처음 갔을 때 골목마다 카페가 숨어 있어서 놀랐어요.</text>
+    <text x="496" y="326" font-size="14" fill="#3f3f46">조선시대 행궁 옆에 자리한 한옥 카페부터, 빈티지 가구로 가득한</text>
+    <text x="496" y="348" font-size="14" fill="#3f3f46">2층 카페까지. 지난 주말 직접 다녀온 5곳을 추천해 드릴게요.</text>
+
+    <!-- H2 -->
+    <line x1="496" y1="396" x2="1184" y2="396" stroke="#f4f4f5"/>
+    <text x="496" y="428" font-weight="700" font-size="18" fill="#09090b">▣ 1. 행궁 옆 한옥카페 '연잎'</text>
+
+    <text x="496" y="462" font-size="14" fill="#3f3f46">행궁 정문에서 도보 3분 거리에 있는 한옥 카페예요.</text>
+    <text x="496" y="484" font-size="14" fill="#3f3f46">대청마루에 앉아 마시는 <tspan font-weight="700" fill="#09090b">연잎차</tspan>가 시그니처고,</text>
+    <text x="496" y="506" font-size="14" fill="#3f3f46">툇마루에서 행궁 담장을 바라보면서 마시는 분위기가 좋아요.</text>
+
+    <!-- H2 -->
+    <text x="496" y="556" font-weight="700" font-size="18" fill="#09090b">▣ 2. 빈티지 가구 카페 '오후세시'</text>
+    <text x="496" y="590" font-size="14" fill="#3f3f46">2층 통창에서 행궁동 거리가 한눈에 보여요.</text>
+    <text x="496" y="612" font-size="14" fill="#3f3f46">유럽에서 직접 가져온 가구들이 인상</text>
+
+    <!-- Blinking cursor -->
+    <rect x="757" y="600" width="2" height="16" fill="#ea580c">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- Bottom action bar -->
+  <line x1="464" y1="688" x2="1216" y2="688" stroke="#e4e4e7"/>
+  <g transform="translate(488,704)">
+    <rect x="0" y="0" width="116" height="32" rx="6" fill="#ffffff" stroke="#e4e4e7"/>
+    <text x="58" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#09090b">📋 복사</text>
+
+    <rect x="124" y="0" width="140" height="32" rx="6" fill="#ffffff" stroke="#e4e4e7"/>
+    <text x="194" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#09090b">에디터로 보내기</text>
+
+    <rect x="284" y="0" width="160" height="32" rx="6" fill="#ffffff" stroke="#e4e4e7"/>
+    <text x="364" y="21" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#09090b">금칙어·맞춤법 검사</text>
+  </g>
+  <text x="1192" y="725" text-anchor="end" font-family="system-ui,sans-serif" font-size="11" fill="#71717a">claude-sonnet-4-6 · ~$0.06</text>
+</svg>

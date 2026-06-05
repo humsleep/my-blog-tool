@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./docs/og.svg" alt="Boheme BlogLab — 블로그 운영의 모든 것을 한 곳에서" width="100%"/>
+
 # 🍊 Boheme BlogLab
 
 **한국 블로거를 위한 데이터 기반 글쓰기 워크플로우**
@@ -18,11 +20,32 @@
 
 ### **[🌐 bohemebloglab.com](https://bohemebloglab.com)**
 
-<br/>
-
-<sub><i>※ 스크린샷 자리 — `docs/screenshots/` 추가 예정 (홈 대시보드 · 진단 결과 · AI 글쓰기 SSE)</i></sub>
-
 </div>
+
+---
+
+## 📸 화면 미리보기
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="./docs/screenshots/home.svg"><img src="./docs/screenshots/home.svg" alt="홈 대시보드 — 검색 + 진단 CTA + 증거 스트립 + 인기 키워드 TOP 10"/></a>
+      <p align="center"><sub><b>🏠 홈 대시보드</b> — 검색 + 진단 + 인기 검색어 포디움</sub></p>
+    </td>
+    <td width="50%" valign="top">
+      <a href="./docs/screenshots/diagnose-result.svg"><img src="./docs/screenshots/diagnose-result.svg" alt="블로그 진단 결과 — 총점 게이지 + 3축 레이더 + 노출 분포"/></a>
+      <p align="center"><sub><b>🩺 블로그 진단 결과</b> — 0~100점 + 3축 레이더 + 8개 건강 체크</sub></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <a href="./docs/screenshots/ai-writer-sse.svg"><img src="./docs/screenshots/ai-writer-sse.svg" alt="AI 글쓰기 — Claude Sonnet 4.6 SSE 스트리밍"/></a>
+      <p align="center"><sub><b>✍️ AI 글쓰기 (SSE 스트리밍)</b> — Claude Sonnet 4.6 가 실시간으로 본문을 흘려보냅니다</sub></p>
+    </td>
+  </tr>
+</table>
+
+<sub><i>※ 위 이미지는 실제 UI를 1:1로 재현한 SVG 목업입니다. 라이브 캡처본은 곧 `docs/screenshots/*.png` 으로 교체됩니다.</i></sub>
 
 ---
 

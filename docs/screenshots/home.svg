@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" width="1280" height="800" role="img" aria-label="홈 대시보드 — 검색 + 진단 CTA + 증거 스트립">
+  <defs>
+    <linearGradient id="hbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fafaf9"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="hpill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fff7ed"/>
+      <stop offset="100%" stop-color="#ffedd5"/>
+    </linearGradient>
+    <filter id="card" x="-2%" y="-5%" width="104%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="800" fill="url(#hbg)"/>
+
+  <!-- Navbar -->
+  <rect x="0" y="0" width="1280" height="56" fill="#ffffff"/>
+  <rect x="0" y="55" width="1280" height="1" fill="#e4e4e7"/>
+  <rect x="64" y="18" width="20" height="20" rx="5" fill="#ea580c"/>
+  <text x="92" y="34" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">Boheme BlogLab</text>
+  <g font-family="system-ui,sans-serif" font-size="13" fill="#3f3f46">
+    <text x="240" y="34">블로그 진단</text>
+    <text x="330" y="34">키워드분석</text>
+    <text x="420" y="34">AI 글쓰기</text>
+    <text x="500" y="34">에디터</text>
+    <text x="570" y="34">모든 도구 ▾</text>
+    <text x="670" y="34">커뮤니티 ▾</text>
+    <text x="760" y="34">연구실</text>
+  </g>
+  <rect x="1144" y="14" width="72" height="28" rx="6" fill="#ea580c"/>
+  <text x="1180" y="32" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="12" fill="#ffffff">로그인</text>
+
+  <!-- Hero pill -->
+  <rect x="64" y="116" width="240" height="28" rx="14" fill="url(#hpill)" stroke="#fed7aa"/>
+  <circle cx="80" cy="130" r="3" fill="#ea580c"/>
+  <text x="92" y="135" font-family="system-ui,sans-serif" font-weight="500" font-size="12" fill="#c2410c">네이버 API 기반 실시간 분석</text>
+
+  <!-- Hero headline -->
+  <text x="64" y="208" font-family="system-ui,sans-serif" font-weight="700" font-size="48" fill="#09090b" letter-spacing="-1.3">내 블로그의 위치를 알고,</text>
+  <text x="64" y="266" font-family="system-ui,sans-serif" font-weight="700" font-size="48" letter-spacing="-1.3">
+    <tspan fill="#ea580c">데이터로</tspan>
+    <tspan fill="#09090b"> 글을 씁니다.</tspan>
+  </text>
+  <text x="64" y="310" font-family="system-ui,sans-serif" font-weight="400" font-size="16" fill="#52525b">블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.</text>
+
+  <!-- Search bar -->
+  <g filter="url(#card)">
+    <rect x="64" y="346" width="540" height="50" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+  </g>
+  <circle cx="92" cy="371" r="7" fill="none" stroke="#a1a1aa" stroke-width="2"/>
+  <line x1="98" y1="377" x2="106" y2="385" stroke="#a1a1aa" stroke-width="2" stroke-linecap="round"/>
+  <text x="120" y="376" font-family="system-ui,sans-serif" font-size="14" fill="#a1a1aa">분석할 키워드 입력 (예: 수원 맛집)</text>
+  <rect x="616" y="346" width="160" height="50" rx="8" fill="#ea580c"/>
+  <text x="696" y="377" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="14" fill="#ffffff">키워드 분석 →</text>
+
+  <!-- Secondary CTAs -->
+  <rect x="64" y="416" width="180" height="40" rx="8" fill="#ffffff" stroke="#e4e4e7"/>
+  <text x="154" y="441" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="500" font-size="13" fill="#09090b">📊 내 블로그 진단하기</text>
+  <text x="262" y="441" font-family="system-ui,sans-serif" font-weight="500" font-size="13" fill="#52525b">3분 만에 첫 글 만들기 →</text>
+
+  <!-- Evidence strip (4 stats) -->
+  <line x1="64" y1="500" x2="800" y2="500" stroke="#e4e4e7"/>
+  <g font-family="system-ui,sans-serif">
+    <text x="64"  y="554" font-weight="700" font-size="32" fill="#09090b" letter-spacing="-0.8">30개</text>
+    <text x="64"  y="584" font-size="11" fill="#71717a">카테고리 키워드로</text>
+    <text x="64"  y="600" font-size="11" fill="#71717a">1페이지 진입율 측정</text>
+
+    <text x="240" y="554" font-weight="700" font-size="32" fill="#09090b" letter-spacing="-0.8">12편</text>
+    <text x="240" y="584" font-size="11" fill="#71717a">최근 본문 자동 분석</text>
+    <text x="240" y="600" font-size="11" fill="#71717a">글자수 · 이미지</text>
+
+    <text x="416" y="554" font-weight="700" font-size="32" fill="#09090b" letter-spacing="-0.8">0원</text>
+    <text x="416" y="584" font-size="11" fill="#71717a">진단 · 키워드 분석</text>
+    <text x="416" y="600" font-size="11" fill="#71717a">AI API 미사용</text>
+
+    <text x="592" y="554" font-weight="700" font-size="32" fill="#09090b" letter-spacing="-0.8">8단계</text>
+    <text x="592" y="584" font-size="11" fill="#71717a">검색어 → 발행까지</text>
+    <text x="592" y="600" font-size="11" fill="#71717a">끊김 없는 흐름</text>
+  </g>
+
+  <!-- Right side: Trending TOP 10 podium card -->
+  <g filter="url(#card)">
+    <rect x="848" y="116" width="368" height="500" rx="12" fill="#ffffff" stroke="#e4e4e7"/>
+  </g>
+  <text x="876" y="156" font-family="system-ui,sans-serif" font-weight="600" font-size="11" fill="#c2410c" letter-spacing="2">TRENDING · 오늘의 트렌드</text>
+  <text x="876" y="184" font-family="system-ui,sans-serif" font-weight="700" font-size="22" fill="#09090b">인기 검색어 TOP 10</text>
+
+  <!-- Podium 1·2·3 -->
+  <g transform="translate(876,210)">
+    <rect x="0"   y="0"  width="100" height="120" rx="10" fill="#fff7ed" stroke="#fed7aa"/>
+    <text x="50"  y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="11" fill="#c2410c">🥇 1위</text>
+    <text x="50"  y="60" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">수원맛집</text>
+    <text x="50"  y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#52525b">월 8.2만</text>
+
+    <rect x="106" y="0"  width="100" height="120" rx="10" fill="#fafaf9" stroke="#e4e4e7"/>
+    <text x="156" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="11" fill="#52525b">🥈 2위</text>
+    <text x="156" y="60" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">홈카페</text>
+    <text x="156" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#52525b">월 6.5만</text>
+
+    <rect x="212" y="0"  width="100" height="120" rx="10" fill="#fafaf9" stroke="#e4e4e7"/>
+    <text x="262" y="26" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="11" fill="#854d0e">🥉 3위</text>
+    <text x="262" y="60" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="14" fill="#09090b">제주여행</text>
+    <text x="262" y="86" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#52525b">월 5.1만</text>
+  </g>
+
+  <!-- 4~10 list -->
+  <g transform="translate(876,360)" font-family="system-ui,sans-serif" font-size="12">
+    <g><text x="0" y="0" fill="#71717a">4</text><text x="22" y="0" fill="#09090b">새벽운동 루틴</text><text x="312" y="0" text-anchor="end" fill="#52525b">3.8만</text></g>
+    <g transform="translate(0,26)"><text x="0" y="0" fill="#71717a">5</text><text x="22" y="0" fill="#09090b">전자기기 리뷰</text><text x="312" y="0" text-anchor="end" fill="#52525b">3.2만</text></g>
+    <g transform="translate(0,52)"><text x="0" y="0" fill="#71717a">6</text><text x="22" y="0" fill="#09090b">강아지 사료 추천</text><text x="312" y="0" text-anchor="end" fill="#52525b">2.9만</text></g>
+    <g transform="translate(0,78)"><text x="0" y="0" fill="#71717a">7</text><text x="22" y="0" fill="#09090b">홈트레이닝</text><text x="312" y="0" text-anchor="end" fill="#52525b">2.6만</text></g>
+    <g transform="translate(0,104)"><text x="0" y="0" fill="#71717a">8</text><text x="22" y="0" fill="#09090b">캠핑 장비</text><text x="312" y="0" text-anchor="end" fill="#52525b">2.4만</text></g>
+    <g transform="translate(0,130)"><text x="0" y="0" fill="#71717a">9</text><text x="22" y="0" fill="#09090b">독서 기록</text><text x="312" y="0" text-anchor="end" fill="#52525b">2.1만</text></g>
+    <g transform="translate(0,156)"><text x="0" y="0" fill="#71717a">10</text><text x="22" y="0" fill="#09090b">비즈니스 영어</text><text x="312" y="0" text-anchor="end" fill="#52525b">1.9만</text></g>
+  </g>
+
+  <!-- Mobile bottom nav hint -->
+  <rect x="0" y="752" width="1280" height="48" fill="#ffffff" opacity="0"/>
+</svg>
