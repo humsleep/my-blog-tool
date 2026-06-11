@@ -37,9 +37,11 @@ export default function KeywordLandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-950">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-20 sm:pt-20">
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-950">
+      {/* 장식 앰비언트 글로우 (Phase 51 — supanova 흡수, aria-hidden) */}
+      <div aria-hidden className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-[480px] w-[680px] rounded-full bg-gradient-to-b from-orange-200/40 to-transparent blur-3xl dark:from-orange-900/20" />
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-20 sm:pt-20">
+        <div className="flex flex-wrap justify-center gap-2 mb-6 animate-fade-up">
           <span className="px-2.5 py-1 rounded-full bg-white/80 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/40 text-xs font-medium text-orange-700 dark:text-orange-300">
             ✓ 실제 검색량
           </span>
@@ -51,32 +53,32 @@ export default function KeywordLandingPage() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 text-center tracking-tight leading-[1.2]">
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 text-center tracking-tight leading-[1.2] animate-fade-up stagger-1">
           여러분 키워드는
           <br />
           <span className="text-orange-500 dark:text-orange-400">황금일까요, 쓰레기일까요?</span>
         </h1>
 
-        <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed">
+        <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed animate-fade-up stagger-2">
           네이버 검색광고 API의 <strong>실측 월간 검색량</strong>과 블로그 OpenAPI의
           <br className="hidden sm:block" /> 발행 문서 수로 경쟁률·황금 키워드를 자동 추출합니다.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-10 max-w-xl mx-auto">
-          <div className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSubmit} className="mt-10 max-w-xl mx-auto animate-fade-up stagger-3">
+          <div className="flex flex-col sm:flex-row gap-2 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-ambient p-2">
             <input
               type="text"
               value={kw}
               onChange={(e) => setKw(e.target.value)}
               placeholder="예: 환절기 비염, 노트북 추천"
-              className="flex-1 px-4 py-3.5 rounded-lg bg-white dark:bg-zinc-900 border-2 border-orange-200 dark:border-orange-900/50 text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 shadow-sm"
+              className="flex-1 px-4 py-3 rounded-xl bg-transparent border border-transparent text-base text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               aria-label="분석할 키워드"
               required
               maxLength={50}
             />
             <button
               type="submit"
-              className="btn-base btn-primary btn-lg shadow-md hover:shadow-lg whitespace-nowrap"
+              className="btn-base btn-primary btn-lg rounded-xl whitespace-nowrap"
             >
               30초 분석 시작 →
             </button>

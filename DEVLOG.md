@@ -5,6 +5,32 @@
 
 ---
 
+## 2026-06-11 — UI/UX: 프리미엄 hero 파일럿 + 앰비언트 모션 토큰 (Phase 51)
+
+### 배경
+참고 레포 [uxjoseph/supanova-design-skill](https://github.com/uxjoseph/supanova-design-skill)(에이전시급 랜딩페이지 생성 스킬)을 분석. supanova는 "전환 중심 랜딩페이지"용이라 도구·대시보드·게시판 화면에 통째로 적용하면 정보 밀도·접근성이 후퇴. 따라서 **2단(Two-Tier) 전략** 채택:
+- **Tier A(마케팅 표면)**: 홈 hero + LP 3종에만 supanova 감성 도입
+- **Tier B(도구/대시보드/커뮤니티)**: 현행 유지, 토큰만 미세 흡수
+
+### 변경
+
+**`app/globals.css` — 토큰 레이어 (전 페이지 재사용 기반)**
+- `--ease-premium: cubic-bezier(0.16,1,0.3,1)` — entrance/hover 물성용 감속 곡선
+- `--shadow-ambient` / `--shadow-ambient-accent` — 초확산 깊이 그림자 (라이트/다크 분리)
+- `@keyframes fade-up` + `.animate-fade-up` + `.stagger-1~4` + `.shadow-ambient*` 유틸
+- `prefers-reduced-motion`에서 기존 전역 블록이 자동 무력화 (추가 코드 0)
+
+**`app/page.tsx` — 홈 `AnonHero` 리디자인 (파일럿)**
+- 넓은 hero 여백(py-20→32), `display-hero` fluid 타이포(40~56px)
+- 장식 앰비언트 글로우 2개(aria-hidden), 떠 있는 프리미엄 검색바, 요소 순차 등장
+
+**`app/lp/{ai,diagnose,keyword}/page.tsx` — 동일 패턴 확산**
+- 중앙 hero 뒤 앰비언트 글로우, 칩→h1→본문→폼 스태거 등장
+- 입력형(diagnose·keyword)은 떠 있는 프리미엄 입력바, 단일 CTA(ai)는 accent 리프트
+
+### 배포
+- PR #60 → main merge → Vercel 자동 배포
+
 ## 2026-06-10 — 글쓰기 지침 GEO 우선 개편 (프롬프트 생성 + AI 글쓰기)
 
 ### 배경

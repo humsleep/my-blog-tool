@@ -76,9 +76,19 @@
 
   /* ── Motion ── */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* premium — supanova 흡수. entrance/hover 의 "물성"용 부드러운 감속 곡선.
+   * 도구 화면의 micro-transition 은 --ease-out 유지, hero/카드 진입에만 사용. */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast:   120ms;
   --duration-base:   180ms;
   --duration-slow:   320ms;
+  --duration-entrance: 600ms;
+
+  /* ── Ambient shadow (마케팅 표면 전용) ──
+   *  일반 카드는 --shadow-sm/md 유지. hero·premium 카드에서 깊이감을 주는
+   *  초확산 그림자. 색은 warm zinc 톤에 맞춰 미세하게. */
+  --shadow-ambient: 0 24px 60px -20px rgb(24 16 8 / 0.12), 0 8px 20px -12px rgb(24 16 8 / 0.08);
+  --shadow-ambient-accent: 0 24px 60px -20px rgb(234 88 12 / 0.18), 0 8px 20px -12px rgb(234 88 12 / 0.10);
 }
 
 .dark {
@@ -127,6 +137,9 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.45);
   --shadow-md: 0 1px 3px 0 rgb(0 0 0 / 0.55), 0 1px 2px -1px rgb(0 0 0 / 0.35);
   --shadow-lg: 0 8px 24px -4px rgb(0 0 0 / 0.65), 0 4px 8px -2px rgb(0 0 0 / 0.45);
+  /* dark — 그림자는 더 깊게, accent glow 는 약하게 (눈부심 방지) */
+  --shadow-ambient: 0 28px 70px -20px rgb(0 0 0 / 0.7), 0 10px 24px -12px rgb(0 0 0 / 0.55);
+  --shadow-ambient-accent: 0 28px 70px -22px rgb(251 146 60 / 0.22), 0 10px 24px -14px rgb(0 0 0 / 0.5);
 }
 
 /* ── Tailwind v4 — neutral zinc 기본 ── */
@@ -429,6 +442,28 @@ p, li {
 @keyframes btn-spin {
   to { transform: rotate(360deg); }
 }
+
+/* ── Entrance motion (supanova 흡수) ──
+ *  hero/마케팅 표면의 진입 연출. transform+opacity 만 사용(GPU-safe).
+ *  prefers-reduced-motion 에서는 하단 글로벌 블록이 duration 을 0.01ms 로
+ *  축소하므로 자동으로 즉시 표시된다. */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  opacity: 0;
+  animation: fade-up var(--duration-entrance) var(--ease-premium) forwards;
+}
+/* 스태거 — hero 내부 요소를 순차 등장시켜 리듬을 준다. */
+.stagger-1 { animation-delay: 60ms; }
+.stagger-2 { animation-delay: 140ms; }
+.stagger-3 { animation-delay: 220ms; }
+.stagger-4 { animation-delay: 320ms; }
+
+/* 앰비언트 그림자 유틸 — 마케팅 표면 hero/premium 카드 전용. */
+.shadow-ambient        { box-shadow: var(--shadow-ambient); }
+.shadow-ambient-accent { box-shadow: var(--shadow-ambient-accent); }
 
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }
 .btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem;  min-height: 38px; }
