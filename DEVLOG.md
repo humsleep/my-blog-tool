@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-06-11 — 내비 드롭다운 키보드 접근성 (Phase 54)
+
+`app/components/Navbar.tsx` 드롭다운 4종(키워드 리서치·글쓰기·커뮤니티·더보기)에 WAI-ARIA menu 키보드 패턴 추가:
+- Esc 로 닫기 (document 레벨 → 트리거 버튼 포커스 상태에서도 동작)
+- `role="menuitem"` + `aria-current` 부여
+- ↑/↓ · Home/End 항목 포커스 이동, Esc 시 트리거로 포커스 복귀(분실 방지)
+- 트리거 버튼 ↓ 입력 시 메뉴 열고 첫 항목 포커스
+- 검증: `tsc --noEmit` + `npm run build` 49/49 통과. PR #65 → main.
+
+남은 백로그(미착수): 모바일 "도구" 허브 전략, page.tsx 디자인 토큰화, 레거시 `.ed-*`/console.log 정리.
+
 ## 2026-06-11 — 메뉴 문서 갱신 + 온보딩 잔재 수정 (Phase 53.1)
 
 - `CLAUDE.md` 메뉴 구조(확정) 다이어그램을 Phase 53 기준으로 갱신
