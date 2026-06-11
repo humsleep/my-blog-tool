@@ -128,6 +128,67 @@ export default function Navbar() {
   const openCommunity = makeOpen(communityCloseTimerRef, setCommunityOpen);
   const scheduleCloseCommunity = makeScheduleClose(communityCloseTimerRef, setCommunityOpen);
 
+  // Esc 로 열려있는 모든 드롭다운 닫기 (a11y, Phase 54).
+  // 포커스가 트리거 버튼에 있을 때도 닫히도록 document 레벨에서 처리.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setKeywordOpen(false);
+      setWritingOpen(false);
+      setCommunityOpen(false);
+      setMoreOpen(false);
+      setUserMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  /** 드롭다운 내부 키보드 네비게이션 — WAI-ARIA menu 패턴 (Phase 54). */
+  const handleMenuKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, close: () => void) => {
+    const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('[role="menuitem"]'));
+    if (!items.length) return;
+    const idx = items.indexOf(document.activeElement as HTMLElement);
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        items[(idx + 1) % items.length].focus();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        items[(idx - 1 + items.length) % items.length].focus();
+        break;
+      case 'Home':
+        e.preventDefault();
+        items[0].focus();
+        break;
+      case 'End':
+        e.preventDefault();
+        items[items.length - 1].focus();
+        break;
+      case 'Escape': {
+        e.preventDefault();
+        close();
+        // 포커스 분실 방지 — 트리거 버튼으로 복귀
+        (e.currentTarget.parentElement?.querySelector('button') as HTMLElement | null)?.focus();
+        break;
+      }
+    }
+  };
+
+  /** 트리거 버튼에서 ↓ 누르면 메뉴를 열고 첫 항목에 포커스. */
+  const handleTriggerKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    setOpen: (v: boolean) => void,
+    ref: React.RefObject<HTMLDivElement | null>,
+  ) => {
+    if (e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    setOpen(true);
+    requestAnimationFrame(() =>
+      ref.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus(),
+    );
+  };
+
   const isDiagnoseActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
   const isCommunityActive = pathname.startsWith('/community');
   const isKeywordActive = KEYWORD_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
@@ -169,6 +230,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setKeywordOpen((v) => !v)}
+                onKeyDown={(e) => handleTriggerKeyDown(e, setKeywordOpen, keywordRef)}
                 aria-expanded={keywordOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -189,6 +251,7 @@ export default function Navbar() {
                 <div
                   className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
+                  onKeyDown={(e) => handleMenuKeyDown(e, () => setKeywordOpen(false))}
                 >
                   {KEYWORD_MENU.map((it) => {
                     const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -196,6 +259,8 @@ export default function Navbar() {
                       <Link
                         key={it.href}
                         href={it.href}
+                        role="menuitem"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => setKeywordOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
@@ -224,6 +289,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setWritingOpen((v) => !v)}
+                onKeyDown={(e) => handleTriggerKeyDown(e, setWritingOpen, writingRef)}
                 aria-expanded={writingOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -244,6 +310,7 @@ export default function Navbar() {
                 <div
                   className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
+                  onKeyDown={(e) => handleMenuKeyDown(e, () => setWritingOpen(false))}
                 >
                   {WRITING_MENU.map((it) => {
                     const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -251,6 +318,8 @@ export default function Navbar() {
                       <Link
                         key={it.href}
                         href={it.href}
+                        role="menuitem"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => setWritingOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
@@ -291,6 +360,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setCommunityOpen((v) => !v)}
+                onKeyDown={(e) => handleTriggerKeyDown(e, setCommunityOpen, communityRef)}
                 aria-expanded={communityOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -311,6 +381,7 @@ export default function Navbar() {
                 <div
                   className="absolute top-full left-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
+                  onKeyDown={(e) => handleMenuKeyDown(e, () => setCommunityOpen(false))}
                 >
                   {COMMUNITY_MENU.map((it) => {
                     const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -318,6 +389,8 @@ export default function Navbar() {
                       <Link
                         key={it.href}
                         href={it.href}
+                        role="menuitem"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => setCommunityOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
@@ -346,6 +419,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMoreOpen((v) => !v)}
+                onKeyDown={(e) => handleTriggerKeyDown(e, setMoreOpen, moreRef)}
                 aria-expanded={moreOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -366,6 +440,7 @@ export default function Navbar() {
                 <div
                   className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
+                  onKeyDown={(e) => handleMenuKeyDown(e, () => setMoreOpen(false))}
                 >
                   {MORE_MENU.map((it) => {
                     const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -373,6 +448,8 @@ export default function Navbar() {
                       <Link
                         key={it.href}
                         href={it.href}
+                        role="menuitem"
+                        aria-current={isActive ? 'page' : undefined}
                         onClick={() => setMoreOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
