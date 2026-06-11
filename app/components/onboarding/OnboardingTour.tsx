@@ -221,7 +221,7 @@ export default function OnboardingTour() {
           {/* 마지막 슬라이드에서 다른 CTA 도 가까이 */}
           {isLast && (
             <p className="mt-3 text-[11px] text-zinc-500 dark:text-zinc-400 text-center">
-              다른 도구는 메뉴 <strong className="text-zinc-700 dark:text-zinc-300">글쓰기 · 진단 · 커뮤니티 · 더보기</strong> 에서 언제든.
+              다른 도구는 메뉴 <strong className="text-zinc-700 dark:text-zinc-300">키워드 리서치 · 글쓰기 · 진단 · 커뮤니티 · 더보기</strong> 에서 언제든.
             </p>
           )}
         </div>
