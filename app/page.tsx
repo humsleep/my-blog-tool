@@ -148,7 +148,7 @@ export default function Home() {
                 <Link
                   key={s.href}
                   href={s.href}
-                  className="group/step h-full flex flex-col rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors p-4"
+                  className="card group/step h-full flex flex-col p-4"
                 >
                   <div className="text-2xl font-semibold text-zinc-300 dark:text-zinc-700 group-hover/step:text-orange-300 dark:group-hover/step:text-orange-700 transition-colors mb-2 tabular">
                     {String(s.num).padStart(2, '0')}

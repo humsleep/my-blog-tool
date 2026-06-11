@@ -353,9 +353,6 @@ export async function POST(request: Request) {
 
           // 스트림 종료까지 대기 — 실패 시 throw 됨
           await aiStream.finalMessage();
-          const elapsed = Date.now() - t0;
-          const ttfb = firstChunkAt !== null ? firstChunkAt - t0 : -1;
-          console.log(`[ai-draft stream] ok — totalMs=${elapsed} ttfbMs=${ttfb} outChars=${fullText.length}`);
 
           if (!fullText) {
             sendEvent(controller, { type: 'error', error: 'AI가 빈 응답을 반환했습니다. 다시 시도해주세요.' });

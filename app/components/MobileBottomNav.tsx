@@ -23,9 +23,9 @@ const NAV: NavItem[] = [
     ),
   },
   {
-    href: '/keyword-analysis',
+    href: '/tools',
     label: '도구',
-    match: ['/trending', '/keyword-analysis', '/competitor-analysis', '/prompt-generator', '/ai-writer', '/editor', '/image-search', '/image-tools'],
+    match: ['/tools', '/trending', '/keyword-analysis', '/competitor-analysis', '/prompt-generator', '/ai-writer', '/editor', '/image-search', '/image-tools', '/start'],
     icon: (active) => (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2.4 : 1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M11 3.5a7.5 7.5 0 105.66 12.4l4.22 4.22a1 1 0 001.41-1.41l-4.22-4.22A7.5 7.5 0 0011 3.5z" />
