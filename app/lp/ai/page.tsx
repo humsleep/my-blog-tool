@@ -36,7 +36,7 @@ export default function AiLandingPage() {
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-20 sm:pt-20">
         <div className="flex flex-wrap justify-center gap-2 mb-6 animate-fade-up">
           <span className="px-2.5 py-1 rounded-full bg-white/80 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/40 text-xs font-medium text-orange-700 dark:text-orange-300">
-            ✓ Claude Sonnet 4.6
+            ✓ 최신 AI 모델
           </span>
           <span className="px-2.5 py-1 rounded-full bg-white/80 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/40 text-xs font-medium text-orange-700 dark:text-orange-300">
             ✓ 네이버 홈판 패턴 학습

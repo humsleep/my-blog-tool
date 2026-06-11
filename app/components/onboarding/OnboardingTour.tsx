@@ -48,7 +48,7 @@ const SLIDES: Slide[] = [
     emoji: '📝',
     eyebrow: 'STEP 2 · 글쓰기',
     title: '데이터로 글을 씁니다',
-    body: '키워드 검색량·경쟁률을 한 표에 펼치고, Claude 가 네이버 톤으로 초안을 만들고, 에디터에서 발행 전 마지막 점검까지 — 한 흐름.',
+    body: '키워드 검색량·경쟁률을 한 표에 펼치고, AI 가 네이버 톤으로 초안을 만들고, 에디터에서 발행 전 마지막 점검까지 — 한 흐름.',
     cta: { label: '글쓰기 시작', href: '/start' },
     accent: 'from-amber-50 via-orange-50/60 to-white',
     accentDark: 'dark:from-amber-950/40 dark:via-orange-950/20 dark:to-zinc-900',
