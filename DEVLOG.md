@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-06-11 — 내비: 인기검색어 상단 승격 + UI 카피에서 AI 브랜드명 제거 (Phase 52)
+
+### 변경
+**`app/components/Navbar.tsx`**
+- 인기검색어(`/trending`)가 `더보기` 메가패널 2단계 안쪽에 있어 발견성이 낮던 문제 해결
+- 데스크톱: `진단` 옆 평면 top-level 링크로 승격 + `isTrendingActive` 추가
+- 모바일: "분석" 그룹에 블로그 진단 다음으로 추가
+- 중복 방지로 메가패널 "키워드 리서치" 그룹에서는 제거
+
+**AI 브랜드명 제거 (마케팅·UI 카피 → 'AI'/'최신 AI')**
+- 홈(`page.tsx`), `not-found`, 온보딩, `about`, `lp/ai`(칩+메타), `ai-writer`/`prompt-generator`/`start` 메타, `prompt-generator` 본문 카피
+- "Claude Sonnet 4.6", "Claude 자동 작성", "ChatGPT 등" 등 → 일반 표현으로
+
+### 유지 (의도적)
+- **약관·개인정보처리방침**: 위탁 처리자(Anthropic, PBC / Claude API) 고지는 PIPA 의무라 보존
+- 코드·주석·API 모델 상수(`claude-sonnet-4-6`): 화면 비노출이라 변경 없음
+
+### 배포
+- PR #61 → main merge → Vercel 자동 배포
+
 ## 2026-06-11 — UI/UX: 프리미엄 hero 파일럿 + 앰비언트 모션 토큰 (Phase 51)
 
 ### 배경
