@@ -60,7 +60,7 @@ export default function Home() {
     { num: 2, title: '키워드 분석',  desc: '검색량 · 경쟁률 분석',         href: '/keyword-analysis' },
     { num: 3, title: '상위노출 분석', desc: '경쟁 블로그 패턴 추적',         href: '/competitor-analysis' },
     { num: 4, title: '프롬프트 생성', desc: '맞춤형 AI 지시문',              href: '/prompt-generator' },
-    { num: 5, title: 'AI 글쓰기',    desc: 'Claude 자동 작성',              href: '/ai-writer' },
+    { num: 5, title: 'AI 글쓰기',    desc: 'AI 자동 작성',                  href: '/ai-writer' },
     { num: 6, title: '에디터',       desc: '금칙어 · 맞춤법 · 발행 전 정리', href: '/editor' },
     { num: 7, title: '이미지 검색',  desc: '무료 저작권 이미지 통합 검색',   href: '/image-search' },
     { num: 8, title: '이미지 편집',  desc: '크롭 · 모자이크 · 필터',         href: '/image-tools' },

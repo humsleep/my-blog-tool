@@ -1445,7 +1445,7 @@ function PromptGeneratorContent() {
                         이 프롬프트로 AI 글 받기
                       </h3>
                       <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                        AI 글쓰기 페이지로 이동해 Claude가 완성된 글을 작성합니다. HTML·마크다운·일반 텍스트 3가지 포맷으로 즉시 복사할 수 있어요. (비로그인 1회/일, 로그인 5회/일 무료)
+                        AI 글쓰기 페이지로 이동해 AI가 완성된 글을 작성합니다. HTML·마크다운·일반 텍스트 3가지 포맷으로 즉시 복사할 수 있어요. (비로그인 1회/일, 로그인 5회/일 무료)
                       </p>
                     </div>
                   </div>
@@ -1517,12 +1517,12 @@ function PromptGeneratorContent() {
             currentStep={2}
             totalSteps={4}
             stepLabel="프롬프트 생성"
-            note="이 프롬프트로 AI에게 글을 받거나, 직접 ChatGPT 등에 붙여넣어 사용하세요."
+            note="이 프롬프트로 AI에게 글을 받거나, 직접 원하는 AI 도구에 붙여넣어 사용하세요."
             actions={[
               {
                 href: '/ai-writer',
                 label: 'AI 글쓰기로 이동',
-                description: '다음 단계 — Claude AI가 자동으로 글 작성',
+                description: '다음 단계 — AI가 자동으로 글 작성',
               },
               {
                 href: '/editor',

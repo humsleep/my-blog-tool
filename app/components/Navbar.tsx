@@ -23,7 +23,7 @@ interface ToolGroup {
 const WRITING_MENU: ToolItem[] = [
   { href: '/start',             label: '빠른 시작',    description: '키워드 한 단어로 1분 만에' },
   { href: '/keyword-analysis',  label: '키워드부터',   description: '검색량·경쟁률 분석 후 시작' },
-  { href: '/ai-writer',         label: 'AI 글쓰기',    description: 'Claude 가 자동으로 초안 작성' },
+  { href: '/ai-writer',         label: 'AI 글쓰기',    description: 'AI 가 자동으로 초안 작성' },
   { href: '/editor',            label: '에디터 (발행)', description: '금칙어·맞춤법 마지막 점검' },
 ];
 
@@ -39,7 +39,6 @@ const MORE_MENU: ToolGroup[] = [
   {
     groupLabel: '키워드 리서치',
     items: [
-      { href: '/trending',             label: '인기검색어',     description: '네이버 실시간 인기 키워드' },
       { href: '/competitor-analysis',  label: '상위노출 분석',  description: '상위 블로그 패턴 분석' },
     ],
   },
@@ -136,6 +135,7 @@ export default function Navbar() {
   const scheduleCloseCommunity = makeScheduleClose(communityCloseTimerRef, setCommunityOpen);
 
   const isDiagnoseActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
+  const isTrendingActive = pathname === '/trending' || pathname.startsWith('/trending/');
   const isCommunityActive = pathname.startsWith('/community');
   const isWritingActive = WRITING_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
   const isMoreActive = MORE_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
@@ -230,6 +230,18 @@ export default function Navbar() {
               }`}
             >
               진단
+            </Link>
+
+            {/* 인기검색어 — 평면 단일 메뉴 (Phase 52: 더보기 메가패널에서 상단으로 승격, 발견성 ↑) */}
+            <Link
+              href="/trending"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                isTrendingActive
+                  ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              인기검색어
             </Link>
 
             {/* 커뮤니티 ▼ — 호버 / 클릭 드롭다운 */}
@@ -528,6 +540,27 @@ export default function Navbar() {
                       <div className="text-sm font-medium">블로그 진단</div>
                       <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
                         카테고리 상위 % · 약점 분석
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })()}
+              {(() => {
+                const isActive = pathname === '/trending' || pathname.startsWith('/trending/');
+                return (
+                  <Link
+                    href="/trending"
+                    onClick={() => setIsMobileOpen(false)}
+                    className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                      isActive
+                        ? 'bg-orange-500 text-white'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium">인기검색어</div>
+                      <div className={`text-xs mt-0.5 ${isActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                        네이버 실시간 인기 키워드
                       </div>
                     </div>
                   </Link>

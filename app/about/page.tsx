@@ -53,7 +53,7 @@ export default function AboutPage() {
                   {
                     n: 3,
                     title: 'AI 글쓰기',
-                    desc: 'Claude Sonnet 4.6이 6단계로 제목·본문·해시태그·이미지 프롬프트까지 한 번에 만듭니다. 비로그인 1회/일, 로그인 5회/일 무료.',
+                    desc: '최신 AI가 6단계로 제목·본문·해시태그·이미지 프롬프트까지 한 번에 만듭니다. 비로그인 1회/일, 로그인 5회/일 무료.',
                     href: '/ai-writer',
                     cta: 'AI 글쓰기',
                   },

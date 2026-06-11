@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const QUICK_LINKS = [
   { href: '/keyword-analysis', label: '키워드 분석', desc: '검색량 · 경쟁률' },
   { href: '/blog-diagnose', label: '블로그 진단', desc: '내 블로그 점수' },
-  { href: '/ai-writer', label: 'AI 글쓰기', desc: 'Claude 자동 작성' },
+  { href: '/ai-writer', label: 'AI 글쓰기', desc: 'AI 자동 작성' },
   { href: '/trending', label: '인기 검색어', desc: '실시간 트렌드' },
 ];
 
