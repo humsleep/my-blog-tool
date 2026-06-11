@@ -30,9 +30,11 @@ export default function AiLandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-950">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-20 sm:pt-20">
-        <div className="flex flex-wrap justify-center gap-2 mb-6">
+    <main className="relative overflow-hidden min-h-screen bg-gradient-to-br from-orange-50 via-amber-50/40 to-white dark:from-orange-950/30 dark:via-amber-950/15 dark:to-zinc-950">
+      {/* 장식 앰비언트 글로우 (Phase 51 — supanova 흡수, aria-hidden) */}
+      <div aria-hidden className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 h-[480px] w-[680px] rounded-full bg-gradient-to-b from-orange-200/40 to-transparent blur-3xl dark:from-orange-900/20" />
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 pt-12 pb-20 sm:pt-20">
+        <div className="flex flex-wrap justify-center gap-2 mb-6 animate-fade-up">
           <span className="px-2.5 py-1 rounded-full bg-white/80 dark:bg-zinc-900/60 border border-orange-200 dark:border-orange-900/40 text-xs font-medium text-orange-700 dark:text-orange-300">
             ✓ Claude Sonnet 4.6
           </span>
@@ -44,23 +46,23 @@ export default function AiLandingPage() {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 text-center tracking-tight leading-[1.2]">
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 text-center tracking-tight leading-[1.2] animate-fade-up stagger-1">
           여러분 글을
           <br />
           <span className="text-orange-500 dark:text-orange-400">1분 만에 초안으로</span>
         </h1>
 
-        <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed">
+        <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed animate-fade-up stagger-2">
           제목 · 본문 (해요체/평서체) · 해시태그 30개 · 자체 검토까지
           <br className="hidden sm:block" /> <strong>한 번 실행으로 발행 가능한 초안</strong>을 만듭니다.
         </p>
 
         {/* AI 글쓰기는 프롬프트 생성이 선행되는 게 품질 ↑ */}
-        <div className="mt-10 max-w-xl mx-auto">
+        <div className="mt-10 max-w-xl mx-auto animate-fade-up stagger-3">
           <button
             type="button"
             onClick={() => router.push('/prompt-generator')}
-            className="btn-base btn-primary btn-lg shadow-md hover:shadow-lg w-full text-base"
+            className="btn-base btn-primary btn-lg shadow-ambient-accent hover:-translate-y-0.5 w-full text-base transition-transform"
           >
             프롬프트 만들고 AI 초안 받기 →
           </button>
