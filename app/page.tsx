@@ -219,23 +219,38 @@ function AnonHero({
   onSubmit: (e: React.FormEvent) => void;
 }) {
   return (
-    <section className="relative border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950">
+      {/* ── 장식 앰비언트 글로우 (Phase 51 — supanova 흡수) ──
+       *  순수 장식이므로 aria-hidden. warm orange 톤으로 hero에 깊이 부여.
+       *  pointer-events-none 으로 클릭 차단 X, blur-3xl 로 부드럽게. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 -right-32 h-[520px] w-[520px] rounded-full bg-gradient-to-br from-orange-200/45 via-amber-100/30 to-transparent blur-3xl dark:from-orange-900/25 dark:via-amber-950/10"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-48 -left-40 h-[460px] w-[460px] rounded-full bg-gradient-to-tr from-orange-100/35 to-transparent blur-3xl dark:from-orange-950/20"
+      />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
         <div className="max-w-3xl">
-          <span className="pill pill-accent mb-5">
+          <span className="pill pill-accent mb-6 animate-fade-up">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 dark:bg-orange-400" />
             네이버 API 기반 실시간 분석
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 mb-4 leading-[1.15]">
+          <h1 className="display-hero mb-5 animate-fade-up stagger-1" style={{ wordBreak: 'keep-all' }}>
             내 블로그의 위치를 알고,<br />
             <span className="text-orange-500 dark:text-orange-400">데이터로</span> 글을 씁니다.
           </h1>
-          <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 max-w-2xl">
+          <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed mb-8 max-w-2xl animate-fade-up stagger-2">
             블로그 진단, 키워드 분석, AI 글쓰기까지 — 한국 블로거를 위한 데이터 기반 글쓰기 워크플로우.
           </p>
 
-          {/* Search */}
-          <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2 max-w-2xl">
+          {/* Search — 떠 있는 프리미엄 검색바 (앰비언트 그림자) */}
+          <form
+            onSubmit={onSubmit}
+            className="flex flex-col sm:flex-row gap-2 max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-ambient p-2 animate-fade-up stagger-3"
+          >
             <div className="relative flex-1">
               <svg className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -250,10 +265,10 @@ function AnonHero({
                 onChange={(e) => setSearchKeyword(e.target.value)}
                 placeholder="분석할 키워드 입력 (예: 수원 맛집)"
                 aria-label="분석할 키워드 입력"
-                className="w-full pl-10 pr-4 py-3 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-transparent bg-transparent text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
-            <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap">
+            <button type="submit" className="btn-base btn-primary btn-md sm:btn-lg whitespace-nowrap rounded-xl">
               키워드 분석
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -261,7 +276,7 @@ function AnonHero({
             </button>
           </form>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          <div className="flex flex-col sm:flex-row gap-3 mt-6 animate-fade-up stagger-3">
             <Link href="/blog-diagnose" className="btn-base btn-secondary btn-md">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -274,7 +289,7 @@ function AnonHero({
           </div>
 
           {/* 증거 스트립 — 추상적 약속 대신 측정 가능한 사실로 신뢰 형성. */}
-          <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-6">
+          <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-6 animate-fade-up stagger-4">
             {[
               { value: '30개', label: '카테고리 키워드로\n1페이지 진입율 측정' },
               { value: '12편', label: '최근 본문 자동 분석\n글자수 · 이미지' },
