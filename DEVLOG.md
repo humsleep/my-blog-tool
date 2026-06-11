@@ -5,6 +5,27 @@
 
 ---
 
+## 2026-06-11 — 백로그 정리: 모바일 도구 허브 + 토큰화 + console.log (Phase 55)
+
+### 변경
+**모바일 도구 허브 (신규 `app/tools/page.tsx`)**
+- 모바일 하단 탭 "도구"가 `/keyword-analysis`로 직행하던 것 → `/tools` 허브로 변경
+- Phase 53 IA(키워드 리서치·글쓰기·진단·이미지/기타)를 그대로 펼친 그룹형 목록. 데스크톱 그룹 드롭다운과 모바일 탐색 격차 해소
+- `MobileBottomNav.tsx`: href `/keyword-analysis` → `/tools`, match 배열에 `/tools`·`/start` 추가
+- 허브 카드는 `.card` 토큰 사용 (인라인 tailwind 재구현 지양)
+
+**디자인 토큰화 (`app/page.tsx`)**
+- 홈 "전체 도구 보기" 8단계 그리드 카드: 인라인 border/bg/hover → `.card` 클래스로 통일
+
+**품질 (`app/api/ai-draft/route.ts`)**
+- 스트림 성공 경로 `console.log`(타이밍·글자수) 제거. 미사용된 `elapsed`/`ttfb` 변수도 함께 정리 (에러 경로 `console.error`는 디버깅용으로 유지)
+
+### 보류 (의도적)
+- 레거시 `.ed-*`/`.bg-paper`/`.text-ink` CSS 별칭: 8개 파일 40+곳에서 **실제 사용 중** → 제거 시 스타일 깨짐. "정리"가 아니라 대규모 마이그레이션이라 제외.
+
+### 검증
+- `tsc --noEmit` + `npm run build` 50/50 정적 생성. PR #67 → main.
+
 ## 2026-06-11 — 내비 드롭다운 키보드 접근성 (Phase 54)
 
 `app/components/Navbar.tsx` 드롭다운 4종(키워드 리서치·글쓰기·커뮤니티·더보기)에 WAI-ARIA menu 키보드 패턴 추가:
