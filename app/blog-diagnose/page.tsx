@@ -9,6 +9,8 @@ import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import CompetitorPatternsCard from '@/app/components/diagnose/CompetitorPatternsCard';
 import HeuristicCoachCard from '@/app/components/diagnose/HeuristicCoachCard';
 import MateReadinessCard from '@/app/components/diagnose/MateReadinessCard';
+import { GRADE_LABEL, GRADE_COLOR, type MateReadinessReport } from '@/app/lib/diagnose/mate-readiness';
+import type { CoachReport } from '@/app/lib/diagnose/heuristic-coach';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
@@ -65,6 +67,11 @@ interface DiagnoseResponse {
     insights: string[];
     warnings: string[];
   };
+  /** GEO(메이트 인용 적합도) — 총점과 분리된 별도 헤드라인 지표 (Phase 56). */
+  geo?: { score: number; grade: MateReadinessReport['grade'] };
+  /** 메인 진단이 실측 본문으로 계산한 상세 리포트 — 카드에 initial 로 전달. */
+  mate?: MateReadinessReport;
+  coach?: CoachReport;
 }
 
 const PROGRESS_BEATS = [
@@ -477,6 +484,9 @@ export default function BlogDiagnosePage() {
               </div>
             </section>
 
+            {/* ── GEO(메이트 인용 적합도) — 총점과 분리된 헤드라인 지표 ── */}
+            {result.geo && <GeoHeadline geo={result.geo} />}
+
             {/* ── 노출 분포 — 30개 키워드 어디 분포되어 있는지 한눈에 ── */}
             <RankDistribution hits={result.score.visibility.hits} />
 
@@ -486,16 +496,18 @@ export default function BlogDiagnosePage() {
             {/* ── 30일 액션 플랜 — 가장 약한 축 기반 weekly 추천 ── */}
             <ActionPlan score={result.score} categoryLabel={result.categoryLabel} />
 
-            {/* ── 메이트 인용 준비도 — AI 검색 최적화 체크 ── */}
+            {/* ── 메이트 인용 준비도 — AI 검색 최적화 체크 (메인 진단 실측 본문 기반) ── */}
             <MateReadinessCard
               blogId={result.blogId}
               category={result.category as DiagnoseCategory}
+              initial={result.mate}
             />
 
             {/* ── 코치 리포트 — 내 글의 자가 진단 (Phase 54 v2.1, 휴리스틱) ── */}
             <HeuristicCoachCard
               blogId={result.blogId}
               category={result.category as DiagnoseCategory}
+              initial={result.coach}
             />
 
             {/* ── 상위 블로거 vs 나 — 패턴 비교 (Phase 53 v2.0, AI 없음, 휴리스틱) ── */}
@@ -631,6 +643,33 @@ export default function BlogDiagnosePage() {
   );
 }
 
+/* ─── GEO(메이트 인용 적합도) 헤드라인 지표 ──────────────────────
+ *
+ *  총점(활동·노출·품질 3축)과 분리된 별도 지표. 네이버 메이트/AI브리핑 등
+ *  생성형 검색이 글을 인용하기 좋은 구조인지 최근 본문 기준으로 측정.
+ *  상세 항목별 통과율은 아래 MateReadinessCard 에서 노출.
+ */
+function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport['grade'] } }) {
+  return (
+    <section className="mb-12">
+      <div className="ed-eyebrow mb-3">AI 인용 적합성 (GEO)</div>
+      <div className="flex items-center gap-5 rounded-2xl border border-rule bg-paper p-5 sm:p-6">
+        <div className="flex-shrink-0 text-center">
+          <div className="text-4xl sm:text-5xl font-bold tabular-nums text-ink leading-none">{geo.score}</div>
+          <div className="text-[10px] uppercase tracking-[0.2em] text-ink-faint mt-1">/ 100</div>
+        </div>
+        <div className="min-w-0">
+          <div className={`text-base sm:text-lg font-bold ${GRADE_COLOR[geo.grade]}`}>{GRADE_LABEL[geo.grade]}</div>
+          <p className="text-xs sm:text-sm text-ink-muted mt-1 leading-relaxed">
+            네이버 메이트·AI브리핑 등 <strong className="text-ink">AI 검색이 내 글을 인용</strong>하기 좋은 구조인지 최근 본문 기준으로 측정한 별도 지표예요.
+            <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span> 항목별 상세는 아래 <strong className="text-ink">메이트 인용 준비도</strong>에서 확인하세요.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── 측정 방법 · 기준 패널 ─────────────────────────────────────
  *
  *  사용자에게 진단 원리·통과 기준·데이터 소스를 투명하게 공개.
@@ -741,7 +780,11 @@ function MethodologyPanel({ defaultOpen = false }: { defaultOpen?: boolean }) {
             </li>
             <li className="flex gap-2">
               <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-              <span><strong className="text-ink">PostView.naver (본문)</strong> — 최근 12편의 실제 본문 페이지를 추가 fetch해 글자수·이미지 수를 정확 측정. 품질 점수의 원천.</span>
+              <span><strong className="text-ink">PostView.naver (본문)</strong> — 최근 12편의 실제 본문 페이지를 추가 fetch해 글자수·이미지 수를 정확 측정. 품질 점수 + GEO 적합도의 공통 원천(같은 본문을 재사용).</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
+              <span><strong className="text-ink">AI 인용 적합성(GEO)</strong> — 위 실측 본문에서 소제목 구조·도입부 팩트·숫자/데이터·질문형 제목·본문 깊이를 휴리스틱으로 측정. AI API는 쓰지 않습니다.</span>
             </li>
           </ul>
         </div>
@@ -775,6 +818,10 @@ function MethodologyPanel({ defaultOpen = false }: { defaultOpen?: boolean }) {
             <li className="flex gap-2">
               <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
               <span>외부 API 호출 비용·속도 문제로 로그인 사용자당 <strong className="text-ink">12시간에 1회</strong>만 진단할 수 있습니다.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
+              <span><strong className="text-ink">AI 인용 적합성(GEO)</strong>은 총점(활동·노출·품질 3축)과 분리된 별도 참고 지표입니다. 총점 밴드 계산에는 반영되지 않습니다.</span>
             </li>
           </ul>
         </div>

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { extractBlogId, fetchRss, fetchPostBody, searchBlogByQuery, type BlogSearchItem } from '@/app/lib/diagnose/naver-blog';
 import { findCategorySeed } from '@/app/lib/diagnose/category-seeds';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits, summarizeRss } from '@/app/lib/diagnose/scoring';
+import { analyzeMateReadiness } from '@/app/lib/diagnose/mate-readiness';
+import { analyzeCoach } from '@/app/lib/diagnose/heuristic-coach';
 import { createClient } from '@/app/lib/supabase/server';
 
 function isSupabaseConfigured() {
@@ -141,6 +143,8 @@ export async function POST(request: Request) {
       if (b) {
         items[i].contentLength = b.contentLength;
         items[i].imageCount = b.imageCount;
+        // RSS 요약(280자) 대신 실측 본문 텍스트로 교체 → 메이트/코치 분석 정확도 ↑
+        items[i].contentSnippet = b.text;
         fetchedIndices.add(i);
       }
     }
@@ -185,6 +189,12 @@ export async function POST(request: Request) {
 
   const result = compose(activity, visibility, quality, warnings);
 
+  // 5.5) 메이트(GEO) 인용 준비도 + 코치 리포트 — 위에서 가져온 실측 본문 12편을 그대로 사용.
+  //      (별도 RSS 요약 재호출 없이 동일 데이터로 계산 → 정확 + 본문 재fetch로 인한 네이버 차단 위험 ↓)
+  const sampleItems = items.slice(0, sampleSize);
+  const mate = analyzeMateReadiness(sampleItems, seed.keywords);
+  const coach = analyzeCoach(sampleItems, seed.keywords);
+
   // 6) 로그인 사용자 → DB 저장 (Phase 28: 데일리 대시보드 + 추적용)
   //    저장 실패는 무시. 진단 결과 응답 자체는 항상 정상 반환.
   if (isSupabaseConfigured()) {
@@ -192,7 +202,7 @@ export async function POST(request: Request) {
       const supabase = await createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        await supabase.from('diagnose_results').insert({
+        const { data: inserted } = await supabase.from('diagnose_results').insert({
           user_id: user.id,
           blog_id: blogId,
           blog_title: rss?.title ?? null,
@@ -207,7 +217,13 @@ export async function POST(request: Request) {
           hit_count: result.visibility.hitCount,
           top_ten_count: result.visibility.topTenCount,
           insights: result.insights,
-        });
+        }).select('id').single();
+
+        // geo_score 는 best-effort — 0013 마이그레이션 적용 전이면 컬럼이 없어 무시됨(에러 swallow).
+        //   기본 insert 와 분리해 컬럼 부재가 핵심 저장을 깨지 않도록 한다 (비파괴).
+        if (inserted?.id) {
+          await supabase.from('diagnose_results').update({ geo_score: mate.score }).eq('id', inserted.id);
+        }
       }
     } catch (err) {
       console.error('[blog-diagnose] DB 저장 실패 (무시):', err);
@@ -222,6 +238,10 @@ export async function POST(request: Request) {
     categoryLabel: seed.label,
     keywordCount: seed.keywords.length,
     score: result,
+    // GEO(메이트 인용 적합도) — 총점과 분리된 별도 헤드라인 지표. 상세 리포트는 mate/coach.
+    geo: { score: mate.score, grade: mate.grade },
+    mate,
+    coach,
     rssItemCount: items.length,
     diagnosedAt: new Date().toISOString(),
   });

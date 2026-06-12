@@ -87,6 +87,27 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+/** stripHtml 과 같지만 블록 경계(p·div·h·li·br 등)를 줄바꿈으로 보존.
+ *  메이트/코치의 소제목·도입부·문단 단위 분석에 필요 (한 줄로 뭉개면 구조 신호 소실). */
+function stripHtmlPreserveLines(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<\/(p|div|h[1-6]|li|tr|section|blockquote|figcaption)>/gi, '\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#\d+;/g, ' ')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+}
+
 function countTags(html: string, tag: string): number {
   const re = new RegExp(`<${tag}\\b`, 'gi');
   const m = html.match(re);
@@ -230,6 +251,25 @@ function toPostViewUrl(postUrl: string): string | null {
 export interface PostBodyMetrics {
   contentLength: number;
   imageCount: number;
+  /** 본문 평문(줄바꿈 보존). 메이트/코치 휴리스틱 분석용. 페이로드 안전 위해 상한 캡. */
+  text: string;
+}
+
+/** 본문 컨테이너 시작점부터 문서 끝까지 슬라이스하면 댓글·관련글·태그·플로팅 위젯의
+ *  이미지/글자까지 포함되어 글자수·이미지 수가 과대 측정됨. 본문 뒤에 흔히 등장하는
+ *  경계 마커 중 가장 먼저 나오는 지점에서 잘라 본문 영역만 남긴다. (최소 본문은 보존) */
+const REGION_END_MARKERS = [
+  'id="comment', 'area_comment', 'wrap_postcomment', 'u_cbox', 'naverComment',
+  'BlogTopReadFloating', 'post_footer', 'id="recommend', 'related_post',
+  'wrap_tag', 'post_tag', 'btn_recommend', 'area_sympathy',
+];
+function boundPostRegion(region: string): string {
+  let cut = region.length;
+  for (const m of REGION_END_MARKERS) {
+    const idx = region.indexOf(m);
+    if (idx > 300 && idx < cut) cut = idx;
+  }
+  return region.slice(0, cut);
 }
 
 /** 네이버 블로그 글 본문(HTML) 가져와 글자수·이미지 수 추출.
@@ -273,11 +313,16 @@ export async function fetchPostBody(postUrl: string): Promise<PostBodyMetrics | 
       }
     }
 
+    // 본문 뒤 댓글·관련글·태그 위젯 컷 → 글자수·이미지 과대측정 방지.
+    region = boundPostRegion(region);
+
     const imageCount = countTags(region, 'img');
-    const stripped = stripHtml(region);
-    const contentLength = stripped.length;
+    const plain = stripHtml(region);            // 단일 공백 — 글자수 측정용 (기존 기준 유지)
+    const contentLength = plain.length;
     if (contentLength < 50) return null;
-    return { contentLength, imageCount };
+    // 줄바꿈 보존 텍스트 — 메이트/코치 분석용. 8,000자 캡(분석엔 충분, 페이로드 안전).
+    const text = stripHtmlPreserveLines(region).slice(0, 8000);
+    return { contentLength, imageCount, text };
   } catch {
     return null;
   }
