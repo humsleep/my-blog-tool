@@ -13,6 +13,8 @@ import type { DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
 interface Props {
   blogId: string;
   category: DiagnoseCategory;
+  /** 메인 진단이 실측 본문으로 이미 계산한 리포트. 있으면 재호출 없이 그대로 사용. */
+  initial?: CoachReport | null;
 }
 
 interface ApiResponse {
@@ -25,12 +27,13 @@ interface ApiResponse {
  *  사용자 글 12편 (RSS 메타) 을 키워드 패턴 + 규칙으로 분석해 글 스타일·약점·quick wins
  *  를 한 화면에 보여줌. AI API 호출 0. v2.0 외부 비교(상위 블로거 vs 나)와 짝.
  */
-export default function HeuristicCoachCard({ blogId, category }: Props) {
-  const [data, setData] = useState<CoachReport | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function HeuristicCoachCard({ blogId, category, initial }: Props) {
+  const [data, setData] = useState<CoachReport | null>(initial ?? null);
+  const [loading, setLoading] = useState(!initial);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initial) return; // 메인 진단이 전달 — lazy fetch 불필요
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -46,7 +49,7 @@ export default function HeuristicCoachCard({ blogId, category }: Props) {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [blogId, category]);
+  }, [blogId, category, initial]);
 
   if (loading) {
     return (

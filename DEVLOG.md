@@ -5,6 +5,36 @@
 
 ---
 
+## 2026-06-11 — 진단 정확도 개편: 본문 실측 기반 메이트/코치 + GEO 헤드라인 (Phase 56)
+
+### 배경
+진단 로직 점검 결과, 메이트(GEO)·코치가 **RSS 요약 280자** 기반이라 구조·데이터·길이 체크가 구조적으로 과소평가됨. 메인 진단은 본문 12편을 PostView로 실측하면서 그 텍스트를 버리고 있었음. 또 `fetchPostBody` 가 본문 컨테이너~문서 끝까지 슬라이스해 댓글·관련글 위젯까지 포함→글자수·이미지 과대측정.
+
+### 변경
+**`app/lib/diagnose/naver-blog.ts`**
+- `fetchPostBody` 가 `text`(줄바꿈 보존 본문, 8,000자 캡)도 반환 → 메이트/코치가 실측 본문으로 분석 가능
+- `boundPostRegion` 추가: 댓글·관련글·태그·플로팅 위젯 경계에서 컷 → 글자수·이미지 과대측정 제거
+- `stripHtmlPreserveLines` 추가(블록 경계→\n) — 소제목·도입부 구조 신호 보존
+
+**`app/api/blog-diagnose/route.ts`**
+- 가져온 실측 본문을 `items[].contentSnippet` 에 주입 → 같은 데이터로 `analyzeMateReadiness`·`analyzeCoach` 계산(본문 재fetch 0, 네이버 차단 위험 ↓)
+- 응답에 `geo{score,grade}` + `mate` + `coach` 포함
+- 로그인 저장: insert 후 best-effort `update({geo_score})` (0013 미적용 시 무시, 비파괴)
+
+**결과 페이지 / 카드**
+- `GeoHeadline` — 총점과 분리된 "AI 인용 적합성(GEO)" 헤드라인 지표 추가 (총점 미반영 명시)
+- `MateReadinessCard`·`HeuristicCoachCard` 에 `initial` prop → 메인이 계산한 리포트 즉시 사용(lazy fetch 폴백 유지)
+- MethodologyPanel 에 GEO 데이터 소스·한계 문구 추가
+
+**`supabase/migrations/0013_diagnose_geo_score.sql`** (신규) — nullable `geo_score smallint`. SQL Editor 실행 필요(미실행이어도 진단·저장 정상).
+
+### 보류 (의도적)
+- 노출 랭킹은 검색 OpenAPI `sort=sim` — 실제 통합검색 탭 순위와 다름(무료 API 한계). MethodologyPanel 에 이미 고지.
+- GEO 를 총점 4번째 축으로 편입하는 안은 기존 저장 점수·밴드 호환 위해 보류(별도 지표 유지).
+
+### 검증
+- `tsc --noEmit` + `npm run build` 50/50 + `qa-unit-tests` 87/87. PR #68 → main.
+
 ## 2026-06-11 — 백로그 정리: 모바일 도구 허브 + 토큰화 + console.log (Phase 55)
 
 ### 변경

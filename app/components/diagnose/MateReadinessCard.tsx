@@ -12,18 +12,21 @@ import type { DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
 interface Props {
   blogId: string;
   category: DiagnoseCategory;
+  /** 메인 진단이 실측 본문으로 이미 계산한 리포트. 있으면 재호출 없이 그대로 사용(정확·즉시). */
+  initial?: MateReadinessReport | null;
 }
 
 interface ApiResponse {
   report: MateReadinessReport;
 }
 
-export default function MateReadinessCard({ blogId, category }: Props) {
-  const [data, setData] = useState<MateReadinessReport | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function MateReadinessCard({ blogId, category, initial }: Props) {
+  const [data, setData] = useState<MateReadinessReport | null>(initial ?? null);
+  const [loading, setLoading] = useState(!initial);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initial) return; // 메인 진단이 전달 — lazy fetch 불필요
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -39,7 +42,7 @@ export default function MateReadinessCard({ blogId, category }: Props) {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [blogId, category]);
+  }, [blogId, category, initial]);
 
   if (loading) {
     return (
