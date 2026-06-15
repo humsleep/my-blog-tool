@@ -650,21 +650,85 @@ export default function BlogDiagnosePage() {
  *  상세 항목별 통과율은 아래 MateReadinessCard 에서 노출.
  */
 function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport['grade'] } }) {
+  const zones = [
+    { min: 0, max: 35, label: '재설계', color: 'bg-red-400 dark:bg-red-500' },
+    { min: 35, max: 55, label: '개선 필요', color: 'bg-amber-400 dark:bg-amber-500' },
+    { min: 55, max: 75, label: '양호', color: 'bg-orange-400 dark:bg-orange-500' },
+    { min: 75, max: 100, label: '인용 준비 완료', color: 'bg-green-500 dark:bg-green-400' },
+  ];
+  const mateThreshold = 75;
+  const gap = Math.max(0, mateThreshold - geo.score);
+  const currentZone = zones.find(z => geo.score >= z.min && geo.score < z.max) ?? zones[zones.length - 1];
+
   return (
     <section className="mb-12">
       <div className="ed-eyebrow mb-3">AI 인용 적합성 (GEO)</div>
-      <div className="flex items-center gap-5 rounded-2xl border border-rule bg-paper p-5 sm:p-6">
-        <div className="flex-shrink-0 text-center">
-          <div className="text-4xl sm:text-5xl font-bold tabular-nums text-ink leading-none">{geo.score}</div>
-          <div className="text-[10px] uppercase tracking-[0.2em] text-ink-faint mt-1">/ 100</div>
+      <div className="rounded-2xl border border-rule bg-paper p-5 sm:p-6">
+        {/* Score + grade row */}
+        <div className="flex items-center gap-5 mb-5">
+          <div className="flex-shrink-0 text-center">
+            <div className="text-4xl sm:text-5xl font-bold tabular-nums text-ink leading-none">{geo.score}</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-ink-faint mt-1">/ 100</div>
+          </div>
+          <div className="min-w-0">
+            <div className={`text-base sm:text-lg font-bold ${GRADE_COLOR[geo.grade]}`}>{GRADE_LABEL[geo.grade]}</div>
+            {gap > 0 ? (
+              <p className="text-sm text-ink-muted mt-1">
+                메이트 인용 기준까지 <strong className="text-orange-600 dark:text-orange-400">{gap}점</strong> 부족
+              </p>
+            ) : (
+              <p className="text-sm text-green-600 dark:text-green-400 font-medium mt-1">
+                메이트 인용 기준 달성!
+              </p>
+            )}
+          </div>
         </div>
-        <div className="min-w-0">
-          <div className={`text-base sm:text-lg font-bold ${GRADE_COLOR[geo.grade]}`}>{GRADE_LABEL[geo.grade]}</div>
-          <p className="text-xs sm:text-sm text-ink-muted mt-1 leading-relaxed">
-            네이버 메이트·AI브리핑 등 <strong className="text-ink">AI 검색이 내 글을 인용</strong>하기 좋은 구조인지 최근 본문 기준으로 측정한 별도 지표예요.
-            <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span> 항목별 상세는 아래 <strong className="text-ink">메이트 인용 준비도</strong>에서 확인하세요.
-          </p>
+
+        {/* Gauge bar with zone markers */}
+        <div className="relative mb-2">
+          <div className="flex h-3 rounded-full overflow-hidden">
+            {zones.map((z, i) => (
+              <div
+                key={i}
+                className={`${z.color} ${geo.score >= z.min ? 'opacity-100' : 'opacity-25'}`}
+                style={{ width: `${z.max - z.min}%` }}
+              />
+            ))}
+          </div>
+          {/* Current position indicator */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 transition-all duration-700"
+            style={{ left: `${Math.min(geo.score, 100)}%` }}
+          >
+            <div className={`w-5 h-5 rounded-full border-[3px] border-white dark:border-zinc-900 shadow-md ${currentZone.color}`} />
+          </div>
+          {/* Mate threshold marker */}
+          <div
+            className="absolute top-0 h-full flex flex-col items-center"
+            style={{ left: `${mateThreshold}%`, transform: 'translateX(-50%)' }}
+          >
+            <div className="w-0.5 h-full bg-ink/40 dark:bg-white/40" />
+          </div>
         </div>
+
+        {/* Zone labels */}
+        <div className="flex text-[10px] sm:text-[11px] text-ink-faint">
+          {zones.map((z, i) => (
+            <div key={i} className="text-center" style={{ width: `${z.max - z.min}%` }}>
+              {z.label}
+            </div>
+          ))}
+        </div>
+
+        {/* Mate line label */}
+        <div className="flex justify-center mt-1" style={{ marginLeft: `${mateThreshold - 12}%`, width: '24%' }}>
+          <span className="text-[10px] text-ink-faint">▲ 메이트 기준 (75)</span>
+        </div>
+
+        <p className="text-xs text-ink-muted mt-4 leading-relaxed">
+          네이버 메이트·AI브리핑 등 <strong className="text-ink">AI 검색이 내 글을 인용</strong>하기 좋은 구조인지 최근 본문 기준으로 측정한 별도 지표예요.
+          <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span> 항목별 상세는 아래 <strong className="text-ink">메이트 인용 준비도</strong>에서 확인하세요.
+        </p>
       </div>
     </section>
   );
