@@ -6,11 +6,8 @@ import { CATEGORY_SEEDS, type DiagnoseCategory } from '@/app/lib/diagnose/catego
 import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
-import CompetitorPatternsCard from '@/app/components/diagnose/CompetitorPatternsCard';
-import HeuristicCoachCard from '@/app/components/diagnose/HeuristicCoachCard';
 import MateReadinessCard from '@/app/components/diagnose/MateReadinessCard';
 import { GRADE_LABEL, GRADE_COLOR, type MateReadinessReport } from '@/app/lib/diagnose/mate-readiness';
-import type { CoachReport } from '@/app/lib/diagnose/heuristic-coach';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
@@ -71,7 +68,6 @@ interface DiagnoseResponse {
   geo?: { score: number; grade: MateReadinessReport['grade'] };
   /** 메인 진단이 실측 본문으로 계산한 상세 리포트 — 카드에 initial 로 전달. */
   mate?: MateReadinessReport;
-  coach?: CoachReport;
 }
 
 const PROGRESS_BEATS = [
@@ -369,9 +365,7 @@ export default function BlogDiagnosePage() {
               </div>
             </div>
 
-            {/* 안내 + CTA */}
-            <MethodologyPanel defaultOpen={false} />
-
+            {/* 안내 */}
             <div className="px-4 py-3 mb-6 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
               <strong className="text-amber-900 dark:text-amber-100">⚠️ 측정 한계</strong> — 네이버는 일일 방문자·블로그 지수를 공개하지 않아 공개 데이터로 합리적 추정만 가능합니다. 결과는 절대 점수가 아닌 카테고리 내 상대적 위치로 해석해주세요.
             </div>
@@ -440,10 +434,12 @@ export default function BlogDiagnosePage() {
               </a>
             </div>
 
-            {/* Total — gauge + radar 시각화 */}
+            {/* ── 이 진단은 이렇게 작동해요 ── */}
+            <HowItWorks category={result.categoryLabel} keywordCount={result.keywordCount} />
+
+            {/* ── 1. 총점 — gauge + radar ── */}
             <section className="relative overflow-hidden rounded-2xl border border-orange-200/70 dark:border-orange-900/40 bg-gradient-to-br from-orange-50/70 via-amber-50/30 to-white dark:from-orange-950/25 dark:via-amber-950/10 dark:to-zinc-900 p-6 sm:p-8 md:p-10 mb-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-start">
-                {/* 게이지 + 밴드 + 미니바 */}
                 <div className="flex flex-col items-center md:items-start text-center md:text-left">
                   <span className="ed-byline mb-3">총점</span>
                   <ScoreGauge value={result.score.total} size={200} caption="/ 100" />
@@ -455,7 +451,6 @@ export default function BlogDiagnosePage() {
                   <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
                     {result.categoryLabel} · {result.keywordCount}개 키워드 분석
                   </p>
-                  {/* SNS 공유 카드 다운로드 — 인스타 스토리 1080×1920 PNG */}
                   <div className="mt-5">
                     <ShareCardButton
                       total={result.score.total}
@@ -467,7 +462,6 @@ export default function BlogDiagnosePage() {
                     />
                   </div>
                 </div>
-                {/* 3축 레이더 + 미니바 */}
                 <div className="space-y-4">
                   <DiagnoseRadar
                     activity={result.score.activity.score}
@@ -484,122 +478,21 @@ export default function BlogDiagnosePage() {
               </div>
             </section>
 
-            {/* ── GEO(메이트 인용 적합도) — 총점과 분리된 헤드라인 지표 ── */}
+            {/* ── 2. AI 인용 적합성 (GEO) + 메이트 준비도 통합 ── */}
             {result.geo && <GeoHeadline geo={result.geo} />}
-
-            {/* ── 노출 분포 — 30개 키워드 어디 분포되어 있는지 한눈에 ── */}
-            <RankDistribution hits={result.score.visibility.hits} />
-
-            {/* ── 블로그 건강 체크 — 8개 체크포인트 ✓/✗ 시각화 ── */}
-            <HealthChecklist score={result.score} />
-
-            {/* ── 30일 액션 플랜 — 가장 약한 축 기반 weekly 추천 ── */}
-            <ActionPlan score={result.score} categoryLabel={result.categoryLabel} />
-
-            {/* ── 메이트 인용 준비도 — AI 검색 최적화 체크 (메인 진단 실측 본문 기반) ── */}
             <MateReadinessCard
               blogId={result.blogId}
               category={result.category as DiagnoseCategory}
               initial={result.mate}
             />
 
-            {/* ── 코치 리포트 — 내 글의 자가 진단 (Phase 54 v2.1, 휴리스틱) ── */}
-            <HeuristicCoachCard
-              blogId={result.blogId}
-              category={result.category as DiagnoseCategory}
-              initial={result.coach}
-            />
+            {/* ── 3. 블로그 건강 체크 — 핵심 8개 ── */}
+            <HealthChecklist score={result.score} />
 
-            {/* ── 상위 블로거 vs 나 — 패턴 비교 (Phase 53 v2.0, AI 없음, 휴리스틱) ── */}
-            <CompetitorPatternsCard
-              category={result.category as DiagnoseCategory}
-              blogId={result.blogId}
-            />
+            {/* ── 4. 노출 분포 + 키워드 상세 (접이식) ── */}
+            <RankDistribution hits={result.score.visibility.hits} />
 
-            {/* 3축 점수 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-rule-soft border border-rule-soft mb-12">
-              <ScoreCard
-                label="활동성"
-                weight="25%"
-                score={result.score.activity.score}
-                rows={[
-                  { k: '최근 30일', v: `${result.score.activity.postsLast30d}편` },
-                  { k: '최근 90일', v: `${result.score.activity.postsLast90d}편` },
-                  { k: '마지막 발행', v: Number.isFinite(result.score.activity.daysSinceLastPost) ? `${result.score.activity.daysSinceLastPost}일 전` : '—' },
-                  { k: '평균 간격', v: Number.isFinite(result.score.activity.avgIntervalDays) ? `${result.score.activity.avgIntervalDays}일` : '—' },
-                ]}
-              />
-              <ScoreCard
-                label="노출 성과"
-                weight="50%"
-                score={result.score.visibility.score}
-                rows={[
-                  { k: '1페이지 진입', v: `${result.score.visibility.hitCount} / ${result.score.visibility.totalKeywords}` },
-                  { k: '상위 10위', v: `${result.score.visibility.topTenCount}개` },
-                  { k: '평균 순위', v: Number.isFinite(result.score.visibility.avgRankWhenHit) ? `${result.score.visibility.avgRankWhenHit}위` : '—' },
-                ]}
-              />
-              <ScoreCard
-                label="콘텐츠 품질"
-                weight="25%"
-                score={result.score.quality.score}
-                rows={[
-                  { k: '글당 평균', v: `${result.score.quality.avgCharsPerPost.toLocaleString()}자` },
-                  { k: '글당 이미지', v: `${result.score.quality.avgImagesPerPost}장` },
-                  { k: '카테고리 집중', v: `${Math.round(result.score.quality.categoryConsistency * 100)}%` },
-                  ...(result.score.quality.topCategory ? [{ k: '주력 분야', v: result.score.quality.topCategory }] : []),
-                ]}
-              />
-            </div>
-
-            {/* 인사이트 */}
-            {result.score.insights.length > 0 && (
-              <section className="mb-12">
-                <div className="ed-eyebrow mb-4">개선 포인트</div>
-                <ol className="space-y-4 border-y border-rule py-6">
-                  {result.score.insights.map((ins, i) => (
-                    <li key={i} className="flex gap-4">
-                      <span className="text-orange-600 dark:text-orange-400 text-xl flex-shrink-0">{`${String(i + 1).padStart(2, '0')}.`}</span>
-                      <span className="text-base text-ink-muted leading-[1.7]">{ins}</span>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            )}
-
-            {/* 노출 키워드 상세 */}
-            {result.score.visibility.hits.length > 0 && (
-              <section className="mb-12">
-                <div className="ed-eyebrow mb-4">키워드별 진입 순위</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 border-y border-rule py-4">
-                  {result.score.visibility.hits.map((h) => (
-                    <div key={h.keyword} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
-                      <span className="text-sm text-ink-muted min-w-0 flex-1 break-words">{h.keyword}</span>
-                      <span className={`text-sm tabular-nums flex-shrink-0 whitespace-nowrap ${
-                        h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
-                      }`}>
-                        {h.rank === null ? '—' : `${h.rank}위`}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* 경고 */}
-            {result.score.warnings.length > 0 && (
-              <section className="mb-12 px-4 py-4 border border-rule-soft text-xs text-ink-muted leading-relaxed">
-                <div className="ed-byline mb-2 inline-block">측정 한계</div>
-                <ul className="list-disc pl-5 space-y-1">
-                  {result.score.warnings.map((w, i) => <li key={i}>{w}</li>)}
-                </ul>
-              </section>
-            )}
-
-            {/* 측정 방법 / 기준 — 점수 해석할 때 참조 */}
-            <MethodologyPanel defaultOpen={false} />
-
-            {/* Next actions */}
+            {/* ── 5. Next actions ── */}
             <section className="border-t border-rule pt-10 mb-10">
               <div className="ed-eyebrow mb-4">다음 단계</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -640,6 +533,44 @@ export default function BlogDiagnosePage() {
         )}
       </div>
     </div>
+  );
+}
+
+/* ─── 진단 원리 안내 카드 ─────────────────────────────────────── */
+function HowItWorks({ category, keywordCount }: { category: string; keywordCount: number }) {
+  return (
+    <section className="mb-10 rounded-xl border border-orange-200/60 dark:border-orange-900/30 bg-orange-50/40 dark:bg-orange-950/15 p-5 sm:p-6">
+      <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
+        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-300 text-xs">?</span>
+        이 진단은 이렇게 작동해요
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-ink-muted leading-relaxed">
+        <div className="flex gap-2.5">
+          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-orange-500 dark:bg-orange-400 text-white dark:text-zinc-950 flex items-center justify-center text-[10px] font-bold mt-0.5">1</span>
+          <div>
+            <strong className="text-ink block mb-0.5">RSS + 본문 수집</strong>
+            최근 글의 발행 일자·빈도를 RSS에서, 글자수·이미지 수를 실제 본문에서 읽어옵니다.
+          </div>
+        </div>
+        <div className="flex gap-2.5">
+          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-orange-500 dark:bg-orange-400 text-white dark:text-zinc-950 flex items-center justify-center text-[10px] font-bold mt-0.5">2</span>
+          <div>
+            <strong className="text-ink block mb-0.5">키워드 검색 노출</strong>
+            <span className="text-ink font-medium">{category}</span> 분야 핵심 키워드 {keywordCount}개로 네이버 검색해서 내 블로그가 몇 위에 나오는지 확인합니다.
+          </div>
+        </div>
+        <div className="flex gap-2.5">
+          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-orange-500 dark:bg-orange-400 text-white dark:text-zinc-950 flex items-center justify-center text-[10px] font-bold mt-0.5">3</span>
+          <div>
+            <strong className="text-ink block mb-0.5">3축 점수 계산</strong>
+            활동성(25%) + 노출(50%) + 품질(25%)로 총점을 산출하고, AI 인용 적합성은 별도로 측정합니다.
+          </div>
+        </div>
+      </div>
+      <p className="text-[11px] text-ink-faint mt-3">
+        네이버는 방문자 수·블로그 지수를 공개하지 않아, 모든 점수는 공개 데이터(RSS·검색 API·본문)로 추정한 결과입니다.
+      </p>
+    </section>
   );
 }
 
@@ -727,198 +658,10 @@ function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport
 
         <p className="text-xs text-ink-muted mt-4 leading-relaxed">
           네이버 메이트·AI브리핑 등 <strong className="text-ink">AI 검색이 내 글을 인용</strong>하기 좋은 구조인지 최근 본문 기준으로 측정한 별도 지표예요.
-          <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span> 항목별 상세는 아래 <strong className="text-ink">메이트 인용 준비도</strong>에서 확인하세요.
+          <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span>
         </p>
       </div>
     </section>
-  );
-}
-
-/* ─── 측정 방법 · 기준 패널 ─────────────────────────────────────
- *
- *  사용자에게 진단 원리·통과 기준·데이터 소스를 투명하게 공개.
- *  입력 페이지 (사전 안내) + 결과 페이지 (사후 해석) 양쪽에 노출.
- *  collapsible <details> — 기본 닫힘. 필요할 때만 펼쳐 보도록.
- */
-function MethodologyPanel({ defaultOpen = false }: { defaultOpen?: boolean }) {
-  return (
-    <details
-      open={defaultOpen}
-      className="group mb-6 rounded-lg border border-zinc-200 dark:border-[#2e2723] bg-white dark:bg-[#221c17] overflow-hidden"
-    >
-      <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-3 hover:bg-zinc-50 dark:hover:bg-[#1a1410] transition-colors">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 text-sm">
-            📊
-          </span>
-          <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">진단 방법 · 측정 기준</span>
-          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">어떻게 점수를 매기나요?</span>
-        </div>
-        <svg
-          className="w-4 h-4 text-zinc-400 transition-transform group-open:rotate-180"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </summary>
-
-      <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-zinc-100 dark:border-[#2e2723] text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-5">
-        {/* 1. 3축 가중치 */}
-        <div>
-          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
-            3축 가중평균
-          </h4>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
-            총점은 세 축의 점수를 가중평균(0~100)으로 합산합니다.
-          </p>
-          <div className="grid grid-cols-3 gap-2">
-            {[
-              { label: '활동성', weight: '25%', desc: '발행 빈도·꾸준함·최신성' },
-              { label: '노출',   weight: '50%', desc: '카테고리 키워드 검색 노출' },
-              { label: '품질',   weight: '25%', desc: '본문 길이·이미지·집중도' },
-            ].map((a) => (
-              <div
-                key={a.label}
-                className="rounded-md border border-rule-soft bg-paper px-3 py-2.5"
-              >
-                <div className="flex items-baseline justify-between mb-1">
-                  <span className="text-sm font-semibold text-ink">{a.label}</span>
-                  <span className="text-[11px] tabular-nums text-orange-700 dark:text-orange-300 font-semibold">{a.weight}</span>
-                </div>
-                <div className="text-[11px] text-ink-faint leading-snug">{a.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 2. 8개 건강 체크 통과 기준 */}
-        <div>
-          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
-            건강 체크 8개 항목 · 통과 기준
-          </h4>
-          <div className="overflow-hidden rounded-md border border-rule-soft">
-            <table className="w-full text-xs">
-              <thead className="bg-zinc-50 dark:bg-[#1a1410] text-ink-faint">
-                <tr>
-                  <th className="text-left font-medium px-3 py-2">항목</th>
-                  <th className="text-left font-medium px-3 py-2">통과 기준</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-rule-soft">
-                {[
-                  ['주 2회 이상 발행',     '최근 30일 8편 이상'],
-                  ['7일 이내 최신 글',      '마지막 발행이 7일 이내'],
-                  ['꾸준한 발행 간격',      '간격 표준편차 / 평균 ≤ 0.7'],
-                  ['1페이지 진입 30%+',    '키워드 30개 검색 → 30위 이내 진입이 9개 이상'],
-                  ['TOP 10 진입 글 보유',   '10위 이내 진입 키워드 1개 이상'],
-                  ['글당 평균 800자+',      '최근 12편 본문 평균 800자 이상'],
-                  ['글당 이미지 2장+',      '최근 12편 본문 평균 2장 이상'],
-                  ['카테고리 집중도 50%+',  'RSS 카테고리 최빈값 비율 50% 이상'],
-                ].map(([k, v]) => (
-                  <tr key={k}>
-                    <td className="px-3 py-2 font-medium text-ink whitespace-nowrap">{k}</td>
-                    <td className="px-3 py-2 text-ink-muted">{v}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* 3. 데이터 소스 */}
-        <div>
-          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
-            데이터 소스
-          </h4>
-          <ul className="space-y-1.5 text-xs text-ink-muted">
-            <li className="flex gap-2">
-              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-              <span><strong className="text-ink">네이버 블로그 RSS</strong> — 최근 글 발행 일자·제목·카테고리. 활동성 점수의 원천.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-              <span><strong className="text-ink">네이버 검색 OpenAPI</strong> — 카테고리별 핵심 키워드 30개로 블로그 검색을 호출해 30위 이내 노출 여부를 확인. 노출 점수의 원천.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-              <span><strong className="text-ink">PostView.naver (본문)</strong> — 최근 12편의 실제 본문 페이지를 추가 fetch해 글자수·이미지 수를 정확 측정. 품질 점수 + GEO 적합도의 공통 원천(같은 본문을 재사용).</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-              <span><strong className="text-ink">AI 인용 적합성(GEO)</strong> — 위 실측 본문에서 소제목 구조·도입부 팩트·숫자/데이터·질문형 제목·본문 깊이를 휴리스틱으로 측정. AI API는 쓰지 않습니다.</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* 4. 측정 한계 */}
-        <div>
-          <h4 className="text-xs font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300 mb-2">
-            측정 한계 · 주의
-          </h4>
-          <ul className="space-y-1.5 text-xs text-ink-muted">
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>네이버는 일일 방문자·블로그 지수를 공개하지 않아 모든 점수는 공개 데이터로 추정한 결과입니다.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>RSS·본문이 비공개이거나 RSS 발행이 꺼져 있으면 진단 자체가 불가합니다.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>"1페이지 진입"은 네이버 검색 OpenAPI display=30 기준 — 실제 PC 1페이지(10위)보다 넓은 범위입니다.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>RSS에 카테고리 태그가 없는 블로그는 카테고리 집중도가 낮게 잡힐 수 있습니다.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>점수 → 밴드(상위 5/15/35% 등) 매핑은 절대 백분위가 아니라 임계값 기준입니다. 카테고리 내 위치를 가늠하는 참고용으로 사용하세요.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span>외부 API 호출 비용·속도 문제로 로그인 사용자당 <strong className="text-ink">12시간에 1회</strong>만 진단할 수 있습니다.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-zinc-400 dark:text-zinc-600 flex-shrink-0">·</span>
-              <span><strong className="text-ink">AI 인용 적합성(GEO)</strong>은 총점(활동·노출·품질 3축)과 분리된 별도 참고 지표입니다. 총점 밴드 계산에는 반영되지 않습니다.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </details>
-  );
-}
-
-/* ─── 점수 카드 ─── */
-function ScoreCard({
-  label, weight, score, rows,
-}: {
-  label: string;
-  weight: string;
-  score: number;
-  rows: { k: string; v: string }[];
-}) {
-  return (
-    <div className="bg-paper p-6">
-      <div className="flex items-baseline justify-between mb-3">
-        <span className="text-base font-semibold text-ink">{label}</span>
-        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">{weight}</span>
-      </div>
-      <div className="text-4xl text-ink leading-none mb-4 tabular-nums">{score}<span className="text-base text-ink-faint ml-1">/100</span></div>
-      <dl className="space-y-1.5 text-xs border-t border-rule-soft pt-3">
-        {rows.map((r) => (
-          <div key={r.k} className="flex justify-between">
-            <dt className="text-ink-faint">{r.k}</dt>
-            <dd className="text-ink tabular-nums">{r.v}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
   );
 }
 
@@ -991,6 +734,28 @@ function RankDistribution({ hits }: { hits: { keyword: string; rank: number | nu
             ? `1페이지 진입은 있지만 TOP10이 ${buckets.top10}개로 적습니다. 진입한 키워드의 글 패턴을 다른 글에 확장해보세요.`
             : `1페이지 진입이 ${buckets.top10 + buckets.rank20 + buckets.rank30}개로 부족합니다. 검색량은 적지만 경쟁이 약한 롱테일 키워드부터 공략하세요.`}
       </p>
+
+      {/* 키워드별 상세 (접이식) */}
+      <details className="mt-4 group">
+        <summary className="cursor-pointer text-xs text-orange-600 dark:text-orange-400 hover:underline underline-offset-2 flex items-center gap-1">
+          키워드 {total}개 전체 순위 보기
+          <svg className="w-3.5 h-3.5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 border-t border-rule-soft mt-3 pt-3">
+          {hits.map((h) => (
+            <div key={h.keyword} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
+              <span className="text-sm text-ink-muted min-w-0 flex-1 break-words">{h.keyword}</span>
+              <span className={`text-sm tabular-nums flex-shrink-0 whitespace-nowrap ${
+                h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
+              }`}>
+                {h.rank === null ? '—' : `${h.rank}위`}
+              </span>
+            </div>
+          ))}
+        </div>
+      </details>
     </section>
   );
 }
@@ -1127,161 +892,3 @@ function HealthChecklist({ score }: { score: DiagnoseResponse['score'] }) {
   );
 }
 
-/* ─── 30일 액션 플랜 — 가장 약한 축에 맞는 weekly 추천 ────────────── */
-function ActionPlan({
-  score, categoryLabel,
-}: {
-  score: DiagnoseResponse['score'];
-  categoryLabel: string;
-}) {
-  // 가장 약한 축 결정 (점수가 낮을수록 우선)
-  const axes: { key: 'activity' | 'visibility' | 'quality'; label: string; value: number }[] = [
-    { key: 'activity',   label: '활동성', value: score.activity.score },
-    { key: 'visibility', label: '노출',   value: score.visibility.score },
-    { key: 'quality',    label: '품질',   value: score.quality.score },
-  ];
-  axes.sort((a, b) => a.value - b.value);
-  const weakest = axes[0];
-
-  const targets = score.visibility.hits.filter((h) => h.rank === null).slice(0, 3);
-  const targetLabel = targets.length > 0
-    ? targets.map((t) => `「${t.keyword}」`).join(', ')
-    : `${categoryLabel} 분야의 미진입 키워드`;
-
-  const plans: Record<typeof weakest.key, { week: string; title: string; tasks: string[] }[]> = {
-    activity: [
-      {
-        week: 'Week 1',
-        title: '발행 페이스 회복',
-        tasks: [
-          '이번 주 안에 최소 2편 발행 — 짧아도 좋으니 끊긴 흐름부터 끊어내기',
-          '발행 시간을 정해두고 캘린더에 반복 일정 등록 (예: 화/목 오전 10시)',
-          '미발행 초안 정리 — 70% 완성된 글 1개를 마감해서 발행',
-        ],
-      },
-      {
-        week: 'Week 2',
-        title: '주간 리듬 만들기',
-        tasks: [
-          '주제 분류표 작성 — 주력 카테고리 1개에 80% 글 몰빵',
-          '같은 요일에 같은 주제로 발행 (예: 매주 화요일=리뷰, 목요일=노하우)',
-          '글감 백로그 5개 미리 적어두기 (제목 + 핵심 메시지만)',
-        ],
-      },
-      {
-        week: 'Week 3~4',
-        title: '꾸준함 정착',
-        tasks: [
-          '주 2~3회 발행을 4주 연속 — 알고리즘이 활성 블로그로 인식하기 시작',
-          '내가 발행한 글 중 검색 노출된 글의 패턴 분석 (제목·길이·구조)',
-          '한 달 결과 리뷰 + 다음 달 콘텐츠 캘린더 작성',
-        ],
-      },
-    ],
-    visibility: [
-      {
-        week: 'Week 1',
-        title: '진입 가능한 키워드 찾기',
-        tasks: [
-          `미진입 키워드 ${targetLabel} 중 1개 선택 — 검색량 적어도 OK`,
-          '키워드 분석 페이지에서 검색량 1천~5천짜리 롱테일로 확장 (예: "OOO 추천" → "OOO 가성비 추천")',
-          '경쟁 글 상위 5개의 제목·소제목·이미지 수 정리',
-        ],
-      },
-      {
-        week: 'Week 2',
-        title: '상위 글 패턴 복제',
-        tasks: [
-          '상위 글의 헤딩 구조를 그대로 가져와서 내 경험으로 채우기',
-          '제목에 키워드를 자연스럽게 포함 — 단어 시작 부분에 배치',
-          '본문 1,500자 + 이미지 5장 + 표 1개 구성으로 발행',
-        ],
-      },
-      {
-        week: 'Week 3~4',
-        title: '진입 후 강화',
-        tasks: [
-          '발행 후 7일~14일 사이 순위 체크 — 진입했다면 다음 키워드로 같은 패턴 반복',
-          '진입한 글에 댓글 달리는 키워드 변형으로 후속 글 작성',
-          '한 달 뒤 다시 진단해서 변화 추이 확인',
-        ],
-      },
-    ],
-    quality: [
-      {
-        week: 'Week 1',
-        title: '글 길이 기준 세우기',
-        tasks: [
-          `다음 글부터 본문 ${score.quality.avgCharsPerPost < 800 ? '1,500자' : '2,000자'} 이상 작성`,
-          '제목 → 도입 → 본론 (3~5개 소제목) → 마무리 구조 고정',
-          '각 소제목 아래 이미지 1장 + 본문 2~3문단',
-        ],
-      },
-      {
-        week: 'Week 2',
-        title: '이미지·시각자료 보강',
-        tasks: [
-          `글당 이미지 ${score.quality.avgImagesPerPost < 2 ? '3장' : '5장'} 이상 배치 — 직접 찍은 사진 우선`,
-          '캡처/도식이 필요하면 이미지 편집 페이지에서 모자이크·크롭 정리',
-          '대체 텍스트(alt) 입력 — SEO + 접근성 동시 확보',
-        ],
-      },
-      {
-        week: 'Week 3~4',
-        title: '카테고리 집중',
-        tasks: [
-          score.quality.topCategory
-            ? `「${score.quality.topCategory}」 카테고리에 80% 이상 발행 집중`
-            : '주력 카테고리 1개를 정하고 80% 이상 그 안에서 글쓰기',
-          '곁다리 주제는 별도 블로그/메모 앱으로 분리',
-          '한 달 후 D.I.A./C-Rank 점수 변화를 다시 진단',
-        ],
-      },
-    ],
-  };
-
-  const selected = plans[weakest.key];
-
-  return (
-    <section className="mb-12">
-      <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
-        <div className="ed-eyebrow">30일 액션 플랜</div>
-        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-          가장 약한 축 · {weakest.label} {weakest.value}점
-        </span>
-      </div>
-
-      <p className="text-sm text-ink-muted mb-4 leading-relaxed">
-        지금 가장 점수가 낮은 <span className="font-semibold text-ink">{weakest.label}</span> 영역에 맞춰
-        4주짜리 실행 플랜을 추천합니다. 해당 주 끝에 체크하고 다음 주로 넘어가세요.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {selected.map((plan, idx) => (
-          <div
-            key={plan.week}
-            className="rounded-md border border-rule-soft bg-paper p-4"
-          >
-            <div className="flex items-baseline justify-between mb-2">
-              <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-orange-700 dark:text-orange-300">
-                {plan.week}
-              </span>
-              <span className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 text-xs font-bold flex items-center justify-center tabular-nums">
-                {idx + 1}
-              </span>
-            </div>
-            <h4 className="text-sm font-semibold text-ink mb-2.5">{plan.title}</h4>
-            <ul className="space-y-1.5">
-              {plan.tasks.map((task, i) => (
-                <li key={i} className="flex gap-2 text-xs text-ink-muted leading-relaxed">
-                  <span className="text-orange-500 dark:text-orange-400 flex-shrink-0">▸</span>
-                  <span>{task}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
