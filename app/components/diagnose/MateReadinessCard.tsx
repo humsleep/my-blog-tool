@@ -72,6 +72,21 @@ export default function MateReadinessCard({ blogId, category, initial }: Props) 
 
   const { score, grade, checks, topTip, sampleSize } = data;
 
+  const weights = [0.25, 0.25, 0.2, 0.15, 0.15];
+  const mateThreshold = 75;
+  const gap = Math.max(0, mateThreshold - score);
+
+  const improvableChecks = checks
+    .map((c, i) => ({
+      ...c,
+      index: i,
+      potential: Math.round((1 - c.passRate) * weights[i] * 100),
+    }))
+    .filter(c => c.status !== 'good')
+    .sort((a, b) => b.potential - a.potential);
+
+  const potentialTotal = improvableChecks.reduce((s, c) => s + c.potential, 0);
+
   return (
     <section className="mb-12">
       <div className="ed-eyebrow mb-3">네이버 메이트 인용 준비도</div>
@@ -79,46 +94,88 @@ export default function MateReadinessCard({ blogId, category, initial }: Props) 
         최근 글 <strong className="text-ink">{sampleSize}편</strong>이 AI 검색(네이버 메이트, GEO)에서 인용되기 좋은 구조인지 분석한 결과입니다.
       </p>
 
-      {/* Score header */}
-      <div className="flex items-center gap-4 mb-6 p-4 border border-rule rounded-lg bg-paper-deep">
+      {/* Score header with gap indicator */}
+      <div className="flex items-center gap-4 mb-4 p-4 border border-rule rounded-lg bg-paper-deep">
         <div className="flex-shrink-0">
           <ScoreRing score={score} grade={grade} />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className={`text-lg font-bold ${GRADE_COLOR[grade]}`}>
             {GRADE_LABEL[grade]}
           </div>
-          <p className="text-xs text-ink-muted mt-0.5 leading-relaxed">
-            {topTip}
-          </p>
+          {gap > 0 ? (
+            <p className="text-xs text-ink-muted mt-0.5">
+              메이트 기준(75점)까지 <strong className="text-orange-600 dark:text-orange-400">{gap}점 부족</strong>
+              {potentialTotal > 0 && (
+                <span> · 개선 여지 <strong className="text-green-600 dark:text-green-400">+{potentialTotal}점</strong></span>
+              )}
+            </p>
+          ) : (
+            <p className="text-xs text-green-600 dark:text-green-400 font-medium mt-0.5">
+              메이트 인용 기준 달성!
+            </p>
+          )}
         </div>
       </div>
 
+      {/* Priority improvement summary */}
+      {improvableChecks.length > 0 && gap > 0 && (
+        <div className="mb-5 p-3.5 rounded-lg bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50">
+          <p className="text-xs font-semibold text-orange-800 dark:text-orange-300 mb-2">
+            우선 개선 항목 (효과 큰 순서)
+          </p>
+          <div className="space-y-1.5">
+            {improvableChecks.slice(0, 3).map((c) => (
+              <div key={c.index} className="flex items-center gap-2 text-xs">
+                <span className="flex-shrink-0 w-5 text-center font-bold text-orange-600 dark:text-orange-400">
+                  +{c.potential}
+                </span>
+                <span className="text-ink-muted">{c.label}</span>
+                <span className="text-ink-faint tabular-nums">({c.passCount}/{c.totalCount}편)</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[11px] text-orange-700/70 dark:text-orange-400/60 mt-2">
+            위 항목을 모두 100%로 올리면 최대 <strong>+{potentialTotal}점</strong> → 예상 <strong>{Math.min(score + potentialTotal, 100)}점</strong>
+          </p>
+        </div>
+      )}
+
       {/* Check items */}
       <div className="space-y-3">
-        {checks.map((check, i) => (
-          <div key={i} className="border border-rule rounded-lg p-3.5 hover:border-rule-soft transition-colors">
-            <div className="flex items-center justify-between gap-3 mb-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <StatusIcon status={check.status} />
-                <span className="text-sm font-semibold text-ink truncate">{check.label}</span>
+        {checks.map((check, i) => {
+          const potential = Math.round((1 - check.passRate) * weights[i] * 100);
+          return (
+            <div key={i} className="border border-rule rounded-lg p-3.5 hover:border-rule-soft transition-colors">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <StatusIcon status={check.status} />
+                  <span className="text-sm font-semibold text-ink truncate">{check.label}</span>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {check.status !== 'good' && potential > 0 && (
+                    <span className="text-[10px] font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 px-1.5 py-0.5 rounded">
+                      +{potential}점 가능
+                    </span>
+                  )}
+                  <span className="text-xs tabular-nums text-ink-faint">
+                    {check.passCount}/{check.totalCount}편 통과
+                  </span>
+                </div>
               </div>
-              <span className="flex-shrink-0 text-xs tabular-nums text-ink-faint">
-                {check.passCount}/{check.totalCount}편 통과
-              </span>
+              {/* Progress bar */}
+              <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mb-2">
+                <div
+                  className={`h-full rounded-full transition-all ${barColor(check.status)}`}
+                  style={{ width: `${Math.round(check.passRate * 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-ink-muted leading-relaxed">
+                {check.status === 'good' ? check.description : `▸ ${check.tip}`}
+              </p>
             </div>
-            {/* Progress bar */}
-            <div className="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mb-2">
-              <div
-                className={`h-full rounded-full transition-all ${barColor(check.status)}`}
-                style={{ width: `${Math.round(check.passRate * 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-ink-muted leading-relaxed">
-              {check.status === 'good' ? check.description : `▸ ${check.tip}`}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
