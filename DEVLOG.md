@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-06-15 — 이미지 편집 클립보드 붙여넣기 (Phase 58.1)
+
+### 변경
+- 이미지 편집 페이지에 `Ctrl+V`(Cmd+V) 클립보드 이미지 붙여넣기 지원 추가
+- `window paste` 이벤트 리스너로 `clipboardData.items` 에서 이미지 파일 추출
+- 업로드 영역 안내 문구에 "Ctrl+V로 붙여넣기 가능" 표시 추가
+- PR #72 → main squash merge
+
+---
+
 ## 2026-06-15 — 메뉴 재구성 + Filerobot 이미지 편집기 (Phase 58)
 
 ### 배경
