@@ -34,6 +34,12 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
     ],
   },
+  serverExternalPackages: ['canvas'],
+  turbopack: {
+    resolveAlias: {
+      canvas: './empty-module.js',
+    },
+  },
   async headers() {
     return [
       {
