@@ -21,7 +21,7 @@ export default function ImageToolsPage() {
   useEffect(() => {
     import('react-filerobot-image-editor').then((mod) => {
       const T = mod.TABS as Record<string, string>;
-      setEditorTabs([T.ADJUST, T.FINETUNE, T.FILTERS, T.ANNOTATE, T.RESIZE]);
+      setEditorTabs([T.ADJUST, T.FINETUNE, T.FILTERS, T.ANNOTATE, T.WATERMARK, T.RESIZE]);
     });
   }, []);
 
@@ -95,7 +95,7 @@ export default function ImageToolsPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">이미지 편집</h1>
             <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
-              크롭·필터·텍스트·모자이크 — 블로그 이미지를 한 곳에서 편집하세요
+              크롭·필터·텍스트·드로잉·워터마크 — 블로그 이미지를 한 곳에서 편집하세요
             </p>
           </div>
           <Link
@@ -152,6 +152,8 @@ export default function ImageToolsPage() {
                   { titleKey: '3:4', ratio: 3 / 4 },
                 ] }}
                 Text={{ text: '텍스트 입력' }}
+                Pen={{ tension: 0.3 }}
+                Watermark={{ hideTextWatermark: false }}
               />
             )}
           </div>
