@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import FlowNav from '../components/FlowNav';
+import MosaicTool from '../components/MosaicTool';
 import { useToast } from '../components/ui/Toast';
 
 const FilerobotImageEditor = dynamic(
@@ -11,8 +12,11 @@ const FilerobotImageEditor = dynamic(
   { ssr: false },
 );
 
+type Mode = 'upload' | 'mosaic' | 'editor';
+
 export default function ImageToolsPage() {
   const { toast } = useToast();
+  const [mode, setMode] = useState<Mode>('upload');
   const [imageUrl, setImageUrl] = useState<string>('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editorTabs, setEditorTabs] = useState<any[] | null>(null);
@@ -33,6 +37,7 @@ export default function ImageToolsPage() {
       const parsed = JSON.parse(raw) as { dataUrl?: string };
       if (parsed?.dataUrl) {
         setImageUrl(parsed.dataUrl);
+        setMode('mosaic');
       }
     } catch {
       // ignore
@@ -50,6 +55,7 @@ export default function ImageToolsPage() {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageUrl(e.target?.result as string);
+      setMode('mosaic');
     };
     reader.readAsDataURL(file);
   }, [toast]);
@@ -88,6 +94,19 @@ export default function ImageToolsPage() {
     toast('이미지가 다운로드되었습니다.', 'success');
   }, [fileName, toast]);
 
+  const downloadDataUrl = useCallback((dataUrl: string) => {
+    const link = document.createElement('a');
+    link.download = `${fileName}.png`;
+    link.href = dataUrl;
+    link.click();
+    toast('이미지가 다운로드되었습니다.', 'success');
+  }, [fileName, toast]);
+
+  const goToUpload = useCallback(() => {
+    setImageUrl('');
+    setMode('upload');
+  }, []);
+
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-4 sm:py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,7 +114,7 @@ export default function ImageToolsPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">이미지 편집</h1>
             <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
-              크롭·필터·텍스트·드로잉·워터마크 — 블로그 이미지를 한 곳에서 편집하세요
+              모자이크·블러·크롭·필터·텍스트·워터마크 — 블로그 이미지를 한 곳에서
             </p>
           </div>
           <Link
@@ -109,7 +128,21 @@ export default function ImageToolsPage() {
           </Link>
         </div>
 
-        {!imageUrl ? (
+        {/* Step indicator */}
+        {mode !== 'upload' && (
+          <div className="mb-4 flex items-center gap-2 text-sm">
+            <span className={`px-2.5 py-1 rounded-full font-medium ${mode === 'mosaic' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'}`}>
+              ① 모자이크 · 블러
+            </span>
+            <span className="text-zinc-300 dark:text-zinc-600">→</span>
+            <span className={`px-2.5 py-1 rounded-full font-medium ${mode === 'editor' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400'}`}>
+              ② 편집기
+            </span>
+          </div>
+        )}
+
+        {/* Upload */}
+        {mode === 'upload' && (
           <div
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
@@ -131,44 +164,56 @@ export default function ImageToolsPage() {
             <p className="text-zinc-600 dark:text-zinc-400 mb-2 font-medium">이미지를 드래그하거나 클릭해서 업로드</p>
             <p className="text-sm text-zinc-400 dark:text-zinc-500">PNG, JPG, GIF, WebP 지원 · Ctrl+V로 붙여넣기 가능</p>
           </div>
-        ) : (
-          <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden" style={{ height: '80vh', minHeight: 500 }}>
-            {editorTabs && (
-              <FilerobotImageEditor
-                source={imageUrl}
-                tabsIds={editorTabs as never}
-                defaultTabId={editorTabs[0] as never}
-                defaultToolId="Crop"
-                savingPixelRatio={2}
-                previewPixelRatio={2}
-                onSave={handleSave}
-                onClose={() => setImageUrl('')}
-                closeAfterSave={false}
-                Crop={{ presetsItems: [
-                  { titleKey: '1:1', ratio: 1 },
-                  { titleKey: '16:9', ratio: 16 / 9 },
-                  { titleKey: '9:16', ratio: 9 / 16 },
-                  { titleKey: '4:3', ratio: 4 / 3 },
-                  { titleKey: '3:4', ratio: 3 / 4 },
-                ] }}
-                Text={{ text: '텍스트 입력' }}
-                Pen={{ tension: 0.3 }}
-                Watermark={{ hideTextWatermark: false }}
-              />
-            )}
-          </div>
         )}
 
-        <div className="mt-6 flex justify-center">
-          {imageUrl && (
-            <button
-              onClick={() => setImageUrl('')}
-              className="btn-base btn-secondary btn-md"
-            >
-              새 이미지 업로드
-            </button>
-          )}
-        </div>
+        {/* Mosaic / Blur tool */}
+        {mode === 'mosaic' && imageUrl && (
+          <MosaicTool
+            imageUrl={imageUrl}
+            onOpenEditor={(dataUrl) => { setImageUrl(dataUrl); setMode('editor'); }}
+            onSave={downloadDataUrl}
+            onBack={goToUpload}
+          />
+        )}
+
+        {/* Filerobot editor */}
+        {mode === 'editor' && imageUrl && (
+          <>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden" style={{ height: '80vh', minHeight: 500 }}>
+              {editorTabs && (
+                <FilerobotImageEditor
+                  source={imageUrl}
+                  tabsIds={editorTabs as never}
+                  defaultTabId={editorTabs[0] as never}
+                  defaultToolId="Crop"
+                  savingPixelRatio={2}
+                  previewPixelRatio={2}
+                  onSave={handleSave}
+                  onClose={() => setMode('mosaic')}
+                  closeAfterSave={false}
+                  Crop={{ presetsItems: [
+                    { titleKey: '1:1', ratio: 1 },
+                    { titleKey: '16:9', ratio: 16 / 9 },
+                    { titleKey: '9:16', ratio: 9 / 16 },
+                    { titleKey: '4:3', ratio: 4 / 3 },
+                    { titleKey: '3:4', ratio: 3 / 4 },
+                  ] }}
+                  Text={{ text: '텍스트 입력' }}
+                  Pen={{ tension: 0.3 }}
+                  Watermark={{ hideTextWatermark: false }}
+                />
+              )}
+            </div>
+            <div className="mt-4 flex justify-center gap-3">
+              <button onClick={() => setMode('mosaic')} className="btn-base btn-secondary btn-md">
+                ◀ 모자이크로 돌아가기
+              </button>
+              <button onClick={goToUpload} className="btn-base btn-secondary btn-md">
+                새 이미지 업로드
+              </button>
+            </div>
+          </>
+        )}
 
         <FlowNav
           currentStep={8}
