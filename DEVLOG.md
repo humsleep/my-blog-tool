@@ -5,6 +5,27 @@
 
 ---
 
+## 2026-06-15 — 메뉴 재구성 + Filerobot 이미지 편집기 (Phase 58)
+
+### 배경
+1. 상단 메뉴 "더보기"가 이미지 검색·편집·연구실을 한데 묶어 이질감
+2. 기존 이미지 편집기(커스텀 Canvas, ~1700줄)가 무겁고 기능 부족
+
+### 변경 A — 메뉴 재구성
+- **"더보기" 제거** → **"이미지 ▼"** 드롭다운(이미지 검색 + 이미지 편집) + **"연구실"** 평면 링크
+- 모바일 햄버거 메뉴도 동일 구조로 업데이트
+- `CLAUDE.md` 메뉴 구조 Phase 53 → Phase 58 반영
+
+### 변경 B — Filerobot 이미지 편집기 통합
+- `react-filerobot-image-editor` v5 (Scaleflex, MIT, ★4.9k) 도입
+- `styled-components` + `react-konva` peer deps 설치
+- `app/image-tools/page.tsx`: ~1700줄 커스텀 Canvas → ~170줄 Filerobot 래퍼
+- 탭: Adjust / Finetune / Filters / Annotate / Resize + Crop 프리셋(1:1, 16:9, 9:16, 4:3, 3:4)
+- Turbopack `canvas` 모듈 호환: `next.config.ts` resolveAlias + `empty-module.js`
+- sessionStorage `pendingImage` 연동(이미지 검색→편집 흐름) 유지
+
+---
+
 ## 2026-06-15 — 진단 결과 페이지 정리 + 시각화 강화 (Phase 57)
 
 ### 배경

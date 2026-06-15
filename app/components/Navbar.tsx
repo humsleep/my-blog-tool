@@ -35,23 +35,22 @@ const COMMUNITY_MENU: ToolItem[] = [
   { href: '/community/companions', label: '체험단 동행해요', description: '체험단 동행자 모집' },
 ];
 
-/** 더보기 — 이미지 도구 + 연구실 (진짜 부가 기능만, Phase 53). */
-const MORE_MENU: ToolItem[] = [
+/** 이미지 — 드롭다운. 이미지 검색 + 편집 (Phase 58). */
+const IMAGE_MENU: ToolItem[] = [
   { href: '/image-search',  label: '이미지 검색', description: '무료 저작권 이미지' },
   { href: '/image-tools',   label: '이미지 편집', description: '크롭·모자이크·필터' },
-  { href: '/lab',           label: '연구실',      description: '에디토리얼 가이드·실험' },
 ];
 
 /** 활성 강조 — 드롭다운 안 어느 항목에 들어와 있으면 부모 메뉴를 활성 톤으로. */
 const KEYWORD_PATHS = KEYWORD_MENU.map((m) => m.href);
 const WRITING_PATHS = WRITING_MENU.map((m) => m.href);
-const MORE_PATHS = MORE_MENU.map((m) => m.href);
+const IMAGE_PATHS = IMAGE_MENU.map((m) => m.href);
 
 export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [keywordOpen, setKeywordOpen] = useState(false);
   const [writingOpen, setWritingOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [imageOpen, setImageOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -59,12 +58,12 @@ export default function Navbar() {
   const { user, configured } = useUser();
   const keywordRef = useRef<HTMLDivElement>(null);
   const writingRef = useRef<HTMLDivElement>(null);
-  const moreRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
   const communityRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const keywordCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const writingCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const moreCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const imageCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const communityCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 외부 클릭 시 닫기
@@ -76,8 +75,8 @@ export default function Navbar() {
       if (writingRef.current && !writingRef.current.contains(e.target as Node)) {
         setWritingOpen(false);
       }
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
+      if (imageRef.current && !imageRef.current.contains(e.target as Node)) {
+        setImageOpen(false);
       }
       if (communityRef.current && !communityRef.current.contains(e.target as Node)) {
         setCommunityOpen(false);
@@ -94,7 +93,7 @@ export default function Navbar() {
   useEffect(() => {
     setKeywordOpen(false);
     setWritingOpen(false);
-    setMoreOpen(false);
+    setImageOpen(false);
     setCommunityOpen(false);
     setIsMobileOpen(false);
     setUserMenuOpen(false);
@@ -123,8 +122,8 @@ export default function Navbar() {
   const scheduleCloseKeyword = makeScheduleClose(keywordCloseTimerRef, setKeywordOpen);
   const openWriting = makeOpen(writingCloseTimerRef, setWritingOpen);
   const scheduleCloseWriting = makeScheduleClose(writingCloseTimerRef, setWritingOpen);
-  const openMore = makeOpen(moreCloseTimerRef, setMoreOpen);
-  const scheduleCloseMore = makeScheduleClose(moreCloseTimerRef, setMoreOpen);
+  const openImage = makeOpen(imageCloseTimerRef, setImageOpen);
+  const scheduleCloseImage = makeScheduleClose(imageCloseTimerRef, setImageOpen);
   const openCommunity = makeOpen(communityCloseTimerRef, setCommunityOpen);
   const scheduleCloseCommunity = makeScheduleClose(communityCloseTimerRef, setCommunityOpen);
 
@@ -136,7 +135,7 @@ export default function Navbar() {
       setKeywordOpen(false);
       setWritingOpen(false);
       setCommunityOpen(false);
-      setMoreOpen(false);
+      setImageOpen(false);
       setUserMenuOpen(false);
     };
     document.addEventListener('keydown', onKey);
@@ -190,10 +189,11 @@ export default function Navbar() {
   };
 
   const isDiagnoseActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
+  const isLabActive = pathname === '/lab' || pathname.startsWith('/lab/');
   const isCommunityActive = pathname.startsWith('/community');
   const isKeywordActive = KEYWORD_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
   const isWritingActive = WRITING_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
-  const isMoreActive = MORE_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
+  const isImageActive = IMAGE_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
 
   const displayName =
     user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || '';
@@ -217,7 +217,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Menu — Phase 48 P3: 4개 슬롯 (글쓰기 / 진단 / 커뮤니티 / 더보기).
+          {/* Desktop Menu — 5개 슬롯 (키워드 리서치 / 글쓰기 / 진단 / 커뮤니티 / 이미지 / 연구실). Phase 58.
               Phase 52: 간격 gap-1 → gap-2 / lg:gap-3 + 메뉴 항목 px-3 → px-4 로 보기 좋게. */}
           <div className="hidden md:flex md:items-center md:gap-2 lg:gap-3">
             {/* 키워드 리서치 ▼ — 인기검색어·키워드분석·상위노출 통합 (Phase 53) */}
@@ -409,40 +409,40 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* 더보기 ▼ — 메가패널. 고급 도구 + 보조 + 연구실 */}
+            {/* 이미지 ▼ — 이미지 검색 + 편집 (Phase 58) */}
             <div
               className="relative"
-              ref={moreRef}
-              onMouseEnter={openMore}
-              onMouseLeave={scheduleCloseMore}
+              ref={imageRef}
+              onMouseEnter={openImage}
+              onMouseLeave={scheduleCloseImage}
             >
               <button
                 type="button"
-                onClick={() => setMoreOpen((v) => !v)}
-                onKeyDown={(e) => handleTriggerKeyDown(e, setMoreOpen, moreRef)}
-                aria-expanded={moreOpen}
+                onClick={() => setImageOpen((v) => !v)}
+                onKeyDown={(e) => handleTriggerKeyDown(e, setImageOpen, imageRef)}
+                aria-expanded={imageOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isMoreActive
+                  isImageActive
                     ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
-                    : moreOpen
+                    : imageOpen
                       ? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100'
                       : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
                 }`}
               >
-                더보기
-                <svg className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                이미지
+                <svg className={`w-3.5 h-3.5 transition-transform ${imageOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              {moreOpen && (
+              {imageOpen && (
                 <div
                   className="absolute top-full right-0 mt-1 w-72 bg-white dark:bg-zinc-900 rounded-md shadow-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden p-1.5"
                   role="menu"
-                  onKeyDown={(e) => handleMenuKeyDown(e, () => setMoreOpen(false))}
+                  onKeyDown={(e) => handleMenuKeyDown(e, () => setImageOpen(false))}
                 >
-                  {MORE_MENU.map((it) => {
+                  {IMAGE_MENU.map((it) => {
                     const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
                     return (
                       <Link
@@ -450,7 +450,7 @@ export default function Navbar() {
                         href={it.href}
                         role="menuitem"
                         aria-current={isActive ? 'page' : undefined}
-                        onClick={() => setMoreOpen(false)}
+                        onClick={() => setImageOpen(false)}
                         className={`block px-3 py-2.5 rounded-lg text-sm transition-colors ${
                           isActive
                             ? 'bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-300'
@@ -467,6 +467,18 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+
+            {/* 연구실 — 평면 단일 메뉴 (Phase 58) */}
+            <Link
+              href="/lab"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                isLabActive
+                  ? 'bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              연구실
+            </Link>
           </div>
 
           {/* Right side: Auth + Dark toggle + Mobile hamburger */}
@@ -735,12 +747,12 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* 더보기 — 이미지 도구 + 연구실. 데스크탑 "더보기 ▼" 와 정합. */}
+            {/* 이미지 + 연구실 */}
             <div className="pt-2 border-t border-zinc-200 dark:border-zinc-700 space-y-1">
               <div className="px-4">
-                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">더보기</span>
+                <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">이미지</span>
               </div>
-              {MORE_MENU.map((it) => {
+              {IMAGE_MENU.map((it) => {
                 const isActive = pathname === it.href || pathname.startsWith(it.href + '/');
                 return (
                   <Link
@@ -762,6 +774,22 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+              <Link
+                href="/lab"
+                onClick={() => setIsMobileOpen(false)}
+                className={`flex items-start gap-2 px-4 py-2.5 rounded-lg min-h-[44px] ${
+                  isLabActive
+                    ? 'bg-orange-500 text-white'
+                    : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                }`}
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">연구실</div>
+                  <div className={`text-xs mt-0.5 ${isLabActive ? 'text-orange-100' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                    에디토리얼 가이드·실험
+                  </div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>
