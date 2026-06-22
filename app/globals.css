@@ -465,6 +465,21 @@ p, li {
 .shadow-ambient        { box-shadow: var(--shadow-ambient); }
 .shadow-ambient-accent { box-shadow: var(--shadow-ambient-accent); }
 
+/* ── 모바일 바텀시트 (Phase 59 — 햄버거 메뉴를 하단에서 올라오는 시트로) ──
+ *  엄지 접근성을 위해 화면 하단에서 슬라이드 업. 드래그 핸들 + backdrop.
+ *  reduced-motion 에서는 글로벌 규칙이 duration 을 축소해 즉시 표시. */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.animate-sheet-up { animation: sheet-up var(--duration-slow) var(--ease-premium); }
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-backdrop-in { animation: backdrop-in var(--duration-base) var(--ease-out); }
+
 .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; min-height: 32px; }
 .btn-md { padding: 0.5rem 1rem;     font-size: 0.875rem;  min-height: 38px; }
 .btn-lg { padding: 0.75rem 1.25rem; font-size: 0.9375rem; min-height: 44px; }

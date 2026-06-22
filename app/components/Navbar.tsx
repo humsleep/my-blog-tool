@@ -53,6 +53,9 @@ export default function Navbar() {
   const [imageOpen, setImageOpen] = useState(false);
   const [communityOpen, setCommunityOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  // 바텀시트 스와이프-다운 닫기 (Phase 59) — 드래그 거리(px).
+  const [sheetDragY, setSheetDragY] = useState(0);
+  const sheetDragStartRef = useRef<number | null>(null);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
   const { user, configured } = useUser();
@@ -89,6 +92,16 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 바텀시트 열릴 때 배경 스크롤 잠금 (Phase 59)
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isMobileOpen]);
+
   // 페이지 이동 시 모든 메뉴 닫기
   useEffect(() => {
     setKeywordOpen(false);
@@ -96,6 +109,7 @@ export default function Navbar() {
     setImageOpen(false);
     setCommunityOpen(false);
     setIsMobileOpen(false);
+    setSheetDragY(0);
     setUserMenuOpen(false);
   }, [pathname]);
 
@@ -188,6 +202,28 @@ export default function Navbar() {
     );
   };
 
+  /** 바텀시트 닫기 — 드래그 상태도 함께 초기화. */
+  const closeMobileSheet = () => {
+    setIsMobileOpen(false);
+    setSheetDragY(0);
+    sheetDragStartRef.current = null;
+  };
+
+  /** 드래그 핸들 스와이프-다운으로 시트 닫기 (모바일 제스처). */
+  const onSheetTouchStart = (e: React.TouchEvent) => {
+    sheetDragStartRef.current = e.touches[0].clientY;
+  };
+  const onSheetTouchMove = (e: React.TouchEvent) => {
+    if (sheetDragStartRef.current == null) return;
+    const dy = e.touches[0].clientY - sheetDragStartRef.current;
+    if (dy > 0) setSheetDragY(dy);
+  };
+  const onSheetTouchEnd = () => {
+    if (sheetDragY > 90) closeMobileSheet();
+    else setSheetDragY(0);
+    sheetDragStartRef.current = null;
+  };
+
   const isDiagnoseActive = pathname === '/blog-diagnose' || pathname.startsWith('/blog-diagnose/');
   const isLabActive = pathname === '/lab' || pathname.startsWith('/lab/');
   const isCommunityActive = pathname.startsWith('/community');
@@ -201,6 +237,7 @@ export default function Navbar() {
   const initial = displayName?.charAt(0).toUpperCase() || '?';
 
   return (
+    <>
     <nav className="sticky top-0 z-50 w-full bg-white/85 dark:bg-zinc-950/85 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14">
@@ -575,11 +612,39 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+    </nav>
 
-      {/* Mobile Menu — 8단계 워크플로우 평면 노출 */}
+      {/* Mobile Menu — 하단에서 올라오는 바텀시트 (Phase 59).
+          엄지 접근성 ↑ · 드래그 핸들 스와이프-다운으로 닫기 · backdrop 탭으로 닫기. */}
       {isMobileOpen && (
-        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 max-h-[calc(100vh-56px-64px)] overflow-y-auto">
-          <div className="px-3 py-3 pb-6 space-y-4">
+        <div className="md:hidden fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="메뉴">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-backdrop-in"
+            onClick={closeMobileSheet}
+            aria-hidden
+          />
+
+          {/* Sheet */}
+          <div
+            className="absolute bottom-0 left-0 right-0 max-h-[82vh] flex flex-col rounded-t-2xl bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 shadow-2xl animate-sheet-up safe-bottom"
+            style={{
+              transform: sheetDragY ? `translateY(${sheetDragY}px)` : undefined,
+              transition: sheetDragStartRef.current == null ? 'transform 0.25s var(--ease-premium)' : 'none',
+            }}
+          >
+            {/* 드래그 핸들 — 스와이프-다운으로 닫기 */}
+            <div
+              className="flex-shrink-0 flex items-center justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing touch-none"
+              onTouchStart={onSheetTouchStart}
+              onTouchMove={onSheetTouchMove}
+              onTouchEnd={onSheetTouchEnd}
+              onClick={closeMobileSheet}
+            >
+              <span className="w-10 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600" aria-hidden />
+            </div>
+
+          <div className="overflow-y-auto px-3 py-3 pb-6 space-y-4">
             {/* Auth on mobile */}
             {configured && (
               user ? (
@@ -792,8 +857,9 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }
