@@ -7,6 +7,7 @@ import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
 import { TIPS_CATEGORIES, type TipsCategory } from '@/app/lib/community/tips';
 import { markdownToHtml } from '@/app/lib/format/article-formats';
+import MobileSubHeader from '@/app/components/ui/MobileSubHeader';
 
 export default function TipsNewPageWrapper() {
   return (
@@ -165,8 +166,9 @@ function TipsNewPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MobileSubHeader title={editId ? '글 수정' : '새 글 작성'} backHref="/community/tips" />
         <div className="mb-5">
-          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+          <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-1">
             <Link href="/community/tips" className="hover:text-orange-500 dark:hover:text-orange-400">정보 공유</Link>
             <span>/</span>
             <span>{editId ? '글 수정' : '글쓰기'}</span>
@@ -230,7 +232,7 @@ function TipsNewPage() {
                 maxLength={10000}
                 rows={14}
                 placeholder={'## 소제목\n\n본문에 ##(소제목), **굵게**, *기울임*, `코드`, 목록(- ) 등 마크다운을 사용할 수 있습니다.'}
-                className={fieldCls + ' font-mono text-[13px]'}
+                className={fieldCls + ' font-mono !text-[16px] sm:!text-[13px]'}
                 required
               />
             )}
@@ -242,17 +244,17 @@ function TipsNewPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="sticky bottom-16 sm:static -mx-5 sm:mx-0 px-5 sm:px-0 py-3 sm:py-0 sm:pt-2 bg-white/95 dark:bg-zinc-800/95 sm:bg-transparent backdrop-blur border-t sm:border-0 border-zinc-200 dark:border-zinc-700 flex justify-end gap-2">
             <Link
               href="/community/tips"
-              className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
+              className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
             >
               취소
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : editId ? '수정 저장' : '작성 완료'}
             </button>
@@ -264,4 +266,4 @@ function TipsNewPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full px-3 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';

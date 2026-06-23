@@ -248,7 +248,7 @@ function TipsRow({ post }: { post: TipsPost }) {
     <li>
       <Link
         href={`/community/tips/${post.id}`}
-        className="block hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors"
+        className="block hover:bg-zinc-50 dark:hover:bg-zinc-700/40 active:bg-zinc-100 dark:active:bg-zinc-700/60 transition-colors"
       >
         {/* 데스크톱 — 그리드 컬럼 */}
         <div className="hidden md:grid grid-cols-[88px_1fr_120px_100px_72px_64px] gap-3 items-center px-5 py-3">

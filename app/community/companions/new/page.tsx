@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
 import { fetchMyProfile, type Profile } from '@/app/lib/community/profile';
 import { REGIONS, getCities, TIME_SLOTS, type TimeSlot } from '@/app/lib/community/regions';
+import MobileSubHeader from '@/app/components/ui/MobileSubHeader';
 
 export default function CompanionNewPageWrapper() {
   return (
@@ -199,8 +200,9 @@ function CompanionNewPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <MobileSubHeader title={editId ? '모집글 수정' : '동행자 모집'} backHref="/community/companions" />
         <div className="mb-5">
-          <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+          <div className="hidden sm:flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mb-1">
             <Link href="/community/companions" className="hover:text-orange-500 dark:hover:text-orange-400">체험단 동행해요</Link>
             <span>/</span>
             <span>{editId ? '글 수정' : '모집글 작성'}</span>
@@ -300,12 +302,12 @@ function CompanionNewPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Link href="/community/companions" className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg">취소</Link>
+          <div className="sticky bottom-16 sm:static -mx-5 sm:mx-0 px-5 sm:px-0 py-3 sm:py-0 sm:pt-2 bg-white/95 dark:bg-zinc-800/95 sm:bg-transparent backdrop-blur border-t sm:border-0 border-zinc-200 dark:border-zinc-700 flex justify-end gap-2">
+            <Link href="/community/companions" className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg">취소</Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : editId ? '수정 저장' : '모집글 등록'}
             </button>
@@ -317,7 +319,7 @@ function CompanionNewPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full px-3 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 function Field({
   label, required, help, children,
