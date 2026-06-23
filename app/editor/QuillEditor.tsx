@@ -154,7 +154,7 @@ const QuillEditor = forwardRef<QuillEditorHandle, QuillEditorProps>(
       }
     }, [value]);
 
-    return <div ref={editorRef} style={{ minHeight: '400px' }} className="bg-white" />;
+    return <div ref={editorRef} style={{ minHeight: 'min(400px, 50vh)' }} className="bg-white" />;
   }
 );
 

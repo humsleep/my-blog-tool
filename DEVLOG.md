@@ -25,6 +25,18 @@
 
 ---
 
+## 2026-06-23 — 모바일 앱화 2차: 무거운 화면·모달 (Phase 60.2)
+
+### 변경 (모바일 전용, 데스크탑 유지)
+- **진단 ScoreGauge 반응형**: 고정 px → SVG fluid(`width:100%` + `maxWidth`)로 작은 화면 오버플로 방지
+- **에디터 Quill 최소 높이**: `400px` → `min(400px, 50vh)`
+- **AI 글쓰기 옵션 패널 모바일 기본 접힘**(matchMedia) — 스크롤 단축, 생성 버튼 근접
+- **이미지 편집 높이**: `80vh/minHeight500` → `clamp(420px,72vh,760px)`
+- **모달 바텀시트화**: SwapModal·ReportModal 모바일 하단 시트(rounded-t·max-h·overflow) + 닫기 X
+- PR #88 → main squash merge
+
+---
+
 ## 2026-06-23 — 모바일 앱화 1차: 네비게이션·폼·터치 (Phase 60.1)
 
 ### 변경 (모바일 전용, 데스크탑 유지)
