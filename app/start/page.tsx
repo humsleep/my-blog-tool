@@ -197,9 +197,9 @@ export default function StartPage() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-20">
         {/* Step indicator */}
-        <div className="ed-eyebrow mb-6">Step {stepNum} · 3</div>
+        <div className="ed-eyebrow mb-4 sm:mb-6">Step {stepNum} · 3</div>
 
         {/* ─── Step 1: 키워드 ─────────────────────────────────────── */}
         {step === 'keyword' && (

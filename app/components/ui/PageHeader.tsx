@@ -35,7 +35,7 @@ export default function PageHeader({ title, subtitle, step, totalSteps, badge, a
           </h1>
 
           {subtitle ? (
-            <p className="mt-2 text-sm sm:text-[15px] text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
+            <p className="hidden sm:block mt-2 text-sm sm:text-[15px] text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
               {subtitle}
             </p>
           ) : null}

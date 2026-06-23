@@ -135,7 +135,7 @@ export default function CompanionsPage() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">🚶‍♂️ 체험단 동행해요</h1>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
+              <p className="hidden sm:block text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 체험단 선정 후 함께 갈 동행자를 찾아보세요
               </p>
             </div>

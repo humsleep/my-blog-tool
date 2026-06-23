@@ -732,7 +732,7 @@ function PromptGeneratorContent() {
         <div className="mt-4 mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">프롬프트 생성</h1>
-            <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
+            <p className="hidden sm:block text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
               키워드와 옵션을 선택하여 블로그 글 작성을 위한 최적의 프롬프트를 생성하세요
             </p>
           </div>

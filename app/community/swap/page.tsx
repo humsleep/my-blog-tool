@@ -194,7 +194,7 @@ export default function SwapPage() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">🤝 서이추 해요</h1>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
+              <p className="hidden sm:block text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 같은 분야 블로거를 만나 서로이웃 추가하세요 · 하루 1회 작성
               </p>
             </div>

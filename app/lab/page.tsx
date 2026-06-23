@@ -45,27 +45,27 @@ export default async function LabPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Masthead */}
-      <div className="border-b border-rule">
+      {/* Masthead — 모바일에선 숨김 */}
+      <div className="hidden sm:block border-b border-rule">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
           <span>포스팅 연구실 — Lab Notes</span>
           <span>실험 · 데이터 · 인사이트</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-16">
         {/* Section title */}
-        <header className="mb-12">
-          <div className="ed-eyebrow mb-4">Issue notes</div>
-          <h1 className="text-2xl sm:text-3xl sm:text-3xl lg:text-3xl sm:text-4xl leading-[0.95] tracking-tight text-ink mb-4">
+        <header className="mb-6 sm:mb-12">
+          <div className="ed-eyebrow mb-4 hidden sm:flex">Issue notes</div>
+          <h1 className="text-2xl lg:text-3xl sm:text-4xl leading-tight sm:leading-[0.95] tracking-tight text-ink mb-3 sm:mb-4">
             포스팅 연구실
           </h1>
-          <p className="text-lg sm:text-xl text-ink-muted max-w-[58ch]">
+          <p className="hidden sm:block text-lg sm:text-xl text-ink-muted max-w-[58ch]">
             가설을 세우고, 같은 조건에서 변수를 바꿔 발행해 보고, 결과를 측정해 정리합니다. 블로그 운영의 &lsquo;카더라&rsquo;를 데이터로 검증하는 노트.
           </p>
         </header>
 
-        <hr className="ed-rule mb-12" />
+        <hr className="ed-rule mb-6 sm:mb-12 hidden sm:block" />
 
         {posts.length === 0 ? (
           <div className="border border-rule-soft p-12 text-center">

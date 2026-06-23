@@ -93,13 +93,13 @@ function CompetitorAnalysisContent() {
   };
 
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-5 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+        <div className="mb-5 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">
             상위노출 분석
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400">
+          <p className="hidden sm:block text-zinc-500 dark:text-zinc-400">
             네이버 상위 노출 블로그 포스트를 분석하여 제목 길이·사용 단어·상위 블로거 패턴을 파악하세요
           </p>
         </div>
