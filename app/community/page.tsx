@@ -56,19 +56,19 @@ const RULES = [
 export default function CommunityHubPage() {
   return (
     <div className="min-h-screen">
-      {/* Masthead */}
-      <div className="border-b border-rule">
+      {/* Masthead — 모바일에선 숨겨 카드가 바로 보이도록 */}
+      <div className="hidden sm:block border-b border-rule">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-ink-faint font-semibold">
           <span>Community — 한국 블로거 커뮤니티</span>
           <span className="hidden sm:inline">읽기 무료 · 쓰기 회원</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
-        {/* Hero */}
-        <header className="mb-6 sm:mb-14 max-w-4xl">
-          <div className="ed-eyebrow mb-2 sm:mb-4">Forum</div>
-          <h1 className="text-2xl sm:text-4xl leading-tight sm:leading-[1.05] tracking-tight text-ink mb-2.5 sm:mb-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-20">
+        {/* Hero — 모바일은 최소 높이로 압축(Forum 라벨 숨김)해 카드가 바로 노출되게 */}
+        <header className="mb-4 sm:mb-14 max-w-4xl">
+          <div className="ed-eyebrow mb-2 sm:mb-4 hidden sm:flex">Forum</div>
+          <h1 className="text-xl sm:text-4xl leading-tight sm:leading-[1.05] tracking-tight text-ink mb-1.5 sm:mb-5">
             블로거들이 <span className="text-zinc-500 dark:text-zinc-400">모이는 곳</span>
           </h1>
           <p className="text-sm sm:text-xl text-ink-muted leading-[1.6] max-w-[58ch]">
@@ -76,7 +76,7 @@ export default function CommunityHubPage() {
           </p>
         </header>
 
-        <hr className="ed-rule mb-8 sm:mb-10" />
+        <hr className="ed-rule mb-5 sm:mb-10" />
 
         {/* Menu — 한 줄 3열, 심플하게 아이콘 + 제목만. sm 이상은 배지·바로가기 추가. */}
         <div className="grid grid-cols-3 gap-2.5 sm:gap-4 mb-12 sm:mb-16">
