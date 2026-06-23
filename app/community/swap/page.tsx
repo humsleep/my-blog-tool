@@ -333,7 +333,7 @@ function SwapRow({
 }: { post: SwapPost; isMine: boolean; onEdit: () => void; onDelete: () => void }) {
   const formatted = useMemo(() => formatRelativeKr(post.created_at), [post.created_at]);
   return (
-    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors">
+    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 active:bg-zinc-100 dark:active:bg-zinc-700/60 transition-colors">
       <div className="hidden md:grid grid-cols-[88px_140px_1fr_120px_100px_80px] gap-3 items-center px-5 py-3">
         <span className="justify-self-start px-2 py-0.5 text-[11px] font-semibold rounded bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300">
           {post.category}

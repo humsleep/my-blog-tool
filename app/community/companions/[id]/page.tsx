@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/app/lib/supabase/client';
+import MobileSubHeader from '@/app/components/ui/MobileSubHeader';
 import { fetchMyProfile, fetchProfileByUserId, type Profile } from '@/app/lib/community/profile';
 import { COMPANION_STATUS, formatFullRegion, type CompanionStatus } from '@/app/lib/community/regions';
 import { formatAbsoluteKr } from '@/app/lib/format/relative-time';
@@ -130,7 +131,8 @@ export default function CompanionDetailPage({ params }: { params: Promise<{ id: 
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4">
+        <MobileSubHeader title="체험단 동행해요" backHref="/community/companions" />
+        <div className="mb-4 hidden sm:block">
           <Link href="/community/companions" className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400">
             ← 목록으로
           </Link>

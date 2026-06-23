@@ -10,6 +10,7 @@ import { markdownToHtml } from '@/app/lib/format/article-formats';
 import { formatRelativeKr, formatAbsoluteKr } from '@/app/lib/format/relative-time';
 import { useToast } from '@/app/components/ui/Toast';
 import ConfirmModal from '@/app/components/community/ConfirmModal';
+import MobileSubHeader from '@/app/components/ui/MobileSubHeader';
 import ReportButton from '@/app/components/community/ReportButton';
 
 interface TipsPost {
@@ -222,7 +223,8 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pt-6 pb-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-4">
+        <MobileSubHeader title="정보 공유" backHref="/community/tips" />
+        <div className="mb-4 hidden sm:block">
           <Link href="/community/tips" className="inline-flex items-center text-sm text-zinc-500 dark:text-zinc-400 hover:text-orange-500 dark:hover:text-orange-400">
             ← 목록으로
           </Link>
@@ -359,7 +361,7 @@ export default function TipsDetailPage({ params }: { params: Promise<{ id: strin
               maxLength={1000}
               rows={3}
               placeholder={authed ? '댓글을 입력하세요 (최대 1000자)' : '댓글을 작성하려면 로그인이 필요합니다.'}
-              className="w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               disabled={!authed}
             />
             <div className="flex justify-between items-center">

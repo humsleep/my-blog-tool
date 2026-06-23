@@ -11,6 +11,7 @@ import {
   type Profile,
 } from '@/app/lib/community/profile';
 import { CATEGORIES } from '@/app/lib/community/categories';
+import MobileSubHeader from '@/app/components/ui/MobileSubHeader';
 import { safeNextPath } from '@/app/lib/security/safe-redirect';
 
 export default function ProfileSetupPageWrapper() {
@@ -177,6 +178,7 @@ function ProfileSetupPage() {
   return (
     <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
       <div className="max-w-xl mx-auto px-4 sm:px-6">
+        <MobileSubHeader title="프로필" />
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
             {existing ? '프로필 수정' : '커뮤니티 프로필 등록'}
@@ -260,17 +262,17 @@ function ProfileSetupPage() {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="sticky bottom-16 sm:static -mx-5 sm:mx-0 px-5 sm:px-0 py-3 sm:py-0 sm:pt-2 bg-white/95 dark:bg-zinc-800/95 sm:bg-transparent backdrop-blur border-t sm:border-0 border-zinc-200 dark:border-zinc-700 flex justify-end gap-2">
             <Link
               href={next}
-              className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
+              className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg"
             >
               취소
             </Link>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               {submitting ? '저장 중...' : existing ? '수정 저장' : '프로필 등록'}
             </button>
@@ -331,7 +333,7 @@ function ProfileSetupPage() {
 }
 
 const fieldCls =
-  'w-full px-3 py-2.5 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full px-3 py-2.5 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 function Field({
   label, required, help, children,

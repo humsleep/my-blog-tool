@@ -362,7 +362,7 @@ export default function TrendingPage() {
                     </div>
                     <Link
                       href={`/keyword-analysis?keyword=${encodeURIComponent(item.keyword)}`}
-                      className="w-full inline-flex items-center justify-center px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-colors min-h-[36px]"
+                      className="w-full inline-flex items-center justify-center px-3 py-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-xs font-semibold rounded-lg transition-colors min-h-[44px]"
                     >
                       분석하기 →
                     </Link>

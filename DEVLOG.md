@@ -25,6 +25,19 @@
 
 ---
 
+## 2026-06-23 — 모바일 앱화 1차: 네비게이션·폼·터치 (Phase 60.1)
+
+### 변경 (모바일 전용, 데스크탑 유지)
+- **앱식 상단 back 바** 신규 `MobileSubHeader` 컴포넌트(sticky top-14, 뒤로+제목).
+  적용: community tips/[id]·companions/[id]·tips/new·companions/new, profile/setup.
+  기존 breadcrumb/← 목록 링크는 `hidden sm:*` 로 데스크탑 전용 전환
+- **긴 폼 제출 버튼 sticky 하단 액션바**(모바일, `bottom-16` 바텀탭 위): tips/new·companions/new·profile, 버튼 `min-h-[44px]`
+- **터치 타겟·피드백**: trending 카드 "분석하기" `min-h-36→44`, 리스트 행 `active:bg-*`
+- **iOS 자동 줌 방지**: 폼 입력/댓글/본문 textarea `text-base sm:text-sm`(16px) 통일
+- PR #__ → main squash merge
+
+---
+
 ## 2026-06-23 — 모바일 앱 느낌 정리 (Phase 59.3)
 
 ### 변경 — 모바일에서 불필요한 장식/공백 제거 (데스크탑 유지)

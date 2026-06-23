@@ -261,7 +261,7 @@ function CompanionRow({ post }: { post: CompanionPost }) {
   const created = formatRelativeKr(post.created_at);
 
   return (
-    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 transition-colors">
+    <li className="hover:bg-zinc-50 dark:hover:bg-zinc-700/40 active:bg-zinc-100 dark:active:bg-zinc-700/60 transition-colors">
       <Link href={`/community/companions/${post.id}`} className="block">
         {/* 데스크톱 — 그리드 행 */}
         <div className="hidden md:grid grid-cols-[72px_1fr_140px_140px_120px_100px] gap-3 items-center px-5 py-3">
