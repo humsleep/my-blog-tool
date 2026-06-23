@@ -85,20 +85,32 @@ export default function ReportModal({ open, targetType, targetId, onClose }: Rep
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4 bg-black/50" onClick={onClose}>
       <form
         role="dialog"
         aria-modal="true"
         aria-labelledby="report-modal-title"
         onSubmit={onSubmit}
-        className="bg-white dark:bg-zinc-800 rounded-xl p-6 max-w-md w-full shadow-xl space-y-4"
+        className="bg-white dark:bg-zinc-800 rounded-t-2xl sm:rounded-xl p-6 max-w-md w-full max-h-[90vh] sm:max-h-[85vh] overflow-y-auto shadow-xl space-y-4 safe-bottom"
         onClick={(e) => e.stopPropagation()}
       >
-        <div>
-          <h3 id="report-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">게시글 신고</h3>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-            신고 5건 누적 시 자동 숨김 처리되며, 운영자가 검토 후 추가 조치합니다.
-          </p>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h3 id="report-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">게시글 신고</h3>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              신고 5건 누적 시 자동 숨김 처리되며, 운영자가 검토 후 추가 조치합니다.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="닫기"
+            className="-m-2 p-2 flex-shrink-0 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         <div>

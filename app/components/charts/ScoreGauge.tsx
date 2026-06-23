@@ -56,7 +56,7 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
     const circumference = Math.PI * r;
     const offset = circumference * (1 - v / 100);
     return (
-      <svg width={size} height={vbH} viewBox={`0 0 ${size} ${vbH}`} className="block">
+      <svg width="100%" viewBox={`0 0 ${size} ${vbH}`} className="block" style={{ maxWidth: size, height: 'auto' }}>
         <path
           d={arcPath}
           fill="none"
@@ -104,7 +104,7 @@ export default function ScoreGauge({ value, size = 160, caption, half = true }: 
   const circumference = 2 * Math.PI * r;
   const offset = circumference * (1 - v / 100);
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="block">
+    <svg width="100%" viewBox={`0 0 ${size} ${size}`} className="block" style={{ maxWidth: size, height: 'auto' }}>
       <circle cx={cx} cy={cy} r={r} fill="none" stroke={muted} strokeWidth={stroke} />
       <circle
         cx={cx}

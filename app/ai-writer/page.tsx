@@ -115,6 +115,13 @@ export default function AiWriterPage() {
   const [usage, setUsage] = useState<UsageState | null>(null);
   const [selectedTitle, setSelectedTitle] = useState<string>('');
 
+  // 모바일에선 옵션 패널을 기본 접힘으로 — 스크롤을 줄이고 생성 버튼을 가깝게 (Phase 60.2)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches) {
+      setOptionsOpen(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const saved = sessionStorage.getItem('aiWriterPrompt');

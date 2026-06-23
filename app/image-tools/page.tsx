@@ -179,7 +179,7 @@ export default function ImageToolsPage() {
         {/* Filerobot editor */}
         {mode === 'editor' && imageUrl && (
           <>
-            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden" style={{ height: '80vh', minHeight: 500 }}>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden" style={{ height: 'clamp(420px, 72vh, 760px)' }}>
               {editorTabs && (
                 <FilerobotImageEditor
                   source={imageUrl}
