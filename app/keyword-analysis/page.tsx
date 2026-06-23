@@ -337,9 +337,9 @@ function KeywordAnalysisContent() {
         <WizardStepBar current={1} />
 
         {/* Header */}
-        <div className="mb-6 mt-4">
+        <div className="mb-5 sm:mb-6 mt-4">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">키워드 분석</h1>
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
+          <p className="hidden sm:block text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
             네이버 검색광고 API를 사용하여 키워드 검색량과 경쟁률을 분석합니다
           </p>
         </div>

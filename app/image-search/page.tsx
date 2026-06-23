@@ -130,11 +130,11 @@ export default function ImageSearchPage() {
     sourceStatus.unsplash === 'UNSPLASH_ACCESS_KEY 미설정';
 
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-5 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
+        <div className="mb-5 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">무료 이미지 검색</h1>
-          <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
+          <p className="hidden sm:block text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
             Pexels + Unsplash 무료 저작권 이미지를 검색하여 블로그에 바로 활용하세요
           </p>
         </div>

@@ -64,7 +64,7 @@ export default function CommunityHubPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-10 sm:py-20">
         {/* Hero — 모바일에선 통째로 숨김(카드가 맨 위에 바로 노출). 데스크탑만 표시 */}
         <header className="hidden sm:block sm:mb-14 max-w-4xl">
           <div className="ed-eyebrow mb-2 sm:mb-4">Forum</div>

@@ -277,7 +277,7 @@ export default function AiWriterPage() {
 
   return (
     <>
-      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
+      <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-5 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <WizardStepBar current={3} />
           <div className="mt-4" />

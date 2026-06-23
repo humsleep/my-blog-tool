@@ -128,15 +128,15 @@ export default function TrendingPage() {
   };
 
   return (
-    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-8">
+    <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen py-5 sm:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-5 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">
             인기 검색어 트렌드
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400">
+          <p className="hidden sm:block text-zinc-500 dark:text-zinc-400">
             네이버 검색광고 API를 활용한 실시간 인기 검색어를 확인하세요
           </p>
         </div>

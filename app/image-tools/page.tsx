@@ -113,7 +113,7 @@ export default function ImageToolsPage() {
         <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">이미지 편집</h1>
-            <p className="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
+            <p className="hidden sm:block text-sm sm:text-base text-zinc-500 dark:text-zinc-400 mt-1.5">
               모자이크·블러·크롭·필터·텍스트·워터마크 — 블로그 이미지를 한 곳에서
             </p>
           </div>

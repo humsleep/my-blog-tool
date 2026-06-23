@@ -249,19 +249,19 @@ export default function BlogDiagnosePage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-12">
         {/* ─── INPUT ──────────────────────────────────────────────── */}
         {step === 'input' && (
           <div>
-            <span className="pill pill-accent mb-5 inline-flex">
+            <span className="pill pill-accent mb-5 hidden sm:inline-flex">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-600 dark:bg-orange-400" />
               블로그 진단
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 mb-4 leading-[1.1]">
+            <h1 className="text-[1.75rem] sm:text-4xl lg:text-5xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 mb-3 sm:mb-4 leading-[1.15] sm:leading-[1.1]">
               내 블로그는 카테고리 안에서<br />
               <span className="text-orange-600 dark:text-orange-400">상위 몇 %</span>일까요?
             </h1>
-            <p className="text-base sm:text-lg text-zinc-700 dark:text-zinc-300 mb-10 leading-relaxed">
+            <p className="hidden sm:block text-base sm:text-lg text-zinc-700 dark:text-zinc-300 mb-10 leading-relaxed">
               네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드려요.
             </p>
 

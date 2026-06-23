@@ -25,6 +25,22 @@
 
 ---
 
+## 2026-06-23 — 모바일 앱 느낌 정리 (Phase 59.3)
+
+### 변경 — 모바일에서 불필요한 장식/공백 제거 (데스크탑 유지)
+- 커뮤니티 허브: 상단 여백 추가 압축(`pt-4 pb-10`), 히어로는 이미 모바일 숨김
+- 큰 hero 세로 패딩 축소(모바일): trending/competitor/image-search `py-8 → py-5`,
+  start `py-12 → py-6`, blog-diagnose `py-8 → py-5`, lab `py-12 → py-6`,
+  ai-writer `py-8 → py-5`
+- 장식 요소 모바일 숨김: `lab` 마스트헤드·`ed-eyebrow`·`ed-rule`,
+  blog-diagnose 상단 pill 배지
+- 중복/장황한 hero 부제 모바일 숨김(`hidden sm:block`): trending·competitor·
+  keyword-analysis·image-search·image-tools·prompt-generator·lab·blog-diagnose·
+  community swap/tips/companions, 공통 `PageHeader` subtitle(→ tools·contact·ai-writer)
+- PR #__ → main squash merge
+
+---
+
 ## 2026-06-23 — 모바일 커뮤니티 허브 정리 (Phase 59.2)
 
 ### 변경

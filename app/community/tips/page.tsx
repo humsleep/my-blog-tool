@@ -137,7 +137,7 @@ export default function TipsListPage() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">💡 정보 공유</h1>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
+              <p className="hidden sm:block text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">
                 운영 노하우·질문·트러블슈팅을 자유롭게 나눠요
               </p>
             </div>
