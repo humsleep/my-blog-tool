@@ -37,7 +37,7 @@ export default function Pagination({ page, totalPages, onChange, enableArrowKeys
         onClick={() => onChange(Math.max(1, page - 1))}
         disabled={page === 1}
         aria-label="이전 페이지"
-        className="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+        className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-3 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
       >
         ←
       </button>
@@ -47,7 +47,7 @@ export default function Pagination({ page, totalPages, onChange, enableArrowKeys
           type="button"
           onClick={() => onChange(p)}
           aria-current={p === page ? 'page' : undefined}
-          className={`min-w-[36px] h-9 px-2 text-sm rounded-lg transition-colors tabular-nums ${
+          className={`inline-flex items-center justify-center min-w-[44px] h-11 px-2 text-sm rounded-lg transition-colors tabular-nums ${
             p === page
               ? 'bg-orange-500 text-white font-semibold shadow-sm'
               : 'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
@@ -61,7 +61,7 @@ export default function Pagination({ page, totalPages, onChange, enableArrowKeys
         onClick={() => onChange(Math.min(totalPages, page + 1))}
         disabled={page === totalPages}
         aria-label="다음 페이지"
-        className="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+        className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] px-3 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
       >
         →
       </button>

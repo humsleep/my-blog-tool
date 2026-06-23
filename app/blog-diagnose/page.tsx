@@ -334,7 +334,7 @@ export default function BlogDiagnosePage() {
                         key={c.value}
                         type="button"
                         onClick={() => setCategory(c.value)}
-                        className={`relative text-left px-3 py-3 rounded-lg border-2 transition-all cursor-pointer ${
+                        className={`relative text-left px-3 py-3 min-h-[44px] rounded-lg border-2 transition-all cursor-pointer ${
                           selected
                             ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/40 ring-2 ring-orange-500/25 shadow-sm'
                             : 'border-zinc-200 dark:border-[#3a312a] bg-white dark:bg-[#1a1410] hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 hover:shadow-sm'

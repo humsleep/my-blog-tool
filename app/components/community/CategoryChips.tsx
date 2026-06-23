@@ -18,7 +18,7 @@ export default function CategoryChips({
   options = CATEGORIES,
 }: CategoryChipsProps) {
   return (
-    <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
+    <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide [mask-image:linear-gradient(to_right,#000_calc(100%_-_28px),transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_calc(100%_-_28px),transparent)]">
       <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
         {includeAll && (
           <button
@@ -46,7 +46,7 @@ export default function CategoryChips({
 
 function chipClass(active: boolean) {
   return [
-    'flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
+    'flex-shrink-0 inline-flex items-center justify-center min-h-[44px] px-4 text-sm font-medium rounded-full transition-colors',
     'border',
     active
       ? 'bg-orange-500 text-white border-orange-500'

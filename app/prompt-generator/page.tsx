@@ -934,7 +934,7 @@ function PromptGeneratorContent() {
                                     key={subCat}
                                     type="button"
                                     onClick={() => setSelectedCategory(subCat)}
-                                    className={`p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[36px] touch-manipulation ${
+                                    className={`inline-flex items-center justify-center p-2 rounded-lg border transition-colors text-xs font-medium text-center min-h-[44px] touch-manipulation ${
                                       selectedCategory === subCat
                                         ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400'
                                         : 'border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-500'
