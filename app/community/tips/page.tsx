@@ -7,6 +7,7 @@ import { TIPS_CATEGORIES, categoryBadgeClass } from '@/app/lib/community/tips';
 import { escapeLikePattern } from '@/app/lib/security/safe-redirect';
 import EmptyState from '@/app/components/community/EmptyState';
 import BoardSkeleton from '@/app/components/community/BoardSkeleton';
+import FilterBottomSheet from '@/app/components/community/FilterBottomSheet';
 import InfiniteScrollSentinel from '@/app/components/community/InfiniteScrollSentinel';
 import { formatRelativeKr } from '@/app/lib/format/relative-time';
 
@@ -36,6 +37,7 @@ export default function TipsListPage() {
   const [sort, setSort] = useState<SortKey>('recent');
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
 
   const isDebouncing = query.trim() !== debouncedQuery;
@@ -152,7 +154,8 @@ export default function TipsListPage() {
 
         <div className="sticky top-14 z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-2 bg-zinc-50/90 dark:bg-zinc-950/90 backdrop-blur-md mb-4">
           <div className="bg-white dark:bg-zinc-800/80 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-3 shadow-sm space-y-2">
-            <div className="-mx-1 px-1 overflow-x-auto scrollbar-hide">
+            {/* 카테고리 칩 — 데스크탑만 (모바일은 필터 시트로) */}
+            <div className="hidden sm:block -mx-1 px-1 overflow-x-auto scrollbar-hide">
               <div className="flex items-center gap-1.5 whitespace-nowrap pb-0.5">
                 <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
                 {TIPS_CATEGORIES.map((c) => (
@@ -167,7 +170,7 @@ export default function TipsListPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="제목으로 검색"
-                  className="w-full pl-9 pr-9 py-2 text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-zinc-700 transition-colors"
+                  className="w-full pl-9 pr-9 py-2 text-base sm:text-sm border border-zinc-200 dark:border-zinc-600 rounded-lg bg-zinc-50 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white dark:focus:bg-zinc-700 transition-colors"
                 />
                 <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -176,13 +179,48 @@ export default function TipsListPage() {
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-zinc-300 border-t-orange-500 rounded-full animate-spin" />
                 )}
               </div>
-              <div className="inline-flex flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 rounded-lg p-0.5">
+              {/* 정렬 — 데스크탑만 */}
+              <div className="hidden sm:inline-flex flex-shrink-0 bg-zinc-100 dark:bg-zinc-700 rounded-lg p-0.5">
                 <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
                 <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
               </div>
+              {/* 필터 버튼 — 모바일만 (카테고리·정렬을 시트로) */}
+              <button
+                type="button"
+                onClick={() => setFilterOpen(true)}
+                className="sm:hidden flex-shrink-0 inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700 text-sm font-medium text-zinc-700 dark:text-zinc-200"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M6 12h12M10 20h4" />
+                </svg>
+                필터
+                {(category !== null || sort !== 'recent') && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500" aria-hidden />
+                )}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* 모바일 필터 시트 — 카테고리 + 정렬 */}
+        <FilterBottomSheet open={filterOpen} onClose={() => setFilterOpen(false)}>
+          <div>
+            <div className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-2">카테고리</div>
+            <div className="flex flex-wrap gap-1.5">
+              <CategoryTab active={category === null} onClick={() => setCategory(null)} label="전체" />
+              {TIPS_CATEGORIES.map((c) => (
+                <CategoryTab key={c} active={category === c} onClick={() => setCategory(c)} label={c} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mb-2">정렬</div>
+            <div className="inline-flex bg-zinc-100 dark:bg-zinc-700 rounded-lg p-0.5">
+              <SortButton active={sort === 'recent'} onClick={() => setSort('recent')}>최신순</SortButton>
+              <SortButton active={sort === 'popular'} onClick={() => setSort('popular')}>인기순</SortButton>
+            </div>
+          </div>
+        </FilterBottomSheet>
 
         {error && (
           <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400 mb-4">
