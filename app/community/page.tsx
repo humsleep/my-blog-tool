@@ -65,9 +65,9 @@ export default function CommunityHubPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-20">
-        {/* Hero — 모바일은 최소 높이로 압축(Forum 라벨 숨김)해 카드가 바로 노출되게 */}
-        <header className="mb-4 sm:mb-14 max-w-4xl">
-          <div className="ed-eyebrow mb-2 sm:mb-4 hidden sm:flex">Forum</div>
+        {/* Hero — 모바일에선 통째로 숨김(카드가 맨 위에 바로 노출). 데스크탑만 표시 */}
+        <header className="hidden sm:block sm:mb-14 max-w-4xl">
+          <div className="ed-eyebrow mb-2 sm:mb-4">Forum</div>
           <h1 className="text-xl sm:text-4xl leading-tight sm:leading-[1.05] tracking-tight text-ink mb-1.5 sm:mb-5">
             블로거들이 <span className="text-zinc-500 dark:text-zinc-400">모이는 곳</span>
           </h1>
@@ -76,7 +76,7 @@ export default function CommunityHubPage() {
           </p>
         </header>
 
-        <hr className="ed-rule mb-5 sm:mb-10" />
+        <hr className="ed-rule hidden sm:block sm:mb-10" />
 
         {/* Menu — 한 줄 3열, 심플하게 아이콘 + 제목만. sm 이상은 배지·바로가기 추가. */}
         <div className="grid grid-cols-3 gap-2.5 sm:gap-4 mb-12 sm:mb-16">
