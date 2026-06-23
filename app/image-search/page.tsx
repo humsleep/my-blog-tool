@@ -230,11 +230,11 @@ export default function ImageSearchPage() {
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); void downloadDirect(item); }}
-                    className="absolute top-2 right-2 w-9 h-9 rounded-full bg-white/95 hover:bg-white dark:bg-zinc-900/95 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-200 shadow-sm flex items-center justify-center transition-colors"
+                    className="absolute top-2 right-2 w-11 h-11 rounded-full bg-white/95 hover:bg-white dark:bg-zinc-900/95 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-200 shadow-sm flex items-center justify-center transition-colors"
                     aria-label="다운로드"
                     title="이미지 다운로드"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                   </button>

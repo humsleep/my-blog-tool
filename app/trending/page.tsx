@@ -242,12 +242,12 @@ export default function TrendingPage() {
           {/* 카테고리 행 — 한 줄 가로 스크롤 (모바일/데스크탑 동일) */}
           <div className="px-5 py-4">
             <span className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3 block">카테고리</span>
-            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-1">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-1 [mask-image:linear-gradient(to_right,#000_calc(100%_-_28px),transparent)] [-webkit-mask-image:linear-gradient(to_right,#000_calc(100%_-_28px),transparent)]">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.value}
                   onClick={() => setCategory(cat.value)}
-                  className={`flex-shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-150 border ${
+                  className={`flex-shrink-0 inline-flex items-center whitespace-nowrap min-h-[44px] px-4 rounded-full text-sm font-medium transition-all duration-150 border ${
                     category === cat.value
                       ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
                       : 'bg-white dark:bg-zinc-800 border-zinc-200 dark:border-zinc-600 text-zinc-600 dark:text-zinc-300 hover:border-orange-400 hover:text-orange-500 dark:hover:border-orange-500 dark:hover:text-orange-400'

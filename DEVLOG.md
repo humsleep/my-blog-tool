@@ -5,6 +5,26 @@
 
 ---
 
+## 2026-06-23 — 모바일 터치 타겟 · 스크롤 어포던스 (Phase 59.1)
+
+### 점검
+- 모바일 UI/UX 전수 점검(2개 Explore 에이전트 병렬) → 검증 후 오탐 2건 제외
+  (MosaicTool은 이미 터치 지원 / SwapModal 16px input은 iOS 줌 방지로 정상)
+
+### 변경 (High 우선순위)
+- **터치 타겟 44px 상향**:
+  - `community/Pagination.tsx` — 페이지/화살표 버튼 `min-w/h-[44px]`
+  - `community/CategoryChips.tsx` — 칩 `min-h-[44px] px-4 text-sm`
+  - `trending/page.tsx` — 카테고리 칩 `min-h-[44px]`
+  - `image-search/page.tsx` — 다운로드 버튼 `w-9→w-11`(36→44px)
+  - `prompt-generator/page.tsx` — 세부 카테고리 `min-h-[36px]→[44px]`
+  - `blog-diagnose/page.tsx` — 분야 선택 버튼 `min-h-[44px]`
+- **가로 스크롤 어포던스**: CategoryChips·trending 카테고리 행에 우측 페이드
+  마스크(`mask-image`)로 "더 스크롤 가능" 시각 신호 추가
+- 빌드·`tsc --noEmit` 통과
+
+---
+
 ## 2026-06-22 — 모바일 UI/UX 업그레이드 (Phase 59)
 
 ### 리서치
