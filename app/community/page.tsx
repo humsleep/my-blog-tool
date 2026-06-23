@@ -8,9 +8,7 @@ export const metadata: Metadata = {
 
 interface MenuCard {
   href: string;
-  num: string;
   title: string;
-  description: string;
   badge: string;
   icon: React.ReactNode;
 }
@@ -18,9 +16,7 @@ interface MenuCard {
 const MENUS: MenuCard[] = [
   {
     href: '/community/swap',
-    num: '01',
     title: '서이추 해요',
-    description: '같은 분야 블로거를 만나 서로이웃 추가합니다. 분야와 닉네임으로 빠르게 찾을 수 있어요. 1일 1글 제한으로 광고 도배가 없습니다.',
     badge: 'Matching',
     icon: (
       <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -30,9 +26,7 @@ const MENUS: MenuCard[] = [
   },
   {
     href: '/community/tips',
-    num: '02',
     title: '정보 공유',
-    description: '블로그 운영 노하우, SEO 팁, 네이버 정책 변경 같은 정보를 카테고리별로 모아 공유합니다. 댓글·좋아요로 좋은 글을 띄워주세요.',
     badge: 'Tips',
     icon: (
       <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -42,9 +36,7 @@ const MENUS: MenuCard[] = [
   },
   {
     href: '/community/companions',
-    num: '03',
     title: '체험단 동행해요',
-    description: '체험단 선정 후 함께 갈 동행자를 지역·날짜로 찾습니다. 시·군·구까지 좁혀서 검색할 수 있어요.',
     badge: 'Companion',
     icon: (
       <svg className="w-5 h-5 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
@@ -74,20 +66,19 @@ export default function CommunityHubPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
         {/* Hero */}
-        <header className="mb-8 sm:mb-14 max-w-4xl">
-          <div className="ed-eyebrow mb-4">Forum</div>
-          <h1 className="text-2xl sm:text-4xl leading-[1.05] tracking-tight text-ink mb-4 sm:mb-5">
-            블로거들이<br />
-            <span className="text-zinc-500 dark:text-zinc-400">모이는 곳</span>
+        <header className="mb-6 sm:mb-14 max-w-4xl">
+          <div className="ed-eyebrow mb-2 sm:mb-4">Forum</div>
+          <h1 className="text-2xl sm:text-4xl leading-tight sm:leading-[1.05] tracking-tight text-ink mb-2.5 sm:mb-5">
+            블로거들이 <span className="text-zinc-500 dark:text-zinc-400">모이는 곳</span>
           </h1>
-          <p className="text-base sm:text-xl text-ink-muted leading-[1.6] max-w-[58ch]">
-            서이추로 이웃을 늘리고, 운영 정보를 나누고, 체험단 동행자도 함께 찾는 한 줄짜리 커뮤니티.
+          <p className="text-sm sm:text-xl text-ink-muted leading-[1.6] max-w-[58ch]">
+            서로이웃 · 정보 공유 · 체험단 동행
           </p>
         </header>
 
         <hr className="ed-rule mb-8 sm:mb-10" />
 
-        {/* Menu — 모바일에서도 한 줄 3열. 컴팩트(아이콘+제목) → sm 이상은 설명까지 풀카드. */}
+        {/* Menu — 한 줄 3열, 심플하게 아이콘 + 제목만. sm 이상은 배지·바로가기 추가. */}
         <div className="grid grid-cols-3 gap-2.5 sm:gap-4 mb-12 sm:mb-16">
           {MENUS.map((menu) => (
             <Link
@@ -107,10 +98,7 @@ export default function CommunityHubPage() {
               >
                 {menu.title}
               </h2>
-              <p className="hidden sm:block text-sm sm:text-base text-ink-muted leading-[1.7] mt-3">
-                {menu.description}
-              </p>
-              <span className="hidden sm:inline-flex items-center gap-1 mt-5 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-orange-600 dark:group-hover:text-orange-400 border-b border-ink group-hover:border-orange-600 dark:group-hover:border-orange-400 pb-0.5 transition-colors">
+              <span className="hidden sm:inline-flex items-center gap-1 mt-4 text-xs font-semibold tracking-wider uppercase text-ink group-hover:text-orange-600 dark:group-hover:text-orange-400 border-b border-ink group-hover:border-orange-600 dark:group-hover:border-orange-400 pb-0.5 transition-colors">
                 바로가기
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
