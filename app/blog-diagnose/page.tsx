@@ -35,7 +35,7 @@ interface DiagnoseResponse {
     total: number;
     band: 'top5' | 'top15' | 'top35' | 'mid' | 'growing';
     activity: { score: number; postsLast30d: number; postsLast90d: number; daysSinceLastPost: number; avgIntervalDays: number; cadenceStdDays: number };
-    visibility: { score: number; totalKeywords: number; hitCount: number; topTenCount: number; avgRankWhenHit: number; hits: { keyword: string; rank: number | null; postTitle?: string }[] };
+    visibility: { score: number; totalKeywords: number; hitCount: number; topTenCount: number; avgRankWhenHit: number; lowCompetitionHits?: number; hits: { keyword: string; rank: number | null; postTitle?: string; competition?: number }[] };
     quality: { score: number; avgCharsPerPost: number; avgImagesPerPost: number; categoryConsistency: number; topCategory: string | null };
     insights: string[];
     warnings: string[];
@@ -586,7 +586,16 @@ function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport
  *  TOP10 / 11~20 / 21~30 / 미진입 4구간으로 막대 + 개수 표시.
  *  내가 쓴 글이 노린 키워드에서 실제로 어디까지 노출되는지 한눈에 파악.
  */
-function RankDistribution({ hits }: { hits: { keyword: string; rank: number | null; postTitle?: string }[] }) {
+/** 경쟁도(총 문서수) → 짧은 라벨. 노출이 얼마나 의미 있는지 투명하게 표시. */
+function competitionLabel(total?: number): { text: string; cls: string } | null {
+  if (total === undefined) return null;
+  if (total < 300) return { text: '경쟁 약', cls: 'text-zinc-400 dark:text-zinc-500' };
+  if (total < 3_000) return { text: '경쟁 보통', cls: 'text-ink-faint' };
+  if (total < 30_000) return { text: '경쟁 있음', cls: 'text-orange-600/80 dark:text-orange-400/80' };
+  return { text: '경쟁 높음', cls: 'text-orange-700 dark:text-orange-300 font-medium' };
+}
+
+function RankDistribution({ hits }: { hits: { keyword: string; rank: number | null; postTitle?: string; competition?: number }[] }) {
   if (hits.length === 0) return null;
 
   const buckets = {
@@ -660,21 +669,27 @@ function RankDistribution({ hits }: { hits: { keyword: string; rank: number | nu
           </svg>
         </summary>
         <div className="grid grid-cols-1 gap-y-1 border-t border-rule-soft mt-3 pt-3">
-          {hits.map((h, i) => (
-            <div key={`${h.keyword}-${i}`} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
-              <span className="min-w-0 flex-1">
-                <span className="text-sm text-ink break-words">{h.keyword}</span>
-                {h.postTitle && (
-                  <span className="block text-[11px] text-ink-faint truncate">{h.postTitle}</span>
-                )}
-              </span>
-              <span className={`text-sm tabular-nums flex-shrink-0 whitespace-nowrap ${
-                h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
-              }`}>
-                {h.rank === null ? '—' : `${h.rank}위`}
-              </span>
-            </div>
-          ))}
+          {hits.map((h, i) => {
+            const comp = competitionLabel(h.competition);
+            return (
+              <div key={`${h.keyword}-${i}`} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
+                <span className="min-w-0 flex-1">
+                  <span className="text-sm text-ink break-words">{h.keyword}</span>
+                  {h.postTitle && (
+                    <span className="block text-[11px] text-ink-faint truncate">{h.postTitle}</span>
+                  )}
+                </span>
+                <span className="flex items-baseline gap-2 flex-shrink-0 whitespace-nowrap">
+                  {comp && <span className={`text-[10px] ${comp.cls}`}>{comp.text}</span>}
+                  <span className={`text-sm tabular-nums ${
+                    h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
+                  }`}>
+                    {h.rank === null ? '—' : `${h.rank}위`}
+                  </span>
+                </span>
+              </div>
+            );
+          })}
         </div>
       </details>
     </section>

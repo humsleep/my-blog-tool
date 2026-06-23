@@ -15,6 +15,7 @@ import { validateNickname, validateBlogUrl } from '../app/lib/community/profile'
 import { markdownToHtml, markdownToPlain } from '../app/lib/format/article-formats';
 import { extractTargetKeyword, buildTargetKeywords } from '../app/lib/diagnose/title-keyword';
 import { detectCategory } from '../app/lib/diagnose/category-seeds';
+import { analyzeMateReadiness, MATE_WEIGHTS } from '../app/lib/diagnose/mate-readiness';
 
 let passed = 0;
 let failed = 0;
@@ -194,6 +195,65 @@ group('scoreVisibility', () => {
   ]);
   expect(mixed.hitCount,     2,  'mixed hitCount');
   expect(mixed.topTenCount,  1,  'mixed top10');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('scoreVisibility — 경쟁도 보정 (v3.1, 자기키워드 인플레이션)', () => {
+  // 전부 무경쟁(total<300) 키워드에서 1위만 → 만점이 되면 안 됨 (가산 0.3배)
+  const lowComp = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1, competition: 50 })),
+  );
+  expect(lowComp.lowCompetitionHits, 6, '무경쟁 노출 6건 집계');
+  if (lowComp.score >= 80) failures.push(`  ✗ 무경쟁 only should be capped well under 80, got ${lowComp.score}`); else passed++;
+
+  // 같은 1위라도 경쟁 키워드(total 큼)면 점수가 훨씬 높아야 함
+  const highComp = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1, competition: 50_000 })),
+  );
+  if (highComp.score <= lowComp.score) failures.push(`  ✗ high-comp(${highComp.score}) should beat low-comp(${lowComp.score})`); else passed++;
+  expect(highComp.lowCompetitionHits, 0, '경쟁 키워드는 lowCompetition 0');
+
+  // competition 미상이면 중립(1.0) — 기존 동작과 동일하게 만점 근처
+  const neutral = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1 })),
+  );
+  if (neutral.score < 90) failures.push(`  ✗ neutral(undefined comp) all #1 should be 90+, got ${neutral.score}`); else passed++;
+});
+
+// ─────────────────────────────────────────────────────────────
+group('analyzeMateReadiness — AI 인용 준비도 (v2.2)', () => {
+  const mk = (over: Partial<{ title: string; contentSnippet: string; contentLength: number; imageCount: number }>) => ({
+    title: over.title ?? 't', link: '', pubDate: '2026-05-01', category: null,
+    contentSnippet: over.contentSnippet ?? '', contentLength: over.contentLength ?? 300, imageCount: over.imageCount ?? 0,
+  });
+
+  // 빈 입력
+  const empty = analyzeMateReadiness([], ['카페']);
+  expect(empty.sampleSize, 0, 'empty sampleSize 0');
+  expect(empty.score, 0, 'empty score 0');
+
+  // 6개 체크 항목 + 가중치 길이 일치
+  const some = analyzeMateReadiness([mk({})], ['카페']);
+  expect(some.checks.length, MATE_WEIGHTS.length, 'checks 수 = 가중치 수');
+
+  // 답변 우선 도입부 — 키워드 + 정의 패턴이 첫 200자에 있으면 통과
+  const answerLead = analyzeMateReadiness(
+    [mk({ title: '제주 카페', contentSnippet: '제주 카페란 분위기 좋은 공간입니다. 오늘은 여기를 정리합니다.', contentLength: 1300 })],
+    ['제주', '카페'],
+  );
+  const leadCheck = answerLead.checks.find((c) => c.label === '답변 우선 도입부')!;
+  expect(leadCheck.passCount, 1, '답변 우선 도입부 통과');
+  // 요약·결론 블록 탐지
+  const summaryCheck = answerLead.checks.find((c) => c.label === '요약·결론 블록')!;
+  expect(summaryCheck.passCount, 1, '요약/정리 블록 탐지');
+
+  // 인사말만 있는 도입부는 답변 우선 도입부 미통과
+  const greeting = analyzeMateReadiness(
+    [mk({ title: '카페 다녀옴', contentSnippet: '안녕하세요 여러분 오늘도 좋은 하루 보내세요 날씨가 좋네요', contentLength: 500 })],
+    ['카페'],
+  );
+  const greetLead = greeting.checks.find((c) => c.label === '답변 우선 도입부')!;
+  expect(greetLead.passCount, 0, '인사말 도입부 미통과');
 });
 
 // ─────────────────────────────────────────────────────────────

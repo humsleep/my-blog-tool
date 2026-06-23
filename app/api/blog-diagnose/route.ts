@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { extractBlogId, fetchRss, fetchPostBody, searchBlogByQuery, findRankInResults } from '@/app/lib/diagnose/naver-blog';
+import { extractBlogId, fetchRss, fetchPostBody, searchBlogWithMeta, findRankInResults } from '@/app/lib/diagnose/naver-blog';
 import { findCategorySeed, detectCategory } from '@/app/lib/diagnose/category-seeds';
 import { buildTargetKeywords } from '@/app/lib/diagnose/title-keyword';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, summarizeRss, type VisibilityHit } from '@/app/lib/diagnose/scoring';
@@ -164,13 +164,13 @@ export async function POST(request: Request) {
   const searchResults = await runPool(
     targets,
     async (t) => {
-      const r = await searchBlogByQuery(t.keyword, 30);
-      return { keyword: t.keyword, postTitle: t.postTitle, items: r };
+      const r = await searchBlogWithMeta(t.keyword, 30);
+      return { keyword: t.keyword, postTitle: t.postTitle, result: r };
     },
     CONCURRENCY,
   );
 
-  const failed = searchResults.filter((r) => r.items === null).length;
+  const failed = searchResults.filter((r) => r.result === null).length;
   if (failed > 0) {
     warnings.push(`내 글 키워드 ${targets.length}개 중 ${failed}개 검색이 실패했어요. 점수가 보수적으로 산출됩니다.`);
   }
@@ -181,7 +181,8 @@ export async function POST(request: Request) {
   const hits: VisibilityHit[] = searchResults.map((r) => ({
     keyword: r.keyword,
     postTitle: r.postTitle,
-    rank: r.items ? findRankInResults(r.items, blogId) : null,
+    rank: r.result ? findRankInResults(r.result.items, blogId) : null,
+    competition: r.result ? r.result.total : undefined,
   }));
 
   // 5) 점수 산출

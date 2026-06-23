@@ -58,6 +58,26 @@ const SUBHEADING_MARKERS = [
   /^<b>|<strong>/i,
 ];
 
+/** 도입부가 "질문에 곧장 답하는" 구조인지 — 정의·단정·방법 안내 패턴.
+ *  AI 브리핑은 도입부에서 답을 명확히 제시하는 글을 우선 인용한다. */
+const ANSWER_LEAD_PATTERNS = [
+  /(이란|란|라는|이라는)\b/,        // 정의: "OO란 ..."
+  /(입니다|이다|이에요|예요|랍니다)/, // 단정형 답변
+  /(하는\s*방법|방법은|하려면|순서는|단계는)/, // 방법/절차 안내
+  /(결론부터|결론적으로|요약하면|핵심은)/,     // 답 먼저
+];
+
+/** 요약·결론 블록 존재 여부 — AI 가 추출·인용하기 좋은 정리 구간.
+ *  본문(실측 텍스트) 어디든 등장하면 통과. */
+const SUMMARY_PATTERNS = [
+  /요약/, /정리/, /결론/, /마무리/, /핵심\s*(정리|만)/,
+  /한\s*줄\s*(요약|정리)/, /tl;?\s*dr/i,
+];
+
+/** AI 인용 준비도 항목별 가중치 — 체크 순서와 1:1 대응. 합 = 1.0.
+ *  도입부 답변·구조·데이터를 우선(생성형 검색 인용에 직접 기여), 질문형 제목은 보조. */
+export const MATE_WEIGHTS = [0.20, 0.22, 0.18, 0.15, 0.13, 0.12] as const;
+
 export function analyzeMateReadiness(
   items: RssItem[],
   categoryKeywords: string[],
@@ -84,11 +104,13 @@ export function analyzeMateReadiness(
   const perPost = items.map((it) => analyzeForMate(it, categoryTokens));
 
   const subheadingPass = perPost.filter((p) => p.hasStructuredSubheadings).length;
-  const factLeadPass = perPost.filter((p) => p.hasFactInLead).length;
+  const answerLeadPass = perPost.filter((p) => p.hasAnswerLead).length;
   const dataPass = perPost.filter((p) => p.hasDataPoints).length;
-  const questionPass = perPost.filter((p) => p.hasQuestionTitle).length;
+  const summaryPass = perPost.filter((p) => p.hasSummaryBlock).length;
   const lengthPass = perPost.filter((p) => p.sufficientLength).length;
+  const questionPass = perPost.filter((p) => p.hasQuestionTitle).length;
 
+  // ⚠️ 순서가 MATE_WEIGHTS 와 1:1 대응해야 함.
   const checks: MateCheckItem[] = [
     {
       label: '구조화된 소제목',
@@ -97,16 +119,16 @@ export function analyzeMateReadiness(
       totalCount: total,
       passRate: subheadingPass / total,
       status: gradeStatus(subheadingPass / total),
-      tip: '본문에 ①②③ 또는 1. 2. 3. 같은 소제목을 넣으면 AI가 정보를 구조적으로 추출할 수 있습니다.',
+      tip: '본문에 ①②③ 또는 1. 2. 3. 같은 소제목을 넣으면 AI 브리핑이 정보를 구조적으로 추출·인용하기 쉬워집니다.',
     },
     {
-      label: '도입부 팩트 배치',
-      description: '첫 200자 안에 숫자·키워드가 포함된 핵심 정보가 있는지',
-      passCount: factLeadPass,
+      label: '답변 우선 도입부',
+      description: '첫 200자 안에 핵심 키워드 + 정의/단정/방법 등 "답"이 바로 나오는지',
+      passCount: answerLeadPass,
       totalCount: total,
-      passRate: factLeadPass / total,
-      status: gradeStatus(factLeadPass / total),
-      tip: '"안녕하세요~" 대신 핵심 답변을 첫 문장에 배치하세요. AI는 도입부에 가장 높은 가중치를 둡니다.',
+      passRate: answerLeadPass / total,
+      status: gradeStatus(answerLeadPass / total),
+      tip: '"안녕하세요~" 대신 "○○란 △△입니다" 처럼 첫 문장에 답을 배치하세요. AI 브리핑은 도입부 답변을 그대로 인용합니다.',
     },
     {
       label: '숫자·데이터 포함',
@@ -118,13 +140,13 @@ export function analyzeMateReadiness(
       tip: '"좋았다" 대신 "2주 사용 후 전기세 12% 절감" 같은 구체적 수치를 넣으면 AI 인용 확률이 올라갑니다.',
     },
     {
-      label: '질문형 제목',
-      description: '제목에 질문 키워드나 물음표가 포함되어 있는지',
-      passCount: questionPass,
+      label: '요약·결론 블록',
+      description: '글 안에 요약/정리/결론 구간이 있어 핵심을 추출하기 쉬운지',
+      passCount: summaryPass,
       totalCount: total,
-      passRate: questionPass / total,
-      status: gradeStatus(questionPass / total, 0.3, 0.15),
-      tip: 'AI는 질문에 답하는 것이 목적이므로 "○○ 어떻게?", "○○ vs ○○" 같은 제목이 인용에 유리합니다.',
+      passRate: summaryPass / total,
+      status: gradeStatus(summaryPass / total, 0.5, 0.25),
+      tip: '본문 끝(또는 앞)에 "한 줄 요약 / 결론" 블록을 두면 AI가 그 부분을 인용 답변으로 뽑아갑니다.',
     },
     {
       label: '충분한 글 길이',
@@ -135,11 +157,19 @@ export function analyzeMateReadiness(
       status: gradeStatus(lengthPass / total),
       tip: 'AI 요약보다 깊은 내용을 제공해야 클릭 후 체류가 발생합니다. 최소 1,200자 이상을 권장합니다.',
     },
+    {
+      label: '질문형 제목',
+      description: '제목에 질문 키워드나 물음표가 포함되어 있는지',
+      passCount: questionPass,
+      totalCount: total,
+      passRate: questionPass / total,
+      status: gradeStatus(questionPass / total, 0.3, 0.15),
+      tip: 'AI는 질문에 답하는 것이 목적이므로 "○○ 어떻게?", "○○ vs ○○" 같은 제목이 인용에 유리합니다.',
+    },
   ];
 
-  const weights = [0.25, 0.25, 0.2, 0.15, 0.15];
   const score = Math.round(
-    checks.reduce((sum, c, i) => sum + c.passRate * weights[i], 0) * 100,
+    checks.reduce((sum, c, i) => sum + c.passRate * MATE_WEIGHTS[i], 0) * 100,
   );
 
   const grade = score >= 75 ? 'excellent'
@@ -157,10 +187,11 @@ export function analyzeMateReadiness(
 
 interface PostMateAnalysis {
   hasStructuredSubheadings: boolean;
-  hasFactInLead: boolean;
+  hasAnswerLead: boolean;
   hasDataPoints: boolean;
-  hasQuestionTitle: boolean;
+  hasSummaryBlock: boolean;
   sufficientLength: boolean;
+  hasQuestionTitle: boolean;
 }
 
 function analyzeForMate(item: RssItem, categoryTokens: string[]): PostMateAnalysis {
@@ -177,20 +208,26 @@ function analyzeForMate(item: RssItem, categoryTokens: string[]): PostMateAnalys
     SUBHEADING_MARKERS.some((p) => p.test(line.trim())),
   );
 
+  // 답변 우선 도입부 — 키워드 + (숫자 또는 정의/단정/방법 패턴).
   const leadHasKeyword = categoryTokens.some((t) => lead200.includes(t));
   const leadHasNumber = /\d/.test(lead200);
-  const hasFactInLead = leadHasKeyword && leadHasNumber;
+  const leadHasAnswerPattern = ANSWER_LEAD_PATTERNS.some((p) => p.test(lead200));
+  const hasAnswerLead = leadHasKeyword && (leadHasNumber || leadHasAnswerPattern);
 
   const hasDataPoints = DATA_PATTERNS.some((p) => p.test(snippet));
+
+  // 요약·결론 블록 — 실측 본문(있으면 길다)에서 정리/결론 구간 탐지.
+  const hasSummaryBlock = SUMMARY_PATTERNS.some((p) => p.test(snippet));
 
   const sufficientLength = item.contentLength >= 1200;
 
   return {
     hasStructuredSubheadings,
-    hasFactInLead,
+    hasAnswerLead,
     hasDataPoints,
-    hasQuestionTitle,
+    hasSummaryBlock,
     sufficientLength,
+    hasQuestionTitle,
   };
 }
 

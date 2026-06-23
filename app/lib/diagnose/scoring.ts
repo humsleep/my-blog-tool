@@ -23,6 +23,7 @@ export interface VisibilityHit {
   keyword: string;
   rank: number | null;       // 1~30 안에 들어가면 숫자, 아니면 null
   postTitle?: string;        // 이 키워드를 추출한 내 글 제목 (진단 v3 — 내 글 기준 측정)
+  competition?: number;      // 해당 키워드 총 블로그 문서수 (경쟁도 프록시, 진단 v3.1)
 }
 
 export interface ActivityScore {
@@ -40,6 +41,7 @@ export interface VisibilityScore {
   hitCount: number;          // 1~30 안 노출된 키워드 수
   topTenCount: number;       // 1~10 안 노출된 키워드 수
   avgRankWhenHit: number;    // 노출됐을 때 평균 순위 (없으면 NaN)
+  lowCompetitionHits: number; // 경쟁이 약한 키워드(무경쟁 구간)에서의 노출 수 — 점수 가산 적음
   hits: VisibilityHit[];
 }
 
@@ -139,7 +141,34 @@ export function scoreActivity(items: RssItem[], now: number = Date.now()): Activ
  * B. Visibility score
  *    진단 v3 — 도구가 정한 분야 고정 키워드가 아니라, 사용자가 실제로 쓴 글에서
  *    뽑은 키워드로 검색해 "내 글이 1페이지에 뜨는가"를 측정한다. (분야·규모와 무관하게 공정)
+ *
+ *    v3.1 경쟁도 보정 — "내 키워드로 내 글 찾기"는 제목이 독특할수록 거의 무조건 상위에
+ *    잡혀 점수가 과대평가될 수 있다(자기키워드 인플레이션). 키워드별 총 문서수(total)를
+ *    경쟁도로 보아, 무경쟁 키워드의 노출은 가산을 줄이고 경쟁 키워드의 노출은 더 크게 인정한다.
  * ──────────────────────────────────────────────────────────────── */
+
+/** 순위 → 노출 크레딧 (1페이지 안에서 상위일수록 높게). */
+function rankCredit(rank: number | null): number {
+  if (rank === null) return 0;
+  if (rank <= 10) return 1.0;
+  if (rank <= 20) return 0.7;
+  return 0.45;                 // 21~30위
+}
+
+/** 경쟁도(총 문서수) → 가중치. 무경쟁이면 떠도 가치가 적고, 헤드 키워드면 가치가 크다.
+ *  competition 미상(undefined)이면 중립(1.0) — 하위호환. */
+function competitionWeight(total: number | undefined): number {
+  if (total === undefined) return 1.0;
+  if (total < 300) return 0.3;      // 거의 무경쟁 — 떠도 의미 적음
+  if (total < 3_000) return 0.6;
+  if (total < 30_000) return 1.0;
+  return 1.3;                        // 헤드 — 떠면 가치 큼
+}
+
+const LOW_COMPETITION_MAX = 300;
+/** 가중 노출 크레딧 비율이 이 값이면 만점 (덜 박하게 — '공정' 의도 유지). */
+const VISIBILITY_TARGET_RATIO = 0.5;
+
 export function scoreVisibility(hits: VisibilityHit[]): VisibilityScore {
   const total = hits.length;
   const hit = hits.filter((h) => h.rank !== null);
@@ -147,15 +176,20 @@ export function scoreVisibility(hits: VisibilityHit[]): VisibilityScore {
   const sumRanks = hit.reduce((a, h) => a + (h.rank as number), 0);
   const avgRank = hit.length ? sumRanks / hit.length : NaN;
 
-  // 점수: 진입율 + 평균 순위 가산점
-  // 1. 진입율: 30개 중 N개가 1~30위. 50%면 만점.
-  const sHit = clamp01(hit.length / Math.max(1, total) / 0.5);
-  // 2. Top10 비율: 10위 안 진입 비율 (전체 키워드 대비)
-  const sTop = clamp01(top10 / Math.max(1, total) / 0.2);
-  // 3. 평균 순위 보너스: 1위 1.0, 30위 0.0
-  const sRank = hit.length ? clamp01((30 - avgRank) / 29) : 0;
-
-  const score = Math.round((sHit * 0.5 + sTop * 0.3 + sRank * 0.2) * 100);
+  // 경쟁도 가중 노출 점수 — Σ(가중치·순위크레딧) / 키워드수.
+  //   분모를 '키워드 수'로 둔다(Σ가중치가 아님): 그래야 무경쟁 키워드만 1위인 블로그가
+  //   만점이 되지 않고(각 크레딧이 0.3배로 깎임), 경쟁 키워드 노출이 점수를 끌어올린다.
+  let creditSum = 0;
+  let lowCompetitionHits = 0;
+  for (const h of hits) {
+    const w = competitionWeight(h.competition);
+    creditSum += w * rankCredit(h.rank);
+    if (h.rank !== null && h.competition !== undefined && h.competition < LOW_COMPETITION_MAX) {
+      lowCompetitionHits++;
+    }
+  }
+  const ratio = total > 0 ? creditSum / total : 0;
+  const score = Math.round(clamp01(ratio / VISIBILITY_TARGET_RATIO) * 100);
 
   return {
     score,
@@ -163,6 +197,7 @@ export function scoreVisibility(hits: VisibilityHit[]): VisibilityScore {
     hitCount: hit.length,
     topTenCount: top10,
     avgRankWhenHit: hit.length ? round1(avgRank) : NaN,
+    lowCompetitionHits,
     hits,
   };
 }
@@ -254,6 +289,9 @@ export function compose(
   }
   if (visibility.topTenCount >= 3) {
     insights.push(`상위 10위 안 진입 글이 ${visibility.topTenCount}개 — 그 글들의 패턴(제목·구조·본문 길이)을 새 글에 적용해 보세요.`);
+  }
+  if (visibility.hitCount > 0 && visibility.lowCompetitionHits >= Math.ceil(visibility.hitCount * 0.6)) {
+    insights.push(`노출된 글 다수가 경쟁이 약한 키워드라 점수 가산이 제한적이에요. 검색량이 있는 키워드로도 1페이지에 들어가야 실제 유입이 늘어납니다.`);
   }
 
   // 품질 인사이트
