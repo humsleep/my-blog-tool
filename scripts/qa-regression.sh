@@ -36,9 +36,9 @@ assert_grep   'home shows TOP 10 podium label'           /              'TOP 10'
 # 비로그인 + Naver API 미설정이면 빈 상태가 노출됨 — 그래도 헤더는 보여야 함
 
 echo ""
-echo "── Phase 34: 블로그 진단 prefill + 카테고리 매핑 ──"
-assert_grep   'diagnose page has 8 category cards'       /blog-diagnose '맛집'
-assert_grep   '... 정보·노하우'                            /blog-diagnose '노하우'
+echo "── Phase 34/59: 블로그 진단 입력 화면 (분야 자동 감지) ──"
+assert_grep   'diagnose auto-detect note'                /blog-diagnose '자동으로 감지'
+assert_grep   '... 내 글 기준 측정 문구'                   /blog-diagnose '내가 실제로 쓴 글'
 assert_grep   '... 진단 시작 CTA'                          /blog-diagnose '진단 시작'
 
 echo ""

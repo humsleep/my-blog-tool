@@ -2,7 +2,7 @@
  * 블로그 진단 점수 계산.
  *
  *   A. Activity   25%  — 발행 빈도, 꾸준함, 최근 활성
- *   B. Visibility 50%  — 카테고리 키워드 1페이지 진입율 (가장 중요)
+ *   B. Visibility 50%  — 내 글이 노린 키워드의 1페이지 진입율 (가장 중요, 진단 v3)
  *   C. Quality    25%  — 글당 평균 글자수, 이미지 비율, 카테고리 일관성
  *
  *  최종 score는 0~100. 각 축도 0~100.
@@ -22,6 +22,7 @@ import type { RssItem, RssSummary, BlogSearchItem } from './naver-blog';
 export interface VisibilityHit {
   keyword: string;
   rank: number | null;       // 1~30 안에 들어가면 숫자, 아니면 null
+  postTitle?: string;        // 이 키워드를 추출한 내 글 제목 (진단 v3 — 내 글 기준 측정)
 }
 
 export interface ActivityScore {
@@ -136,6 +137,8 @@ export function scoreActivity(items: RssItem[], now: number = Date.now()): Activ
 
 /* ─────────────────────────────────────────────────────────────────
  * B. Visibility score
+ *    진단 v3 — 도구가 정한 분야 고정 키워드가 아니라, 사용자가 실제로 쓴 글에서
+ *    뽑은 키워드로 검색해 "내 글이 1페이지에 뜨는가"를 측정한다. (분야·규모와 무관하게 공정)
  * ──────────────────────────────────────────────────────────────── */
 export function scoreVisibility(hits: VisibilityHit[]): VisibilityScore {
   const total = hits.length;
@@ -243,11 +246,11 @@ export function compose(
     insights.push('발행 간격의 변동이 커요. 같은 요일·시간대를 정해두면 알고리즘 친화도가 올라갑니다.');
   }
 
-  // 노출 인사이트
-  if (visibility.hitCount === 0) {
-    insights.push('카테고리 핵심 키워드 30개 중 1페이지 노출이 0건이에요. 검색량은 적지만 경쟁이 약한 롱테일 키워드부터 공략해 보세요.');
-  } else if (visibility.hitCount >= 10) {
-    insights.push(`핵심 키워드 ${visibility.totalKeywords}개 중 ${visibility.hitCount}개에서 1페이지 노출 — 이미 카테고리 권위가 누적되고 있어요.`);
+  // 노출 인사이트 — 내 글이 노린 키워드 기준
+  if (visibility.totalKeywords > 0 && visibility.hitCount === 0) {
+    insights.push('내 글이 노린 키워드 중 1페이지 노출이 0건이에요. 제목 앞쪽에 핵심 키워드를 배치하고, 경쟁이 약한 롱테일부터 공략해 보세요.');
+  } else if (visibility.hitCount >= Math.max(5, Math.round(visibility.totalKeywords * 0.5))) {
+    insights.push(`측정한 내 글 ${visibility.totalKeywords}개 중 ${visibility.hitCount}개가 검색 1페이지에 떠요 — 노린 키워드를 잘 잡고 있습니다.`);
   }
   if (visibility.topTenCount >= 3) {
     insights.push(`상위 10위 안 진입 글이 ${visibility.topTenCount}개 — 그 글들의 패턴(제목·구조·본문 길이)을 새 글에 적용해 보세요.`);

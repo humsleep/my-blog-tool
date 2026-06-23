@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { extractBlogId, fetchRss, fetchPostBody, searchBlogByQuery, type BlogSearchItem } from '@/app/lib/diagnose/naver-blog';
-import { findCategorySeed } from '@/app/lib/diagnose/category-seeds';
-import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits, summarizeRss } from '@/app/lib/diagnose/scoring';
+import { extractBlogId, fetchRss, fetchPostBody, searchBlogByQuery, findRankInResults } from '@/app/lib/diagnose/naver-blog';
+import { findCategorySeed, detectCategory } from '@/app/lib/diagnose/category-seeds';
+import { buildTargetKeywords } from '@/app/lib/diagnose/title-keyword';
+import { scoreActivity, scoreVisibility, scoreQuality, compose, summarizeRss, type VisibilityHit } from '@/app/lib/diagnose/scoring';
 import { analyzeMateReadiness } from '@/app/lib/diagnose/mate-readiness';
 import { analyzeCoach } from '@/app/lib/diagnose/heuristic-coach';
 import { createClient } from '@/app/lib/supabase/server';
@@ -64,16 +65,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // 2) 카테고리 시드 결정
-  const seed = findCategorySeed(body.category || '');
-  if (!seed) {
-    return NextResponse.json(
-      { error: '메인 카테고리를 선택해주세요.' },
-      { status: 400 },
-    );
-  }
-
-  // 2.5) 환경설정 가드 — 입력 검증 통과 후, 외부 API 호출 직전에 검증.
+  // 2) 환경설정 가드 — 입력 검증 통과 후, 외부 API 호출 직전에 검증.
+  //    (분야 시드는 RSS 를 가져온 뒤 글 내용으로 자동 감지 — 진단 v3)
   const naverIdSet = !!process.env.NAVER_CLIENT_ID && !!process.env.NAVER_CLIENT_SECRET;
   if (!naverIdSet) {
     return NextResponse.json(
@@ -155,24 +148,41 @@ export async function POST(request: Request) {
     }
   }
 
-  // 4) 카테고리 키워드 30개로 검색해 랭크 매핑 (노출 점수)
-  //    동시성 5, 요청 간 120ms gap → 30개 약 7~12초 소요 (네이버 응답 속도 변동에 따라)
+  // 3.7) 분야 자동 감지 — 사용자가 고르지 않고 실제 글 내용으로 추정 (진단 v3).
+  //      명시적으로 category 를 보냈고 유효하면 그대로 존중(하위호환).
+  const explicitSeed = findCategorySeed(body.category || '');
+  const seed = explicitSeed ?? detectCategory(
+    items.flatMap((it) => [it.title, it.category ?? '', it.contentSnippet]),
+  );
+
+  // 4) 내 글이 노린 키워드로 검색해 "내 글이 1페이지에 뜨는가" 측정 (노출 점수, 진단 v3).
+  //    최근 글 제목에서 핵심 키워드를 뽑아(중복 제거) 검색 → 내 블로그 랭크 매핑.
+  //    분야 고정 키워드 대신 내 글 기준이라, 전문 키워드를 안 쓰는 블로그도 공정하게 측정.
+  const VISIBILITY_SAMPLE = 18;
+  const targets = buildTargetKeywords(items, VISIBILITY_SAMPLE);
+
   const searchResults = await runPool(
-    seed.keywords,
-    async (keyword) => {
-      const r = await searchBlogByQuery(keyword, 30);
-      return { keyword, items: r };
+    targets,
+    async (t) => {
+      const r = await searchBlogByQuery(t.keyword, 30);
+      return { keyword: t.keyword, postTitle: t.postTitle, items: r };
     },
     CONCURRENCY,
   );
 
   const failed = searchResults.filter((r) => r.items === null).length;
-  const enriched: { keyword: string; items: BlogSearchItem[] | null }[] = searchResults;
   if (failed > 0) {
-    warnings.push(`키워드 ${seed.keywords.length}개 중 ${failed}개 검색이 실패했어요. 점수가 보수적으로 산출됩니다.`);
+    warnings.push(`내 글 키워드 ${targets.length}개 중 ${failed}개 검색이 실패했어요. 점수가 보수적으로 산출됩니다.`);
+  }
+  if (targets.length > 0 && targets.length < 5) {
+    warnings.push(`최근 글이 ${targets.length}편뿐이라 노출 점수가 적은 표본으로 산출됐어요. 글이 쌓이면 더 정확해집니다.`);
   }
 
-  const hits = mapHits(enriched, blogId);
+  const hits: VisibilityHit[] = searchResults.map((r) => ({
+    keyword: r.keyword,
+    postTitle: r.postTitle,
+    rank: r.items ? findRankInResults(r.items, blogId) : null,
+  }));
 
   // 5) 점수 산출
   //    품질은 본문 fetch가 성공한 최근 샘플만으로 — RSS 잘린 데이터로 평균이 낮아지지 않도록.
@@ -236,7 +246,8 @@ export async function POST(request: Request) {
     blogLink: rss?.link ?? `https://blog.naver.com/${blogId}`,
     category: seed.value,
     categoryLabel: seed.label,
-    keywordCount: seed.keywords.length,
+    categoryDetected: !explicitSeed,   // 분야를 자동 감지했는지 (진단 v3)
+    keywordCount: targets.length,      // 실제 측정한 내 글 키워드 수
     score: result,
     // GEO(메이트 인용 적합도) — 총점과 분리된 별도 헤드라인 지표. 상세 리포트는 mate/coach.
     geo: { score: mate.score, grade: mate.grade },

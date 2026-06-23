@@ -130,3 +130,41 @@ export const CATEGORY_SEEDS: CategorySeed[] = [
 export function findCategorySeed(value: string): CategorySeed | null {
   return CATEGORY_SEEDS.find((c) => c.value === value) ?? null;
 }
+
+/**
+ * 최근 글 텍스트(제목 + 폴더 카테고리 + 본문 일부)에서 분야를 자동 추정.
+ *
+ * 진단 v3 (Phase 59): 사용자가 분야를 직접 고르지 않고, 실제 글 내용으로 8개 분야 중
+ * 가장 잘 맞는 것을 고른다. 각 분야 시드 키워드 토큰이 본문에 등장한 종류 수로 점수화.
+ * 매칭이 0이면 가장 범용적인 '일상·라이프'로 폴백.
+ */
+export function detectCategory(
+  texts: string[],
+  fallback: DiagnoseCategory = 'lifestyle',
+): CategorySeed {
+  const haystack = texts.join('  ').toLowerCase();
+  let best: CategorySeed | null = null;
+  let bestScore = 0;
+
+  for (const seed of CATEGORY_SEEDS) {
+    const tokens = Array.from(
+      new Set(
+        seed.keywords
+          .flatMap((k) => k.toLowerCase().split(/\s+/))
+          .filter((tok) => tok.length >= 2),
+      ),
+    );
+    let score = 0;
+    for (const tok of tokens) {
+      if (haystack.includes(tok)) score++;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = seed;
+    }
+  }
+
+  return best && bestScore > 0
+    ? best
+    : (findCategorySeed(fallback) as CategorySeed);
+}

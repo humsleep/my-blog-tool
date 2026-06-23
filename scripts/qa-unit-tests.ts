@@ -13,6 +13,8 @@ import { extractBlogId } from '../app/lib/diagnose/naver-blog';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits } from '../app/lib/diagnose/scoring';
 import { validateNickname, validateBlogUrl } from '../app/lib/community/profile';
 import { markdownToHtml, markdownToPlain } from '../app/lib/format/article-formats';
+import { extractTargetKeyword, buildTargetKeywords } from '../app/lib/diagnose/title-keyword';
+import { detectCategory } from '../app/lib/diagnose/category-seeds';
 
 let passed = 0;
 let failed = 0;
@@ -111,6 +113,42 @@ group('mapHits — visibility rank mapping', () => {
     { title: '', link: 'https://blog.naver.com/MyBlog/1', description: '', bloggername: '', bloggerlink: 'https://blog.naver.com/MyBlog', postdate: '20260101' },
   ] }] as any, 'myblog');
   expect(hits2[0].rank, 1, 'case insensitive blog id match');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('extractTargetKeyword — 제목→검색 키워드 (진단 v3)', () => {
+  // 말머리 대괄호 제거 + 앞쪽 핵심 키워드 추출
+  expect(extractTargetKeyword('[내돈내산] 다이슨 에어랩 한 달 후기'), '다이슨 에어랩', '말머리 제거 + 키워드');
+  // 꼬리 서술형 토큰에서 종료
+  expect(extractTargetKeyword('수원 인계동 카페 카페그레이 다녀왔어요'), '수원 인계동 카페', '서술형 토큰 전까지');
+  // 시간 말머리(조사 포함) 건너뜀
+  expect(extractTargetKeyword('오늘은 연말정산 의료비 공제 총정리'), '연말정산 의료비 공제', '시간 말머리 skip');
+  // 추천/베스트는 키워드의 일부로 유지
+  expect(extractTargetKeyword('강릉 카페 추천 베스트'), '강릉 카페 추천', '추천은 키워드 일부');
+  // 이모지/특수문자 제거
+  expect(extractTargetKeyword('✨아이폰 15 프로 리뷰✨'), '아이폰 15 프로', '이모지 제거');
+  // 빈 제목 → null
+  expect(extractTargetKeyword(''), null, '빈 제목 null');
+  expect(extractTargetKeyword('   '), null, '공백만 null');
+});
+
+group('buildTargetKeywords — 중복 제거 + 상한', () => {
+  const items = [
+    { title: '제주도 카페 추천' },
+    { title: '제주도 카페 추천 다시' },   // 같은 키워드 → 중복 제거
+    { title: '부산 맛집 후기' },
+  ];
+  const out = buildTargetKeywords(items, 10);
+  expect(out.length, 2, '중복 제거 후 2개');
+  expect(out[0].keyword, '제주도 카페 추천', '첫 키워드');
+  expect(out[0].postTitle, '제주도 카페 추천', '출처 제목 보존');
+  expect(buildTargetKeywords(items, 1).length, 1, 'limit 적용');
+});
+
+group('detectCategory — 분야 자동 감지', () => {
+  expect(detectCategory(['오사카 맛집 추천', '제주도 가볼만한곳']).value, 'food-travel', '맛집·여행 감지');
+  expect(detectCategory(['헬스장 PT 후기', '단백질 식단 다이어트']).value, 'health-fitness', '건강·운동 감지');
+  expect(detectCategory(['아무 의미 없는 글', 'zzz']).value, 'lifestyle', '매칭 0 → lifestyle 폴백');
 });
 
 // ─────────────────────────────────────────────────────────────
