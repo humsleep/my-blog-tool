@@ -5,6 +5,7 @@ import { buildTargetKeywords } from '@/app/lib/diagnose/title-keyword';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, summarizeRss, type VisibilityHit } from '@/app/lib/diagnose/scoring';
 import { analyzeMateReadiness } from '@/app/lib/diagnose/mate-readiness';
 import { analyzeCoach } from '@/app/lib/diagnose/heuristic-coach';
+import { analyzeAiCitation } from '@/app/lib/diagnose/ai-citation';
 import { createClient } from '@/app/lib/supabase/server';
 
 function isSupabaseConfigured() {
@@ -206,6 +207,9 @@ export async function POST(request: Request) {
   const mate = analyzeMateReadiness(sampleItems, seed.keywords);
   const coach = analyzeCoach(sampleItems, seed.keywords);
 
+  // 5.6) AI 인용 기대치 — 내 키워드 적합도 × 준비도(mate). 스크래핑 없이 인용 가능성 추정.
+  const aiCitation = analyzeAiCitation(targets.map((t) => t.keyword), mate.score);
+
   // 6) 로그인 사용자 → DB 저장 (Phase 28: 데일리 대시보드 + 추적용)
   //    저장 실패는 무시. 진단 결과 응답 자체는 항상 정상 반환.
   if (isSupabaseConfigured()) {
@@ -254,6 +258,7 @@ export async function POST(request: Request) {
     geo: { score: mate.score, grade: mate.grade },
     mate,
     coach,
+    aiCitation,
     rssItemCount: items.length,
     diagnosedAt: new Date().toISOString(),
   });

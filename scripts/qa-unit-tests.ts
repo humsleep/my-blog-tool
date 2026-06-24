@@ -16,6 +16,7 @@ import { markdownToHtml, markdownToPlain } from '../app/lib/format/article-forma
 import { extractTargetKeyword, buildTargetKeywords } from '../app/lib/diagnose/title-keyword';
 import { detectCategory } from '../app/lib/diagnose/category-seeds';
 import { analyzeMateReadiness, MATE_WEIGHTS } from '../app/lib/diagnose/mate-readiness';
+import { classifyAiProneness, analyzeAiCitation } from '../app/lib/diagnose/ai-citation';
 
 let passed = 0;
 let failed = 0;
@@ -150,6 +151,41 @@ group('detectCategory — 분야 자동 감지', () => {
   expect(detectCategory(['오사카 맛집 추천', '제주도 가볼만한곳']).value, 'food-travel', '맛집·여행 감지');
   expect(detectCategory(['헬스장 PT 후기', '단백질 식단 다이어트']).value, 'health-fitness', '건강·운동 감지');
   expect(detectCategory(['아무 의미 없는 글', 'zzz']).value, 'lifestyle', '매칭 0 → lifestyle 폴백');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('classifyAiProneness — AI 브리핑 적합도', () => {
+  expect(classifyAiProneness('연말정산 하는법').tier, 'high',   '방법형 → high');
+  expect(classifyAiProneness('아이폰 갤럭시 비교').tier, 'high', '비교형 → high');
+  expect(classifyAiProneness('비타민D 효능').tier,    'high',   '효능형 → high');
+  expect(classifyAiProneness('타이레놀 복용법?').tier, 'high',  '물음표 → high');
+  expect(classifyAiProneness('수원 카페 추천').tier,  'medium', '추천형 → medium');
+  expect(classifyAiProneness('제주도 맛집').tier,     'medium', '맛집 → medium');
+  expect(classifyAiProneness('오늘의 일상').tier,     'low',    '일상 → low');
+  expect(classifyAiProneness('다이슨 에어랩').tier,    'low',    '제품명만 → low');
+  expect(classifyAiProneness('카페그레이').tier,      'medium', '카페 포함 브랜드 → medium');
+});
+
+group('analyzeAiCitation — 인용 기대치 = 적합도 × 준비도', () => {
+  // 적합 키워드 + 높은 준비도 → 기대치 높음
+  const good = analyzeAiCitation(['연말정산 하는법', '소득공제 조건', '환급 방법'], 80);
+  expect(good.highCount, 3, '3개 모두 high');
+  if (good.expectationScore < 55) failures.push(`  ✗ prone+ready should be high, got ${good.expectationScore}`); else passed++;
+  expect(good.grade, 'high', 'grade high');
+
+  // 적합하지만 준비도 0 → 기대치 0
+  const noReady = analyzeAiCitation(['연말정산 하는법'], 0);
+  expect(noReady.expectationScore, 0, '준비도 0 → 기대치 0');
+
+  // 일상 키워드 + 높은 준비도 → 적합도가 낮아 기대치 억제
+  const dailyOnly = analyzeAiCitation(['오늘의 일상', '주말 기록'], 80);
+  if (dailyOnly.expectationScore > 30) failures.push(`  ✗ daily-only should be suppressed, got ${dailyOnly.expectationScore}`); else passed++;
+  expect(dailyOnly.proneCount, 0, '적합 키워드 0');
+
+  // 빈 목록 안전
+  expect(analyzeAiCitation([], 80).expectationScore, 0, '빈 목록 → 0');
+  // 정렬: high 가 앞으로
+  expect(analyzeAiCitation(['오늘의 일상', '환급 방법'], 50).keywords[0].tier, 'high', '적합도 내림차순 정렬');
 });
 
 // ─────────────────────────────────────────────────────────────

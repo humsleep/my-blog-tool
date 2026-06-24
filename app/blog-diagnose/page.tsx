@@ -8,6 +8,7 @@ import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import MateReadinessCard from '@/app/components/diagnose/MateReadinessCard';
 import { GRADE_LABEL, GRADE_COLOR, type MateReadinessReport } from '@/app/lib/diagnose/mate-readiness';
+import { naverSearchUrl, AI_TIER_LABEL, type AiCitationReport } from '@/app/lib/diagnose/ai-citation';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
@@ -44,6 +45,8 @@ interface DiagnoseResponse {
   geo?: { score: number; grade: MateReadinessReport['grade'] };
   /** 메인 진단이 실측 본문으로 계산한 상세 리포트 — 카드에 initial 로 전달. */
   mate?: MateReadinessReport;
+  /** AI 브리핑 인용 기대치 (적합도 × 준비도). */
+  aiCitation?: AiCitationReport;
 }
 
 const PROGRESS_BEATS = [
@@ -402,6 +405,9 @@ export default function BlogDiagnosePage() {
               initial={result.mate}
             />
 
+            {/* ── AI 브리핑 인용 기대치 + 직접 확인 ── */}
+            {result.aiCitation && <AiCitationPanel report={result.aiCitation} />}
+
             {/* ── 3. 블로그 건강 체크 — 핵심 8개 ── */}
             <HealthChecklist score={result.score} />
 
@@ -575,6 +581,97 @@ function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport
         <p className="text-xs text-ink-muted mt-4 leading-relaxed">
           네이버 메이트·AI브리핑 등 <strong className="text-ink">AI 검색이 내 글을 인용</strong>하기 좋은 구조인지 최근 본문 기준으로 측정한 별도 지표예요.
           <span className="text-ink-faint"> (총점에는 포함되지 않습니다)</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ─── AI 브리핑 인용 기대치 + 직접 확인 ────────────────────────
+ *
+ *  스크래핑 없이 "인용 가능성"을 정직하게 추정: 키워드 적합도 × 준비도(mate).
+ *  + 사용자가 본인 브라우저에서 실제 AI 브리핑을 확인할 수 있는 딥링크 제공.
+ */
+function AiCitationPanel({ report }: { report: AiCitationReport }) {
+  if (report.totalKeywords === 0) return null;
+
+  const grade = report.grade;
+  const gradeLabel = grade === 'high' ? '인용 기대 높음' : grade === 'mid' ? '인용 기대 보통' : '인용 기대 낮음';
+  const gradeColor =
+    grade === 'high' ? 'text-green-600 dark:text-green-400'
+    : grade === 'mid' ? 'text-orange-600 dark:text-orange-400'
+    : 'text-ink-muted';
+
+  // 직접 확인용 — 적합/부분적합 키워드 우선 (이미 적합도 내림차순 정렬됨), 최대 8개.
+  const checkable = report.keywords.filter((k) => k.tier !== 'low').slice(0, 8);
+
+  return (
+    <section className="mb-12">
+      <div className="ed-eyebrow mb-3">AI 브리핑 인용 기대치</div>
+
+      <div className="rounded-2xl border border-rule bg-paper p-5 sm:p-6">
+        {/* 헤드라인 — 기대치 점수 + 구성 */}
+        <div className="flex items-center gap-5 mb-4">
+          <div className="flex-shrink-0 text-center">
+            <div className="text-4xl sm:text-5xl font-bold tabular-nums text-ink leading-none">{report.expectationScore}</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-ink-faint mt-1">/ 100</div>
+          </div>
+          <div className="min-w-0">
+            <div className={`text-base sm:text-lg font-bold ${gradeColor}`}>{gradeLabel}</div>
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+              내 키워드의 <strong className="text-ink">AI 브리핑 적합도</strong>(정보성·질문형) ×{' '}
+              <strong className="text-ink">글 구조 준비도</strong>(준비도 {report.readinessScore}점)로 추정한 값이에요.
+            </p>
+          </div>
+        </div>
+
+        {/* 구성 요약 */}
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          <div className="px-3 py-2 rounded-md border border-rule-soft bg-paper-deep">
+            <div className="text-[11px] text-ink-faint">AI 브리핑 적합 키워드</div>
+            <div className="text-sm font-semibold text-ink tabular-nums">
+              {report.proneCount} / {report.totalKeywords}개
+              <span className="text-ink-faint font-normal"> (강 {report.highCount})</span>
+            </div>
+          </div>
+          <div className="px-3 py-2 rounded-md border border-rule-soft bg-paper-deep">
+            <div className="text-[11px] text-ink-faint">글 구조 준비도</div>
+            <div className="text-sm font-semibold text-ink tabular-nums">{report.readinessScore}점</div>
+          </div>
+        </div>
+
+        {/* 직접 확인 — 딥링크 */}
+        {checkable.length > 0 ? (
+          <>
+            <p className="text-xs text-ink-muted mb-2 leading-relaxed">
+              아래 키워드로 <strong className="text-ink">실제 AI 브리핑에 내 글이 인용됐는지 직접 확인</strong>해보세요. (내 브라우저에서 네이버 검색이 열립니다)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {checkable.map((k) => (
+                <a
+                  key={k.keyword}
+                  href={naverSearchUrl(k.keyword)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-orange-200 dark:border-orange-900/50 bg-orange-50/60 dark:bg-orange-950/25 text-xs text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-colors"
+                  title={AI_TIER_LABEL[k.tier]}
+                >
+                  {k.keyword}
+                  <svg className="w-3 h-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-xs text-ink-muted leading-relaxed">
+            내 글 키워드 대부분이 일상·브랜드형이라 AI 브리핑이 잘 뜨지 않아요. "○○ 방법", "○○ 비교", "○○ 효과"처럼 정보성·질문형 주제를 함께 다뤄보세요.
+          </p>
+        )}
+
+        <p className="text-[11px] text-ink-faint mt-4 leading-relaxed">
+          ※ 네이버는 AI 인용수를 공개 API로 제공하지 않아, 실제 인용 여부는 위 링크로 직접 확인하는 것이 가장 정확해요. 이 점수는 공개 데이터 기반 <strong>기대치</strong>입니다. (총점에는 포함되지 않습니다)
         </p>
       </div>
     </section>
