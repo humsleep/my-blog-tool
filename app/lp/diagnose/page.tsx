@@ -68,7 +68,7 @@ export default function DiagnoseLandingPage() {
         </h1>
 
         <p className="mt-5 sm:mt-6 text-center text-base sm:text-lg text-zinc-600 dark:text-zinc-300 max-w-xl mx-auto leading-relaxed animate-fade-up stagger-2">
-          최근 12편 본문과 카테고리 핵심 키워드 30개로
+          최근 12편 본문과 내가 쓴 글이 노린 키워드로
           <br className="hidden sm:block" /> <strong>활동성·노출·품질</strong> 점수를 매겨드립니다.
         </p>
 

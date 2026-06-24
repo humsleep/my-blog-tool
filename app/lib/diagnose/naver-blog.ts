@@ -173,13 +173,19 @@ export async function fetchRss(blogId: string): Promise<RssSummary | null> {
   };
 }
 
-/** 네이버 블로그 검색 API 호출. display 30이면 1페이지 노출 후보.
- *  실패 시 null 반환 (호출자가 graceful degradation).
+/** 네이버 블로그 검색 결과 + 메타(총 문서수). */
+export interface BlogSearchResult {
+  items: BlogSearchItem[];
+  total: number;        // 해당 쿼리의 총 블로그 문서 수 (경쟁도 프록시)
+}
+
+/** 네이버 블로그 검색 API 호출 — 결과 + total(경쟁도) 동반.
+ *  실패 시 null. total 은 진단 노출 점수의 경쟁도 가중에 사용.
  */
-export async function searchBlogByQuery(
+export async function searchBlogWithMeta(
   query: string,
   display: number = 30,
-): Promise<BlogSearchItem[] | null> {
+): Promise<BlogSearchResult | null> {
   const id = process.env.NAVER_CLIENT_ID;
   const secret = process.env.NAVER_CLIENT_SECRET;
   if (!id || !secret) return null;
@@ -196,10 +202,23 @@ export async function searchBlogByQuery(
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return Array.isArray(data.items) ? (data.items as BlogSearchItem[]) : [];
+    const items = Array.isArray(data.items) ? (data.items as BlogSearchItem[]) : [];
+    const total = typeof data.total === 'number' ? data.total : items.length;
+    return { items, total };
   } catch {
     return null;
   }
+}
+
+/** 네이버 블로그 검색 API 호출. display 30이면 1페이지 노출 후보.
+ *  실패 시 null 반환 (호출자가 graceful degradation).
+ */
+export async function searchBlogByQuery(
+  query: string,
+  display: number = 30,
+): Promise<BlogSearchItem[] | null> {
+  const r = await searchBlogWithMeta(query, display);
+  return r ? r.items : null;
 }
 
 /** 검색 결과 안에서 특정 blogId 글의 1순위 위치(1-based)를 찾음. 없으면 null. */

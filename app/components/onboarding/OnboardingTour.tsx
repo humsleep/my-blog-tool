@@ -39,7 +39,7 @@ const SLIDES: Slide[] = [
     emoji: '🩺',
     eyebrow: 'STEP 1 · 진단',
     title: '내 블로그의 위치, 30초면 알아요',
-    body: '카테고리 핵심 키워드 30개로 1페이지 진입율을 측정해 활동성·노출·품질 3축 점수와 30일 액션 플랜을 만들어드려요.',
+    body: '내가 실제로 쓴 글이 검색 상위에 뜨는지로 1페이지 진입율을 측정해 활동성·노출·품질 3축 점수와 30일 액션 플랜을 만들어드려요.',
     cta: { label: '진단 받아보기', href: '/blog-diagnose' },
     accent: 'from-orange-50 via-amber-50/60 to-white',
     accentDark: 'dark:from-orange-950/40 dark:via-amber-950/20 dark:to-zinc-900',

@@ -2,40 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CATEGORY_SEEDS, type DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
+import { type DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
 import DiagnoseRadar from '@/app/components/charts/DiagnoseRadar';
 import ScoreGauge, { ScoreMiniBar } from '@/app/components/charts/ScoreGauge';
 import ShareCardButton from '@/app/components/diagnose/ShareCardButton';
 import MateReadinessCard from '@/app/components/diagnose/MateReadinessCard';
 import { GRADE_LABEL, GRADE_COLOR, type MateReadinessReport } from '@/app/lib/diagnose/mate-readiness';
+import { naverSearchUrl, AI_TIER_LABEL, type AiCitationReport } from '@/app/lib/diagnose/ai-citation';
 import { useUser } from '@/app/lib/supabase/useUser';
 import { fetchMyProfile } from '@/app/lib/community/profile';
 import { safeJson } from '@/app/lib/clientFetch';
-
-/**
- * 프로필 분야(한국어) → 진단 카테고리 시드(영문) 매핑.
- * CATEGORIES(`@/app/lib/community/categories`)는 한국어 라벨을 그대로 저장하지만,
- * CATEGORY_SEEDS는 영문 슬러그를 쓰므로 한 번 매핑한다.
- */
-const PROFILE_TO_DIAGNOSE: Record<string, string> = {
-  '일상':       'lifestyle',
-  '맛집':       'food-travel',
-  '여행':       'food-travel',
-  '요리/음식':  'food-travel',
-  '인테리어':   'lifestyle',
-  '반려동물':   'lifestyle',
-  '육아/결혼':  'parenting',
-  '건강/운동':  'health-fitness',
-  '스포츠':     'health-fitness',
-  '뷰티/패션':  'fashion-beauty',
-  'IT/기술':    'info-howto',
-  '교육/학습':  'info-howto',
-  '경제/투자':  'info-howto',
-  '부동산':     'info-howto',
-  '자동차':     'review',
-  '게임':       'culture',
-  '영화/드라마':'culture',
-};
 
 /**
  * /blog-diagnose — 블로그 진단 페이지.
@@ -52,6 +28,7 @@ interface DiagnoseResponse {
   blogLink: string;
   category: string;
   categoryLabel: string;
+  categoryDetected?: boolean;
   keywordCount: number;
   rssItemCount: number;
   diagnosedAt: string;
@@ -59,7 +36,7 @@ interface DiagnoseResponse {
     total: number;
     band: 'top5' | 'top15' | 'top35' | 'mid' | 'growing';
     activity: { score: number; postsLast30d: number; postsLast90d: number; daysSinceLastPost: number; avgIntervalDays: number; cadenceStdDays: number };
-    visibility: { score: number; totalKeywords: number; hitCount: number; topTenCount: number; avgRankWhenHit: number; hits: { keyword: string; rank: number | null }[] };
+    visibility: { score: number; totalKeywords: number; hitCount: number; topTenCount: number; avgRankWhenHit: number; lowCompetitionHits?: number; hits: { keyword: string; rank: number | null; postTitle?: string; competition?: number }[] };
     quality: { score: number; avgCharsPerPost: number; avgImagesPerPost: number; categoryConsistency: number; topCategory: string | null };
     insights: string[];
     warnings: string[];
@@ -68,11 +45,13 @@ interface DiagnoseResponse {
   geo?: { score: number; grade: MateReadinessReport['grade'] };
   /** 메인 진단이 실측 본문으로 계산한 상세 리포트 — 카드에 initial 로 전달. */
   mate?: MateReadinessReport;
+  /** AI 브리핑 인용 기대치 (적합도 × 준비도). */
+  aiCitation?: AiCitationReport;
 }
 
 const PROGRESS_BEATS = [
   '블로그 RSS 가져오는 중',
-  '카테고리 키워드 30개로 검색 중',
+  '내 글 키워드로 검색 노출 확인 중',
   '상위 노출 진입 분석 중',
   '콘텐츠 품질 평가 중',
   '결과 정리 중',
@@ -82,7 +61,7 @@ const PROGRESS_BEATS = [
 const DIAGNOSE_STORAGE_KEY = 'bbl:diagnose:v1';
 
 /** 진단 입력값 + 결과를 sessionStorage에 직렬화. 실패 시 무시 (quotaExceeded 등). */
-function persistDiagnose(state: { blogInput: string; category: string; result?: DiagnoseResponse }) {
+function persistDiagnose(state: { blogInput: string; result?: DiagnoseResponse }) {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(DIAGNOSE_STORAGE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
@@ -100,7 +79,6 @@ const BAND_LABELS: Record<DiagnoseResponse['score']['band'], { label: string; to
 export default function BlogDiagnosePage() {
   const [step, setStep] = useState<Step>('input');
   const [blogInput, setBlogInput] = useState('');
-  const [category, setCategory] = useState<string>('');
   const [error, setError] = useState('');
   const [result, setResult] = useState<DiagnoseResponse | null>(null);
   const [progressBeat, setProgressBeat] = useState(0);
@@ -129,7 +107,6 @@ export default function BlogDiagnosePage() {
       if (!raw) return;
       const cached = JSON.parse(raw) as {
         blogInput?: string;
-        category?: string;
         result?: DiagnoseResponse;
         savedAt?: number;
       };
@@ -139,7 +116,6 @@ export default function BlogDiagnosePage() {
         return;
       }
       if (cached.blogInput) setBlogInput(cached.blogInput);
-      if (cached.category) setCategory(cached.category);
       if (cached.result) {
         setResult(cached.result);
         setStep('result');
@@ -151,30 +127,19 @@ export default function BlogDiagnosePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 로그인 상태면 프로필에서 블로그 URL · 분야 자동 채움
+  // 로그인 상태면 프로필에서 블로그 URL 자동 채움 (분야는 자동 감지하므로 입력 불필요)
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
     fetchMyProfile().then((profile) => {
       if (cancelled || !profile) return;
-      const filled: string[] = [];
       if (profile.blog_url && !blogInput.trim()) {
         setBlogInput(profile.blog_url);
-        filled.push('블로그 주소');
-      }
-      if (profile.category && !category) {
-        const mapped = PROFILE_TO_DIAGNOSE[profile.category];
-        if (mapped) {
-          setCategory(mapped);
-          filled.push('분야');
-        }
-      }
-      if (filled.length > 0) {
-        setPrefillNotice(`프로필에서 ${filled.join(' · ')}을(를) 가져왔어요. 필요하면 수정 가능합니다.`);
+        setPrefillNotice('프로필에서 블로그 주소를 가져왔어요. 필요하면 수정 가능합니다.');
       }
     });
     return () => { cancelled = true; };
-    // 최초 1회만 — blogInput/category 변경에 다시 트리거 X
+    // 최초 1회만 — blogInput 변경에 다시 트리거 X
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -195,17 +160,17 @@ export default function BlogDiagnosePage() {
   }, [step]);
 
   const submit = async () => {
-    if (!blogInput.trim() || !category) return;
+    if (!blogInput.trim()) return;
     setStep('running');
     setProgressBeat(0);
     setError('');
     // 진행 상태 저장 — running 중 새로고침되어도 입력값 복원
-    persistDiagnose({ blogInput: blogInput.trim(), category });
+    persistDiagnose({ blogInput: blogInput.trim() });
     try {
       const res = await fetch('/api/blog-diagnose', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blogInput: blogInput.trim(), category }),
+        body: JSON.stringify({ blogInput: blogInput.trim() }),
       });
       const data = await safeJson<DiagnoseResponse & { error?: string }>(res);
       if (!res.ok) {
@@ -227,7 +192,7 @@ export default function BlogDiagnosePage() {
       setResult(payload);
       setStep('result');
       // 결과 캐시 — 새로고침해도 결과 유지
-      persistDiagnose({ blogInput: blogInput.trim(), category, result: payload });
+      persistDiagnose({ blogInput: blogInput.trim(), result: payload });
     } catch (e) {
       setError(e instanceof Error ? e.message : '네트워크 오류');
       setStep('error');
@@ -262,7 +227,7 @@ export default function BlogDiagnosePage() {
               <span className="text-orange-600 dark:text-orange-400">상위 몇 %</span>일까요?
             </h1>
             <p className="hidden sm:block text-base sm:text-lg text-zinc-700 dark:text-zinc-300 mb-10 leading-relaxed">
-              네이버 블로그 RSS와 카테고리 핵심 키워드 30개를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드려요.
+              네이버 블로그 RSS와 <strong className="text-zinc-900 dark:text-zinc-100">내가 실제로 쓴 글</strong>이 검색 상위에 뜨는지를 분석해 활동성·노출·품질 3개 축에서 점수를 매기고 약점을 알려드려요. 분야는 자동으로 감지합니다.
             </p>
 
             {/* 진행 스텝 표시 */}
@@ -272,13 +237,8 @@ export default function BlogDiagnosePage() {
                 블로그 입력
               </li>
               <span className="text-zinc-400">→</span>
-              <li className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium ${category ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'}`}>
-                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">{category ? '✓' : '2'}</span>
-                분야 선택
-              </li>
-              <span className="text-zinc-400">→</span>
               <li className="flex items-center gap-1.5 px-2.5 py-1 rounded-full font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
-                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">3</span>
+                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold bg-white dark:bg-zinc-900">2</span>
                 진단 시작
               </li>
             </ol>
@@ -304,7 +264,7 @@ export default function BlogDiagnosePage() {
                   type="text"
                   value={blogInput}
                   onChange={(e) => setBlogInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && blogInput.trim() && category) submit(); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && blogInput.trim()) submit(); }}
                   placeholder="https://blog.naver.com/myblog  또는  myblog"
                   className="w-full px-4 py-3 bg-zinc-50 dark:bg-[#1a1410] border-2 border-zinc-200 dark:border-[#2e2723] rounded-lg text-zinc-900 dark:text-zinc-50 text-base sm:text-lg placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-orange-500 dark:focus:border-orange-400 focus:ring-2 focus:ring-orange-500/20 transition-all"
                 />
@@ -313,55 +273,14 @@ export default function BlogDiagnosePage() {
                 </p>
               </div>
 
-              {/* 카테고리 선택 — 카드형 + 명확한 selected 상태 */}
-              <div className="bg-white dark:bg-[#221c17] rounded-xl border border-zinc-200 dark:border-[#2e2723] p-5 sm:p-6 shadow-sm">
-                <div className="flex items-baseline justify-between mb-4">
-                  <label className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                    메인 카테고리
-                    <span className="ml-2 text-[11px] text-orange-600 dark:text-orange-400 font-medium">필수</span>
-                  </label>
-                  {category && (
-                    <span className="text-xs text-orange-700 dark:text-orange-300 font-medium">
-                      ✓ {CATEGORY_SEEDS.find((c) => c.value === category)?.label} 선택됨
-                    </span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                  {CATEGORY_SEEDS.map((c) => {
-                    const selected = category === c.value;
-                    return (
-                      <button
-                        key={c.value}
-                        type="button"
-                        onClick={() => setCategory(c.value)}
-                        className={`relative text-left px-3 py-3 min-h-[44px] rounded-lg border-2 transition-all cursor-pointer ${
-                          selected
-                            ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/40 ring-2 ring-orange-500/25 shadow-sm'
-                            : 'border-zinc-200 dark:border-[#3a312a] bg-white dark:bg-[#1a1410] hover:border-orange-300 dark:hover:border-orange-700 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 hover:shadow-sm'
-                        }`}
-                        aria-pressed={selected}
-                      >
-                        <span className={`block text-sm font-semibold ${
-                          selected
-                            ? 'text-orange-700 dark:text-orange-300'
-                            : 'text-zinc-900 dark:text-zinc-100'
-                        }`}>
-                          {c.label}
-                        </span>
-                        {selected && (
-                          <span className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow">
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="mt-3 text-xs text-zinc-600 dark:text-zinc-400">
-                  대상 블로그가 가장 많이 다루는 분야를 선택해주세요. 선택한 분야의 핵심 키워드 30개로 진단합니다.
-                </p>
+              {/* 분야 자동 감지 안내 — 더 이상 사용자가 직접 고르지 않음 */}
+              <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl border border-zinc-200 dark:border-[#2e2723] bg-zinc-50 dark:bg-[#1a1410] text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                <svg className="w-4 h-4 mt-0.5 flex-shrink-0 text-orange-500 dark:text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <span>
+                  <strong className="text-zinc-800 dark:text-zinc-200">분야는 자동으로 감지합니다.</strong> 최근 글 내용을 분석해 분야를 추정하고, <strong className="text-zinc-800 dark:text-zinc-200">내가 실제로 쓴 글이 노린 키워드</strong>로 검색 노출을 측정해요. 도구가 정한 분야 키워드가 아니라 내 글 기준이라 더 공정합니다.
+                </span>
               </div>
             </div>
 
@@ -375,11 +294,11 @@ export default function BlogDiagnosePage() {
               <button
                 type="button"
                 onClick={submit}
-                disabled={!blogInput.trim() || !category}
+                disabled={!blogInput.trim()}
                 className="btn-base btn-primary btn-lg"
               >
-                {!blogInput.trim() || !category ? '입력을 모두 완료해주세요' : '진단 시작 (30~50초)'}
-                {blogInput.trim() && category && (
+                {!blogInput.trim() ? '블로그 주소를 입력해주세요' : '진단 시작 (30~50초)'}
+                {blogInput.trim() && (
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
@@ -435,7 +354,7 @@ export default function BlogDiagnosePage() {
             </div>
 
             {/* ── 이 진단은 이렇게 작동해요 ── */}
-            <HowItWorks category={result.categoryLabel} keywordCount={result.keywordCount} />
+            <HowItWorks category={result.categoryLabel} keywordCount={result.keywordCount} detected={result.categoryDetected} />
 
             {/* ── 1. 총점 — gauge + radar ── */}
             <section className="relative overflow-hidden rounded-2xl border border-orange-200/70 dark:border-orange-900/40 bg-gradient-to-br from-orange-50/70 via-amber-50/30 to-white dark:from-orange-950/25 dark:via-amber-950/10 dark:to-zinc-900 p-6 sm:p-8 md:p-10 mb-12">
@@ -449,7 +368,7 @@ export default function BlogDiagnosePage() {
                   </div>
                   <p className="mt-2 text-sm text-ink-muted max-w-xs">{BAND_LABELS[result.score.band].desc}</p>
                   <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-ink-faint">
-                    {result.categoryLabel} · {result.keywordCount}개 키워드 분석
+                    {result.categoryLabel}{result.categoryDetected ? ' (자동 감지)' : ''} · 내 글 {result.keywordCount}개 분석
                   </p>
                   <div className="mt-5">
                     <ShareCardButton
@@ -485,6 +404,9 @@ export default function BlogDiagnosePage() {
               category={result.category as DiagnoseCategory}
               initial={result.mate}
             />
+
+            {/* ── AI 브리핑 인용 기대치 + 직접 확인 ── */}
+            {result.aiCitation && <AiCitationPanel report={result.aiCitation} />}
 
             {/* ── 3. 블로그 건강 체크 — 핵심 8개 ── */}
             <HealthChecklist score={result.score} />
@@ -537,7 +459,7 @@ export default function BlogDiagnosePage() {
 }
 
 /* ─── 진단 원리 안내 카드 ─────────────────────────────────────── */
-function HowItWorks({ category, keywordCount }: { category: string; keywordCount: number }) {
+function HowItWorks({ category, keywordCount, detected }: { category: string; keywordCount: number; detected?: boolean }) {
   return (
     <section className="mb-10 rounded-xl border border-orange-200/60 dark:border-orange-900/30 bg-orange-50/40 dark:bg-orange-950/15 p-5 sm:p-6">
       <h3 className="text-sm font-bold text-ink mb-3 flex items-center gap-2">
@@ -555,8 +477,8 @@ function HowItWorks({ category, keywordCount }: { category: string; keywordCount
         <div className="flex gap-2.5">
           <span className="flex-shrink-0 w-5 h-5 rounded-full bg-orange-500 dark:bg-orange-400 text-white dark:text-zinc-950 flex items-center justify-center text-[10px] font-bold mt-0.5">2</span>
           <div>
-            <strong className="text-ink block mb-0.5">키워드 검색 노출</strong>
-            <span className="text-ink font-medium">{category}</span> 분야 핵심 키워드 {keywordCount}개로 네이버 검색해서 내 블로그가 몇 위에 나오는지 확인합니다.
+            <strong className="text-ink block mb-0.5">내 글 검색 노출</strong>
+            <span className="text-ink font-medium">내가 쓴 최근 글 {keywordCount}개</span>가 노린 키워드로 네이버 검색해서, 그 글이 1페이지에 뜨는지 확인합니다. (분야: <span className="text-ink font-medium">{category}</span>{detected ? ' 자동 감지' : ''})
           </div>
         </div>
         <div className="flex gap-2.5">
@@ -665,12 +587,112 @@ function GeoHeadline({ geo }: { geo: { score: number; grade: MateReadinessReport
   );
 }
 
-/* ─── 노출 분포 차트 — 30개 키워드 노출 구간별 분포 ────────────────
+/* ─── AI 브리핑 인용 기대치 + 직접 확인 ────────────────────────
+ *
+ *  스크래핑 없이 "인용 가능성"을 정직하게 추정: 키워드 적합도 × 준비도(mate).
+ *  + 사용자가 본인 브라우저에서 실제 AI 브리핑을 확인할 수 있는 딥링크 제공.
+ */
+function AiCitationPanel({ report }: { report: AiCitationReport }) {
+  if (report.totalKeywords === 0) return null;
+
+  const grade = report.grade;
+  const gradeLabel = grade === 'high' ? '인용 기대 높음' : grade === 'mid' ? '인용 기대 보통' : '인용 기대 낮음';
+  const gradeColor =
+    grade === 'high' ? 'text-green-600 dark:text-green-400'
+    : grade === 'mid' ? 'text-orange-600 dark:text-orange-400'
+    : 'text-ink-muted';
+
+  // 직접 확인용 — 적합/부분적합 키워드 우선 (이미 적합도 내림차순 정렬됨), 최대 8개.
+  const checkable = report.keywords.filter((k) => k.tier !== 'low').slice(0, 8);
+
+  return (
+    <section className="mb-12">
+      <div className="ed-eyebrow mb-3">AI 브리핑 인용 기대치</div>
+
+      <div className="rounded-2xl border border-rule bg-paper p-5 sm:p-6">
+        {/* 헤드라인 — 기대치 점수 + 구성 */}
+        <div className="flex items-center gap-5 mb-4">
+          <div className="flex-shrink-0 text-center">
+            <div className="text-4xl sm:text-5xl font-bold tabular-nums text-ink leading-none">{report.expectationScore}</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-ink-faint mt-1">/ 100</div>
+          </div>
+          <div className="min-w-0">
+            <div className={`text-base sm:text-lg font-bold ${gradeColor}`}>{gradeLabel}</div>
+            <p className="text-xs text-ink-muted mt-1 leading-relaxed">
+              내 키워드의 <strong className="text-ink">AI 브리핑 적합도</strong>(정보성·질문형) ×{' '}
+              <strong className="text-ink">글 구조 준비도</strong>(준비도 {report.readinessScore}점)로 추정한 값이에요.
+            </p>
+          </div>
+        </div>
+
+        {/* 구성 요약 */}
+        <div className="grid grid-cols-2 gap-2 mb-5">
+          <div className="px-3 py-2 rounded-md border border-rule-soft bg-paper-deep">
+            <div className="text-[11px] text-ink-faint">AI 브리핑 적합 키워드</div>
+            <div className="text-sm font-semibold text-ink tabular-nums">
+              {report.proneCount} / {report.totalKeywords}개
+              <span className="text-ink-faint font-normal"> (강 {report.highCount})</span>
+            </div>
+          </div>
+          <div className="px-3 py-2 rounded-md border border-rule-soft bg-paper-deep">
+            <div className="text-[11px] text-ink-faint">글 구조 준비도</div>
+            <div className="text-sm font-semibold text-ink tabular-nums">{report.readinessScore}점</div>
+          </div>
+        </div>
+
+        {/* 직접 확인 — 딥링크 */}
+        {checkable.length > 0 ? (
+          <>
+            <p className="text-xs text-ink-muted mb-2 leading-relaxed">
+              아래 키워드로 <strong className="text-ink">실제 AI 브리핑에 내 글이 인용됐는지 직접 확인</strong>해보세요. (내 브라우저에서 네이버 검색이 열립니다)
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {checkable.map((k) => (
+                <a
+                  key={k.keyword}
+                  href={naverSearchUrl(k.keyword)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-orange-200 dark:border-orange-900/50 bg-orange-50/60 dark:bg-orange-950/25 text-xs text-orange-700 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-950/40 transition-colors"
+                  title={AI_TIER_LABEL[k.tier]}
+                >
+                  {k.keyword}
+                  <svg className="w-3 h-3 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-xs text-ink-muted leading-relaxed">
+            내 글 키워드 대부분이 일상·브랜드형이라 AI 브리핑이 잘 뜨지 않아요. "○○ 방법", "○○ 비교", "○○ 효과"처럼 정보성·질문형 주제를 함께 다뤄보세요.
+          </p>
+        )}
+
+        <p className="text-[11px] text-ink-faint mt-4 leading-relaxed">
+          ※ 네이버는 AI 인용수를 공개 API로 제공하지 않아, 실제 인용 여부는 위 링크로 직접 확인하는 것이 가장 정확해요. 이 점수는 공개 데이터 기반 <strong>기대치</strong>입니다. (총점에는 포함되지 않습니다)
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 노출 분포 차트 — 내 글 노출 구간별 분포 ────────────────
  *
  *  TOP10 / 11~20 / 21~30 / 미진입 4구간으로 막대 + 개수 표시.
- *  카테고리 내 위치를 빠르게 파악할 수 있게 도움.
+ *  내가 쓴 글이 노린 키워드에서 실제로 어디까지 노출되는지 한눈에 파악.
  */
-function RankDistribution({ hits }: { hits: { keyword: string; rank: number | null }[] }) {
+/** 경쟁도(총 문서수) → 짧은 라벨. 노출이 얼마나 의미 있는지 투명하게 표시. */
+function competitionLabel(total?: number): { text: string; cls: string } | null {
+  if (total === undefined) return null;
+  if (total < 300) return { text: '경쟁 약', cls: 'text-zinc-400 dark:text-zinc-500' };
+  if (total < 3_000) return { text: '경쟁 보통', cls: 'text-ink-faint' };
+  if (total < 30_000) return { text: '경쟁 있음', cls: 'text-orange-600/80 dark:text-orange-400/80' };
+  return { text: '경쟁 높음', cls: 'text-orange-700 dark:text-orange-300 font-medium' };
+}
+
+function RankDistribution({ hits }: { hits: { keyword: string; rank: number | null; postTitle?: string; competition?: number }[] }) {
   if (hits.length === 0) return null;
 
   const buckets = {
@@ -693,7 +715,7 @@ function RankDistribution({ hits }: { hits: { keyword: string; rank: number | nu
     <section className="mb-12">
       <div className="flex items-baseline justify-between mb-3">
         <div className="ed-eyebrow">노출 분포</div>
-        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">{total}개 키워드 기준</span>
+        <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">내 글 {total}개 기준</span>
       </div>
 
       {/* 스택 막대 */}
@@ -729,31 +751,42 @@ function RankDistribution({ hits }: { hits: { keyword: string; rank: number | nu
       {/* 해석 */}
       <p className="mt-3 text-xs text-ink-muted leading-relaxed">
         {buckets.top10 >= total * 0.2
-          ? `TOP10 진입 키워드가 ${buckets.top10}개로 카테고리 권위가 잘 누적되고 있습니다.`
+          ? `내 글 중 TOP10 진입이 ${buckets.top10}개 — 노린 키워드를 잘 잡아 권위가 누적되고 있습니다.`
           : buckets.top10 + buckets.rank20 + buckets.rank30 >= total * 0.3
-            ? `1페이지 진입은 있지만 TOP10이 ${buckets.top10}개로 적습니다. 진입한 키워드의 글 패턴을 다른 글에 확장해보세요.`
-            : `1페이지 진입이 ${buckets.top10 + buckets.rank20 + buckets.rank30}개로 부족합니다. 검색량은 적지만 경쟁이 약한 롱테일 키워드부터 공략하세요.`}
+            ? `1페이지 진입은 있지만 TOP10이 ${buckets.top10}개로 적습니다. 진입한 글의 패턴(제목·구조·길이)을 다른 글에 확장해보세요.`
+            : `1페이지 진입이 ${buckets.top10 + buckets.rank20 + buckets.rank30}개로 부족합니다. 제목 앞쪽에 핵심 키워드를 배치하고, 경쟁이 약한 롱테일부터 공략하세요.`}
       </p>
 
-      {/* 키워드별 상세 (접이식) */}
+      {/* 내 글별 상세 (접이식) */}
       <details className="mt-4 group">
         <summary className="cursor-pointer text-xs text-orange-600 dark:text-orange-400 hover:underline underline-offset-2 flex items-center gap-1">
-          키워드 {total}개 전체 순위 보기
+          내 글 {total}개 키워드별 순위 보기
           <svg className="w-3.5 h-3.5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
         </summary>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 border-t border-rule-soft mt-3 pt-3">
-          {hits.map((h) => (
-            <div key={h.keyword} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
-              <span className="text-sm text-ink-muted min-w-0 flex-1 break-words">{h.keyword}</span>
-              <span className={`text-sm tabular-nums flex-shrink-0 whitespace-nowrap ${
-                h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
-              }`}>
-                {h.rank === null ? '—' : `${h.rank}위`}
-              </span>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 gap-y-1 border-t border-rule-soft mt-3 pt-3">
+          {hits.map((h, i) => {
+            const comp = competitionLabel(h.competition);
+            return (
+              <div key={`${h.keyword}-${i}`} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-rule-soft last:border-b-0">
+                <span className="min-w-0 flex-1">
+                  <span className="text-sm text-ink break-words">{h.keyword}</span>
+                  {h.postTitle && (
+                    <span className="block text-[11px] text-ink-faint truncate">{h.postTitle}</span>
+                  )}
+                </span>
+                <span className="flex items-baseline gap-2 flex-shrink-0 whitespace-nowrap">
+                  {comp && <span className={`text-[10px] ${comp.cls}`}>{comp.text}</span>}
+                  <span className={`text-sm tabular-nums ${
+                    h.rank === null ? 'text-ink-faint' : (h.rank as number) <= 10 ? 'text-orange-600 dark:text-orange-400 font-semibold' : 'text-ink'
+                  }`}>
+                    {h.rank === null ? '—' : `${h.rank}위`}
+                  </span>
+                </span>
+              </div>
+            );
+          })}
         </div>
       </details>
     </section>
@@ -799,12 +832,12 @@ function HealthChecklist({ score }: { score: DiagnoseResponse['score'] }) {
       advice: '발행 간격이 들쭉날쭉하면 알고리즘이 신뢰도를 낮게 봅니다. 같은 요일에 발행하세요.',
     },
     {
-      label: '1페이지 진입 30%+',
+      label: '내 글 1페이지 진입 30%+',
       detail: `${score.visibility.hitCount} / ${score.visibility.totalKeywords}개 진입 (${
         Math.round((score.visibility.hitCount / Math.max(1, score.visibility.totalKeywords)) * 100)
       }%)`,
       pass:   score.visibility.hitCount / Math.max(1, score.visibility.totalKeywords) >= 0.3,
-      advice: '카테고리 핵심 키워드의 30% 이상 1페이지 진입이 평균 합격선입니다.',
+      advice: '내가 쓴 글의 30% 이상이 노린 키워드로 1페이지에 떠야 평균 합격선입니다.',
     },
     {
       label: 'TOP 10 진입 글 보유',

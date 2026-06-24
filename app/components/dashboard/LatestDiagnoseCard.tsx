@@ -57,7 +57,7 @@ export default function LatestDiagnoseCard() {
           내 블로그는 카테고리 안에서 어디쯤일까요?
         </h3>
         <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed mb-5">
-          카테고리 핵심 키워드 30개로 활동성 · 노출 · 품질을 한 번에 진단합니다. 1분 안에 점수가 나와요.
+          내가 쓴 글이 검색 상위에 뜨는지로 활동성 · 노출 · 품질을 한 번에 진단합니다. 1분 안에 점수가 나와요.
         </p>
         <Link href="/blog-diagnose" className="btn-base btn-primary btn-lg text-base">
           내 블로그 진단하기

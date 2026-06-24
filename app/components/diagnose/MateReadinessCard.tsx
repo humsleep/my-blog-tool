@@ -6,6 +6,7 @@ import {
   type MateReadinessReport,
   GRADE_LABEL,
   GRADE_COLOR,
+  MATE_WEIGHTS,
 } from '@/app/lib/diagnose/mate-readiness';
 import type { DiagnoseCategory } from '@/app/lib/diagnose/category-seeds';
 
@@ -72,7 +73,7 @@ export default function MateReadinessCard({ blogId, category, initial }: Props) 
 
   const { score, grade, checks, topTip, sampleSize } = data;
 
-  const weights = [0.25, 0.25, 0.2, 0.15, 0.15];
+  const weights = MATE_WEIGHTS;
   const mateThreshold = 75;
   const gap = Math.max(0, mateThreshold - score);
 
@@ -80,7 +81,7 @@ export default function MateReadinessCard({ blogId, category, initial }: Props) 
     .map((c, i) => ({
       ...c,
       index: i,
-      potential: Math.round((1 - c.passRate) * weights[i] * 100),
+      potential: Math.round((1 - c.passRate) * (weights[i] ?? 0) * 100),
     }))
     .filter(c => c.status !== 'good')
     .sort((a, b) => b.potential - a.potential);
@@ -144,7 +145,7 @@ export default function MateReadinessCard({ blogId, category, initial }: Props) 
       {/* Check items */}
       <div className="space-y-3">
         {checks.map((check, i) => {
-          const potential = Math.round((1 - check.passRate) * weights[i] * 100);
+          const potential = Math.round((1 - check.passRate) * (weights[i] ?? 0) * 100);
           return (
             <div key={i} className="border border-rule rounded-lg p-3.5 hover:border-rule-soft transition-colors">
               <div className="flex items-center justify-between gap-3 mb-2">

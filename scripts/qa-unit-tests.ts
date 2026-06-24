@@ -13,6 +13,10 @@ import { extractBlogId } from '../app/lib/diagnose/naver-blog';
 import { scoreActivity, scoreVisibility, scoreQuality, compose, mapHits } from '../app/lib/diagnose/scoring';
 import { validateNickname, validateBlogUrl } from '../app/lib/community/profile';
 import { markdownToHtml, markdownToPlain } from '../app/lib/format/article-formats';
+import { extractTargetKeyword, buildTargetKeywords } from '../app/lib/diagnose/title-keyword';
+import { detectCategory } from '../app/lib/diagnose/category-seeds';
+import { analyzeMateReadiness, MATE_WEIGHTS } from '../app/lib/diagnose/mate-readiness';
+import { classifyAiProneness, analyzeAiCitation } from '../app/lib/diagnose/ai-citation';
 
 let passed = 0;
 let failed = 0;
@@ -114,6 +118,77 @@ group('mapHits — visibility rank mapping', () => {
 });
 
 // ─────────────────────────────────────────────────────────────
+group('extractTargetKeyword — 제목→검색 키워드 (진단 v3)', () => {
+  // 말머리 대괄호 제거 + 앞쪽 핵심 키워드 추출
+  expect(extractTargetKeyword('[내돈내산] 다이슨 에어랩 한 달 후기'), '다이슨 에어랩', '말머리 제거 + 키워드');
+  // 꼬리 서술형 토큰에서 종료
+  expect(extractTargetKeyword('수원 인계동 카페 카페그레이 다녀왔어요'), '수원 인계동 카페', '서술형 토큰 전까지');
+  // 시간 말머리(조사 포함) 건너뜀
+  expect(extractTargetKeyword('오늘은 연말정산 의료비 공제 총정리'), '연말정산 의료비 공제', '시간 말머리 skip');
+  // 추천/베스트는 키워드의 일부로 유지
+  expect(extractTargetKeyword('강릉 카페 추천 베스트'), '강릉 카페 추천', '추천은 키워드 일부');
+  // 이모지/특수문자 제거
+  expect(extractTargetKeyword('✨아이폰 15 프로 리뷰✨'), '아이폰 15 프로', '이모지 제거');
+  // 빈 제목 → null
+  expect(extractTargetKeyword(''), null, '빈 제목 null');
+  expect(extractTargetKeyword('   '), null, '공백만 null');
+});
+
+group('buildTargetKeywords — 중복 제거 + 상한', () => {
+  const items = [
+    { title: '제주도 카페 추천' },
+    { title: '제주도 카페 추천 다시' },   // 같은 키워드 → 중복 제거
+    { title: '부산 맛집 후기' },
+  ];
+  const out = buildTargetKeywords(items, 10);
+  expect(out.length, 2, '중복 제거 후 2개');
+  expect(out[0].keyword, '제주도 카페 추천', '첫 키워드');
+  expect(out[0].postTitle, '제주도 카페 추천', '출처 제목 보존');
+  expect(buildTargetKeywords(items, 1).length, 1, 'limit 적용');
+});
+
+group('detectCategory — 분야 자동 감지', () => {
+  expect(detectCategory(['오사카 맛집 추천', '제주도 가볼만한곳']).value, 'food-travel', '맛집·여행 감지');
+  expect(detectCategory(['헬스장 PT 후기', '단백질 식단 다이어트']).value, 'health-fitness', '건강·운동 감지');
+  expect(detectCategory(['아무 의미 없는 글', 'zzz']).value, 'lifestyle', '매칭 0 → lifestyle 폴백');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('classifyAiProneness — AI 브리핑 적합도', () => {
+  expect(classifyAiProneness('연말정산 하는법').tier, 'high',   '방법형 → high');
+  expect(classifyAiProneness('아이폰 갤럭시 비교').tier, 'high', '비교형 → high');
+  expect(classifyAiProneness('비타민D 효능').tier,    'high',   '효능형 → high');
+  expect(classifyAiProneness('타이레놀 복용법?').tier, 'high',  '물음표 → high');
+  expect(classifyAiProneness('수원 카페 추천').tier,  'medium', '추천형 → medium');
+  expect(classifyAiProneness('제주도 맛집').tier,     'medium', '맛집 → medium');
+  expect(classifyAiProneness('오늘의 일상').tier,     'low',    '일상 → low');
+  expect(classifyAiProneness('다이슨 에어랩').tier,    'low',    '제품명만 → low');
+  expect(classifyAiProneness('카페그레이').tier,      'medium', '카페 포함 브랜드 → medium');
+});
+
+group('analyzeAiCitation — 인용 기대치 = 적합도 × 준비도', () => {
+  // 적합 키워드 + 높은 준비도 → 기대치 높음
+  const good = analyzeAiCitation(['연말정산 하는법', '소득공제 조건', '환급 방법'], 80);
+  expect(good.highCount, 3, '3개 모두 high');
+  if (good.expectationScore < 55) failures.push(`  ✗ prone+ready should be high, got ${good.expectationScore}`); else passed++;
+  expect(good.grade, 'high', 'grade high');
+
+  // 적합하지만 준비도 0 → 기대치 0
+  const noReady = analyzeAiCitation(['연말정산 하는법'], 0);
+  expect(noReady.expectationScore, 0, '준비도 0 → 기대치 0');
+
+  // 일상 키워드 + 높은 준비도 → 적합도가 낮아 기대치 억제
+  const dailyOnly = analyzeAiCitation(['오늘의 일상', '주말 기록'], 80);
+  if (dailyOnly.expectationScore > 30) failures.push(`  ✗ daily-only should be suppressed, got ${dailyOnly.expectationScore}`); else passed++;
+  expect(dailyOnly.proneCount, 0, '적합 키워드 0');
+
+  // 빈 목록 안전
+  expect(analyzeAiCitation([], 80).expectationScore, 0, '빈 목록 → 0');
+  // 정렬: high 가 앞으로
+  expect(analyzeAiCitation(['오늘의 일상', '환급 방법'], 50).keywords[0].tier, 'high', '적합도 내림차순 정렬');
+});
+
+// ─────────────────────────────────────────────────────────────
 group('scoreActivity', () => {
   const empty = scoreActivity([]);
   expect(empty.score, 0,        'empty items score 0');
@@ -156,6 +231,65 @@ group('scoreVisibility', () => {
   ]);
   expect(mixed.hitCount,     2,  'mixed hitCount');
   expect(mixed.topTenCount,  1,  'mixed top10');
+});
+
+// ─────────────────────────────────────────────────────────────
+group('scoreVisibility — 경쟁도 보정 (v3.1, 자기키워드 인플레이션)', () => {
+  // 전부 무경쟁(total<300) 키워드에서 1위만 → 만점이 되면 안 됨 (가산 0.3배)
+  const lowComp = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1, competition: 50 })),
+  );
+  expect(lowComp.lowCompetitionHits, 6, '무경쟁 노출 6건 집계');
+  if (lowComp.score >= 80) failures.push(`  ✗ 무경쟁 only should be capped well under 80, got ${lowComp.score}`); else passed++;
+
+  // 같은 1위라도 경쟁 키워드(total 큼)면 점수가 훨씬 높아야 함
+  const highComp = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1, competition: 50_000 })),
+  );
+  if (highComp.score <= lowComp.score) failures.push(`  ✗ high-comp(${highComp.score}) should beat low-comp(${lowComp.score})`); else passed++;
+  expect(highComp.lowCompetitionHits, 0, '경쟁 키워드는 lowCompetition 0');
+
+  // competition 미상이면 중립(1.0) — 기존 동작과 동일하게 만점 근처
+  const neutral = scoreVisibility(
+    Array.from({ length: 6 }, (_, i) => ({ keyword: 'k' + i, rank: 1 })),
+  );
+  if (neutral.score < 90) failures.push(`  ✗ neutral(undefined comp) all #1 should be 90+, got ${neutral.score}`); else passed++;
+});
+
+// ─────────────────────────────────────────────────────────────
+group('analyzeMateReadiness — AI 인용 준비도 (v2.2)', () => {
+  const mk = (over: Partial<{ title: string; contentSnippet: string; contentLength: number; imageCount: number }>) => ({
+    title: over.title ?? 't', link: '', pubDate: '2026-05-01', category: null,
+    contentSnippet: over.contentSnippet ?? '', contentLength: over.contentLength ?? 300, imageCount: over.imageCount ?? 0,
+  });
+
+  // 빈 입력
+  const empty = analyzeMateReadiness([], ['카페']);
+  expect(empty.sampleSize, 0, 'empty sampleSize 0');
+  expect(empty.score, 0, 'empty score 0');
+
+  // 6개 체크 항목 + 가중치 길이 일치
+  const some = analyzeMateReadiness([mk({})], ['카페']);
+  expect(some.checks.length, MATE_WEIGHTS.length, 'checks 수 = 가중치 수');
+
+  // 답변 우선 도입부 — 키워드 + 정의 패턴이 첫 200자에 있으면 통과
+  const answerLead = analyzeMateReadiness(
+    [mk({ title: '제주 카페', contentSnippet: '제주 카페란 분위기 좋은 공간입니다. 오늘은 여기를 정리합니다.', contentLength: 1300 })],
+    ['제주', '카페'],
+  );
+  const leadCheck = answerLead.checks.find((c) => c.label === '답변 우선 도입부')!;
+  expect(leadCheck.passCount, 1, '답변 우선 도입부 통과');
+  // 요약·결론 블록 탐지
+  const summaryCheck = answerLead.checks.find((c) => c.label === '요약·결론 블록')!;
+  expect(summaryCheck.passCount, 1, '요약/정리 블록 탐지');
+
+  // 인사말만 있는 도입부는 답변 우선 도입부 미통과
+  const greeting = analyzeMateReadiness(
+    [mk({ title: '카페 다녀옴', contentSnippet: '안녕하세요 여러분 오늘도 좋은 하루 보내세요 날씨가 좋네요', contentLength: 500 })],
+    ['카페'],
+  );
+  const greetLead = greeting.checks.find((c) => c.label === '답변 우선 도입부')!;
+  expect(greetLead.passCount, 0, '인사말 도입부 미통과');
 });
 
 // ─────────────────────────────────────────────────────────────

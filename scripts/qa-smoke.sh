@@ -127,11 +127,12 @@ if echo "$resp" | grep -qE "인식할 수 없|블로그"; then
 else
   FAIL=$((FAIL+1)); FAILS+=("/api/blog-diagnose did not reject Korean ID: $resp")
 fi
+# 진단 v3 — 카테고리는 자동 감지하므로 더 이상 필수가 아님 (선택 누락이 입력 에러가 되면 안 됨)
 resp=$(curl -s -X POST -H 'Content-Type: application/json' -d '{"blogInput":"myblog"}' "$BASE/api/blog-diagnose")
-if echo "$resp" | grep -qE "카테고리|메인"; then
-  PASS=$((PASS+1)); echo "  ✓ /api/blog-diagnose requires category"
+if echo "$resp" | grep -qE "카테고리를 선택|메인 카테고리"; then
+  FAIL=$((FAIL+1)); FAILS+=("/api/blog-diagnose still requires category (should auto-detect): $resp")
 else
-  FAIL=$((FAIL+1)); FAILS+=("/api/blog-diagnose did not require category: $resp")
+  PASS=$((PASS+1)); echo "  ✓ /api/blog-diagnose auto-detects category (no category required)"
 fi
 
 echo ""
