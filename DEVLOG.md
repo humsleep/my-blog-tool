@@ -5,6 +5,49 @@
 
 ---
 
+## 2026-07-17 — 성장 전략 회의(진단·트렌드·전략) → NOW 웨이브 실행 (Phase 60)
+
+### 배경
+- 자체 Agent 회의체(진단 3 + 전략 2 + PM 종합)로 사이트 문제·최신 트렌드·성장
+  전략을 도출. 다섯 진단이 한 점으로 수렴: **"최고조 가치(진단 점수·첫 글)를
+  전부 비로그인·무료로 흘려보내는데 계정·재방문·수익·유입으로 앵커링하는 장치가
+  비어 있다"** + 검색이 AI 브리핑/GEO로 이동 중. RICE 우선순위 로드맵의 NOW 웨이브
+  (P0 리스크 방어 + 최대 전환 레버 + 저비용 즉효)를 이번 세션에 구현.
+
+### ① 홈 히어로 카피 정합 (P0 신뢰)
+- `page.tsx` 증거 스트립 "30개 카테고리 키워드로 진입율 측정" → **"내 글 제목
+  키워드로 검색 1페이지 노출 측정"**. Phase 59 방법론(내 글 기준)과 일치.
+
+### ② 진단 maxDuration 60→180 (Pro 플랜, 타임아웃 방어)
+- `/api/ai-draft`가 이미 `maxDuration=300`으로 배포 → Pro 확정. 진단 1회는 외부
+  호출 약 30건(본문 12 + 검색 18)이라 60초 근접 시 전체 실패 → 180으로 상향.
+
+### ③ 진단 rate limit 뒤집기 (P0 남용·API 차단 방어)
+- 기존: 로그인만 12h 1회, **비로그인 무제한**(네이버 쿼터 소진·IP 차단 위험).
+- 변경: 비로그인도 **1회/일**(IP 해시, `anon_diagnose_usage` 0014, admin+fail-open),
+  로그인은 12h 1회 우대. "로그인이 이득"으로 정책 정렬. 429 시 `requiresLogin` 플래그.
+
+### ④ 진단 익명저장 + 결과화면 로그인 CTA + 소급 flush (최대 전환 레버)
+- 비로그인 진단 결과가 증발하던 문제 해소. 결과 화면(최고 wow)에 "로그인하고 점수
+  저장" CTA → OAuth 복귀 후 sessionStorage 캐시를 `/api/blog-diagnose/save`로 flush
+  (재진단 없이 스냅샷 저장, RLS 0012가 12h 중복 방어, saved 플래그로 1회만).
+  429(requiresLogin) 에러 화면에도 로그인 버튼.
+
+### ⑤ AI 크롤러 allow + llms.txt + 저장소 위생
+- `robots.ts`: GPTBot/OAI-SearchBot/PerplexityBot/ClaudeBot/Google-Extended 등 AI
+  검색 크롤러 명시 허용(GEO/AEO 인용 접근성). `public/llms.txt` 신규(사이트 요약 +
+  핵심 도구·가이드 목록). 루트 정체불명 Python 스크립트 2개 git 제거.
+
+### 배포 주의
+- **`supabase/migrations/0014_anon_diagnose_usage.sql`를 Supabase SQL Editor에서
+  실행**해야 비로그인 진단 한도가 실제로 강제됨(미실행 시 fail-open — 진단은 되나
+  남용 방어 미작동).
+
+### 검증
+- 단위테스트 129건 통과. `IP_HASH_SALT=... npm run build` 성공(에러 0).
+
+---
+
 ## 2026-06-23 — 진단 노출 측정 개편 + AI 인용 준비도 고도화 (Phase 59.2)
 
 ### 배경

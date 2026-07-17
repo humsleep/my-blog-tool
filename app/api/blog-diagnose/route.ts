@@ -7,13 +7,53 @@ import { analyzeMateReadiness } from '@/app/lib/diagnose/mate-readiness';
 import { analyzeCoach } from '@/app/lib/diagnose/heuristic-coach';
 import { analyzeAiCitation } from '@/app/lib/diagnose/ai-citation';
 import { createClient } from '@/app/lib/supabase/server';
+import { getAdminClient } from '@/app/lib/supabase/admin';
+import { getClientIp, hashIp } from '@/app/lib/security/ip-hash';
 
 function isSupabaseConfigured() {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
+// 비로그인 진단 한도: IP 해시 기준 1회/일 (anon_diagnose_usage, 마이그레이션 0014).
+//   진단 1회 = 네이버 API 약 30건 호출이라, 비로그인 무제한이면 쿼터 소진·IP 차단 위험.
+//   로그인 사용자는 12시간 1회(RLS 0012)로 우대 → "로그인이 이득"이 되도록 정책 정렬.
+const ANON_DIAGNOSE_LIMIT = 1;
+
+function usageDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** 비로그인 오늘자 진단 횟수. admin 미설정/테이블 부재(0014 미실행) 시 null → fail-open. */
+async function getAnonDiagnoseCount(ipHash: string): Promise<number | null> {
+  const admin = getAdminClient();
+  if (!admin) return null;
+  const { data, error } = await admin
+    .from('anon_diagnose_usage')
+    .select('count')
+    .eq('ip_hash', ipHash)
+    .eq('date', usageDate())
+    .maybeSingle();
+  if (error) {
+    console.error('[blog-diagnose] anon usage read failed (fail-open):', error.message);
+    return null;
+  }
+  return (data?.count as number | undefined) ?? 0;
+}
+
+async function incrementAnonDiagnose(ipHash: string, newCount: number) {
+  const admin = getAdminClient();
+  if (!admin) return;
+  const { error } = await admin
+    .from('anon_diagnose_usage')
+    .upsert({ ip_hash: ipHash, date: usageDate(), count: newCount }, { onConflict: 'ip_hash,date' });
+  if (error) console.error('[blog-diagnose] anon usage upsert failed:', error.message);
+}
+
 export const runtime = 'nodejs';
-export const maxDuration = 60;        // Vercel hobby 한도
+// Vercel Pro — /api/ai-draft(maxDuration 300)와 동일 플랜. 진단 1회는 외부 호출이 많아
+// (본문 12편 + 내 글 키워드 검색 최대 18건 ≈ 30건) 느린 블로그·재시도가 겹치면 60초에 근접해
+// 진단 전체가 타임아웃될 수 있었다. 여유를 둬 완료율을 높인다.
+export const maxDuration = 180;
 
 interface DiagnoseRequest {
   blogId?: string;
@@ -76,10 +116,11 @@ export async function POST(request: Request) {
     );
   }
 
-  // 2.6) Rate limit — 로그인 사용자는 12시간에 1회만 진단 가능.
-  //      외부 API 호출 비용·시간이 크므로 사전에 막아 무용한 호출 방지.
-  //      RLS 마이그레이션 0012 가 INSERT 단에서도 한 번 더 강제하지만 (서버 신뢰), 여기서
-  //      먼저 검사해 사용자에게 명확한 메시지 + 다음 가능 시각을 안내.
+  // 2.6) Rate limit — 외부 API 호출 비용·시간이 크므로 사전에 막아 무용한 호출 방지.
+  //      · 로그인: 12시간 1회 (RLS 0012 가 INSERT 단에서도 강제, 여기선 명확한 안내 + 다음 가능 시각).
+  //      · 비로그인: 1회/일 (IP 해시, anon_diagnose_usage 0014) — 남용·네이버 차단 방어.
+  //        비로그인 성공 시 아래 6.5)에서 카운트를 +1 한다.
+  let anonIpHash: string | null = null;   // 비로그인일 때만 세팅 → 성공 후 카운트 증가에 사용
   if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient();
@@ -106,6 +147,24 @@ export async function POST(request: Request) {
             { status: 429 },
           );
         }
+      } else {
+        // 비로그인 — IP 해시 일일 한도. IP_HASH_SALT/admin 미설정 시 fail-open (진단 진행).
+        try {
+          anonIpHash = hashIp(getClientIp(request));
+          const count = await getAnonDiagnoseCount(anonIpHash);
+          if (count !== null && count >= ANON_DIAGNOSE_LIMIT) {
+            return NextResponse.json(
+              {
+                error: `오늘 무료 진단 ${ANON_DIAGNOSE_LIMIT}회를 모두 사용했어요. 로그인하면 12시간마다 진단하고 점수 변동도 추적할 수 있어요.`,
+                requiresLogin: true,
+              },
+              { status: 429 },
+            );
+          }
+        } catch (e) {
+          anonIpHash = null;   // 카운트 증가도 건너뜀 (salt 미설정 등)
+          console.error('[blog-diagnose] anon rate-limit skipped:', e instanceof Error ? e.message : 'unknown');
+        }
       }
     } catch (err) {
       // 검사 실패는 swallow — 진단 자체는 진행. RLS 가 INSERT 시점에 한번 더 강제.
@@ -121,7 +180,7 @@ export async function POST(request: Request) {
   // 3.5) 최근 N편 본문 실제 측정.
   //      RSS description은 잘려있어 글자수·이미지 수가 부정확 (실제 1,500자/3장이어도 RSS는 400자/1장 수준).
   //      네이버 PostView.naver를 추가 호출해 정확한 본문 길이/이미지 수로 덮어쓴다.
-  //      샘플은 최근 12편만 — 시간(maxDuration 60초) + 비용 균형.
+  //      샘플은 최근 12편만 — 시간(maxDuration 180초) + 비용 균형.
   const QUALITY_SAMPLE_SIZE = 12;
   const sampleSize = Math.min(items.length, QUALITY_SAMPLE_SIZE);
   const fetchedIndices = new Set<number>();
@@ -243,6 +302,12 @@ export async function POST(request: Request) {
     } catch (err) {
       console.error('[blog-diagnose] DB 저장 실패 (무시):', err);
     }
+  }
+
+  // 6.5) 비로그인 성공 → 오늘자 사용 카운트 +1 (남용 방어). 실패는 swallow.
+  if (anonIpHash) {
+    const prev = await getAnonDiagnoseCount(anonIpHash);
+    await incrementAnonDiagnose(anonIpHash, (prev ?? 0) + 1);
   }
 
   return NextResponse.json({

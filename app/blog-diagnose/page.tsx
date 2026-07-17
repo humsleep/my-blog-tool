@@ -60,8 +60,9 @@ const PROGRESS_BEATS = [
 /** sessionStorage key — 진단 결과/입력값 캐시 */
 const DIAGNOSE_STORAGE_KEY = 'bbl:diagnose:v1';
 
-/** 진단 입력값 + 결과를 sessionStorage에 직렬화. 실패 시 무시 (quotaExceeded 등). */
-function persistDiagnose(state: { blogInput: string; result?: DiagnoseResponse }) {
+/** 진단 입력값 + 결과를 sessionStorage에 직렬화. 실패 시 무시 (quotaExceeded 등).
+ *  saved: 비로그인 결과를 로그인 후 계정에 소급 저장 완료했는지 (중복 저장 방지 플래그). */
+function persistDiagnose(state: { blogInput: string; result?: DiagnoseResponse; saved?: boolean }) {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(DIAGNOSE_STORAGE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
@@ -83,6 +84,8 @@ export default function BlogDiagnosePage() {
   const [result, setResult] = useState<DiagnoseResponse | null>(null);
   const [progressBeat, setProgressBeat] = useState(0);
   const [prefillNotice, setPrefillNotice] = useState<string | null>(null);
+  const [errorRequiresLogin, setErrorRequiresLogin] = useState(false);
+  const [savedNotice, setSavedNotice] = useState<string | null>(null);
 
   const { user } = useUser();
 
@@ -143,6 +146,41 @@ export default function BlogDiagnosePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  // 로그인 직후 — 비로그인 때 본 진단 결과를 계정에 소급 저장 (전환 가치 회수).
+  //   결과 화면에서 "로그인하고 점수 저장" CTA → OAuth 후 이 페이지로 복귀 → 캐시된 결과를 flush.
+  //   중복 저장 방지: sessionStorage 의 saved 플래그로 1회만.
+  useEffect(() => {
+    if (!user || !result) return;
+    if (typeof window === 'undefined') return;
+    let alreadySaved = false;
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(DIAGNOSE_STORAGE_KEY) || 'null');
+      alreadySaved = Boolean(cached?.saved);
+    } catch { /* ignore */ }
+    if (alreadySaved) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/blog-diagnose/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ snapshot: result }),
+        });
+        if (cancelled) return;
+        // 성공/실패 무관하게 재시도 방지 플래그 (실패는 대개 최근 진단 중복 → 이미 점수 보유).
+        persistDiagnose({ blogInput, result, saved: true });
+        const data = await safeJson<{ saved?: boolean }>(res);
+        if (res.ok && data.saved) {
+          setSavedNotice('진단 점수를 계정에 저장했어요. 다음 진단 때 변동을 추적할 수 있어요.');
+        }
+      } catch { /* swallow — 저장 실패해도 결과 보기엔 지장 없음 */ }
+    })();
+    return () => { cancelled = true; };
+    // user/result 가 준비되면 1회
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, result]);
+
   // running 단계에서 progress beat 회전. 마지막 beat 도달 시 interval 정리 (불필요한 re-render 방지).
   useEffect(() => {
     if (step !== 'running') return;
@@ -172,7 +210,7 @@ export default function BlogDiagnosePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ blogInput: blogInput.trim() }),
       });
-      const data = await safeJson<DiagnoseResponse & { error?: string }>(res);
+      const data = await safeJson<DiagnoseResponse & { error?: string; requiresLogin?: boolean }>(res);
       if (!res.ok) {
         const fallback = (res.status === 504 || res.status === 408)
           ? '진단이 시간 안에 끝나지 않았어요. 잠시 후 다시 시도해주세요.'
@@ -180,6 +218,7 @@ export default function BlogDiagnosePage() {
             ? '서버가 일시적으로 응답하지 않아요. 잠시 후 다시 시도해주세요.'
             : `진단 실패 (HTTP ${res.status})`;
         setError(data.error || fallback);
+        setErrorRequiresLogin(Boolean(data.requiresLogin));
         setStep('error');
         return;
       }
@@ -203,6 +242,8 @@ export default function BlogDiagnosePage() {
     setStep('input');
     setResult(null);
     setError('');
+    setErrorRequiresLogin(false);
+    setSavedNotice(null);
     setProgressBeat(0);
     // prefillNotice 는 첫 마운트에서만 의미가 있는 1회성 안내라
     // 진단 완료 후 다시 입력 폼으로 돌아갈 때 지운다.
@@ -397,6 +438,37 @@ export default function BlogDiagnosePage() {
               </div>
             </section>
 
+            {/* ── 로그인 전환 CTA (비로그인) / 저장 완료 안내 (로그인) ──
+                 진단 결과는 가장 가치가 높은 순간 — 여기서 계정 저장 = 다음 진단 변동 추적으로 잇는다. */}
+            {!user ? (
+              <section className="mb-12 rounded-2xl border border-orange-300 dark:border-orange-800/60 bg-orange-50/80 dark:bg-orange-950/25 p-5 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                  <div>
+                    <h3 className="text-base font-semibold text-ink mb-1">이 점수, 저장해 둘까요?</h3>
+                    <p className="text-sm text-ink-muted leading-relaxed">
+                      로그인하면 이 진단 결과가 계정에 저장돼요. 다음에 다시 진단하면{' '}
+                      <strong className="text-ink">점수가 얼마나 올랐는지</strong> 변동 추이를 그래프로 볼 수 있어요.
+                    </p>
+                  </div>
+                  <Link
+                    href="/login?next=/blog-diagnose"
+                    className="btn-base btn-primary btn-md whitespace-nowrap shrink-0"
+                  >
+                    로그인하고 점수 저장 →
+                  </Link>
+                </div>
+              </section>
+            ) : savedNotice ? (
+              <section className="mb-12 rounded-2xl border border-orange-200 dark:border-orange-900/40 bg-white/60 dark:bg-zinc-900/40 p-4">
+                <p className="text-sm text-orange-700 dark:text-orange-300 flex items-center gap-2">
+                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {savedNotice}
+                </p>
+              </section>
+            ) : null}
+
             {/* ── 2. AI 인용 적합성 (GEO) + 메이트 준비도 통합 ── */}
             {result.geo && <GeoHeadline geo={result.geo} />}
             <MateReadinessCard
@@ -448,8 +520,17 @@ export default function BlogDiagnosePage() {
             </h1>
             <p className="text-ink-muted mb-8 max-w-md mx-auto">{error}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button onClick={() => setStep('input')} className="btn-base btn-primary btn-md">다시 시도</button>
-              <Link href="/" className="btn-base btn-secondary btn-md">홈으로 돌아가기</Link>
+              {errorRequiresLogin ? (
+                <>
+                  <Link href="/login?next=/blog-diagnose" className="btn-base btn-primary btn-md">로그인하기</Link>
+                  <button onClick={() => setStep('input')} className="btn-base btn-secondary btn-md">다시 시도</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => setStep('input')} className="btn-base btn-primary btn-md">다시 시도</button>
+                  <Link href="/" className="btn-base btn-secondary btn-md">홈으로 돌아가기</Link>
+                </>
+              )}
             </div>
           </div>
         )}

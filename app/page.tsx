@@ -291,7 +291,7 @@ function AnonHero({
           {/* 증거 스트립 — 추상적 약속 대신 측정 가능한 사실로 신뢰 형성. */}
           <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5 max-w-2xl border-t border-zinc-200 dark:border-zinc-800 pt-6 animate-fade-up stagger-4">
             {[
-              { value: '30개', label: '카테고리 키워드로\n1페이지 진입율 측정' },
+              { value: '내 글', label: '제목 키워드로\n검색 1페이지 노출 측정' },
               { value: '12편', label: '최근 본문 자동 분석\n글자수 · 이미지' },
               { value: '0원', label: '진단 · 키워드 분석\nAI API 미사용' },
               { value: '8단계', label: '검색어 → 발행까지\n끊김 없는 흐름' },
