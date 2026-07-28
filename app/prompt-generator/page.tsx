@@ -345,16 +345,21 @@ function PromptGeneratorContent() {
   };
 
   const generatePrompt = () => {
+    // 검증 실패로 중단할 때는 "글쓰기로 바로 이동" 예약을 반드시 해제 —
+    // 안 그러면 다음 성공 생성 때 의도치 않게 에디터로 튕겨나감.
     if (!keyword.trim()) {
       toast('키워드를 입력해주세요.', 'info');
+      setAutoGoToWriter(false);
       return;
     }
     if (!selectedCategory) {
       toast('분야를 선택해주세요.', 'info');
+      setAutoGoToWriter(false);
       return;
     }
     if (!tone) {
       toast('어투를 선택해주세요.', 'info');
+      setAutoGoToWriter(false);
       return;
     }
 
@@ -1387,8 +1392,11 @@ function PromptGeneratorContent() {
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
                     onClick={generatePrompt}
-                    disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px] text-sm"
+                    // 필수값 미입력(!keyword/!selectedCategory/!tone)으로 버튼을 막지 않는다 —
+                    // 막으면 클릭이 씹혀 generatePrompt 안의 "무엇을 입력하라" toast가 죽은 코드가 됨.
+                    // 클릭은 허용하고 핸들러가 빠진 항목을 toast로 안내. 미완성 시 흐리게만 표시.
+                    disabled={isGenerating}
+                    className={`flex-1 bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-200 hover:border-orange-400 dark:hover:border-orange-500 px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px] text-sm ${!keyword.trim() || !selectedCategory || !tone ? 'opacity-60' : ''}`}
                     title="프롬프트만 만들어서 직접 확인·복사하기"
                   >
                     {isGenerating && !autoGoToWriter ? '생성 중...' : '프롬프트만 생성'}
@@ -1398,8 +1406,8 @@ function PromptGeneratorContent() {
                       setAutoGoToWriter(true);
                       generatePrompt();
                     }}
-                    disabled={isGenerating || !keyword.trim() || !selectedCategory || !tone}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm inline-flex items-center justify-center gap-2"
+                    disabled={isGenerating}
+                    className={`flex-1 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm min-h-[44px] text-sm inline-flex items-center justify-center gap-2 ${!keyword.trim() || !selectedCategory || !tone ? 'opacity-60' : ''}`}
                     title="프롬프트를 만들고 AI 글쓰기로 바로 이동"
                   >
                     {autoGoToWriter ? '준비 중...' : 'AI 글쓰기로 바로 →'}
