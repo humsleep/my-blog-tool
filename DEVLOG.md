@@ -5,6 +5,22 @@
 
 ---
 
+## 2026-07-28 — [자체점검] 먹통 버튼 클래스 전수 점검 + 프롬프트 생성 동일 버그 수정
+
+### 배경
+- 로그인 먹통 버그(#91)와 같은 클래스("검증 조건으로 disabled → 핸들러 안내가
+  죽은 코드 → 피드백 없는 먹통 버튼")를 코드베이스 전체에서 점검.
+
+### 결과
+- `app/**/*.tsx`의 모든 `disabled={...}` 버튼 전수 확인. 동일 버그 1건 추가 발견:
+- **`app/prompt-generator/page.tsx`**: 두 생성 버튼이 `!keyword||!selectedCategory||!tone`로
+  disabled → `generatePrompt`의 `toast('...입력/선택해주세요')` 3종이 도달 불가.
+  → `disabled={isGenerating}`로만 잠그고 핸들러 toast로 빠진 항목 안내, 미완성 시 opacity-60.
+  검증 실패 early-return 때 `setAutoGoToWriter(false)`로 리다이렉트 예약 해제(부작용 차단). PR #93
+- 정상 확인(수정 불필요): ai-writer(라벨 "오늘 사용량 소진")·start(라벨 전환)·
+  tips 댓글(placeholder+"로그인 후 작성")·NewsPanel(선택 카운터)·Pagination·loading/submit 잠금.
+  → 이들은 disabled 이유가 라벨/placeholder/카운터로 명시되어 함정 아님.
+
 ## 2026-07-28 — [버그픽스] 로그인 버튼 먹통 해결
 
 ### 문제
