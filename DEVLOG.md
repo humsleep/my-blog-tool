@@ -5,6 +5,23 @@
 
 ---
 
+## 2026-07-28 — [버그픽스] 로그인 버튼 먹통 해결
+
+### 문제
+- 사용자 리포트: 로그인 버튼을 눌러도 아무 반응 없음. Supabase는 Active(인프라 정상).
+
+### 원인
+- `app/login/page.tsx`: 버튼 `disabled={loading || !configured || !agreed}` 로 동의
+  체크박스 미체크 시 버튼이 비활성 → onClick 미실행 → 핸들러의
+  `if (!agreed) setError('...동의해주세요')` 안내가 **도달 불가능한 죽은 코드**.
+  결과적으로 체크박스 안 누른 사용자에게 피드백 없는 '먹통' 버튼으로 보임.
+
+### 수정
+- `disabled` 조건에서 `!agreed` 제거(→ `loading || !configured`), 클릭 허용하고
+  핸들러가 동의 안내 메시지를 띄우도록 정상화. 동의 전엔 `opacity-60` + `aria-disabled`로
+  필요한 동작 시각화. `tsc` 클린·build ✓. PR #91
+- 2차 원인 메모: 버튼이 회색 비활성 + 상단 노란 배너면 Vercel `NEXT_PUBLIC_SUPABASE_*` 누락.
+
 ## 2026-06-23 — 진단 노출 측정 개편 + AI 인용 준비도 고도화 (Phase 59.2)
 
 ### 배경
