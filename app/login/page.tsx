@@ -119,8 +119,12 @@ function LoginContent() {
 
             <button
               onClick={signInWithGoogle}
-              disabled={loading || !configured || !agreed}
-              className="w-full flex items-center justify-center gap-3 px-5 py-3 bg-white hover:bg-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 border border-zinc-300 dark:border-zinc-600 rounded-lg text-zinc-700 dark:text-zinc-200 font-medium text-sm transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              // 동의 미체크(!agreed)는 disabled로 막지 않는다 — 막으면 클릭이 씹혀
+              // "동의해주세요" 안내가 뜨지 않고 버튼이 '먹통'으로 보이기 때문.
+              // 클릭은 허용하되 핸들러에서 안내 메시지를 띄운다.
+              disabled={loading || !configured}
+              aria-disabled={!agreed}
+              className={`w-full flex items-center justify-center gap-3 px-5 py-3 bg-white hover:bg-zinc-50 dark:bg-zinc-700 dark:hover:bg-zinc-600 border border-zinc-300 dark:border-zinc-600 rounded-lg text-zinc-700 dark:text-zinc-200 font-medium text-sm transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed ${!agreed ? 'opacity-60' : ''}`}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
